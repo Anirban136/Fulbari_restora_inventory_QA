@@ -1,0 +1,87 @@
+"use server"
+
+import { prisma } from "@/lib/prisma"
+import { revalidatePath } from "next/cache"
+import { redirect } from "next/navigation"
+
+export async function addTabItem(tabId: string, menuItemId: string, price: number) {
+  // Check if it already exists to increment quantity instead
+  const existingItem = await prisma.tabItem.findFirst({
+    where: { tabId, menuItemId }
+  })
+
+  if (existingItem) {
+    await prisma.tabItem.update({
+      where: { id: existingItem.id },
+      data: { quantity: { increment: 1 } }
+    })
+  } else {
+    await prisma.tabItem.create({
+      data: { tabId, menuItemId, priceAtTime: price, quantity: 1 }
+    })
+  }
+
+  // Update tab total
+  await prisma.tab.update({
+    where: { id: tabId },
+    data: { totalAmount: { increment: price } }
+  })
+
+  revalidatePath(`/tabs/${tabId}`)
+}
+
+export async function removeTabItem(tabItemId: string, tabId: string, priceDesc: number) {
+  await prisma.tabItem.delete({ where: { id: tabItemId } })
+  
+  await prisma.tab.update({
+    where: { id: tabId },
+    data: { totalAmount: { decrement: priceDesc } }
+  })
+
+  revalidatePath(`/tabs/${tabId}`)
+}
+
+export async function closeTab(data: FormData) {
+  const tabId = data.get("tabId") as string
+  const paymentMode = data.get("paymentMode") as string
+  
+  const tab = await prisma.tab.findUnique({ where: { id: tabId }, include: { Items: { include: { MenuItem: true } } }})
+  if (!tab) return
+
+  // Deduct inventory if items are linked to Central Catalog
+  for (const item of tab.Items) {
+     if (item.MenuItem.itemId) {
+       // Attempt to consume outlet stock
+       try {
+         await prisma.outletStock.update({
+           where: { outletId_itemId: { outletId: tab.outletId, itemId: item.MenuItem.itemId } },
+           data: { quantity: { decrement: item.quantity } }
+         })
+         
+         await prisma.inventoryLedger.create({
+           data: {
+             type: "CONSUMPTION",
+             itemId: item.MenuItem.itemId,
+             outletId: tab.outletId,
+             quantity: item.quantity,
+             userId: tab.userId,
+             notes: `POS Sales Consumption (Tab ${tab.id})`
+           }
+         })
+       } catch (e) {
+         console.error("Failed to decrement inventory for", item.MenuItem.name, e)
+       }
+     }
+  }
+
+  await prisma.tab.update({
+    where: { id: tabId },
+    data: {
+      status: "CLOSED",
+      paymentMode,
+      closedAt: new Date()
+    }
+  })
+
+  redirect("/tabs")
+}

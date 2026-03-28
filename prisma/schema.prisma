@@ -1,0 +1,120 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  name      String
+  email     String?  @unique
+  pin       String   @unique // Quick PIN login for staff
+  role      String   // OWNER, INV_MANAGER, CAFE_STAFF, CHAI_STAFF, REST_STAFF
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  Tabs      Tab[]    // Tabs created by this user
+  Dispatches InventoryLedger[] // Dispatches approved by this user
+}
+
+model Outlet {
+  id        String   @id @default(cuid())
+  name      String   // RESTAURANT, CAFE, CHAI_JOINT
+  type      String
+  createdAt DateTime @default(now())
+  
+  Stock     OutletStock[]
+  Tabs      Tab[]
+  Menus     MenuItem[]
+}
+
+model Item {
+  id            String   @id @default(cuid())
+  name          String
+  unit          String   // kg, litre, pieces, packets
+  currentStock  Float    @default(0) // Central inventory stock
+  vendor        String?
+  costPerUnit   Float?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  Ledger        InventoryLedger[]
+  OutletStock   OutletStock[]
+  MenuItems     MenuItem[] // If this item maps to a menu item directly (e.g., Samosa)
+}
+
+model InventoryLedger {
+  id          String   @id @default(cuid())
+  type        String   // STOCK_IN, DISPATCH, CONSUMPTION
+  itemId      String
+  quantity    Float
+  outletId    String?  // Null if STOCK_IN, populated if DISPATCH or CONSUMPTION
+  userId      String   // Who did this action
+  notes       String?
+  createdAt   DateTime @default(now())
+
+  Item        Item     @relation(fields: [itemId], references: [id])
+  User        User     @relation(fields: [userId], references: [id])
+}
+
+model OutletStock {
+  id          String   @id @default(cuid())
+  outletId    String
+  itemId      String
+  quantity    Float    @default(0)
+  updatedAt   DateTime @updatedAt
+
+  Outlet      Outlet   @relation(fields: [outletId], references: [id])
+  Item        Item     @relation(fields: [itemId], references: [id])
+
+  @@unique([outletId, itemId])
+}
+
+model MenuItem {
+  id          String   @id @default(cuid())
+  outletId    String
+  name        String
+  price       Float
+  categoryId  String?
+  isAvailable Boolean  @default(true)
+  itemId      String?  // Optional relation to global Item catalog
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  Outlet      Outlet   @relation(fields: [outletId], references: [id])
+  Item        Item?    @relation(fields: [itemId], references: [id])
+  TabItems    TabItem[]
+}
+
+model Tab {
+  id            String   @id @default(cuid())
+  outletId      String
+  userId        String   // Staff who opened it
+  customerName  String?
+  tableName     String?  // specifically for CAFE tables
+  status        String   // OPEN, CLOSED, CANCELLED
+  totalAmount   Float    @default(0)
+  paymentMode   String?  // CASH, ONLINE, SPLIT
+  openedAt      DateTime @default(now())
+  closedAt      DateTime?
+
+  Outlet        Outlet   @relation(fields: [outletId], references: [id])
+  User          User     @relation(fields: [userId], references: [id])
+  Items         TabItem[]
+}
+
+model TabItem {
+  id          String   @id @default(cuid())
+  tabId       String
+  menuItemId  String
+  quantity    Int      @default(1)
+  priceAtTime Float    // To lock in the price when ordered
+  addedAt     DateTime @default(now())
+
+  Tab         Tab      @relation(fields: [tabId], references: [id])
+  MenuItem    MenuItem @relation(fields: [menuItemId], references: [id])
+}

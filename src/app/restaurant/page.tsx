@@ -1,0 +1,115 @@
+import { prisma } from "@/lib/prisma"
+import { Label } from "@/components/ui/label"
+import { Input } from "@/components/ui/input"
+import { Button } from "@/components/ui/button"
+import { consumeStock } from "./actions"
+import { UserControls } from "@/components/user-controls"
+import { ChefHat, Flame, Search } from "lucide-react"
+
+export default async function RestaurantDashboard() {
+  const restaurant = await prisma.outlet.findFirst({ where: { type: "RESTAURANT" }})
+  
+  if (!restaurant) return <div className="min-h-screen bg-background text-white p-10 font-bold">Restaurant outlet not configured.</div>
+
+  const localStock = await prisma.outletStock.findMany({
+    where: { outletId: restaurant.id, quantity: { gt: 0 } },
+    include: { Item: true },
+    orderBy: { Item: { name: 'asc' } }
+  })
+
+  return (
+    <div className="min-h-screen bg-background selection:bg-rose-500/30 relative overflow-hidden flex flex-col items-center">
+      
+      {/* Background Decorators */}
+      <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-10 mix-blend-overlay pointer-events-none z-0"></div>
+      <div className="absolute top-[-10%] right-[-10%] w-[600px] h-[600px] bg-rose-600/10 rounded-full blur-[150px] pointer-events-none z-0"></div>
+      <div className="absolute bottom-[-10%] left-[-10%] w-[400px] h-[400px] bg-orange-600/10 rounded-full blur-[150px] pointer-events-none z-0"></div>
+
+      <div className="w-full max-w-6xl px-6 py-10 relative z-10 flex flex-col min-h-screen">
+        
+        <header className="flex items-center justify-between pb-8 mb-8 border-b border-white/10">
+          <div className="flex items-center gap-4">
+             <div className="h-14 w-14 bg-gradient-to-br from-rose-500 to-orange-600 rounded-2xl flex items-center justify-center border border-white/10 shadow-[0_0_30px_-5px_oklch(0.65_0.22_25_/_0.5)] p-1">
+               <div className="h-full w-full bg-background/50 rounded-xl flex items-center justify-center backdrop-blur-md">
+                 <ChefHat className="text-rose-400 w-6 h-6" />
+               </div>
+             </div>
+            <div>
+              <h1 className="text-4xl font-black text-white tracking-tight">Restaurant Hub</h1>
+              <p className="text-rose-400 font-bold mt-1 tracking-widest uppercase text-xs">Kitchen Operations Interface</p>
+            </div>
+          </div>
+          <UserControls />
+        </header>
+
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 flex-1">
+          
+          {/* Consumption Logger */}
+          <div className="lg:col-span-5 glass-panel p-8 rounded-3xl self-start hover:border-white/20 transition-all border border-rose-500/20 shadow-[0_20px_60px_-15px_rgba(244,63,94,0.1)]">
+            <div className="flex items-center gap-3 mb-8">
+               <Flame className="w-6 h-6 text-orange-400" />
+               <h2 className="text-2xl font-black text-white">Log Usage</h2>
+            </div>
+            
+            <form action={consumeStock} className="space-y-6">
+              <div className="space-y-2">
+                <Label htmlFor="itemId" className="text-xs font-bold text-slate-400 uppercase tracking-widest">Ingredient</Label>
+                <select name="itemId" id="itemId" required defaultValue="" className="w-full h-14 px-4 py-3 rounded-xl border border-white/10 bg-black/40 text-white placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-rose-500/50 transition-all shadow-inner font-medium text-lg">
+                  <option value="" disabled className="bg-slate-900 text-slate-500">Select from fridge / pantry...</option>
+                  {localStock.map(stock => (
+                    <option key={stock.itemId} value={stock.itemId} className="bg-slate-900 text-white">
+                      {stock.Item.name} — {stock.quantity} {stock.Item.unit} avl.
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="quantity" className="text-xs font-bold text-slate-400 uppercase tracking-widest">Amount Consumed</Label>
+                <Input id="quantity" name="quantity" type="number" step="0.01" min="0.01" className="h-14 bg-black/40 border-white/10 text-white placeholder:text-slate-600 rounded-xl focus-visible:ring-rose-500/50 shadow-inner font-mono text-2xl" placeholder="2.5" required />
+              </div>
+
+              <Button type="submit" className="w-full h-16 text-xl font-black tracking-widest uppercase bg-gradient-to-r from-rose-600 to-orange-600 hover:from-rose-500 hover:to-orange-500 text-white rounded-xl transition-all shadow-[0_0_30px_-5px_rgba(244,63,94,0.5)] active:scale-95 mt-4">
+                Deduct from Stock
+              </Button>
+            </form>
+          </div>
+
+          {/* Current Stock */}
+          <div className="lg:col-span-7 glass-panel rounded-3xl overflow-hidden flex flex-col max-h-[700px]">
+             <div className="p-8 border-b border-white/10 bg-white/5 backdrop-blur-md flex justify-between items-center">
+               <h2 className="text-xl font-bold text-white uppercase tracking-widest">Current Local Stock</h2>
+               <div className="px-4 py-1.5 rounded-full bg-rose-500/20 border border-rose-500/30 text-rose-300 font-bold text-xs flex items-center gap-2">
+                 <div className="w-2 h-2 rounded-full bg-rose-500 animate-pulse"></div> Live
+               </div>
+             </div>
+             
+             <div className="flex-1 overflow-auto p-8 relative">
+                <ul className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {localStock.length === 0 ? (
+                    <div className="col-span-2 flex flex-col items-center justify-center text-slate-500 py-20 animate-pulse">
+                      <Search className="w-12 h-12 mb-4 opacity-20" />
+                      <p className="font-bold tracking-widest uppercase text-sm">No inventory available. Await dispatch.</p>
+                    </div>
+                  ) : (
+                    localStock.map(stock => (
+                      <li key={stock.id} className="flex flex-col p-5 rounded-2xl border border-white/5 bg-white/5 hover:bg-white/10 hover:border-white/20 transition-all group shadow-sm hover:shadow-[0_5px_20px_-5px_rgba(244,63,94,0.2)]">
+                        <span className="font-bold text-slate-300 group-hover:text-white text-lg transition-colors">{stock.Item.name}</span>
+                        <div className="mt-4 flex justify-between items-end">
+                          <span className="text-xs font-bold text-slate-500 uppercase tracking-widest">Available</span>
+                          <span className="font-black text-rose-400 bg-rose-500/10 border border-rose-500/20 px-3 py-1 rounded-lg text-lg drop-shadow-[0_0_5px_rgba(244,63,94,0.3)]">
+                            {stock.quantity} <span className="text-[10px] ml-1 opacity-70 uppercase text-rose-300 tracking-widest">{stock.Item.unit}</span>
+                          </span>
+                        </div>
+                      </li>
+                    ))
+                  )}
+                </ul>
+             </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  )
+}
