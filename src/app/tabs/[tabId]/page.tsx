@@ -32,7 +32,7 @@ export default async function TabTerminal({ params }: { params: Promise<{ tabId:
   }, {})
 
   return (
-    <div className="h-screen bg-background flex overflow-hidden selection:bg-emerald-500/30 selection:text-emerald-100 relative">
+    <div className="h-screen bg-background flex flex-col lg:flex-row overflow-hidden selection:bg-emerald-500/30 selection:text-emerald-100 relative">
       
       {/* Background Decorators */}
       <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-10 mix-blend-overlay pointer-events-none z-0"></div>
@@ -40,15 +40,15 @@ export default async function TabTerminal({ params }: { params: Promise<{ tabId:
 
       {/* Left Pane: MENU GRID */}
       <div className="flex-1 flex flex-col pt-4 z-10 relative">
-        <header className="px-8 pb-6 border-b border-white/10 flex items-center justify-between bg-background/50 backdrop-blur-md">
+        <header className="p-4 sm:px-8 sm:pb-6 border-b border-white/10 flex flex-col sm:flex-row items-start sm:items-center justify-between bg-background/50 backdrop-blur-md shrink-0">
           <Link href="/tabs">
-            <Button variant="outline" className="text-slate-300 border-white/10 hover:bg-white/10 hover:text-white rounded-xl h-12 px-6 gap-2 font-bold backdrop-blur-md">
-              <ArrowLeft className="w-4 h-4" /> Back to Terminal
+            <Button variant="outline" className="text-slate-300 border-white/10 hover:bg-white/10 hover:text-white rounded-xl h-10 sm:h-12 px-4 sm:px-6 gap-2 font-bold backdrop-blur-md">
+              <ArrowLeft className="w-4 h-4" /> <span className="hidden sm:inline">Back to Terminal</span><span className="sm:hidden">Back</span>
             </Button>
           </Link>
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3 sm:gap-4 shrink-0 mt-4 sm:mt-0">
             <div className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_10px_#10b981]"></div>
-            <h2 className="text-2xl font-black text-white tracking-tight uppercase">{tab.Outlet.name} <span className="text-emerald-500/50">POS</span></h2>
+            <h2 className="text-xl sm:text-2xl font-black text-white tracking-tight uppercase truncate">{tab.Outlet.name} <span className="text-emerald-500/50">POS</span></h2>
           </div>
         </header>
         
@@ -75,8 +75,8 @@ export default async function TabTerminal({ params }: { params: Promise<{ tabId:
       </div>
 
       {/* Right Pane: CART / BILL */}
-      <div className="w-1/3 min-w-[400px] max-w-[500px] bg-black/40 backdrop-blur-2xl flex flex-col border-l border-white/10 shadow-[-20px_0_40px_rgba(0,0,0,0.5)] z-20">
-        <header className="p-8 border-b border-white/10 bg-white/5 relative overflow-hidden">
+      <div className="w-full lg:w-1/3 lg:min-w-[400px] lg:max-w-[500px] h-[50vh] lg:h-auto bg-black/40 backdrop-blur-2xl flex flex-col border-t lg:border-t-0 lg:border-l border-white/10 shadow-[0_-20px_80px_rgba(0,0,0,0.8)] lg:shadow-[-20px_0_40px_rgba(0,0,0,0.5)] z-20 shrink-0 relative">
+        <header className="p-4 sm:p-8 border-b border-white/10 bg-white/5 relative overflow-hidden shrink-0">
           <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/10 rounded-full blur-[40px] pointer-events-none"></div>
           <h2 className="text-3xl font-black text-white tracking-tight break-words relative z-10 text-glow">{tab.customerName}</h2>
           <p className="text-emerald-400/80 font-bold text-xs tracking-widest mt-2 uppercase relative z-10">Tab #{tab.id.slice(-6)}</p>
@@ -109,10 +109,10 @@ export default async function TabTerminal({ params }: { params: Promise<{ tabId:
           )}
         </div>
 
-        <div className="p-8 bg-black/60 border-t border-white/10 z-10 backdrop-blur-xl">
-          <div className="flex justify-between items-center mb-8">
+        <div className="p-4 sm:p-8 bg-black/60 border-t border-white/10 z-10 backdrop-blur-xl shrink-0">
+          <div className="flex justify-between items-center mb-4 sm:mb-8">
             <span className="text-slate-400 text-sm font-bold tracking-widest uppercase">Total Due</span>
-            <span className="text-5xl font-black text-white text-glow">₹{tab.totalAmount.toFixed(2)}</span>
+            <span className="text-3xl sm:text-5xl font-black text-white text-glow">₹{tab.totalAmount.toFixed(2)}</span>
           </div>
 
           <form action={closeTab} className="space-y-6">
@@ -123,22 +123,22 @@ export default async function TabTerminal({ params }: { params: Promise<{ tabId:
               <div className="grid grid-cols-3 gap-3">
                 <label className="cursor-pointer group">
                   <input type="radio" name="paymentMode" value="CASH" className="peer sr-only" required />
-                  <div className="flex flex-col items-center justify-center gap-2 py-4 rounded-xl border-2 border-white/10 bg-white/5 font-bold text-slate-400 peer-checked:border-emerald-500 peer-checked:bg-emerald-500/10 peer-checked:text-emerald-400 peer-checked:shadow-[0_0_20px_-5px_#10b981] group-hover:bg-white/10 transition-all">
-                    <Banknote className="w-5 h-5 mb-1" />
+                  <div className="flex flex-col items-center justify-center gap-2 py-2 sm:py-4 rounded-xl border-2 border-white/10 bg-white/5 font-bold text-slate-400 peer-checked:border-emerald-500 peer-checked:bg-emerald-500/10 peer-checked:text-emerald-400 peer-checked:shadow-[0_0_20px_-5px_#10b981] group-hover:bg-white/10 transition-all text-[10px] sm:text-xs">
+                    <Banknote className="w-4 h-4 sm:w-5 sm:h-5 mb-1" />
                     CASH
                   </div>
                 </label>
                 <label className="cursor-pointer group">
                   <input type="radio" name="paymentMode" value="ONLINE" className="peer sr-only" required />
-                  <div className="flex flex-col items-center justify-center gap-2 py-4 rounded-xl border-2 border-white/10 bg-white/5 font-bold text-slate-400 peer-checked:border-emerald-500 peer-checked:bg-emerald-500/10 peer-checked:text-emerald-400 peer-checked:shadow-[0_0_20px_-5px_#10b981] group-hover:bg-white/10 transition-all">
-                    <CreditCard className="w-5 h-5 mb-1" />
-                    UPI / CARD
+                  <div className="flex flex-col items-center justify-center gap-2 py-2 sm:py-4 rounded-xl border-2 border-white/10 bg-white/5 font-bold text-slate-400 peer-checked:border-emerald-500 peer-checked:bg-emerald-500/10 peer-checked:text-emerald-400 peer-checked:shadow-[0_0_20px_-5px_#10b981] group-hover:bg-white/10 transition-all text-[10px] sm:text-xs text-center leading-tight">
+                    <CreditCard className="w-4 h-4 sm:w-5 sm:h-5 mb-1" />
+                    UPI/CARD
                   </div>
                 </label>
                 <label className="cursor-pointer group">
                   <input type="radio" name="paymentMode" value="SPLIT" className="peer sr-only" required />
-                  <div className="flex flex-col items-center justify-center gap-2 py-4 rounded-xl border-2 border-white/10 bg-white/5 font-bold text-slate-400 peer-checked:border-emerald-500 peer-checked:bg-emerald-500/10 peer-checked:text-emerald-400 peer-checked:shadow-[0_0_20px_-5px_#10b981] group-hover:bg-white/10 transition-all">
-                    <SplitSquareHorizontal className="w-5 h-5 mb-1" />
+                  <div className="flex flex-col items-center justify-center gap-2 py-2 sm:py-4 rounded-xl border-2 border-white/10 bg-white/5 font-bold text-slate-400 peer-checked:border-emerald-500 peer-checked:bg-emerald-500/10 peer-checked:text-emerald-400 peer-checked:shadow-[0_0_20px_-5px_#10b981] group-hover:bg-white/10 transition-all text-[10px] sm:text-xs">
+                    <SplitSquareHorizontal className="w-4 h-4 sm:w-5 sm:h-5 mb-1" />
                     SPLIT
                   </div>
                 </label>
