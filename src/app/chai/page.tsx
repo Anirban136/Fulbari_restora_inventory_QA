@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button"
 import { UserControls } from "@/components/user-controls"
 import { CupSoda, PackageOpen, LayoutGrid, Search, History, Receipt } from "lucide-react"
 import Link from "next/link"
-import { formatTimeIST, formatDateIST } from "@/lib/utils"
+import { formatTimeIST, formatDateIST, getISTDateBounds } from "@/lib/utils"
 
 export default async function ChaiDashboard() {
   const chaiJoint = await prisma.outlet.findFirst({ where: { type: "CHAI_JOINT" }})
@@ -36,6 +36,22 @@ export default async function ChaiDashboard() {
       orderBy: { closedAt: 'desc' }
     })
   ])
+
+  const { startUTC: todayStart, endUTC: todayEnd } = getISTDateBounds();
+  
+  const todaysTabs = recentTabs.filter(tab => 
+    tab.status === "CLOSED" && 
+    tab.closedAt && 
+    tab.closedAt >= todayStart && 
+    tab.closedAt <= todayEnd
+  );
+
+  const dailyReport = {
+    CASH: todaysTabs.filter(t => t.paymentMode === 'CASH').reduce((sum, t) => sum + t.totalAmount, 0),
+    ONLINE: todaysTabs.filter(t => t.paymentMode === 'ONLINE').reduce((sum, t) => sum + t.totalAmount, 0),
+    SPLIT: todaysTabs.filter(t => t.paymentMode === 'SPLIT').reduce((sum, t) => sum + t.totalAmount, 0),
+    TOTAL: todaysTabs.reduce((sum, t) => sum + t.totalAmount, 0)
+  };
 
   return (
     <div className="min-h-screen bg-background selection:bg-blue-500/30 relative overflow-hidden flex flex-col items-center">
@@ -76,6 +92,34 @@ export default async function ChaiDashboard() {
                    Open Registers
                  </Button>
                </Link>
+            </div>
+
+            {/* Today's Report */}
+            <div className="glass-panel p-6 rounded-3xl group transition-all border border-blue-500/10 hover:border-blue-500/30">
+               <h2 className="text-lg font-bold text-white uppercase tracking-widest mb-6 flex items-center justify-between">
+                 <span>Today's Report</span>
+                 <Receipt className="w-5 h-5 text-blue-500" />
+               </h2>
+               <div className="space-y-3">
+                 <div className="flex justify-between items-center bg-white/5 p-3 rounded-xl border border-white/5">
+                   <span className="text-sm font-bold text-slate-400 uppercase tracking-widest">💵 Cash</span>
+                   <span className="text-lg font-black text-white">₹{dailyReport.CASH.toFixed(2)}</span>
+                 </div>
+                 <div className="flex justify-between items-center bg-white/5 p-3 rounded-xl border border-white/5">
+                   <span className="text-sm font-bold text-slate-400 uppercase tracking-widest">💳 Online</span>
+                   <span className="text-lg font-black text-white">₹{dailyReport.ONLINE.toFixed(2)}</span>
+                 </div>
+                 {dailyReport.SPLIT > 0 && (
+                   <div className="flex justify-between items-center bg-white/5 p-3 rounded-xl border border-white/5">
+                     <span className="text-sm font-bold text-slate-400 uppercase tracking-widest">🔄 Split</span>
+                     <span className="text-lg font-black text-white">₹{dailyReport.SPLIT.toFixed(2)}</span>
+                   </div>
+                 )}
+                 <div className="flex justify-between items-center bg-blue-500/10 p-4 rounded-xl border border-blue-500/20 mt-4">
+                   <span className="text-sm font-black text-blue-500 uppercase tracking-widest">Total</span>
+                   <span className="text-2xl font-black text-blue-400 drop-shadow-[0_0_10px_rgba(59,130,246,0.5)] text-glow">₹{dailyReport.TOTAL.toFixed(2)}</span>
+                 </div>
+               </div>
             </div>
 
             {/* Current Stock */}

@@ -1,14 +1,14 @@
 import { prisma } from "@/lib/prisma"
 export const dynamic = 'force-dynamic'
 import { ArrowUpRight, TrendingUp, CreditCard, Activity, BarChart3, Crown } from "lucide-react"
+import { getISTDateBounds } from "@/lib/utils"
 
 export default async function DashboardOverview() {
-  const startOfDay = new Date()
-  startOfDay.setHours(0, 0, 0, 0)
+  const { startUTC: startOfDay, endUTC: endOfDay } = getISTDateBounds();
 
   // 1. Fetch Today's Revenue & Sold Items
   const todaysClosedTabs = await prisma.tab.findMany({
-    where: { status: "CLOSED", closedAt: { gte: startOfDay } },
+    where: { status: "CLOSED", closedAt: { gte: startOfDay, lte: endOfDay } },
     include: { 
       Outlet: true,
       Items: {
@@ -23,7 +23,7 @@ export default async function DashboardOverview() {
   let cashRevenue = 0
   let onlineRevenue = 0
   let splitRevenue = 0
-  const outletRevenue: Record<string, number> = {}
+  const outletStats: Record<string, { total: number, cash: number, online: number, split: number }> = {}
   const categorySales: Record<string, number> = {}
   const itemSales: Record<string, {name: string, qty: number, rev: number}> = {}
 
@@ -34,8 +34,13 @@ export default async function DashboardOverview() {
     if (tab.paymentMode === "ONLINE") onlineRevenue += tab.totalAmount
     if (tab.paymentMode === "SPLIT") splitRevenue += tab.totalAmount
     
-    if (!outletRevenue[tab.Outlet.name]) outletRevenue[tab.Outlet.name] = 0
-    outletRevenue[tab.Outlet.name] += tab.totalAmount
+    if (!outletStats[tab.Outlet.name]) {
+      outletStats[tab.Outlet.name] = { total: 0, cash: 0, online: 0, split: 0 }
+    }
+    outletStats[tab.Outlet.name].total += tab.totalAmount
+    if (tab.paymentMode === "CASH") outletStats[tab.Outlet.name].cash += tab.totalAmount
+    if (tab.paymentMode === "ONLINE") outletStats[tab.Outlet.name].online += tab.totalAmount
+    if (tab.paymentMode === "SPLIT") outletStats[tab.Outlet.name].split += tab.totalAmount
 
     tab.Items.forEach(item => {
       const cat = item.MenuItem.categoryId || "Misc"
@@ -190,13 +195,29 @@ export default async function DashboardOverview() {
               <h3 className="text-sm font-bold tracking-widest uppercase text-slate-400">Total Revenue by Outlet</h3>
            </div>
            <div className="grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-white/10">
-              {Object.keys(outletRevenue).length === 0 ? (
+              {Object.keys(outletStats).length === 0 ? (
                  <div className="col-span-3 p-6 text-center text-sm text-slate-500">No data</div>
               ) : (
-                 Object.entries(outletRevenue).map(([name, rev]) => (
+                 Object.entries(outletStats).map(([name, stats]) => (
                    <div key={name} className="p-6 flex flex-col items-center justify-center hover:bg-white/5 transition-colors group">
-                     <span className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-2 group-hover:text-slate-300">{name}</span>
-                     <span className="text-3xl font-black text-white group-hover:text-emerald-400 transition-colors drop-shadow-[0_0_15px_rgba(255,255,255,0.1)]">₹{rev.toFixed(2)}</span>
+                     <span className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-4 group-hover:text-slate-300">{name}</span>
+                     <span className="text-3xl font-black text-white group-hover:text-emerald-400 transition-colors drop-shadow-[0_0_15px_rgba(255,255,255,0.1)] mb-4">₹{stats.total.toFixed(2)}</span>
+                     <div className="w-full space-y-2">
+                       <div className="flex justify-between items-center bg-black/20 px-3 py-2 rounded-lg border border-white/5">
+                         <span className="text-[10px] uppercase tracking-widest font-bold text-emerald-400">💵 Cash</span>
+                         <span className="text-xs font-bold text-slate-300">₹{stats.cash.toFixed(2)}</span>
+                       </div>
+                       <div className="flex justify-between items-center bg-black/20 px-3 py-2 rounded-lg border border-white/5">
+                         <span className="text-[10px] uppercase tracking-widest font-bold text-blue-400">💳 Online</span>
+                         <span className="text-xs font-bold text-slate-300">₹{stats.online.toFixed(2)}</span>
+                       </div>
+                       {stats.split > 0 && (
+                         <div className="flex justify-between items-center bg-black/20 px-3 py-2 rounded-lg border border-white/5">
+                           <span className="text-[10px] uppercase tracking-widest font-bold text-purple-400">🔄 Split</span>
+                           <span className="text-xs font-bold text-slate-300">₹{stats.split.toFixed(2)}</span>
+                         </div>
+                       )}
+                     </div>
                    </div>
                  ))
               )}
