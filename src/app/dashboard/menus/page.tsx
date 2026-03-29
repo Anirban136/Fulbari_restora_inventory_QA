@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/prisma"
+export const dynamic = 'force-dynamic'
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"

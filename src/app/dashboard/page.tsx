@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/prisma"
+export const dynamic = 'force-dynamic'
 import { ArrowUpRight, TrendingUp, CreditCard, Activity, BarChart3, Crown } from "lucide-react"
 
 export default async function DashboardOverview() {

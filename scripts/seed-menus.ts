@@ -62,7 +62,7 @@ async function main() {
         type: "STOCK_IN",
         itemId: item.id,
         quantity: 100,
-        userId: owner.id,
+        userId: owner!.id,
         notes: "Initial DB Seed for Testing"
       }
     });
@@ -87,7 +87,7 @@ async function main() {
         itemId,
         quantity,
         outletId,
-        userId: owner.id,
+        userId: owner!.id,
         notes: "Seeded Dispatch"
       }
     });

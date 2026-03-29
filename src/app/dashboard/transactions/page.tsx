@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/prisma"
+export const dynamic = 'force-dynamic'
 import { Receipt, Coffee, CupSoda } from "lucide-react"
 import { EditTransactionDialog } from "./_components/edit-transaction-dialog"
 
