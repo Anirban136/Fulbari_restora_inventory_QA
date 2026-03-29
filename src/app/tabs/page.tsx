@@ -54,7 +54,7 @@ export default async function ActiveTabsPage() {
               <p className="text-emerald-400 font-bold mt-1 tracking-widest uppercase text-xs">{outlet?.name || "Global"} Registers</p>
             </div>
           </div>
-          <div className="flex gap-4 items-center">
+          <div className="flex flex-wrap justify-end gap-2 sm:gap-4 items-center mt-4 sm:mt-0">
             {session.user.role === "OWNER" && (
                <Link href="/dashboard"><Button variant="outline" className="border-white/10 text-slate-300 hover:bg-white/10 hover:text-white backdrop-blur-md">Back to Dashboard</Button></Link>
             )}
@@ -79,13 +79,13 @@ export default async function ActiveTabsPage() {
              </div>
            </div>
            
-           <form action={createTab} className="flex gap-3 w-full md:w-auto">
+           <form action={createTab} className="flex flex-col sm:flex-row gap-3 w-full lg:w-auto mt-4 md:mt-0">
              {isCafe && (
-               <Input name="tableName" placeholder="Table No." required className="w-32 h-14 bg-black/40 border-white/10 text-white placeholder:text-slate-600 rounded-xl focus-visible:ring-emerald-500/50 shadow-inner font-bold text-center" />
+               <Input name="tableName" placeholder="Table No." required className="w-full sm:w-32 h-14 bg-black/40 border-white/10 text-white placeholder:text-slate-600 rounded-xl focus-visible:ring-emerald-500/50 shadow-inner font-bold text-center" />
              )}
-             <Input name="customerName" placeholder={isCafe ? "Customer Name (Opt)" : "Customer Name"} required={!isCafe} className="w-48 xl:w-64 h-14 bg-black/40 border-white/10 text-white placeholder:text-slate-600 rounded-xl focus-visible:ring-emerald-500/50 shadow-inner font-medium pl-4" />
+             <Input name="customerName" placeholder={isCafe ? "Customer Name (Opt)" : "Customer Name"} required={!isCafe} className="w-full sm:w-48 xl:w-64 h-14 bg-black/40 border-white/10 text-white placeholder:text-slate-600 rounded-xl focus-visible:ring-emerald-500/50 shadow-inner font-medium pl-4" />
              
-             <Button type="submit" className="h-14 px-8 text-lg font-black tracking-widest uppercase bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-black rounded-xl transition-all shadow-[0_0_30px_-5px_rgba(16,185,129,0.5)] active:scale-95">
+             <Button type="submit" className="w-full sm:w-auto h-14 px-8 text-lg font-black tracking-widest uppercase bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-black rounded-xl transition-all shadow-[0_0_30px_-5px_rgba(16,185,129,0.5)] active:scale-95">
                 + Open Tab
              </Button>
            </form>
