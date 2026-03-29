@@ -11,12 +11,20 @@ import { Utensils, Coffee } from "lucide-react"
 import { TabItem } from "@/components/tab-item"
 import AppLayout from "@/components/layouts/app-layout"
 
-export default async function ActiveTabsPage() {
+export default async function ActiveTabsPage({ searchParams }: { searchParams: Promise<{ target?: string }> }) {
+  const { target } = await searchParams || {}
+
   const session = await getServerSession(authOptions)
   if (!session) return null
 
   const roleTypeMap: Record<string, string> = { CAFE_STAFF: "CAFE", CHAI_STAFF: "CHAI_JOINT" } 
-  const outletSearch = session.user.role === "OWNER" ? {} : { type: roleTypeMap[session.user.role] }
+  let outletSearch: any = {}
+  
+  if (session.user.role === "OWNER") {
+    outletSearch = target ? { type: target } : {}
+  } else {
+    outletSearch = { type: roleTypeMap[session.user.role] }
+  }
 
   const outlet = await prisma.outlet.findFirst({ where: outletSearch })
 
@@ -29,8 +37,8 @@ export default async function ActiveTabsPage() {
     })
   }
 
-  const isCafe = session.user.role === "CAFE_STAFF"
-  const isChai = session.user.role === "CHAI_STAFF"
+  const isCafe = session.user.role === "CAFE_STAFF" || (session.user.role === "OWNER" && target === "CAFE")
+  const isChai = session.user.role === "CHAI_STAFF" || (session.user.role === "OWNER" && target === "CHAI_JOINT")
 
   return (
     <AppLayout>
@@ -80,6 +88,7 @@ export default async function ActiveTabsPage() {
            </div>
            
            <form action={createTab} className="flex flex-col sm:flex-row gap-3 w-full lg:w-auto mt-4 md:mt-0">
+             {outlet && <input type="hidden" name="outletId" value={outlet.id} />}
              {isCafe && (
                <Input name="tableName" placeholder="Table No." required className="w-full sm:w-32 h-14 bg-black/40 border-white/10 text-white placeholder:text-slate-600 rounded-xl focus-visible:ring-emerald-500/50 shadow-inner font-bold text-center" />
              )}

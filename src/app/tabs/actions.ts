@@ -14,11 +14,18 @@ export async function createTab(data: FormData) {
 
   const customerName = data.get("customerName") as string
   const tableName = data.get("tableName") as string
-  const roleTypeMap: Record<string, string> = { CAFE_STAFF: "CAFE", CHAI_STAFF: "CHAI_JOINT" } 
-  // Owner is edge case, we'll assign to first available outlet or infer for simplicity
-  const outletSearch = session.user.role === "OWNER" ? {} : { type: roleTypeMap[session.user.role] }
+  const explicitOutletId = data.get("outletId") as string
 
-  const outlet = await prisma.outlet.findFirst({ where: outletSearch })
+  let outlet;
+  if (explicitOutletId) {
+    outlet = await prisma.outlet.findUnique({ where: { id: explicitOutletId } })
+  } else {
+    const roleTypeMap: Record<string, string> = { CAFE_STAFF: "CAFE", CHAI_STAFF: "CHAI_JOINT" } 
+    // Owner is edge case, we'll assign to first available outlet or infer for simplicity
+    const outletSearch = session.user.role === "OWNER" ? {} : { type: roleTypeMap[session.user.role] }
+    outlet = await prisma.outlet.findFirst({ where: outletSearch })
+  }
+
   if (!outlet) throw new Error("Outlet not found")
 
   // By-passing strict typing using any, since Windows locks the query engine preventing prisma generate

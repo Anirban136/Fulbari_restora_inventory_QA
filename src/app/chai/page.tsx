@@ -71,7 +71,7 @@ export default async function ChaiDashboard() {
                <LayoutGrid className="w-10 h-10 text-teal-500 mb-6 drop-shadow-[0_0_15px_rgba(20,184,166,0.5)]" />
                <h2 className="text-2xl font-black text-white mb-2 relative z-10">POS Terminal</h2>
                <p className="text-slate-400 font-medium text-sm mb-8 leading-relaxed relative z-10">Launch the touch interface to take orders and auto-deduct live ingredients.</p>
-               <Link href="/tabs" className="w-full flex">
+               <Link href="/tabs?target=CHAI_JOINT" className="w-full flex">
                  <Button className="flex-1 w-full h-14 text-lg font-black tracking-widest uppercase bg-gradient-to-r from-teal-500 to-sky-500 hover:from-teal-400 hover:to-sky-400 text-black rounded-xl transition-all shadow-[0_0_30px_-5px_rgba(20,184,166,0.5)] active:scale-95">
                    Open Registers
                  </Button>
