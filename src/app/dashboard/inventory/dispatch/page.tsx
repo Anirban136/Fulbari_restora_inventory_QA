@@ -19,13 +19,13 @@ export default async function DispatchPage() {
   const [items, outlets, recentDispatches] = await Promise.all([
     prisma.item.findMany({ 
       where: { currentStock: { gt: 0 } },
-      order_by: { name: 'asc' } 
+      orderBy: { name: 'asc' } 
     }),
-    prisma.outlet.findMany({ order_by: { name: 'asc' } }),
+    prisma.outlet.findMany({ orderBy: { name: 'asc' } }),
     prisma.inventoryLedger.findMany({
       where: { type: "DISPATCH" },
       include: { Item: true, User: true },
-      order_by: { createdAt: 'desc' },
+      orderBy: { createdAt: 'desc' },
       take: 10
     })
   ])
