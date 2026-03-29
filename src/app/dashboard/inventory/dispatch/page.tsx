@@ -13,18 +13,19 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
+import { formatTimeIST, formatDateIST } from "@/lib/utils"
 
 export default async function DispatchPage() {
   const [items, outlets, recentDispatches] = await Promise.all([
     prisma.item.findMany({ 
       where: { currentStock: { gt: 0 } },
-      orderBy: { name: 'asc' } 
+      order_by: { name: 'asc' } 
     }),
-    prisma.outlet.findMany({ orderBy: { name: 'asc' } }),
+    prisma.outlet.findMany({ order_by: { name: 'asc' } }),
     prisma.inventoryLedger.findMany({
       where: { type: "DISPATCH" },
       include: { Item: true, User: true },
-      orderBy: { createdAt: 'desc' },
+      order_by: { createdAt: 'desc' },
       take: 10
     })
   ])
@@ -78,7 +79,7 @@ export default async function DispatchPage() {
               <Input id="quantity" name="quantity" type="number" step="0.01" min="0.01" placeholder="e.g. 10" required className="h-12 bg-black/40 border-white/10 text-white placeholder:text-slate-600 rounded-xl focus-visible:ring-blue-500/50 shadow-inner" />
             </div>
 
-            <Button type="submit" className="w-full h-14 mt-4 text-lg font-bold bg-blue-600 hover:bg-blue-500 text-white shadow-[0_0_20px_-5px_rgba(59,130,246,0.5)] rounded-xl transition-all active:scale-[0.98]">
+            <Button type="submit" className="w-full h-14 mt-4 text-lg font-bold bg-blue-600 hover:bg-blue-500 text-white shadow-[0_0_20_5px_rgba(59,130,246,0.5)] rounded-xl transition-all active:scale-[0.98]">
               Approve Dispatch
             </Button>
           </form>
@@ -117,7 +118,7 @@ export default async function DispatchPage() {
                   recentDispatches.map((log) => (
                     <TableRow key={log.id} className="border-b border-white/5 hover:bg-white/5 transition-colors group">
                       <TableCell className="text-slate-500 font-medium whitespace-nowrap text-sm">
-                        <span className="text-slate-300">{log.createdAt.toLocaleDateString()}</span> <span className="opacity-50">{log.createdAt.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
+                        <span className="text-slate-300">{formatDateIST(log.createdAt)}</span> <span className="opacity-50">{formatTimeIST(log.createdAt)}</span>
                       </TableCell>
                       <TableCell className="font-bold text-slate-200 group-hover:text-white transition-colors">{log.Item.name}</TableCell>
                       <TableCell className="font-medium text-slate-400 tracking-wide uppercase text-xs">{outlets.find(o => o.id === log.outletId)?.name}</TableCell>

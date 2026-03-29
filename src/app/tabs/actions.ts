@@ -36,6 +36,20 @@ export async function createTab(data: FormData) {
 }
 
 export async function cancelTab(tabId: string) {
-  await prisma.tab.update({ where: { id: tabId }, data: { status: "CANCELLED", closedAt: new Date() } })
+  const session = await getServerSession(authOptions)
+  if (!session || !["OWNER", "CAFE_STAFF", "CHAI_STAFF"].includes(session.user.role)) {
+    throw new Error("Unauthorized")
+  }
+
+  console.log(`Cancelling tab: ${tabId} by ${session.user.name}`)
+  
+  await prisma.tab.update({ 
+    where: { id: tabId }, 
+    data: { status: "CANCELLED", closedAt: new Date() } 
+  })
+
   revalidatePath("/tabs")
+  revalidatePath("/cafe")
+  revalidatePath("/chai")
+  revalidatePath("/dashboard")
 }

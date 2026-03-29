@@ -4,10 +4,11 @@ import { getServerSession } from "next-auth"
 import { authOptions } from "@/lib/auth"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { createTab, cancelTab } from "./actions"
+import { createTab } from "./actions"
 import Link from "next/link"
 import { UserControls } from "@/components/user-controls"
-import { Utensils, Coffee, X } from "lucide-react"
+import { Utensils, Coffee } from "lucide-react"
+import { TabItem } from "@/components/tab-item"
 
 export default async function ActiveTabsPage() {
   const session = await getServerSession(authOptions)
@@ -92,55 +93,7 @@ export default async function ActiveTabsPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 flex-1 content-start pb-20">
            {activeTabs.map(tab => {
              const itemsCount = tab.Items.reduce((acc: number, item: any) => acc + item.quantity, 0)
-             return (
-               <div key={tab.id} className="glass-panel rounded-3xl flex flex-col hover:border-emerald-500/50 transition-all duration-300 hover:shadow-[0_10px_40px_-10px_rgba(16,185,129,0.2)] hover:-translate-y-1 group overflow-hidden relative">
-                 
-                 <div className="p-6 border-b border-white/10 flex-1 relative z-10 bg-gradient-to-br from-white/5 to-transparent">
-                   <div className="flex justify-between items-start mb-4">
-                     <div>
-                       {(tab.tableName) && <div className="text-xs font-black tracking-widest text-emerald-400 mb-1.5 px-2 py-0.5 bg-emerald-500/10 rounded-md border border-emerald-500/20 w-fit">TABLE {tab.tableName}</div>}
-                       <h3 className="text-2xl font-black text-white truncate pr-2 tracking-tight group-hover:text-emerald-300 transition-colors">
-                         {tab.customerName || "Walk-in"}
-                       </h3>
-                     </div>
-                     <span className="text-[10px] text-slate-400 font-black tracking-widest bg-black/40 px-2 py-1.5 rounded-lg border border-white/10 shadow-inner">
-                       {tab.openedAt.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
-                     </span>
-                   </div>
-                   
-                   <div className="inline-flex items-center gap-2 mb-6 bg-emerald-500/10 border border-emerald-500/20 px-3 py-1 rounded-lg">
-                     <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></div>
-                     <p className="text-xs font-black text-emerald-400 tracking-widest uppercase">{itemsCount} items total</p>
-                   </div>
-                   
-                   <div className="space-y-2">
-                     {tab.Items.slice(0, 3).map((item: any) => (
-                       <div key={item.id} className="text-sm font-medium text-slate-400 flex justify-between bg-black/40 p-2.5 rounded-xl border border-white/5 shadow-inner">
-                         <span className="truncate pr-2 text-slate-300 tracking-wide"><span className="text-emerald-500 font-black bg-emerald-500/10 px-1.5 py-0.5 rounded mr-1 leading-none">{item.quantity}x</span> {item.MenuItem.name}</span>
-                         <span className="text-emerald-500/70 font-black">₹{(item.quantity * item.priceAtTime).toFixed(2)}</span>
-                       </div>
-                     ))}
-                     {tab.Items.length > 3 && (
-                       <div className="text-xs text-slate-500 font-black text-emerald-500/50 uppercase tracking-widest pt-2 text-center bg-black/20 rounded-lg py-1 mt-2">And {tab.Items.length - 3} more...</div>
-                     )}
-                     {tab.Items.length === 0 && (
-                       <div className="text-xs font-bold tracking-widest uppercase text-slate-500/50 py-4 text-center bg-black/20 rounded-xl border border-white/5 border-dashed">Empty Cart</div>
-                     )}
-                   </div>
-                 </div>
-
-                 <div className="p-4 bg-black/60 backdrop-blur-xl flex gap-3 relative z-10 border-t items-center border-white/5">
-                   <Link href={`/tabs/${tab.id}`} className="flex-1">
-                     <Button className="w-full h-12 font-bold tracking-widest uppercase text-xs bg-white/10 hover:bg-white text-white hover:text-black border border-white/20 transition-all rounded-xl">View & Bill</Button>
-                   </Link>
-                   <form action={cancelTab.bind(null, tab.id)}>
-                     <Button variant="outline" className="w-12 h-12 bg-red-500/10 border-red-500/30 text-red-500 hover:bg-red-500 hover:text-white rounded-xl transition-all p-0 flex items-center justify-center shadow-inner active:scale-95">
-                       <X className="w-5 h-5" />
-                     </Button>
-                   </form>
-                 </div>
-               </div>
-             )
+             return <TabItem key={tab.id} tab={tab} itemsCount={itemsCount} />
            })}
         </div>
 

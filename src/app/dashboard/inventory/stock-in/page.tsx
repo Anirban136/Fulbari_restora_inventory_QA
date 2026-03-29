@@ -13,6 +13,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
+import { formatTimeIST, formatDateIST } from "@/lib/utils"
 
 export default async function StockInPage() {
   const items = await prisma.item.findMany({ orderBy: { name: 'asc' } })
@@ -110,7 +111,7 @@ export default async function StockInPage() {
                   recentLogs.map((log) => (
                     <TableRow key={log.id} className="border-b border-white/5 hover:bg-white/5 transition-colors group">
                       <TableCell className="text-slate-500 font-medium whitespace-nowrap text-sm">
-                        <span className="text-slate-300">{log.createdAt.toLocaleDateString()}</span> <span className="opacity-50">{log.createdAt.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
+                        <span className="text-slate-300">{formatDateIST(log.createdAt)}</span> <span className="opacity-50">{formatTimeIST(log.createdAt)}</span>
                       </TableCell>
                       <TableCell className="font-bold text-slate-200 group-hover:text-white transition-colors">{log.Item.name}</TableCell>
                       <TableCell className="text-right">

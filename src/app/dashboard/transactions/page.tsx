@@ -2,6 +2,7 @@ import { prisma } from "@/lib/prisma"
 export const dynamic = 'force-dynamic'
 import { Receipt, Coffee, CupSoda } from "lucide-react"
 import { EditTransactionDialog } from "./_components/edit-transaction-dialog"
+import { formatTimeIST, formatDateIST } from "@/lib/utils"
 
 export default async function AdminTransactionsPage() {
   const threeDaysAgo = new Date()
@@ -42,7 +43,7 @@ export default async function AdminTransactionsPage() {
           <div key={tab.id} className="flex flex-col md:flex-row md:items-center justify-between p-5 rounded-2xl border border-white/5 bg-white/5 hover:bg-white/10 hover:border-white/20 transition-all group shadow-sm gap-4">
             <div>
               <div className="flex items-center gap-3 mb-1">
-                <p className="text-xs font-bold text-slate-500">{(tab.closedAt || tab.openedAt).toLocaleDateString()} at {(tab.closedAt || tab.openedAt).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</p>
+                <p className="text-xs font-bold text-slate-500">{formatDateIST(tab.closedAt || tab.openedAt)} at {formatTimeIST(tab.closedAt || tab.openedAt)}</p>
                 {tab.status === "CANCELLED" && <span className="text-[9px] font-black tracking-widest bg-red-500/20 text-red-400 px-2 py-0.5 rounded uppercase border border-red-500/20">Cancelled</span>}
                 {tab.status === "CLOSED" && <span className="text-[9px] font-black tracking-widest bg-emerald-500/20 text-emerald-400 px-2 py-0.5 rounded uppercase border border-emerald-500/20">Closed</span>}
                 {tab.status === "OPEN" && <span className="text-[9px] font-black tracking-widest bg-blue-500/20 text-blue-400 px-2 py-0.5 rounded uppercase border border-blue-500/20">Open</span>}

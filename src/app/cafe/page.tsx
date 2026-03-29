@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button"
 import { UserControls } from "@/components/user-controls" // reuse logout button component
 import { Coffee, PackageOpen, LayoutGrid, Search, History, Receipt } from "lucide-react"
 import Link from "next/link"
+import { formatTimeIST, formatDateIST } from "@/lib/utils"
 
 export default async function CafeDashboard() {
   const cafe = await prisma.outlet.findFirst({ where: { type: "CAFE" }})
@@ -121,7 +122,7 @@ export default async function CafeDashboard() {
                       {incomingDispatches.map(log => (
                         <li key={log.id} className="flex items-center justify-between p-5 rounded-2xl border border-white/5 bg-white/5 hover:bg-white/10 hover:border-white/20 transition-all group shadow-sm">
                           <div>
-                            <p className="text-xs font-bold text-slate-500 mb-1">{log.createdAt.toLocaleDateString()} at {log.createdAt.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</p>
+                            <p className="text-xs font-bold text-slate-500 mb-1">{formatDateIST(log.createdAt)} at {formatTimeIST(log.createdAt)}</p>
                             <span className="font-bold text-slate-200 group-hover:text-white text-lg transition-colors">{log.Item.name}</span>
                             <p className="text-xs text-slate-500 mt-1 font-medium">Dispatched by: <span className="text-slate-400">{log.User.name}</span></p>
                           </div>
@@ -160,7 +161,7 @@ export default async function CafeDashboard() {
                         <li key={tab.id} className="flex items-center justify-between p-5 rounded-2xl border border-white/5 bg-white/5 hover:bg-white/10 hover:border-white/20 transition-all group shadow-sm">
                           <div>
                             <div className="flex items-center gap-3 mb-1">
-                               <p className="text-xs font-bold text-slate-500">{(tab.closedAt || tab.openedAt).toLocaleDateString()} at {(tab.closedAt || tab.openedAt).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</p>
+                               <p className="text-xs font-bold text-slate-500">{formatDateIST(tab.closedAt || tab.openedAt)} at {formatTimeIST(tab.closedAt || tab.openedAt)}</p>
                                {tab.status === "CANCELLED" && <span className="text-[9px] font-black tracking-widest bg-red-500/20 text-red-400 px-2 py-0.5 rounded uppercase border border-red-500/20">Cancelled</span>}
                             </div>
                             <span className="font-bold text-slate-200 group-hover:text-white text-lg transition-colors">{tab.customerName || "Walk-in Customer"}</span>
