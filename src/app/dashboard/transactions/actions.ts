@@ -22,7 +22,5 @@ export async function updateTransactionAction(tabId: string, data: { paymentMode
 
   revalidatePath("/dashboard/transactions")
   revalidatePath("/dashboard")
-  revalidatePath("/cafe")
-  revalidatePath("/chai")
   return { success: true }
 }
