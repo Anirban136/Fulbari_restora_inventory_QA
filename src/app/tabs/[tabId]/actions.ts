@@ -45,7 +45,7 @@ export async function closeTab(data: FormData) {
   const tabId = data.get("tabId") as string
   const paymentMode = data.get("paymentMode") as string
   
-  const tab = await prisma.tab.findUnique({ where: { id: tabId }, include: { Items: { include: { MenuItem: true } } }})
+  const tab = await prisma.tab.findUnique({ where: { id: tabId }, include: { Outlet: true, Items: { include: { MenuItem: true } } }})
   if (!tab) return
 
   // Deduct inventory if items are linked to Central Catalog
@@ -83,5 +83,5 @@ export async function closeTab(data: FormData) {
     }
   })
 
-  redirect("/tabs")
+  redirect(`/tabs?target=${tab.Outlet.type}`)
 }

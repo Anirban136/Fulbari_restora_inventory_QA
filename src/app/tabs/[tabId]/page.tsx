@@ -45,7 +45,7 @@ export default async function TabTerminal({ params }: { params: Promise<{ tabId:
       {/* Left Pane: MENU GRID */}
       <div className="flex-1 flex flex-col pt-4 z-10 relative min-h-0 overflow-hidden">
         <header className="p-4 sm:px-8 sm:pb-6 border-b border-white/10 flex flex-col sm:flex-row items-start sm:items-center justify-between bg-background/50 backdrop-blur-md shrink-0">
-          <Link href="/tabs">
+          <Link href={`/tabs?target=${tab.Outlet.type}`}>
             <Button variant="outline" className="text-slate-300 border-white/10 hover:bg-white/10 hover:text-white rounded-xl h-10 sm:h-12 px-4 sm:px-6 gap-2 font-bold backdrop-blur-md">
               <ArrowLeft className="w-4 h-4" /> <span className="hidden sm:inline">Back to Terminal</span><span className="sm:hidden">Back</span>
             </Button>
