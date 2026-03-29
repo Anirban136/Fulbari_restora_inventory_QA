@@ -1,6 +1,5 @@
 import { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
-import { prisma } from "./prisma";
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -12,6 +11,7 @@ export const authOptions: NextAuthOptions = {
       async authorize(credentials) {
         if (!credentials?.pin) return null;
 
+        const { prisma } = await import("./prisma");
         const user = await prisma.user.findUnique({
           where: { pin: credentials.pin },
         });
