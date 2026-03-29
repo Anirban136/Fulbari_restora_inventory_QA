@@ -26,8 +26,10 @@ export default async function TabTerminal({ params }: { params: Promise<{ tabId:
 
   // Group menu by category
   const categorizedMenu = availableMenu.reduce((acc: any, item) => {
-    if (!acc[item.categoryId || 'General']) acc[item.categoryId || 'General'] = []
-    acc[item.categoryId || 'General'].push(item)
+    const defaultCat = item.categoryId || 'GENERAL'
+    const categoryName = defaultCat.toUpperCase().trim()
+    if (!acc[categoryName]) acc[categoryName] = []
+    acc[categoryName].push(item)
     return acc
   }, {})
 

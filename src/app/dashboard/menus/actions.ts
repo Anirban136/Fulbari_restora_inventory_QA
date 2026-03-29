@@ -14,7 +14,7 @@ export async function addMenuItem(data: FormData) {
   const outletId = data.get("outletId") as string
   const name = data.get("name") as string
   const price = parseFloat(data.get("price") as string)
-  const categoryId = data.get("category") as string
+  const categoryId = (data.get("category") as string)?.toUpperCase().trim() || "GENERAL"
   const itemId = data.get("itemId") as string
 
   if (!outletId || !name || isNaN(price)) return
@@ -24,7 +24,7 @@ export async function addMenuItem(data: FormData) {
       outletId,
       name,
       price,
-      categoryId: categoryId || "General",
+      categoryId: categoryId,
       itemId: itemId || null, // Optional link to central catalog
     }
   })

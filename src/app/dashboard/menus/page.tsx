@@ -27,6 +27,8 @@ export default async function MenusPage() {
 
   const globalItems = await prisma.item.findMany({ orderBy: { name: 'asc' } })
 
+  const existingCategories = Array.from(new Set(menuItems.map(item => item.categoryId).filter(Boolean)))
+
   return (
     <div className="space-y-8 relative">
       <div className="absolute top-[30%] left-[80%] w-[400px] h-[400px] bg-indigo-500/10 rounded-full blur-[130px] pointer-events-none -translate-x-1/2"></div>
@@ -74,7 +76,12 @@ export default async function MenusPage() {
 
               <div className="space-y-2">
                 <Label htmlFor="category" className="text-xs font-bold text-slate-400 uppercase tracking-widest">Category</Label>
-                <Input id="category" name="category" placeholder="Drinks, Snacks" defaultValue="General" required className="h-12 bg-black/40 border-white/10 text-white placeholder:text-slate-600 rounded-xl focus-visible:ring-indigo-500/50 shadow-inner" />
+                <Input id="category" name="category" list="category-options" placeholder="Drinks, Snacks" defaultValue="General" required className="h-12 bg-black/40 border-white/10 text-white placeholder:text-slate-600 rounded-xl focus-visible:ring-indigo-500/50 shadow-inner" />
+                <datalist id="category-options">
+                  {existingCategories.map((cat) => (
+                    <option key={cat as string} value={cat as string} />
+                  ))}
+                </datalist>
               </div>
             </div>
 
