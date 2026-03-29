@@ -78,10 +78,10 @@ export default async function TabTerminal({ params }: { params: Promise<{ tabId:
 
       {/* Right Pane: CART / BILL */}
       <div className="w-full lg:w-1/3 lg:min-w-[400px] lg:max-w-[500px] h-[50vh] lg:h-auto bg-black/40 backdrop-blur-2xl flex flex-col border-t lg:border-t-0 lg:border-l border-white/10 shadow-[0_-20px_80px_rgba(0,0,0,0.8)] lg:shadow-[-20px_0_40px_rgba(0,0,0,0.5)] z-20 shrink-0 relative">
-        <header className="p-4 sm:p-8 border-b border-white/10 bg-white/5 relative overflow-hidden shrink-0">
+        <header className="p-3 sm:p-8 border-b border-white/10 bg-white/5 relative overflow-hidden shrink-0">
           <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/10 rounded-full blur-[40px] pointer-events-none"></div>
-          <h2 className="text-3xl font-black text-white tracking-tight break-words relative z-10 text-glow">{tab.customerName}</h2>
-          <p className="text-emerald-400/80 font-bold text-xs tracking-widest mt-2 uppercase relative z-10">Tab #{tab.id.slice(-6)}</p>
+          <h2 className="text-xl sm:text-3xl font-black text-white tracking-tight break-words relative z-10 text-glow">{tab.customerName}</h2>
+          <p className="text-emerald-400/80 font-bold text-[10px] sm:text-xs tracking-widest mt-0 sm:mt-2 uppercase relative z-10">Tab #{tab.id.slice(-6)}</p>
         </header>
 
         <div className="flex-1 overflow-auto p-4">
@@ -93,16 +93,16 @@ export default async function TabTerminal({ params }: { params: Promise<{ tabId:
           ) : (
             <ul className="space-y-3">
               {tab.Items.map(item => (
-                <li key={item.id} className="p-4 flex gap-4 bg-white/5 border border-white/10 rounded-2xl animate-in slide-in-from-right-4 duration-300 hover:border-white/20 transition-colors">
-                  <div className="font-black text-emerald-950 bg-emerald-400 px-3 py-1.5 rounded-lg h-fit shadow-[0_0_15px_-3px_#34d399] tracking-wider w-12 text-center">{item.quantity}x</div>
+                <li key={item.id} className="p-2 sm:p-4 flex gap-2 sm:gap-4 bg-white/5 border border-white/10 rounded-2xl animate-in slide-in-from-right-4 duration-300 hover:border-white/20 transition-colors">
+                  <div className="font-black text-emerald-950 bg-emerald-400 px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg h-fit shadow-[0_0_15px_-3px_#34d399] tracking-wider w-8 sm:w-12 text-center text-xs sm:text-base">{item.quantity}x</div>
                   <div className="flex-1 min-w-0">
-                    <p className="font-bold text-slate-200 text-lg truncate">{item.MenuItem.name}</p>
-                    <p className="text-slate-500 font-medium text-sm">₹{item.priceAtTime.toFixed(2)} each</p>
+                    <p className="font-bold text-slate-200 text-sm sm:text-lg truncate">{item.MenuItem.name}</p>
+                    <p className="text-slate-500 font-medium text-xs sm:text-sm">₹{item.priceAtTime.toFixed(2)} each</p>
                   </div>
                   <div className="text-right flex flex-col items-end shrink-0">
-                    <p className="font-black text-white text-xl">₹{(item.quantity * item.priceAtTime).toFixed(2)}</p>
+                    <p className="font-black text-white text-sm sm:text-xl">₹{(item.quantity * item.priceAtTime).toFixed(2)}</p>
                     <form action={removeTabItem.bind(null, item.id, tab.id, item.quantity * item.priceAtTime)}>
-                      <button type="submit" className="text-xs text-red-400/70 hover:text-red-400 mt-2 font-bold tracking-widest uppercase hover:underline transition-all">Remove</button>
+                      <button type="submit" className="text-[10px] sm:text-xs text-red-400/70 hover:text-red-400 mt-1 sm:mt-2 font-bold tracking-widest uppercase hover:underline transition-all">Remove</button>
                     </form>
                   </div>
                 </li>
@@ -111,17 +111,17 @@ export default async function TabTerminal({ params }: { params: Promise<{ tabId:
           )}
         </div>
 
-        <div className="p-4 sm:p-8 bg-black/60 border-t border-white/10 z-10 backdrop-blur-xl shrink-0">
-          <div className="flex justify-between items-center mb-4 sm:mb-8">
-            <span className="text-slate-400 text-sm font-bold tracking-widest uppercase">Total Due</span>
-            <span className="text-3xl sm:text-5xl font-black text-white text-glow">₹{tab.totalAmount.toFixed(2)}</span>
+        <div className="p-3 sm:p-8 bg-black/60 border-t border-white/10 z-10 backdrop-blur-xl shrink-0">
+          <div className="flex justify-between items-center mb-2 sm:mb-8">
+            <span className="text-slate-400 text-xs sm:text-sm font-bold tracking-widest uppercase">Total Due</span>
+            <span className="text-2xl sm:text-5xl font-black text-white text-glow">₹{tab.totalAmount.toFixed(2)}</span>
           </div>
 
-          <form action={closeTab} className="space-y-6">
+          <form action={closeTab} className="space-y-3 sm:space-y-6">
             <input type="hidden" name="tabId" value={tab.id} />
             
-            <div className="space-y-3">
-              <label className="text-xs font-bold text-slate-500 uppercase tracking-widest">Select Payment Method</label>
+            <div className="space-y-1 sm:space-y-3">
+              <label className="text-[10px] sm:text-xs font-bold text-slate-500 uppercase tracking-widest">Select Payment Method</label>
               <div className="grid grid-cols-3 gap-3">
                 <label className="cursor-pointer group">
                   <input type="radio" name="paymentMode" value="CASH" className="peer sr-only" required />
@@ -150,7 +150,7 @@ export default async function TabTerminal({ params }: { params: Promise<{ tabId:
             <Button 
                type="submit" 
                disabled={tab.Items.length === 0}
-               className="w-full h-16 text-xl font-black tracking-widest uppercase bg-emerald-600 hover:bg-emerald-500 text-white shadow-[0_0_40px_-5px_oklch(0.55_0.16_150_/_0.5)] rounded-2xl transition-all disabled:opacity-20 disabled:cursor-not-allowed disabled:shadow-none active:scale-[0.98]"
+               className="w-full h-12 sm:h-16 text-sm sm:text-xl font-black tracking-widest uppercase bg-emerald-600 hover:bg-emerald-500 text-white shadow-[0_0_40px_-5px_oklch(0.55_0.16_150_/_0.5)] rounded-xl sm:rounded-2xl transition-all disabled:opacity-20 disabled:cursor-not-allowed disabled:shadow-none active:scale-[0.98]"
             >
               Checkout & Close Tab
             </Button>
