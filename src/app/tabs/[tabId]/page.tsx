@@ -41,7 +41,7 @@ export default async function TabTerminal({ params }: { params: Promise<{ tabId:
       <div className="absolute top-1/2 left-1/4 w-[600px] h-[600px] bg-emerald-900/10 rounded-full blur-[150px] pointer-events-none -translate-y-1/2 z-0"></div>
 
       {/* Left Pane: MENU GRID */}
-      <div className="flex-1 flex flex-col pt-4 z-10 relative">
+      <div className="flex-1 flex flex-col pt-4 z-10 relative min-h-0 overflow-hidden">
         <header className="p-4 sm:px-8 sm:pb-6 border-b border-white/10 flex flex-col sm:flex-row items-start sm:items-center justify-between bg-background/50 backdrop-blur-md shrink-0">
           <Link href="/tabs">
             <Button variant="outline" className="text-slate-300 border-white/10 hover:bg-white/10 hover:text-white rounded-xl h-10 sm:h-12 px-4 sm:px-6 gap-2 font-bold backdrop-blur-md">
