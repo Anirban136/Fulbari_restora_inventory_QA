@@ -42,24 +42,24 @@ export default async function ActiveTabsPage({ searchParams }: { searchParams: P
 
   return (
     <AppLayout>
-      <div className="selection:bg-emerald-500/30 relative overflow-hidden flex flex-col items-center p-4 sm:p-8 min-h-full w-full">
+      <div className={`${isCafe ? "selection:bg-orange-500/30 selection:text-orange-100" : "selection:bg-sky-500/30 selection:text-sky-100"} relative overflow-hidden flex flex-col items-center p-4 sm:p-8 min-h-full w-full`}>
         
         {/* Background Decorators */}
-        <div className="absolute top-[10%] left-[-10%] w-[500px] h-[500px] bg-emerald-600/10 rounded-full blur-[150px] pointer-events-none z-0"></div>
-        <div className="absolute bottom-[10%] right-[-10%] w-[500px] h-[500px] bg-teal-500/10 rounded-full blur-[150px] pointer-events-none z-0"></div>
+        <div className={`absolute top-[10%] left-[-10%] w-[500px] h-[500px] ${isCafe ? "bg-orange-600/10" : "bg-sky-600/10"} rounded-full blur-[150px] pointer-events-none z-0`}></div>
+        <div className={`absolute bottom-[10%] right-[-10%] w-[500px] h-[500px] ${isCafe ? "bg-amber-500/10" : "bg-blue-500/10"} rounded-full blur-[150px] pointer-events-none z-0`}></div>
 
         <div className="max-w-7xl w-full mx-auto space-y-8 relative z-10 flex-1 flex flex-col">
           
           <header className="flex flex-col sm:flex-row items-start sm:items-center justify-between pb-6 border-b border-white/10 gap-4">
             <div className="flex items-center gap-4">
-             <div className="h-14 w-14 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-2xl flex items-center justify-center border border-white/10 shadow-[0_0_30px_-5px_rgba(16,185,129,0.5)] p-1">
+             <div className={`h-14 w-14 bg-gradient-to-br ${isCafe ? "from-orange-500 to-amber-600 shadow-[0_0_30px_-5px_oklch(0.65_0.22_25_/_0.5)]" : "from-sky-500 to-blue-600 shadow-[0_0_30px_-5px_rgba(14,165,233,0.5)]"} rounded-2xl flex items-center justify-center border border-white/10 p-1`}>
                <div className="h-full w-full bg-background/50 rounded-xl flex items-center justify-center backdrop-blur-md">
-                 {isCafe ? <Utensils className="text-emerald-400 w-6 h-6" /> : <Coffee className="text-emerald-400 w-6 h-6" />}
+                 {isCafe ? <Utensils className="text-orange-400 w-6 h-6" /> : <Coffee className="text-sky-400 w-6 h-6" />}
                </div>
              </div>
             <div>
               <h1 className="text-4xl font-black text-white tracking-tight">POS Terminal</h1>
-              <p className="text-emerald-400 font-bold mt-1 tracking-widest uppercase text-xs">{outlet?.name || "Global"} Registers</p>
+              <p className={`${isCafe ? "text-orange-400" : "text-sky-400"} font-bold mt-1 tracking-widest uppercase text-xs`}>{outlet?.name || "Global"} Registers</p>
             </div>
           </div>
           <div className="flex flex-wrap justify-end gap-2 sm:gap-4 items-center mt-4 sm:mt-0">
@@ -76,10 +76,10 @@ export default async function ActiveTabsPage({ searchParams }: { searchParams: P
           </div>
         </header>
 
-        <div className="flex flex-col md:flex-row justify-between items-center glass-panel p-6 rounded-3xl border border-white/10 shadow-[0_20px_60px_-15px_rgba(16,185,129,0.1)] gap-6">
+        <div className={`flex flex-col md:flex-row justify-between items-center glass-panel p-6 rounded-3xl border border-white/10 ${isCafe ? "shadow-[0_20px_60px_-15px_rgba(245,158,11,0.1)]" : "shadow-[0_20px_60px_-15px_rgba(14,165,233,0.1)]"} gap-6`}>
            <div className="flex items-center gap-4">
-             <div className="w-14 h-14 rounded-2xl bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center shadow-inner">
-               <span className="text-2xl font-black text-emerald-400">{activeTabs.length}</span>
+             <div className={`w-14 h-14 rounded-2xl ${isCafe ? "bg-orange-500/20 border-orange-500/30" : "bg-sky-500/20 border-sky-500/30"} border flex items-center justify-center shadow-inner`}>
+               <span className={`text-2xl font-black ${isCafe ? "text-orange-400" : "text-sky-400"}`}>{activeTabs.length}</span>
              </div>
              <div>
                <h2 className="text-xl font-bold text-white tracking-tight">Running Tabs</h2>
@@ -90,11 +90,11 @@ export default async function ActiveTabsPage({ searchParams }: { searchParams: P
            <form action={createTab} className="flex flex-col sm:flex-row gap-3 w-full lg:w-auto mt-4 md:mt-0">
              {outlet && <input type="hidden" name="outletId" value={outlet.id} />}
              {isCafe && (
-               <Input name="tableName" placeholder="Table No." required className="w-full sm:w-32 h-14 bg-black/40 border-white/10 text-white placeholder:text-slate-600 rounded-xl focus-visible:ring-emerald-500/50 shadow-inner font-bold text-center" />
+               <Input name="tableName" placeholder="Table No." required className={`w-full sm:w-32 h-14 bg-black/40 border-white/10 text-white placeholder:text-slate-600 rounded-xl ${isCafe ? "focus-visible:ring-orange-500/50" : "focus-visible:ring-sky-500/50"} shadow-inner font-bold text-center`} />
              )}
-             <Input name="customerName" placeholder={isCafe ? "Customer Name (Opt)" : "Customer Name"} required={!isCafe} className="w-full sm:w-48 xl:w-64 h-14 bg-black/40 border-white/10 text-white placeholder:text-slate-600 rounded-xl focus-visible:ring-emerald-500/50 shadow-inner font-medium pl-4" />
+             <Input name="customerName" placeholder={isCafe ? "Customer Name (Opt)" : "Customer Name"} required={!isCafe} className={`w-full sm:w-48 xl:w-64 h-14 bg-black/40 border-white/10 text-white placeholder:text-slate-600 rounded-xl ${isCafe ? "focus-visible:ring-orange-500/50" : "focus-visible:ring-sky-500/50"} shadow-inner font-medium pl-4`} />
              
-             <Button type="submit" className="w-full sm:w-auto h-14 px-8 text-lg font-black tracking-widest uppercase bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-black rounded-xl transition-all shadow-[0_0_30px_-5px_rgba(16,185,129,0.5)] active:scale-95">
+             <Button type="submit" className={`w-full sm:w-auto h-14 px-8 text-lg font-black tracking-widest uppercase bg-gradient-to-r ${isCafe ? "from-orange-500 to-amber-500 hover:from-orange-400 hover:to-amber-400 shadow-[0_0_30px_-5px_rgba(245,158,11,0.5)]" : "from-sky-500 to-blue-500 hover:from-sky-400 hover:to-blue-400 shadow-[0_0_30px_-5px_rgba(14,165,233,0.5)]"} text-black rounded-xl transition-all active:scale-95`}>
                 + Open Tab
              </Button>
            </form>

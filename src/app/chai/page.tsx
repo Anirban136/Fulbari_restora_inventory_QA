@@ -38,25 +38,25 @@ export default async function ChaiDashboard() {
   ])
 
   return (
-    <div className="min-h-screen bg-background selection:bg-teal-500/30 relative overflow-hidden flex flex-col items-center">
+    <div className="min-h-screen bg-background selection:bg-blue-500/30 relative overflow-hidden flex flex-col items-center">
       
       {/* Background Decorators */}
       <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-10 mix-blend-overlay pointer-events-none z-0"></div>
-      <div className="absolute top-[-10%] right-[-10%] w-[500px] h-[500px] bg-teal-600/10 rounded-full blur-[150px] pointer-events-none z-0"></div>
+      <div className="absolute top-[-10%] right-[-10%] w-[500px] h-[500px] bg-blue-600/10 rounded-full blur-[150px] pointer-events-none z-0"></div>
       <div className="absolute bottom-[-10%] left-[-10%] w-[500px] h-[500px] bg-sky-500/10 rounded-full blur-[150px] pointer-events-none z-0"></div>
 
       <div className="w-full max-w-6xl px-6 py-10 relative z-10 flex flex-col min-h-screen">
         
         <header className="flex items-center justify-between pb-8 mb-8 border-b border-white/10">
           <div className="flex items-center gap-4">
-             <div className="h-14 w-14 bg-gradient-to-br from-teal-500 to-sky-600 rounded-2xl flex items-center justify-center border border-white/10 shadow-[0_0_30px_-5px_oklch(0.65_0.22_25_/_0.5)] p-1">
+             <div className="h-14 w-14 bg-gradient-to-br from-blue-500 to-sky-600 rounded-2xl flex items-center justify-center border border-white/10 shadow-[0_0_30px_-5px_oklch(0.65_0.22_25_/_0.5)] p-1">
                <div className="h-full w-full bg-background/50 rounded-xl flex items-center justify-center backdrop-blur-md">
-                 <CupSoda className="text-teal-400 w-6 h-6" />
+                 <CupSoda className="text-blue-400 w-6 h-6" />
                </div>
              </div>
             <div>
               <h1 className="text-4xl font-black text-white tracking-tight">Chai Joint Hub</h1>
-              <p className="text-teal-400 font-bold mt-1 tracking-widest uppercase text-xs">Manager & POS Operations</p>
+              <p className="text-blue-400 font-bold mt-1 tracking-widest uppercase text-xs">Manager & POS Operations</p>
             </div>
           </div>
           <UserControls />
@@ -66,13 +66,13 @@ export default async function ChaiDashboard() {
           
           <div className="lg:col-span-4 flex flex-col gap-8">
             {/* Launch POS */}
-            <div className="glass-panel p-8 rounded-3xl group hover:border-teal-500/30 transition-all border border-teal-500/10 shadow-[0_20px_60px_-15px_rgba(20,184,166,0.1)] relative overflow-hidden">
-               <div className="absolute -right-4 -top-4 w-32 h-32 bg-teal-500/10 rounded-full blur-[40px] group-hover:bg-teal-500/20 transition-all pointer-events-none"></div>
-               <LayoutGrid className="w-10 h-10 text-teal-500 mb-6 drop-shadow-[0_0_15px_rgba(20,184,166,0.5)]" />
+            <div className="glass-panel p-8 rounded-3xl group hover:border-blue-500/30 transition-all border border-blue-500/10 shadow-[0_20px_60px_-15px_rgba(59,130,246,0.1)] relative overflow-hidden">
+               <div className="absolute -right-4 -top-4 w-32 h-32 bg-blue-500/10 rounded-full blur-[40px] group-hover:bg-blue-500/20 transition-all pointer-events-none"></div>
+               <LayoutGrid className="w-10 h-10 text-blue-500 mb-6 drop-shadow-[0_0_15px_rgba(59,130,246,0.5)]" />
                <h2 className="text-2xl font-black text-white mb-2 relative z-10">POS Terminal</h2>
                <p className="text-slate-400 font-medium text-sm mb-8 leading-relaxed relative z-10">Launch the touch interface to take orders and auto-deduct live ingredients.</p>
                <Link href="/tabs?target=CHAI_JOINT" className="w-full flex">
-                 <Button className="flex-1 w-full h-14 text-lg font-black tracking-widest uppercase bg-gradient-to-r from-teal-500 to-sky-500 hover:from-teal-400 hover:to-sky-400 text-black rounded-xl transition-all shadow-[0_0_30px_-5px_rgba(20,184,166,0.5)] active:scale-95">
+                 <Button className="flex-1 w-full h-14 text-lg font-black tracking-widest uppercase bg-gradient-to-r from-blue-500 to-sky-500 hover:from-blue-400 hover:to-sky-400 text-black rounded-xl transition-all shadow-[0_0_30px_-5px_rgba(59,130,246,0.5)] active:scale-95">
                    Open Registers
                  </Button>
                </Link>
@@ -81,7 +81,7 @@ export default async function ChaiDashboard() {
             {/* Current Stock */}
             <div className="glass-panel p-6 rounded-3xl flex-1 max-h-[500px] flex flex-col">
                <h2 className="text-lg font-bold text-white uppercase tracking-widest mb-6 flex items-center gap-2">
-                 <div className="w-2 h-2 rounded-full bg-teal-500 animate-pulse"></div> Live Pantry
+                 <div className="w-2 h-2 rounded-full bg-blue-500 animate-pulse"></div> Live Pantry
                </h2>
                <div className="flex-1 overflow-auto pr-2">
                   <ul className="space-y-3">
@@ -91,7 +91,7 @@ export default async function ChaiDashboard() {
                       localStock.map(stock => (
                         <li key={stock.id} className="flex justify-between items-center p-3 rounded-xl border border-white/5 bg-white/5">
                           <span className="font-bold text-slate-300 text-sm">{stock.Item.name}</span>
-                          <span className="font-black text-teal-400 bg-teal-500/10 px-2 py-1 rounded-md text-sm">
+                          <span className="font-black text-blue-400 bg-blue-500/10 px-2 py-1 rounded-md text-sm">
                             {stock.quantity} <span className="text-[9px] ml-0.5 opacity-70 uppercase">{stock.Item.unit}</span>
                           </span>
                         </li>
@@ -127,8 +127,8 @@ export default async function ChaiDashboard() {
                             <p className="text-xs text-slate-500 mt-1 font-medium">Dispatched by: <span className="text-slate-400">{log.User.name}</span></p>
                           </div>
                           <div className="text-right">
-                            <span className="font-black text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-4 py-2 rounded-xl text-xl drop-shadow-[0_0_5px_rgba(52,211,153,0.3)]">
-                              +{log.quantity} <span className="text-[10px] ml-1 opacity-70 uppercase text-emerald-300 tracking-widest">{log.Item.unit}</span>
+                            <span className="font-black text-sky-400 bg-sky-500/10 border border-sky-500/20 px-4 py-2 rounded-xl text-xl drop-shadow-[0_0_5px_rgba(14,165,233,0.3)]">
+                              +{log.quantity} <span className="text-[10px] ml-1 opacity-70 uppercase text-sky-300 tracking-widest">{log.Item.unit}</span>
                             </span>
                             <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest mt-2">{log.notes || "Added to Pantry"}</p>
                           </div>
@@ -146,7 +146,7 @@ export default async function ChaiDashboard() {
                    <History className="w-6 h-6 text-slate-400" />
                    <h2 className="text-xl font-bold text-white uppercase tracking-widest">Register History</h2>
                  </div>
-                 <span className="text-xs font-black tracking-widest uppercase bg-teal-500/20 text-teal-400 px-3 py-1 rounded-full border border-teal-500/20">Last 3 Days</span>
+                 <span className="text-xs font-black tracking-widest uppercase bg-blue-500/20 text-blue-400 px-3 py-1 rounded-full border border-blue-500/20">Last 3 Days</span>
                </div>
                
                <div className="flex-1 overflow-auto p-8">
@@ -168,7 +168,7 @@ export default async function ChaiDashboard() {
                             <p className="text-xs text-slate-500 mt-1 font-medium">Billed by: <span className="text-slate-400">{tab.User.name}</span></p>
                           </div>
                           <div className="text-right">
-                            <span className={`font-black tracking-widest px-4 py-2 rounded-xl text-xl drop-shadow-[0_0_5px_rgba(255,255,255,0.1)] ${tab.status === "CANCELLED" ? "text-slate-500 bg-white/5 border border-white/5" : "text-teal-400 bg-teal-500/10 border border-teal-500/20"}`}>
+                            <span className={`font-black tracking-widest px-4 py-2 rounded-xl text-xl drop-shadow-[0_0_5px_rgba(255,255,255,0.1)] ${tab.status === "CANCELLED" ? "text-slate-500 bg-white/5 border border-white/5" : "text-blue-400 bg-blue-500/10 border border-blue-500/20"}`}>
                               ₹{tab.totalAmount.toFixed(2)}
                             </span>
                             <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest mt-2">{tab.paymentMode || "UNKNOWN"}</p>
