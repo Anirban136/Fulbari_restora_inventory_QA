@@ -9,6 +9,7 @@ import Link from "next/link"
 import { UserControls } from "@/components/user-controls"
 import { Utensils, Coffee } from "lucide-react"
 import { TabItem } from "@/components/tab-item"
+import AppLayout from "@/components/layouts/app-layout"
 
 export default async function ActiveTabsPage() {
   const session = await getServerSession(authOptions)
@@ -32,17 +33,17 @@ export default async function ActiveTabsPage() {
   const isChai = session.user.role === "CHAI_STAFF"
 
   return (
-    <div className="min-h-screen bg-background selection:bg-emerald-500/30 relative overflow-hidden flex flex-col items-center p-8">
-      
-      {/* Background Decorators */}
-      <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-10 mix-blend-overlay pointer-events-none z-0"></div>
-      <div className="absolute top-[10%] left-[-10%] w-[500px] h-[500px] bg-emerald-600/10 rounded-full blur-[150px] pointer-events-none z-0"></div>
-      <div className="absolute bottom-[10%] right-[-10%] w-[500px] h-[500px] bg-teal-500/10 rounded-full blur-[150px] pointer-events-none z-0"></div>
-
-      <div className="max-w-7xl w-full mx-auto space-y-8 relative z-10 flex-1 flex flex-col">
+    <AppLayout>
+      <div className="selection:bg-emerald-500/30 relative overflow-hidden flex flex-col items-center p-4 sm:p-8 min-h-full w-full">
         
-        <header className="flex items-center justify-between pb-6 border-b border-white/10">
-          <div className="flex items-center gap-4">
+        {/* Background Decorators */}
+        <div className="absolute top-[10%] left-[-10%] w-[500px] h-[500px] bg-emerald-600/10 rounded-full blur-[150px] pointer-events-none z-0"></div>
+        <div className="absolute bottom-[10%] right-[-10%] w-[500px] h-[500px] bg-teal-500/10 rounded-full blur-[150px] pointer-events-none z-0"></div>
+
+        <div className="max-w-7xl w-full mx-auto space-y-8 relative z-10 flex-1 flex flex-col">
+          
+          <header className="flex flex-col sm:flex-row items-start sm:items-center justify-between pb-6 border-b border-white/10 gap-4">
+            <div className="flex items-center gap-4">
              <div className="h-14 w-14 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-2xl flex items-center justify-center border border-white/10 shadow-[0_0_30px_-5px_rgba(16,185,129,0.5)] p-1">
                <div className="h-full w-full bg-background/50 rounded-xl flex items-center justify-center backdrop-blur-md">
                  {isCafe ? <Utensils className="text-emerald-400 w-6 h-6" /> : <Coffee className="text-emerald-400 w-6 h-6" />}
@@ -96,8 +97,8 @@ export default async function ActiveTabsPage() {
              return <TabItem key={tab.id} tab={tab} itemsCount={itemsCount} />
            })}
         </div>
-
+        </div>
       </div>
-    </div>
+    </AppLayout>
   )
 }
