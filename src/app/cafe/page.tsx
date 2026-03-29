@@ -5,6 +5,7 @@ import { UserControls } from "@/components/user-controls" // reuse logout button
 import { Coffee, PackageOpen, LayoutGrid, Search, History, Receipt } from "lucide-react"
 import Link from "next/link"
 import { formatTimeIST, formatDateIST } from "@/lib/utils"
+import AppLayout from "@/components/layouts/app-layout"
 
 export default async function CafeDashboard() {
   const cafe = await prisma.outlet.findFirst({ where: { type: "CAFE" }})
@@ -38,15 +39,8 @@ export default async function CafeDashboard() {
   ])
 
   return (
-    <div className="min-h-screen bg-background selection:bg-amber-500/30 relative overflow-hidden flex flex-col items-center">
-      
-      {/* Background Decorators */}
-      <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-10 mix-blend-overlay pointer-events-none z-0"></div>
-      <div className="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] bg-amber-600/10 rounded-full blur-[150px] pointer-events-none z-0"></div>
-      <div className="absolute bottom-[-10%] right-[-10%] w-[500px] h-[500px] bg-orange-500/10 rounded-full blur-[150px] pointer-events-none z-0"></div>
-
-      <div className="w-full max-w-6xl px-6 py-10 relative z-10 flex flex-col min-h-screen">
-        
+    <AppLayout>
+      <div className="w-full max-w-6xl px-6 py-10 relative z-10 flex flex-col min-h-full">
         <header className="flex items-center justify-between pb-8 mb-8 border-b border-white/10">
           <div className="flex items-center gap-4">
              <div className="h-14 w-14 bg-gradient-to-br from-amber-500 to-orange-600 rounded-2xl flex items-center justify-center border border-white/10 shadow-[0_0_30px_-5px_oklch(0.65_0.22_25_/_0.5)] p-1">
@@ -59,7 +53,6 @@ export default async function CafeDashboard() {
               <p className="text-amber-400 font-bold mt-1 tracking-widest uppercase text-xs">Manager & POS Operations</p>
             </div>
           </div>
-          <UserControls />
         </header>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 flex-1">
@@ -183,6 +176,6 @@ export default async function CafeDashboard() {
 
         </div>
       </div>
-    </div>
+    </AppLayout>
   )
 }
