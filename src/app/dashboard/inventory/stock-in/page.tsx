@@ -1,10 +1,13 @@
 import { prisma } from "@/lib/prisma"
 export const dynamic = 'force-dynamic'
+import { getServerSession } from "next-auth"
+import { authOptions } from "@/lib/auth"
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { logStockIn } from "./actions"
-import { Truck, Search } from "lucide-react"
+import { revertLedgerEntry } from "../actions"
+import { Truck, Search, Undo2 } from "lucide-react"
 import {
   Table,
   TableBody,
@@ -13,15 +16,26 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
 import { formatTimeIST, formatDateIST } from "@/lib/utils"
 
 export default async function StockInPage() {
+  const session = await getServerSession(authOptions)
+  const isOwner = session?.user?.role === "OWNER"
+
   const items = await prisma.item.findMany({ orderBy: { name: 'asc' } })
   const recentLogs = await prisma.inventoryLedger.findMany({
     where: { type: "STOCK_IN" },
     include: { Item: true, User: true },
     orderBy: { createdAt: 'desc' },
-    take: 10
+    take: 15
   })
 
   return (
@@ -84,8 +98,13 @@ export default async function StockInPage() {
 
         {/* Right Table */}
         <div className="md:col-span-2 glass-panel rounded-3xl overflow-hidden flex flex-col">
-          <div className="p-6 border-b border-white/10 bg-white/5 backdrop-blur-md">
+          <div className="p-6 border-b border-white/10 bg-white/5 backdrop-blur-md flex items-center justify-between">
             <h3 className="text-lg font-bold text-white tracking-wide">Recent Deliveries Overview</h3>
+            {isOwner && (
+              <span className="text-[10px] font-black tracking-widest bg-amber-500/10 border border-amber-500/20 text-amber-400 px-3 py-1 rounded-full uppercase">
+                Revert available
+              </span>
+            )}
           </div>
           <div className="flex-1 overflow-auto max-h-[600px] p-0">
             <Table>
@@ -93,14 +112,17 @@ export default async function StockInPage() {
                 <TableRow className="border-b border-white/10 hover:bg-transparent">
                   <TableHead className="font-bold text-slate-400 uppercase tracking-widest text-[10px] h-12 bg-black/40 sticky top-0 z-20">Date / Time</TableHead>
                   <TableHead className="font-bold text-slate-400 uppercase tracking-widest text-[10px] h-12 bg-black/40 sticky top-0 z-20">Item</TableHead>
-                  <TableHead className="font-bold text-slate-400 uppercase tracking-widest text-[10px] h-12 bg-black/40 sticky top-0 z-20 text-right">Quantity In</TableHead>
+                  <TableHead className="font-bold text-slate-400 uppercase tracking-widest text-[10px] h-12 bg-black/40 sticky top-0 z-20 text-right">Qty In</TableHead>
                   <TableHead className="font-bold text-slate-400 uppercase tracking-widest text-[10px] h-12 bg-black/40 sticky top-0 z-20">Received By</TableHead>
+                  {isOwner && (
+                    <TableHead className="font-bold text-slate-400 uppercase tracking-widest text-[10px] h-12 bg-black/40 sticky top-0 z-20 text-center">Revert</TableHead>
+                  )}
                 </TableRow>
               </TableHeader>
               <TableBody>
                  {recentLogs.length === 0 ? (
                    <TableRow className="border-b border-white/10">
-                    <TableCell colSpan={4} className="h-40 text-center text-slate-500">
+                    <TableCell colSpan={isOwner ? 5 : 4} className="h-40 text-center text-slate-500">
                       <span className="flex flex-col items-center justify-center">
                         <Search className="w-8 h-8 opacity-20 mb-2" />
                         No recent incoming stock logged.
@@ -120,6 +142,34 @@ export default async function StockInPage() {
                         </span>
                       </TableCell>
                       <TableCell className="text-slate-500 text-sm font-medium">{log.User.name}</TableCell>
+                      {isOwner && (
+                        <TableCell className="text-center">
+                          <Dialog>
+                            <DialogTrigger render={
+                              <button className="p-2 rounded-xl text-amber-400/60 hover:text-amber-400 hover:bg-amber-500/10 border border-transparent hover:border-amber-500/20 transition-all" title="Revert this stock entry" />
+                            }>
+                              <Undo2 className="w-4 h-4" />
+                            </DialogTrigger>
+                            <DialogContent className="sm:max-w-[400px] bg-black/90 backdrop-blur-2xl border-amber-500/20 rounded-3xl shadow-[0_0_50px_rgba(245,158,11,0.15)]">
+                              <DialogHeader className="mb-2">
+                                <div className="w-12 h-12 bg-amber-500/10 rounded-2xl flex items-center justify-center mb-4 border border-amber-500/20">
+                                  <Undo2 className="w-6 h-6 text-amber-400" />
+                                </div>
+                                <DialogTitle className="text-xl font-black text-white">Revert Stock Entry?</DialogTitle>
+                                <DialogDescription className="text-slate-400 leading-relaxed">
+                                  This will reverse the intake of <span className="text-emerald-400 font-bold">+{log.quantity} {log.Item.unit}</span> of <span className="text-white font-bold">{log.Item.name}</span> and delete this ledger record.
+                                </DialogDescription>
+                              </DialogHeader>
+                              <form action={revertLedgerEntry} className="mt-4">
+                                <input type="hidden" name="ledgerId" value={log.id} />
+                                <Button type="submit" className="w-full h-11 bg-amber-600 hover:bg-amber-500 text-white font-bold rounded-xl transition-all active:scale-95">
+                                  Yes, Revert Intake
+                                </Button>
+                              </form>
+                            </DialogContent>
+                          </Dialog>
+                        </TableCell>
+                      )}
                     </TableRow>
                   ))
                  )}

@@ -1,7 +1,11 @@
 import { prisma } from "@/lib/prisma"
 export const dynamic = 'force-dynamic'
+import { getServerSession } from "next-auth"
+import { authOptions } from "@/lib/auth"
 import { DispatchForm } from "./DispatchForm"
-import { Search } from "lucide-react"
+import { revertLedgerEntry } from "../actions"
+import { Search, Undo2 } from "lucide-react"
+import { Button } from "@/components/ui/button"
 import {
   Table,
   TableBody,
@@ -10,9 +14,20 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
 import { formatTimeIST, formatDateIST } from "@/lib/utils"
 
 export default async function DispatchPage() {
+  const session = await getServerSession(authOptions)
+  const isOwner = session?.user?.role === "OWNER"
+
   const [items, outlets, recentDispatches] = await Promise.all([
     prisma.item.findMany({ 
       orderBy: { name: 'asc' } 
@@ -22,7 +37,7 @@ export default async function DispatchPage() {
       where: { type: "DISPATCH" },
       include: { Item: true, User: true },
       orderBy: { createdAt: 'desc' },
-      take: 10
+      take: 15
     })
   ])
 
@@ -45,8 +60,13 @@ export default async function DispatchPage() {
         <DispatchForm items={items} outlets={outlets} />
 
         <div className="md:col-span-2 glass-panel rounded-3xl overflow-hidden flex flex-col">
-          <div className="p-6 border-b border-white/10 bg-white/5 backdrop-blur-md">
-             <h3 className="text-lg font-bold text-white tracking-wide">Dispatch History LEDGER</h3>
+          <div className="p-6 border-b border-white/10 bg-white/5 backdrop-blur-md flex items-center justify-between">
+            <h3 className="text-lg font-bold text-white tracking-wide">Dispatch History LEDGER</h3>
+            {isOwner && (
+              <span className="text-[10px] font-black tracking-widest bg-amber-500/10 border border-amber-500/20 text-amber-400 px-3 py-1 rounded-full uppercase">
+                Revert available
+              </span>
+            )}
           </div>
           <div className="flex-1 overflow-auto max-h-[600px] p-0">
             <Table>
@@ -55,13 +75,16 @@ export default async function DispatchPage() {
                   <TableHead className="font-bold text-slate-400 uppercase tracking-widest text-[10px] h-12 bg-black/40 sticky top-0 z-20">Date / Time</TableHead>
                   <TableHead className="font-bold text-slate-400 uppercase tracking-widest text-[10px] h-12 bg-black/40 sticky top-0 z-20">Item</TableHead>
                   <TableHead className="font-bold text-slate-400 uppercase tracking-widest text-[10px] h-12 bg-black/40 sticky top-0 z-20">Destination</TableHead>
-                  <TableHead className="font-bold text-slate-400 uppercase tracking-widest text-[10px] h-12 bg-black/40 sticky top-0 z-20 text-right">Quantity Out</TableHead>
+                  <TableHead className="font-bold text-slate-400 uppercase tracking-widest text-[10px] h-12 bg-black/40 sticky top-0 z-20 text-right">Qty Out</TableHead>
+                  {isOwner && (
+                    <TableHead className="font-bold text-slate-400 uppercase tracking-widest text-[10px] h-12 bg-black/40 sticky top-0 z-20 text-center">Revert</TableHead>
+                  )}
                 </TableRow>
               </TableHeader>
               <TableBody>
                  {recentDispatches.length === 0 ? (
                   <TableRow className="border-b border-white/10">
-                    <TableCell colSpan={4} className="h-40 text-center text-slate-500">
+                    <TableCell colSpan={isOwner ? 5 : 4} className="h-40 text-center text-slate-500">
                       <span className="flex flex-col items-center justify-center">
                         <Search className="w-8 h-8 opacity-20 mb-2" />
                         No recent outward shipments.
@@ -81,6 +104,34 @@ export default async function DispatchPage() {
                            {log.quantity} <span className="text-[10px] ml-1 opacity-70 uppercase">{log.Item.unit}</span>
                          </span>
                       </TableCell>
+                      {isOwner && (
+                        <TableCell className="text-center">
+                          <Dialog>
+                            <DialogTrigger render={
+                              <button className="p-2 rounded-xl text-amber-400/60 hover:text-amber-400 hover:bg-amber-500/10 border border-transparent hover:border-amber-500/20 transition-all" title="Revert this dispatch" />
+                            }>
+                              <Undo2 className="w-4 h-4" />
+                            </DialogTrigger>
+                            <DialogContent className="sm:max-w-[400px] bg-black/90 backdrop-blur-2xl border-amber-500/20 rounded-3xl shadow-[0_0_50px_rgba(245,158,11,0.15)]">
+                              <DialogHeader className="mb-2">
+                                <div className="w-12 h-12 bg-amber-500/10 rounded-2xl flex items-center justify-center mb-4 border border-amber-500/20">
+                                  <Undo2 className="w-6 h-6 text-amber-400" />
+                                </div>
+                                <DialogTitle className="text-xl font-black text-white">Revert Dispatch?</DialogTitle>
+                                <DialogDescription className="text-slate-400 leading-relaxed">
+                                  This will reverse the dispatch of <span className="text-blue-400 font-bold">{log.quantity} {log.Item.unit}</span> of <span className="text-white font-bold">{log.Item.name}</span> to <span className="text-white font-bold">{outlets.find(o => o.id === log.outletId)?.name}</span> — restoring stock to central and reducing outlet stock accordingly.
+                                </DialogDescription>
+                              </DialogHeader>
+                              <form action={revertLedgerEntry} className="mt-4">
+                                <input type="hidden" name="ledgerId" value={log.id} />
+                                <Button type="submit" className="w-full h-11 bg-amber-600 hover:bg-amber-500 text-white font-bold rounded-xl transition-all active:scale-95">
+                                  Yes, Revert Dispatch
+                                </Button>
+                              </form>
+                            </DialogContent>
+                          </Dialog>
+                        </TableCell>
+                      )}
                     </TableRow>
                   ))
                  )}

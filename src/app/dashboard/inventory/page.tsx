@@ -1,10 +1,12 @@
 import { prisma } from "@/lib/prisma"
 export const dynamic = 'force-dynamic'
+import { getServerSession } from "next-auth"
+import { authOptions } from "@/lib/auth"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { addItem } from "./actions"
-import { PlusCircle, Search } from "lucide-react"
+import { addItem, removeItem } from "./actions"
+import { PlusCircle, Search, Trash2 } from "lucide-react"
 import {
   Table,
   TableBody,
@@ -23,6 +25,9 @@ import {
 } from "@/components/ui/dialog"
 
 export default async function CentralInventoryPage() {
+  const session = await getServerSession(authOptions)
+  const isOwner = session?.user?.role === "OWNER"
+
   const items = await prisma.item.findMany({
     orderBy: { name: 'asc' }
   })
@@ -86,14 +91,16 @@ export default async function CentralInventoryPage() {
                 <TableHead className="font-bold text-slate-400 uppercase tracking-widest text-xs h-14 bg-black/40 backdrop-blur-md sticky top-0 z-20">Item Name</TableHead>
                 <TableHead className="font-bold text-slate-400 uppercase tracking-widest text-xs h-14 bg-black/40 backdrop-blur-md sticky top-0 z-20">Unit</TableHead>
                 <TableHead className="font-bold text-slate-400 uppercase tracking-widest text-xs h-14 bg-black/40 backdrop-blur-md sticky top-0 z-20 text-right">Central Stock</TableHead>
-                <TableHead className="font-bold text-slate-400 uppercase tracking-widest text-xs h-14 bg-black/40 backdrop-blur-md sticky top-0 z-20">Cost/Unit</TableHead>
                 <TableHead className="font-bold text-slate-400 uppercase tracking-widest text-xs h-14 bg-black/40 backdrop-blur-md sticky top-0 z-20">Vendor</TableHead>
+                {isOwner && (
+                  <TableHead className="font-bold text-slate-400 uppercase tracking-widest text-xs h-14 bg-black/40 backdrop-blur-md sticky top-0 z-20 text-center">Remove</TableHead>
+                )}
               </TableRow>
             </TableHeader>
             <TableBody>
               {items.length === 0 ? (
                 <TableRow className="border-b border-white/10">
-                  <TableCell colSpan={5} className="h-32 text-center text-slate-500">
+                  <TableCell colSpan={isOwner ? 5 : 4} className="h-32 text-center text-slate-500">
                      <span className="flex flex-col items-center justify-center">
                        <Search className="w-8 h-8 opacity-20 mb-2" />
                        No items found in catalog. Add your first item.
@@ -110,8 +117,35 @@ export default async function CentralInventoryPage() {
                         {item.currentStock} <span className="text-[10px] ml-1 opacity-70 uppercase">{item.unit}</span>
                       </span>
                     </TableCell>
-                    <TableCell className="text-slate-500 font-medium">{item.costPerUnit !== null && item.costPerUnit !== undefined ? `₹${item.costPerUnit}` : '—'}</TableCell>
                     <TableCell className="text-slate-500">{item.vendor || '—'}</TableCell>
+                    {isOwner && (
+                      <TableCell className="text-center">
+                        <Dialog>
+                          <DialogTrigger render={
+                            <button className="p-2 rounded-xl text-red-400/60 hover:text-red-400 hover:bg-red-500/10 border border-transparent hover:border-red-500/20 transition-all group/del" title={`Remove ${item.name}`} />
+                          }>
+                            <Trash2 className="w-4 h-4" />
+                          </DialogTrigger>
+                          <DialogContent className="sm:max-w-[400px] bg-black/90 backdrop-blur-2xl border-red-500/20 rounded-3xl shadow-[0_0_50px_rgba(239,68,68,0.2)]">
+                            <DialogHeader className="mb-2">
+                              <div className="w-12 h-12 bg-red-500/10 rounded-2xl flex items-center justify-center mb-4 border border-red-500/20">
+                                <Trash2 className="w-6 h-6 text-red-400" />
+                              </div>
+                              <DialogTitle className="text-xl font-black text-white">Remove Item from Catalog?</DialogTitle>
+                              <DialogDescription className="text-slate-400 leading-relaxed">
+                                This will permanently remove <span className="text-white font-bold">{item.name}</span> and all its ledger history. This action cannot be undone.
+                              </DialogDescription>
+                            </DialogHeader>
+                            <form action={removeItem} className="mt-4 flex gap-3">
+                              <input type="hidden" name="itemId" value={item.id} />
+                              <Button type="submit" className="flex-1 h-11 bg-red-600 hover:bg-red-500 text-white font-bold rounded-xl transition-all active:scale-95">
+                                Yes, Remove
+                              </Button>
+                            </form>
+                          </DialogContent>
+                        </Dialog>
+                      </TableCell>
+                    )}
                   </TableRow>
                 ))
               )}
