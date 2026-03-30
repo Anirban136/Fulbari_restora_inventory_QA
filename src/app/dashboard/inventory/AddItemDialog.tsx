@@ -1,0 +1,76 @@
+"use client"
+
+import { useState } from "react"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { PlusCircle } from "lucide-react"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
+import { addItem } from "./actions"
+
+export function AddItemDialog({ vendors }: { vendors: any[] }) {
+  const [open, setOpen] = useState(false)
+
+  async function handleSubmit(formData: FormData) {
+    await addItem(formData)
+    setOpen(false)
+  }
+
+  return (
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogTrigger render={
+        <Button className="h-12 px-6 rounded-xl bg-primary hover:bg-emerald-500 text-white font-bold shadow-[0_0_20px_-5px_oklch(0.55_0.16_150_/_0.5)] transition-all active:scale-95 gap-2 w-full" />
+      }>
+        <PlusCircle className="w-5 h-5" /> Add New Item
+      </DialogTrigger>
+      <DialogContent className="sm:max-w-[450px] bg-black/80 backdrop-blur-2xl border-white/10 rounded-3xl shadow-[0_0_50px_rgba(0,0,0,0.8)]">
+        <DialogHeader className="mb-4">
+           <div className="w-12 h-12 bg-primary/20 rounded-2xl flex items-center justify-center mb-4 border border-primary/30 shadow-[0_0_15px_-3px_oklch(0.55_0.16_150_/_0.3)]">
+             <PlusCircle className="w-6 h-6 text-primary" />
+           </div>
+          <DialogTitle className="text-2xl font-black text-white">Add Inventory Item</DialogTitle>
+          <DialogDescription className="text-slate-400">
+            Create a new item in the global catalog. It starts with 0 stock.
+          </DialogDescription>
+        </DialogHeader>
+        <form action={handleSubmit} className="space-y-5">
+          <div className="space-y-2">
+            <Label htmlFor="name" className="text-xs font-bold text-slate-400 uppercase tracking-widest">Item Name</Label>
+            <Input id="name" name="name" placeholder="e.g. Sugar, Milk" required className="h-12 bg-white/5 border-white/10 text-white placeholder:text-slate-600 rounded-xl focus-visible:ring-primary/50" />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="unit" className="text-xs font-bold text-slate-400 uppercase tracking-widest">Unit Type</Label>
+            <Input id="unit" name="unit" placeholder="e.g. kg, litre, pieces" required className="h-12 bg-white/5 border-white/10 text-white placeholder:text-slate-600 rounded-xl focus-visible:ring-primary/50" />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="vendorId" className="text-xs font-bold text-slate-400 uppercase tracking-widest">Select Vendor</Label>
+            <select name="vendorId" id="vendorId" className="w-full h-12 px-4 py-2 rounded-xl border border-white/10 bg-black/40 text-white focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all font-medium">
+              <option value="" className="bg-slate-900 text-slate-500">Select a vendor...</option>
+              {vendors.map(v => (
+                <option key={v.id} value={v.id} className="bg-slate-900 text-white">{v.name}</option>
+              ))}
+            </select>
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="costPerUnit" className="text-xs font-bold text-slate-400 uppercase tracking-widest">Cost Price (₹)</Label>
+              <Input id="costPerUnit" name="costPerUnit" type="number" step="0.01" placeholder="e.g. 50" className="h-12 bg-white/5 border-white/10 text-white placeholder:text-slate-600 rounded-xl focus-visible:ring-primary/50" />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="sellPrice" className="text-xs font-bold text-slate-400 uppercase tracking-widest">Sell Price (₹)</Label>
+              <Input id="sellPrice" name="sellPrice" type="number" step="0.01" placeholder="e.g. 150" className="h-12 bg-white/5 border-white/10 text-white placeholder:text-slate-600 rounded-xl focus-visible:ring-primary/50" />
+            </div>
+          </div>
+          <Button type="submit" className="w-full h-14 text-lg font-bold bg-white text-black hover:bg-slate-200 mt-4 rounded-xl shadow-[0_0_20px_rgba(255,255,255,0.2)]">Save Item</Button>
+        </form>
+      </DialogContent>
+    </Dialog>
+  )
+}

@@ -23,6 +23,9 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
+import { AddVendorDialog } from "./AddVendorDialog"
+import { AddItemDialog } from "./AddItemDialog"
+import { EditItemDialog } from "./EditItemDialog"
 
 export default async function GlobalCatalogPage() {
   const session = await getServerSession(authOptions)
@@ -43,7 +46,7 @@ export default async function GlobalCatalogPage() {
       {/* Background Decorators */}
       <div className="absolute top-[-100px] left-[-100px] w-[400px] h-[400px] bg-primary/10 rounded-full blur-[120px] pointer-events-none"></div>
 
-      <div className="flex items-center justify-between relative z-10 glass-panel p-6 rounded-3xl">
+      <div className="flex items-center justify-between relative z-10 glass-panel p-4 sm:p-6 rounded-3xl">
         <div>
           <h2 className="text-3xl font-black text-white tracking-tight flex items-center gap-3">
             Global Catalog
@@ -52,90 +55,14 @@ export default async function GlobalCatalogPage() {
           <p className="text-muted-foreground mt-1 font-medium text-sm tracking-wide uppercase">Manage all items available in central inventory</p>
         </div>
         
-        <div className="flex gap-4">
-          <Dialog>
-            <DialogTrigger render={<Button variant="outline" className="h-12 px-6 rounded-xl border-white/10 bg-white/5 hover:bg-white/10 text-white font-bold transition-all active:scale-95 gap-2" />}>
-                <PlusCircle className="w-5 h-5" /> Add New Vendor
-            </DialogTrigger>
-            <DialogContent className="sm:max-w-[450px] bg-black/80 backdrop-blur-2xl border-white/10 rounded-3xl shadow-[0_0_50px_rgba(0,0,0,0.8)]">
-              <DialogHeader className="mb-4">
-                 <div className="w-12 h-12 bg-primary/20 rounded-2xl flex items-center justify-center mb-4 border border-primary/30 shadow-[0_0_15px_-3px_oklch(0.55_0.16_150_/_0.3)]">
-                   <Users className="w-6 h-6 text-primary" />
-                 </div>
-                <DialogTitle className="text-2xl font-black text-white">Add New Vendor</DialogTitle>
-                <DialogDescription className="text-slate-400">
-                  Register a new supplier to link with catalog items.
-                </DialogDescription>
-              </DialogHeader>
-              <form action={addVendor} className="space-y-5">
-                <div className="space-y-2">
-                  <Label htmlFor="name" className="text-xs font-bold text-slate-400 uppercase tracking-widest">Vendor Name</Label>
-                  <Input id="vendor_name" name="name" placeholder="e.g. ABC Wholesale" required className="h-12 bg-white/5 border-white/10 text-white placeholder:text-slate-600 rounded-xl focus-visible:ring-primary/50" />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="contact" className="text-xs font-bold text-slate-400 uppercase tracking-widest">Contact Number</Label>
-                  <Input id="contact" name="contact" placeholder="e.g. +91 9876543210" className="h-12 bg-white/5 border-white/10 text-white placeholder:text-slate-600 rounded-xl focus-visible:ring-primary/50" />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="address" className="text-xs font-bold text-slate-400 uppercase tracking-widest">Address</Label>
-                  <Input id="address" name="address" placeholder="Vendor location..." className="h-12 bg-white/5 border-white/10 text-white placeholder:text-slate-600 rounded-xl focus-visible:ring-primary/50" />
-                </div>
-                <Button type="submit" className="w-full h-14 text-lg font-bold bg-white text-black hover:bg-slate-200 mt-4 rounded-xl shadow-[0_0_20px_rgba(255,255,255,0.2)]">Save Vendor</Button>
-              </form>
-            </DialogContent>
-          </Dialog>
-
-          <Dialog>
-            <DialogTrigger render={<Button className="h-12 px-6 rounded-xl bg-primary hover:bg-emerald-500 text-white font-bold shadow-[0_0_20px_-5px_oklch(0.55_0.16_150_/_0.5)] transition-all active:scale-95 gap-2" />}>
-                <PlusCircle className="w-5 h-5" /> Add New Item
-            </DialogTrigger>
-            <DialogContent className="sm:max-w-[450px] bg-black/80 backdrop-blur-2xl border-white/10 rounded-3xl shadow-[0_0_50px_rgba(0,0,0,0.8)]">
-              <DialogHeader className="mb-4">
-                 <div className="w-12 h-12 bg-primary/20 rounded-2xl flex items-center justify-center mb-4 border border-primary/30 shadow-[0_0_15px_-3px_oklch(0.55_0.16_150_/_0.3)]">
-                   <PlusCircle className="w-6 h-6 text-primary" />
-                 </div>
-                <DialogTitle className="text-2xl font-black text-white">Add Inventory Item</DialogTitle>
-                <DialogDescription className="text-slate-400">
-                  Create a new item in the global catalog. It starts with 0 stock.
-                </DialogDescription>
-              </DialogHeader>
-              <form action={addItem} className="space-y-5">
-                <div className="space-y-2">
-                  <Label htmlFor="name" className="text-xs font-bold text-slate-400 uppercase tracking-widest">Item Name</Label>
-                  <Input id="name" name="name" placeholder="e.g. Sugar, Milk" required className="h-12 bg-white/5 border-white/10 text-white placeholder:text-slate-600 rounded-xl focus-visible:ring-primary/50" />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="unit" className="text-xs font-bold text-slate-400 uppercase tracking-widest">Unit Type</Label>
-                  <Input id="unit" name="unit" placeholder="e.g. kg, litre, pieces" required className="h-12 bg-white/5 border-white/10 text-white placeholder:text-slate-600 rounded-xl focus-visible:ring-primary/50" />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="vendorId" className="text-xs font-bold text-slate-400 uppercase tracking-widest">Select Vendor</Label>
-                  <select name="vendorId" id="vendorId" className="w-full h-12 px-4 py-2 rounded-xl border border-white/10 bg-black/40 text-white focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all font-medium">
-                    <option value="" className="bg-slate-900 text-slate-500">Select a vendor...</option>
-                    {vendors.map(v => (
-                      <option key={v.id} value={v.id} className="bg-slate-900 text-white">{v.name}</option>
-                    ))}
-                  </select>
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="costPerUnit" className="text-xs font-bold text-slate-400 uppercase tracking-widest">Cost Price (₹)</Label>
-                    <Input id="costPerUnit" name="costPerUnit" type="number" step="0.01" placeholder="e.g. 50" className="h-12 bg-white/5 border-white/10 text-white placeholder:text-slate-600 rounded-xl focus-visible:ring-primary/50" />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="sellPrice" className="text-xs font-bold text-slate-400 uppercase tracking-widest">Sell Price (₹)</Label>
-                    <Input id="sellPrice" name="sellPrice" type="number" step="0.01" placeholder="e.g. 150" className="h-12 bg-white/5 border-white/10 text-white placeholder:text-slate-600 rounded-xl focus-visible:ring-primary/50" />
-                  </div>
-                </div>
-                <Button type="submit" className="w-full h-14 text-lg font-bold bg-white text-black hover:bg-slate-200 mt-4 rounded-xl shadow-[0_0_20px_rgba(255,255,255,0.2)]">Save Item</Button>
-              </form>
-            </DialogContent>
-          </Dialog>
+        <div className="flex flex-col gap-3 min-w-[200px] w-full sm:w-auto">
+          <AddVendorDialog />
+          <AddItemDialog vendors={vendors} />
         </div>
       </div>
 
-      <div className="glass-panel rounded-3xl overflow-hidden relative z-10">
-        <div className="p-0 max-h-[70vh] overflow-auto">
+      <div className="glass-panel rounded-3xl overflow-hidden relative z-10 shadow-2xl">
+        <div className="p-0 max-h-[85vh] overflow-auto custom-scrollbar-premium">
           <Table>
             <TableHeader>
               <TableRow className="border-b border-white/10 hover:bg-transparent">
@@ -161,7 +88,7 @@ export default async function GlobalCatalogPage() {
                   </TableCell>
                 </TableRow>
               ) : (
-                items.map((item) => (
+                items.map((item: any) => (
                   <TableRow key={item.id} className="border-b border-white/5 hover:bg-white/5 transition-colors group">
                     <TableCell className="font-medium text-slate-200 group-hover:text-white transition-colors">{item.name}</TableCell>
                     <TableCell className="text-slate-500">{item.unit}</TableCell>
@@ -181,59 +108,9 @@ export default async function GlobalCatalogPage() {
                       <TableCell className="text-center">
                         <div className="flex items-center justify-center gap-2">
                           {/* Edit Dialog */}
-                          <Dialog>
-                            <DialogTrigger render={
-                              <button className="p-2 rounded-xl text-amber-400/60 hover:text-amber-400 hover:bg-amber-500/10 border border-transparent hover:border-amber-500/20 transition-all" title={`Edit ${item.name}`} />
-                            }>
-                              <Edit className="w-4 h-4" />
-                            </DialogTrigger>
-                            <DialogContent className="sm:max-w-[450px] bg-black/80 backdrop-blur-2xl border-white/10 rounded-3xl shadow-[0_0_50px_rgba(0,0,0,0.8)]">
-                              <DialogHeader className="mb-4">
-                               <div className="w-12 h-12 bg-amber-500/20 rounded-2xl flex items-center justify-center mb-4 border border-amber-500/30 shadow-[0_0_15px_-3px_rgba(245,158,11,0.3)]">
-                                 <Edit className="w-6 h-6 text-amber-400" />
-                               </div>
-                                <DialogTitle className="text-2xl font-black text-white">Edit Item</DialogTitle>
-                                <DialogDescription className="text-slate-400">
-                                  Update details for <span className="text-white font-bold">{item.name}</span>.
-                                </DialogDescription>
-                              </DialogHeader>
-                              <form action={updateItem} className="space-y-5">
-                                <input type="hidden" name="itemId" value={item.id} />
-                                <div className="space-y-2">
-                                  <Label htmlFor={`edit_name_${item.id}`} className="text-xs font-bold text-slate-400 uppercase tracking-widest">Item Name</Label>
-                                  <Input id={`edit_name_${item.id}`} name="name" defaultValue={item.name} required className="h-12 bg-white/5 border-white/10 text-white rounded-xl" />
-                                </div>
-                                <div className="space-y-2">
-                                  <Label htmlFor={`edit_unit_${item.id}`} className="text-xs font-bold text-slate-400 uppercase tracking-widest">Unit Type</Label>
-                                  <Input id={`edit_unit_${item.id}`} name="unit" defaultValue={item.unit} required className="h-12 bg-white/5 border-white/10 text-white rounded-xl" />
-                                </div>
-                                <div className="space-y-2">
-                                  <Label htmlFor={`edit_vendor_${item.id}`} className="text-xs font-bold text-slate-400 uppercase tracking-widest">Select Vendor</Label>
-                                  <select name="vendorId" id={`edit_vendor_${item.id}`} defaultValue={item.vendorId || ""} className="w-full h-12 px-4 py-2 rounded-xl border border-white/10 bg-black/40 text-white focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all font-medium">
-                                    <option value="" className="bg-slate-900 text-slate-500">No vendor selected</option>
-                                    {vendors.map(v => (
-                                      <option key={v.id} value={v.id} className="bg-slate-900 text-white">{v.name}</option>
-                                    ))}
-                                  </select>
-                                </div>
-                                <div className="grid grid-cols-2 gap-4">
-                                  <div className="space-y-2">
-                                    <Label htmlFor={`edit_cost_${item.id}`} className="text-xs font-bold text-slate-400 uppercase tracking-widest">Cost Price (₹)</Label>
-                                    <Input id={`edit_cost_${item.id}`} name="costPerUnit" type="number" step="0.01" defaultValue={item.costPerUnit || ""} className="h-12 bg-white/5 border-white/10 text-white rounded-xl" />
-                                  </div>
-                                  <div className="space-y-2">
-                                    <Label htmlFor={`edit_sell_${item.id}`} className="text-xs font-bold text-slate-400 uppercase tracking-widest">Sell Price (₹)</Label>
-                                    <Input id={`edit_sell_${item.id}`} name="sellPrice" type="number" step="0.01" defaultValue={item.sellPrice || ""} className="h-12 bg-white/5 border-white/10 text-white rounded-xl" />
-                                  </div>
-                                </div>
-                                <div className="space-y-2">
-                                  <Label htmlFor={`edit_stock_${item.id}`} className="text-xs font-bold text-slate-400 uppercase tracking-widest">Current Stock ({item.unit})</Label>
-                                  <Input id={`edit_stock_${item.id}`} name="currentStock" type="number" step="0.01" defaultValue={item.currentStock} required className="h-12 bg-white/5 border-white/10 text-white rounded-xl text-primary font-black" />
-                                </div>
-                                <Button type="submit" className="w-full h-14 text-lg font-bold bg-white text-black hover:bg-slate-200 mt-4 rounded-xl">Save Changes</Button>
-                              </form>
-                            </DialogContent>
-                          </Dialog>
+                          <EditItemDialog item={item} vendors={vendors} />
+
+                          {/* Delete Dialog (Only for Owner) */}
 
                           {/* Delete Dialog (Only for Owner) */}
                           {isOwner && (
