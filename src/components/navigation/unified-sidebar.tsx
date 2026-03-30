@@ -48,7 +48,7 @@ export function UnifiedSidebar({ user }: { user: any }) {
     { name: "Global Menus", href: "/dashboard/menus", icon: ClipboardList, roles: ["OWNER"] },
     { name: "POS Terminal", href: "/tabs", icon: ClipboardList, roles: ["CAFE_STAFF", "CHAI_STAFF"] },
     { name: "Restaurant", href: "/restaurant", icon: Store, roles: ["OWNER", "REST_STAFF"] },
-    { name: "Central Catalog", href: "/dashboard/inventory", icon: Package, roles: ["OWNER", "INV_MANAGER"] },
+    { name: "Global Catalog", href: "/dashboard/inventory", icon: Package, roles: ["OWNER", "INV_MANAGER"] },
     { name: "Stock In", href: "/dashboard/inventory/stock-in", icon: Package, roles: ["OWNER", "INV_MANAGER"] },
     { name: "Dispatch", href: "/dashboard/inventory/dispatch", icon: ArrowLeftRight, roles: ["OWNER", "INV_MANAGER"] },
     { name: "Outlets Stock", href: "/dashboard/stores", icon: Store, roles: ["OWNER", "INV_MANAGER"] },

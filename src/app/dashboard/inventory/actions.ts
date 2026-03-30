@@ -5,6 +5,24 @@ import { revalidatePath } from "next/cache"
 import { getServerSession } from "next-auth"
 import { authOptions } from "@/lib/auth"
 
+export async function addVendor(data: FormData) {
+  const session = await getServerSession(authOptions)
+  if (!session || (session.user.role !== "OWNER" && session.user.role !== "INV_MANAGER")) {
+    throw new Error("Unauthorized")
+  }
+
+  const name = data.get("name") as string
+  const contact = data.get("contact") as string
+  const email = data.get("email") as string
+  const address = data.get("address") as string
+
+  await prisma.vendor.create({
+    data: { name, contact, email, address },
+  })
+
+  revalidatePath("/dashboard/inventory")
+}
+
 export async function addItem(data: FormData) {
   const session = await getServerSession(authOptions)
   if (!session || (session.user.role !== "OWNER" && session.user.role !== "INV_MANAGER")) {
@@ -13,12 +31,21 @@ export async function addItem(data: FormData) {
 
   const name = data.get("name") as string
   const unit = data.get("unit") as string
-  const vendor = data.get("vendor") as string
+  const vendorId = data.get("vendorId") as string
   const costPerUnitRaw = data.get("costPerUnit") as string
+  const sellPriceRaw = data.get("sellPrice") as string
+  
   const costPerUnit = costPerUnitRaw ? parseFloat(costPerUnitRaw) : null
+  const sellPrice = sellPriceRaw ? parseFloat(sellPriceRaw) : null
 
   await prisma.item.create({
-    data: { name, unit, vendor, costPerUnit },
+    data: { 
+      name, 
+      unit, 
+      vendorId: vendorId || null, 
+      costPerUnit,
+      sellPrice
+    },
   })
 
   revalidatePath("/dashboard/inventory")

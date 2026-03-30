@@ -32,16 +32,31 @@ model Outlet {
   Menus     MenuItem[]
 }
 
+model Vendor {
+  id        String   @id @default(cuid())
+  name      String
+  contact   String?
+  email     String?
+  address   String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  Items     Item[]
+}
+
 model Item {
   id            String   @id @default(cuid())
   name          String
   unit          String   // kg, litre, pieces, packets
   currentStock  Float    @default(0) // Central inventory stock
-  vendor        String?
+  vendor        String?  // Legacy text field
+  vendorId      String?  // FK to Vendor table
   costPerUnit   Float?
+  sellPrice     Float?   // Selling price per unit
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 
+  Vendor        Vendor?  @relation(fields: [vendorId], references: [id])
   Ledger        InventoryLedger[]
   OutletStock   OutletStock[]
   MenuItems     MenuItem[] // If this item maps to a menu item directly (e.g., Samosa)
