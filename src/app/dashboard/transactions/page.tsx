@@ -3,8 +3,13 @@ export const dynamic = 'force-dynamic'
 import { Receipt, Coffee, CupSoda } from "lucide-react"
 import { EditTransactionDialog } from "./_components/edit-transaction-dialog"
 import { formatTimeIST, formatDateIST } from "@/lib/utils"
+import Link from "next/link"
 
-export default async function AdminTransactionsPage() {
+export default async function AdminTransactionsPage(props: { searchParams: Promise<{ showAllCafe?: string, showAllChai?: string }> }) {
+  const searchParams = await props.searchParams;
+  const showAllCafe = searchParams?.showAllCafe === 'true';
+  const showAllChai = searchParams?.showAllChai === 'true';
+
   const threeDaysAgo = new Date()
   threeDaysAgo.setDate(threeDaysAgo.getDate() - 3)
 
@@ -18,13 +23,15 @@ export default async function AdminTransactionsPage() {
     cafeOutlet ? prisma.tab.findMany({
       where: { outletId: cafeOutlet.id, status: { in: ["CLOSED", "CANCELLED", "OPEN"] }, openedAt: { gte: threeDaysAgo } },
       include: { User: true },
-      orderBy: { openedAt: "desc" }
+      orderBy: { openedAt: "desc" },
+      ...(showAllCafe ? {} : { take: 5 })
     }) : Promise.resolve([]),
     
     chaiOutlet ? prisma.tab.findMany({
       where: { outletId: chaiOutlet.id, status: { in: ["CLOSED", "CANCELLED", "OPEN"] }, openedAt: { gte: threeDaysAgo } },
       include: { User: true },
-      orderBy: { openedAt: "desc" }
+      orderBy: { openedAt: "desc" },
+      ...(showAllChai ? {} : { take: 5 })
     }) : Promise.resolve([])
   ])
 
@@ -104,6 +111,13 @@ export default async function AdminTransactionsPage() {
             </div>
           </div>
           {renderTabRows(cafeTabs, "text-amber-400 bg-amber-500/10 border border-amber-500/20")}
+          {!showAllCafe && cafeTabs.length >= 5 && (
+            <div className="mt-6 flex justify-center">
+              <Link href="?showAllCafe=true" scroll={false} className="px-6 py-3 bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 text-amber-400 rounded-xl text-sm font-bold uppercase tracking-widest transition-all hover:scale-105 active:scale-95 shadow-[0_0_15px_-3px_rgba(245,158,11,0.3)]">
+                See All Transactions
+              </Link>
+            </div>
+          )}
         </section>
 
         {/* Chai Joint Hub Section */}
@@ -119,6 +133,13 @@ export default async function AdminTransactionsPage() {
             </div>
           </div>
           {renderTabRows(chaiTabs, "text-teal-400 bg-teal-500/10 border border-teal-500/20")}
+          {!showAllChai && chaiTabs.length >= 5 && (
+            <div className="mt-6 flex justify-center">
+              <Link href="?showAllChai=true" scroll={false} className="px-6 py-3 bg-teal-500/10 hover:bg-teal-500/20 border border-teal-500/30 text-teal-400 rounded-xl text-sm font-bold uppercase tracking-widest transition-all hover:scale-105 active:scale-95 shadow-[0_0_15px_-3px_rgba(20,184,166,0.3)]">
+                See All Transactions
+              </Link>
+            </div>
+          )}
         </section>
       </div>
     </div>

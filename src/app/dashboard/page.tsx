@@ -1,7 +1,8 @@
 import { prisma } from "@/lib/prisma"
 export const dynamic = 'force-dynamic'
-import { ArrowUpRight, TrendingUp, CreditCard, Activity, BarChart3, Crown } from "lucide-react"
+import { TrendingUp, CreditCard, Activity, BarChart3, Crown, Receipt } from "lucide-react"
 import { getISTDateBounds } from "@/lib/utils"
+import { GrossRevenueModal } from "@/components/GrossRevenueModal"
 
 export default async function DashboardOverview() {
   const { startUTC: startOfDay, endUTC: endOfDay } = getISTDateBounds();
@@ -77,17 +78,7 @@ export default async function DashboardOverview() {
 
       {/* High-Level Metrics */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <div className="glass-panel p-6 rounded-3xl relative overflow-hidden group hover:-translate-y-1 transition-transform duration-300">
-          <div className="absolute -right-4 -top-4 w-24 h-24 bg-primary/20 rounded-full blur-xl group-hover:bg-primary/30 transition-colors"></div>
-          <div className="flex justify-between items-start mb-4">
-            <h3 className="text-xs font-bold text-muted-foreground uppercase tracking-widest">Gross Revenue</h3>
-            <TrendingUp className="text-emerald-400 w-5 h-5" />
-          </div>
-          <p className="text-4xl font-black text-white text-glow">₹{totalRevenue.toFixed(2)}</p>
-          <div className="mt-4 text-xs font-bold text-emerald-300 bg-emerald-500/10 px-3 py-1.5 rounded-full inline-flex items-center gap-1 border border-emerald-500/20">
-            <ArrowUpRight className="w-3 h-3" /> Today
-          </div>
-        </div>
+        <GrossRevenueModal totalRevenue={totalRevenue} />
 
         <div className="glass-panel p-6 rounded-3xl group hover:-translate-y-1 transition-transform duration-300">
           <div className="flex justify-between items-start mb-4">
@@ -224,6 +215,54 @@ export default async function DashboardOverview() {
            </div>
         </div>
 
+      </div>
+
+      {/* Today's Transactions & Exports */}
+      <div className="glass-panel rounded-3xl overflow-hidden mt-8 border border-emerald-500/10 hover:border-emerald-500/30 transition-colors relative z-10">
+         <div className="p-6 bg-white/5 border-b border-white/10 flex flex-col md:flex-row items-center justify-between backdrop-blur-md gap-4">
+            <h3 className="text-xl font-bold text-white uppercase tracking-widest flex items-center gap-3">
+              <Receipt className="w-5 h-5 text-emerald-400" />
+              Today's Completed Tabs
+            </h3>
+            <div className="flex gap-3">
+              <a href={`/api/export/transactions?outlet=CAFE`} download>
+                <button className="px-4 py-2 bg-amber-500/20 hover:bg-amber-500/30 border border-amber-500/40 text-amber-400 rounded-xl text-[10px] sm:text-xs font-black uppercase tracking-widest transition-all hover:scale-105 active:scale-95 shadow-[0_0_15px_-3px_rgba(245,158,11,0.3)]">
+                  Export Cafe (CSV)
+                </button>
+              </a>
+              <a href={`/api/export/transactions?outlet=CHAI_JOINT`} download>
+                <button className="px-4 py-2 bg-blue-500/20 hover:bg-blue-500/30 border border-blue-500/40 text-blue-400 rounded-xl text-[10px] sm:text-xs font-black uppercase tracking-widest transition-all hover:scale-105 active:scale-95 shadow-[0_0_15px_-3px_rgba(59,130,246,0.3)]">
+                  Export Chai (CSV)
+                </button>
+              </a>
+            </div>
+         </div>
+         <div className="p-0 max-h-[400px] overflow-auto custom-scrollbar bg-black/20">
+            {todaysClosedTabs.length === 0 ? (
+               <div className="text-center py-10 text-slate-500 font-medium tracking-widest uppercase">No transactions recorded today.</div>
+            ) : (
+               <table className="w-full text-left border-collapse">
+                 <thead className="bg-black/60 sticky top-0 z-10 backdrop-blur-xl">
+                   <tr>
+                     <th className="p-5 text-xs font-bold text-slate-400 uppercase tracking-widest">Time</th>
+                     <th className="p-5 text-xs font-bold text-slate-400 uppercase tracking-widest">Outlet</th>
+                     <th className="p-5 text-xs font-bold text-slate-400 uppercase tracking-widest">Customer</th>
+                     <th className="p-5 text-xs font-bold text-slate-400 uppercase tracking-widest text-right">Amount</th>
+                   </tr>
+                 </thead>
+                 <tbody className="divide-y divide-white/5">
+                   {[...todaysClosedTabs].sort((a,b) => (b.closedAt?.getTime() || 0) - (a.closedAt?.getTime() || 0)).map(tab => (
+                     <tr key={tab.id} className="hover:bg-white/5 transition-colors group">
+                       <td className="p-5 text-sm text-slate-400 font-medium group-hover:text-slate-300 transition-colors">{tab.closedAt ? new Date(tab.closedAt).toLocaleTimeString('en-IN', { timeZone: 'Asia/Kolkata', hour: '2-digit', minute: '2-digit' }) : "N/A"}</td>
+                       <td className="p-5 text-sm font-bold text-emerald-400">{tab.Outlet.name}</td>
+                       <td className="p-5 text-sm text-slate-300 font-medium">{tab.customerName || "Walk-in"}</td>
+                       <td className="p-5 text-lg text-white font-black text-right tracking-tight drop-shadow-md">₹{tab.totalAmount.toFixed(2)}</td>
+                     </tr>
+                   ))}
+                 </tbody>
+               </table>
+            )}
+         </div>
       </div>
     </div>
   )

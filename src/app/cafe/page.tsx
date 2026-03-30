@@ -12,8 +12,16 @@ export default async function CafeDashboard() {
   
   if (!cafe) return <div className="min-h-screen bg-background text-white p-10 font-bold">Cafe outlet not configured.</div>
 
-  const threeDaysAgo = new Date();
-  threeDaysAgo.setDate(threeDaysAgo.getDate() - 3);
+  const { startUTC: todayStart, endUTC: todayEnd } = getISTDateBounds();
+
+  // Generate last 7 days array for reporting
+  const last7Days = Array.from({ length: 7 }, (_, i) => {
+    const d = new Date();
+    d.setDate(d.getDate() - i);
+    const dateStr = d.toLocaleDateString("en-CA"); // YYYY-MM-DD
+    const displayDate = d.toLocaleDateString("en-IN", { weekday: 'short', month: 'short', day: 'numeric' });
+    return { dateStr, displayDate, isToday: i === 0 };
+  });
 
   const [localStock, incomingDispatches, recentTabs] = await Promise.all([
     prisma.outletStock.findMany({
@@ -31,21 +39,14 @@ export default async function CafeDashboard() {
       where: { 
         outletId: cafe.id, 
         status: { in: ["CLOSED", "CANCELLED"] },
-        openedAt: { gte: threeDaysAgo } 
+        openedAt: { gte: todayStart, lte: todayEnd } 
       },
       include: { User: true },
       orderBy: { closedAt: 'desc' }
     })
   ])
 
-  const { startUTC: todayStart, endUTC: todayEnd } = getISTDateBounds();
-  
-  const todaysTabs = recentTabs.filter(tab => 
-    tab.status === "CLOSED" && 
-    tab.closedAt && 
-    tab.closedAt >= todayStart && 
-    tab.closedAt <= todayEnd
-  );
+  const todaysTabs = recentTabs;
 
   const dailyReport = {
     CASH: todaysTabs.filter(t => t.paymentMode === 'CASH').reduce((sum, t) => sum + t.totalAmount, 0),
@@ -89,10 +90,17 @@ export default async function CafeDashboard() {
 
             {/* Today's Report */}
             <div className="glass-panel p-6 rounded-3xl group transition-all border border-amber-500/10 hover:border-amber-500/30">
-               <h2 className="text-lg font-bold text-white uppercase tracking-widest mb-6 flex items-center justify-between">
-                 <span>Today's Report</span>
-                 <Receipt className="w-5 h-5 text-amber-500" />
-               </h2>
+                <h2 className="text-lg font-bold text-white uppercase tracking-widest mb-6 flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <span>Today's Report</span>
+                    <Receipt className="w-5 h-5 text-amber-500" />
+                  </div>
+                  <a href="/api/export/transactions?outlet=CAFE" download>
+                    <Button variant="ghost" size="sm" className="h-8 px-2 text-[10px] text-amber-400 hover:bg-amber-500/10 border border-amber-500/20">
+                      Download CSV
+                    </Button>
+                  </a>
+                </h2>
                <div className="space-y-3">
                  <div className="flex justify-between items-center bg-white/5 p-3 rounded-xl border border-white/5">
                    <span className="text-sm font-bold text-slate-400 uppercase tracking-widest">💵 Cash</span>
@@ -181,16 +189,16 @@ export default async function CafeDashboard() {
                <div className="p-8 border-b border-white/10 bg-white/5 backdrop-blur-md flex items-center justify-between shrink-0">
                  <div className="flex items-center gap-4">
                    <History className="w-6 h-6 text-slate-400" />
-                   <h2 className="text-xl font-bold text-white uppercase tracking-widest">Register History</h2>
+                   <h2 className="text-xl font-bold text-white uppercase tracking-widest">Today's Transactions</h2>
                  </div>
-                 <span className="text-xs font-black tracking-widest uppercase bg-amber-500/20 text-amber-400 px-3 py-1 rounded-full border border-amber-500/20">Last 3 Days</span>
+                 <span className="text-xs font-black tracking-widest uppercase bg-amber-500/20 text-amber-400 px-3 py-1 rounded-full border border-amber-500/20">Live</span>
                </div>
                
                <div className="flex-1 overflow-auto p-8">
                   {recentTabs.length === 0 ? (
                     <div className="flex flex-col items-center justify-center text-slate-500 py-10 animate-pulse h-full">
                       <Receipt className="w-12 h-12 mb-4 opacity-20" />
-                      <p className="font-bold tracking-widest uppercase text-sm">No closed registers in the last 3 days.</p>
+                      <p className="font-bold tracking-widest uppercase text-sm">No closed registers today.</p>
                     </div>
                   ) : (
                     <ul className="space-y-4">
@@ -198,7 +206,7 @@ export default async function CafeDashboard() {
                         <li key={tab.id} className="flex items-center justify-between p-5 rounded-2xl border border-white/5 bg-white/5 hover:bg-white/10 hover:border-white/20 transition-all group shadow-sm">
                           <div>
                             <div className="flex items-center gap-3 mb-1">
-                               <p className="text-xs font-bold text-slate-500">{formatDateIST(tab.closedAt || tab.openedAt)} at {formatTimeIST(tab.closedAt || tab.openedAt)}</p>
+                               <p className="text-xs font-bold text-slate-500">{formatTimeIST(tab.closedAt || tab.openedAt)}</p>
                                {tab.status === "CANCELLED" && <span className="text-[9px] font-black tracking-widest bg-red-500/20 text-red-400 px-2 py-0.5 rounded uppercase border border-red-500/20">Cancelled</span>}
                             </div>
                             <span className="font-bold text-slate-200 group-hover:text-white text-lg transition-colors">{tab.customerName || "Walk-in Customer"}</span>
@@ -214,6 +222,23 @@ export default async function CafeDashboard() {
                       ))}
                     </ul>
                   )}
+               </div>
+            </div>
+
+            {/* 7-Day History Reports */}
+            <div className="glass-panel p-6 rounded-3xl mt-2 border border-blue-500/10 hover:border-blue-500/30 transition-colors">
+               <h2 className="text-lg font-bold text-white uppercase tracking-widest mb-6 flex items-center justify-between">
+                 <span>Daily ExceL Reports</span>
+               </h2>
+               <div className="flex overflow-x-auto gap-4 pb-2 custom-scrollbar">
+                  {last7Days.map((day) => (
+                    <div key={day.dateStr} className="min-w-[140px] p-4 bg-white/5 border border-white/10 rounded-2xl flex flex-col items-center gap-3 hover:bg-white/10 transition-colors">
+                      <span className="text-xs font-bold text-slate-400 uppercase tracking-widest text-center whitespace-nowrap">{day.isToday ? "Today" : day.displayDate}</span>
+                      <a href={`/api/export/transactions?outlet=CAFE&date=${day.dateStr}`} download className="w-full">
+                        <Button variant="secondary" className="w-full text-xs h-8 bg-blue-500/20 text-blue-400 hover:bg-blue-500/40 border border-blue-500/30">Download</Button>
+                      </a>
+                    </div>
+                  ))}
                </div>
             </div>
           </div>

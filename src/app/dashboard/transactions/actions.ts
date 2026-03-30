@@ -7,7 +7,7 @@ import { authOptions } from "@/lib/auth"
 
 export async function updateTransactionAction(tabId: string, data: { paymentMode: string, totalAmount: number, status: string }) {
   const session = await getServerSession(authOptions)
-  if (!session || !["OWNER", "INV_MANAGER"].includes(session.user.role)) {
+  if (!session || session.user.role !== "OWNER") {
     throw new Error("Unauthorized")
   }
 

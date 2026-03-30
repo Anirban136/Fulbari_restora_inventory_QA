@@ -21,6 +21,11 @@ export default withAuth(
       return NextResponse.redirect(new URL("/dashboard", req.url));
     }
 
+    // Protect /dashboard/transactions
+    if (path.startsWith("/dashboard/transactions") && role !== "OWNER") {
+      return NextResponse.redirect(new URL("/dashboard", req.url));
+    }
+
     // Protect /restaurant
     if (path.startsWith("/restaurant") && role !== "REST_STAFF") {
       return NextResponse.redirect(new URL("/dashboard", req.url));

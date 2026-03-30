@@ -68,6 +68,10 @@ export default async function CentralInventoryPage() {
                 <Label htmlFor="vendor" className="text-xs font-bold text-slate-400 uppercase tracking-widest">Default Vendor (Optional)</Label>
                 <Input id="vendor" name="vendor" placeholder="e.g. ABC Suppliers" className="h-12 bg-white/5 border-white/10 text-white placeholder:text-slate-600 rounded-xl focus-visible:ring-primary/50" />
               </div>
+              <div className="space-y-2">
+                <Label htmlFor="costPerUnit" className="text-xs font-bold text-slate-400 uppercase tracking-widest">Cost Per Unit (₹) (Optional)</Label>
+                <Input id="costPerUnit" name="costPerUnit" type="number" step="0.01" placeholder="e.g. 50" className="h-12 bg-white/5 border-white/10 text-white placeholder:text-slate-600 rounded-xl focus-visible:ring-primary/50" />
+              </div>
               <Button type="submit" className="w-full h-14 text-lg font-bold bg-white text-black hover:bg-slate-200 mt-4 rounded-xl shadow-[0_0_20px_rgba(255,255,255,0.2)]">Save Item</Button>
             </form>
           </DialogContent>
@@ -82,13 +86,14 @@ export default async function CentralInventoryPage() {
                 <TableHead className="font-bold text-slate-400 uppercase tracking-widest text-xs h-14 bg-black/40 backdrop-blur-md sticky top-0 z-20">Item Name</TableHead>
                 <TableHead className="font-bold text-slate-400 uppercase tracking-widest text-xs h-14 bg-black/40 backdrop-blur-md sticky top-0 z-20">Unit</TableHead>
                 <TableHead className="font-bold text-slate-400 uppercase tracking-widest text-xs h-14 bg-black/40 backdrop-blur-md sticky top-0 z-20 text-right">Central Stock</TableHead>
+                <TableHead className="font-bold text-slate-400 uppercase tracking-widest text-xs h-14 bg-black/40 backdrop-blur-md sticky top-0 z-20">Cost/Unit</TableHead>
                 <TableHead className="font-bold text-slate-400 uppercase tracking-widest text-xs h-14 bg-black/40 backdrop-blur-md sticky top-0 z-20">Vendor</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {items.length === 0 ? (
                 <TableRow className="border-b border-white/10">
-                  <TableCell colSpan={4} className="h-32 text-center text-slate-500">
+                  <TableCell colSpan={5} className="h-32 text-center text-slate-500">
                      <span className="flex flex-col items-center justify-center">
                        <Search className="w-8 h-8 opacity-20 mb-2" />
                        No items found in catalog. Add your first item.
@@ -105,6 +110,7 @@ export default async function CentralInventoryPage() {
                         {item.currentStock} <span className="text-[10px] ml-1 opacity-70 uppercase">{item.unit}</span>
                       </span>
                     </TableCell>
+                    <TableCell className="text-slate-500 font-medium">{item.costPerUnit !== null && item.costPerUnit !== undefined ? `₹${item.costPerUnit}` : '—'}</TableCell>
                     <TableCell className="text-slate-500">{item.vendor || '—'}</TableCell>
                   </TableRow>
                 ))

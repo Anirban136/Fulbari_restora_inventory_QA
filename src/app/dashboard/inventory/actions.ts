@@ -14,9 +14,11 @@ export async function addItem(data: FormData) {
   const name = data.get("name") as string
   const unit = data.get("unit") as string
   const vendor = data.get("vendor") as string
+  const costPerUnitRaw = data.get("costPerUnit") as string
+  const costPerUnit = costPerUnitRaw ? parseFloat(costPerUnitRaw) : null
 
   await prisma.item.create({
-    data: { name, unit, vendor },
+    data: { name, unit, vendor, costPerUnit },
   })
 
   revalidatePath("/dashboard/inventory")
