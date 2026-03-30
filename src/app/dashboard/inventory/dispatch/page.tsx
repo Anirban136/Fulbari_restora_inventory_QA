@@ -1,10 +1,7 @@
 import { prisma } from "@/lib/prisma"
 export const dynamic = 'force-dynamic'
-import { Label } from "@/components/ui/label"
-import { Input } from "@/components/ui/input"
-import { Button } from "@/components/ui/button"
-import { dispatchStock } from "./actions"
-import { ArrowLeftRight, Search } from "lucide-react"
+import { DispatchForm } from "./DispatchForm"
+import { Search } from "lucide-react"
 import {
   Table,
   TableBody,
@@ -18,7 +15,6 @@ import { formatTimeIST, formatDateIST } from "@/lib/utils"
 export default async function DispatchPage() {
   const [items, outlets, recentDispatches] = await Promise.all([
     prisma.item.findMany({ 
-      where: { currentStock: { gt: 0 } },
       orderBy: { name: 'asc' } 
     }),
     prisma.outlet.findMany({ orderBy: { name: 'asc' } }),
@@ -45,50 +41,8 @@ export default async function DispatchPage() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8 relative z-10">
-        <div className="md:col-span-1 glass-panel p-8 rounded-3xl self-start hover:border-white/20 transition-all">
-          <div className="flex items-center gap-4 mb-8">
-             <div className="h-12 w-12 bg-blue-500/20 rounded-2xl flex items-center justify-center border border-blue-500/30 shadow-[0_0_15px_-3px_rgba(59,130,246,0.3)]">
-               <ArrowLeftRight className="w-6 h-6 text-blue-400" />
-             </div>
-             <h3 className="text-xl font-bold text-white">Send Shipment</h3>
-          </div>
-          
-          <form action={dispatchStock} className="space-y-6">
-            <div className="space-y-2">
-              <Label htmlFor="itemId" className="text-xs font-bold text-slate-400 uppercase tracking-widest">Select Item</Label>
-              <select name="itemId" id="itemId" required defaultValue="" className="w-full h-12 px-4 py-2 rounded-xl border border-white/10 bg-black/40 text-white placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all shadow-inner font-medium">
-                <option value="" disabled className="bg-slate-900 text-slate-500">Select an item...</option>
-                {items.map(item => (
-                  <option key={item.id} value={item.id} className="bg-slate-900 text-white">{item.name} ({item.currentStock} {item.unit} central stock)</option>
-                ))}
-              </select>
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="outletId" className="text-xs font-bold text-slate-400 uppercase tracking-widest">Destination Outlet</Label>
-              <select name="outletId" id="outletId" required defaultValue="" className="w-full h-12 px-4 py-2 rounded-xl border border-white/10 bg-black/40 text-white placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all shadow-inner font-medium">
-                <option value="" disabled className="bg-slate-900 text-slate-500">Select an outlet...</option>
-                {outlets.map(outlet => (
-                  <option key={outlet.id} value={outlet.id} className="bg-slate-900 text-white">{outlet.name}</option>
-                ))}
-              </select>
-            </div>
-            
-            <div className="space-y-2">
-              <Label htmlFor="quantity" className="text-xs font-bold text-slate-400 uppercase tracking-widest">Quantity to Dispatch</Label>
-              <Input id="quantity" name="quantity" type="number" step="0.01" min="0.01" placeholder="e.g. 10" required className="h-12 bg-black/40 border-white/10 text-white placeholder:text-slate-600 rounded-xl focus-visible:ring-blue-500/50 shadow-inner" />
-            </div>
-
-            <Button type="submit" className="w-full h-14 mt-4 text-lg font-bold bg-blue-600 hover:bg-blue-500 text-white shadow-[0_0_20_5px_rgba(59,130,246,0.5)] rounded-xl transition-all active:scale-[0.98]">
-              Approve Dispatch
-            </Button>
-          </form>
-          {items.length === 0 && (
-             <div className="mt-6 p-4 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-sm text-center font-medium animate-pulse">
-               Cannot dispatch. Central catalog has zero stock available.
-             </div>
-          )}
-        </div>
+        {/* Client form with error handling */}
+        <DispatchForm items={items} outlets={outlets} />
 
         <div className="md:col-span-2 glass-panel rounded-3xl overflow-hidden flex flex-col">
           <div className="p-6 border-b border-white/10 bg-white/5 backdrop-blur-md">

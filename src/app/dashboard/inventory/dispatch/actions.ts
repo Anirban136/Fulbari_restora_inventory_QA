@@ -5,21 +5,29 @@ import { revalidatePath } from "next/cache"
 import { getServerSession } from "next-auth"
 import { authOptions } from "@/lib/auth"
 
-export async function dispatchStock(data: FormData) {
+export async function dispatchStock(data: FormData): Promise<{ error?: string }> {
   const session = await getServerSession(authOptions)
   if (!session || (session.user.role !== "OWNER" && session.user.role !== "INV_MANAGER")) {
-    throw new Error("Unauthorized")
+    return { error: "Unauthorized" }
   }
 
   const itemId = data.get("itemId") as string
   const outletId = data.get("outletId") as string
   const quantity = parseFloat(data.get("quantity") as string)
 
-  if (!itemId || !outletId || isNaN(quantity) || quantity <= 0) return
+  if (!itemId || !outletId || isNaN(quantity) || quantity <= 0) {
+    return { error: "Invalid input. Please fill all fields with valid values." }
+  }
 
-  const item = await prisma.item.findUnique({ where: { id: itemId }})
-  if (!item || item.currentStock < quantity) {
-    throw new Error("Insufficient central stock.")
+  const item = await prisma.item.findUnique({ where: { id: itemId } })
+  if (!item) {
+    return { error: "Item not found." }
+  }
+
+  if (item.currentStock < quantity) {
+    return {
+      error: `Dispatch not possible! Requested ${quantity} ${item.unit} but only ${item.currentStock} ${item.unit} available in central stock.`
+    }
   }
 
   // Transaction to update Central Stock, Outlet Stock, and Ledger
@@ -52,4 +60,6 @@ export async function dispatchStock(data: FormData) {
   revalidatePath("/dashboard/inventory/dispatch")
   revalidatePath("/dashboard/inventory")
   revalidatePath("/dashboard/stores")
+
+  return {}
 }
