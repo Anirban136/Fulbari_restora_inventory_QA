@@ -42,16 +42,16 @@ export function UnifiedSidebar({ user }: { user: any }) {
   const navItems: NavItem[] = [
     { name: "Home Dashboard", href: "/dashboard", icon: Home, roles: ["OWNER"] },
     { name: "Cafe Hub", href: "/cafe", icon: Coffee, roles: ["OWNER", "CAFE_STAFF"] },
+    { name: "Transactions", href: "/dashboard/transactions", icon: Receipt, roles: ["OWNER"] },
     { name: "Chai Hub", href: "/chai", icon: Coffee, roles: ["OWNER", "CHAI_STAFF"] },
     { name: "Overview", href: "/dashboard", icon: LayoutDashboard, roles: ["OWNER"] },
     { name: "Global Menus", href: "/dashboard/menus", icon: ClipboardList, roles: ["OWNER"] },
-    { name: "POS Terminal", href: "/tabs", icon: ClipboardList, roles: ["OWNER", "CAFE_STAFF", "CHAI_STAFF"] },
+    { name: "POS Terminal", href: "/tabs", icon: ClipboardList, roles: ["CAFE_STAFF", "CHAI_STAFF"] },
     { name: "Restaurant", href: "/restaurant", icon: Store, roles: ["OWNER", "REST_STAFF"] },
     { name: "Central Catalog", href: "/dashboard/inventory", icon: Package, roles: ["OWNER", "INV_MANAGER"] },
     { name: "Stock In", href: "/dashboard/inventory/stock-in", icon: Package, roles: ["OWNER", "INV_MANAGER"] },
     { name: "Dispatch", href: "/dashboard/inventory/dispatch", icon: ArrowLeftRight, roles: ["OWNER", "INV_MANAGER"] },
     { name: "Outlets Stock", href: "/dashboard/stores", icon: Store, roles: ["OWNER", "INV_MANAGER"] },
-    { name: "Transactions", href: "/dashboard/transactions", icon: Receipt, roles: ["OWNER"] },
   ]
 
   const filteredItems = navItems.filter(item => 
