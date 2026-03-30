@@ -42,8 +42,8 @@ export function UnifiedSidebar({ user }: { user: any }) {
   const navItems: NavItem[] = [
     { name: "Home Dashboard", href: "/dashboard", icon: Home, roles: ["OWNER"] },
     { name: "Cafe Hub", href: "/cafe", icon: Coffee, roles: ["OWNER", "CAFE_STAFF"] },
-    { name: "Transactions", href: "/dashboard/transactions", icon: Receipt, roles: ["OWNER"] },
     { name: "Chai Hub", href: "/chai", icon: Coffee, roles: ["OWNER", "CHAI_STAFF"] },
+    { name: "Transactions", href: "/dashboard/transactions", icon: Receipt, roles: ["OWNER"] },
     { name: "Overview", href: "/dashboard", icon: LayoutDashboard, roles: ["OWNER"] },
     { name: "Global Menus", href: "/dashboard/menus", icon: ClipboardList, roles: ["OWNER"] },
     { name: "POS Terminal", href: "/tabs", icon: ClipboardList, roles: ["CAFE_STAFF", "CHAI_STAFF"] },
