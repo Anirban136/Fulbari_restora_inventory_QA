@@ -51,6 +51,39 @@ export async function addItem(data: FormData) {
   revalidatePath("/dashboard/inventory")
 }
 
+export async function updateItem(data: FormData) {
+  const session = await getServerSession(authOptions)
+  if (!session || (session.user.role !== "OWNER" && session.user.role !== "INV_MANAGER")) {
+    throw new Error("Unauthorized")
+  }
+
+  const itemId = data.get("itemId") as string
+  const name = data.get("name") as string
+  const unit = data.get("unit") as string
+  const vendorId = data.get("vendorId") as string
+  const costPerUnitRaw = data.get("costPerUnit") as string
+  const sellPriceRaw = data.get("sellPrice") as string
+  const currentStockRaw = data.get("currentStock") as string
+  
+  const costPerUnit = costPerUnitRaw ? parseFloat(costPerUnitRaw) : null
+  const sellPrice = sellPriceRaw ? parseFloat(sellPriceRaw) : null
+  const currentStock = currentStockRaw ? parseFloat(currentStockRaw) : 0
+
+  await prisma.item.update({
+    where: { id: itemId },
+    data: { 
+      name, 
+      unit, 
+      vendorId: vendorId || null, 
+      costPerUnit,
+      sellPrice,
+      currentStock
+    },
+  })
+
+  revalidatePath("/dashboard/inventory")
+}
+
 export async function removeItem(data: FormData) {
   const session = await getServerSession(authOptions)
   if (!session || session.user.role !== "OWNER") {
