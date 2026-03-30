@@ -6,6 +6,7 @@ import { Coffee, PackageOpen, LayoutGrid, Search, History, Receipt } from "lucid
 import Link from "next/link"
 import { formatTimeIST, formatDateIST, getISTDateBounds } from "@/lib/utils"
 import AppLayout from "@/components/layouts/app-layout"
+import { TabReceiptModal } from "@/components/TabReceiptModal"
 
 export default async function CafeDashboard() {
   const cafe = await prisma.outlet.findFirst({ where: { type: "CAFE" }})
@@ -41,7 +42,10 @@ export default async function CafeDashboard() {
         status: { in: ["CLOSED", "CANCELLED"] },
         openedAt: { gte: todayStart, lte: todayEnd } 
       },
-      include: { User: true },
+      include: {
+        User: true,
+        Items: { include: { MenuItem: true } }
+      },
       orderBy: { closedAt: 'desc' }
     })
   ])
@@ -203,16 +207,27 @@ export default async function CafeDashboard() {
                   ) : (
                     <ul className="space-y-4">
                       {recentTabs.map(tab => (
-                        <li key={tab.id} className="flex items-center justify-between p-5 rounded-2xl border border-white/5 bg-white/5 hover:bg-white/10 hover:border-white/20 transition-all group shadow-sm">
-                          <div>
+                        <li key={tab.id} className="flex items-start justify-between p-5 rounded-2xl border border-white/5 bg-white/5 hover:bg-white/10 hover:border-white/20 transition-all group shadow-sm gap-4">
+                          <div className="flex-1 min-w-0">
                             <div className="flex items-center gap-3 mb-1">
                                <p className="text-xs font-bold text-slate-500">{formatTimeIST(tab.closedAt || tab.openedAt)}</p>
                                {tab.status === "CANCELLED" && <span className="text-[9px] font-black tracking-widest bg-red-500/20 text-red-400 px-2 py-0.5 rounded uppercase border border-red-500/20">Cancelled</span>}
                             </div>
-                            <span className="font-bold text-slate-200 group-hover:text-white text-lg transition-colors">{tab.customerName || "Walk-in Customer"}</span>
+                            <span className="font-bold text-slate-200 group-hover:text-white text-lg transition-colors block truncate">{tab.customerName || "Walk-in Customer"}</span>
                             <p className="text-xs text-slate-500 mt-1 font-medium">Billed by: <span className="text-slate-400">{tab.User.name}</span></p>
+                            <div className="mt-3">
+                              <TabReceiptModal
+                                tabId={tab.id}
+                                customerName={tab.customerName}
+                                totalAmount={tab.totalAmount}
+                                paymentMode={tab.paymentMode}
+                                closedAt={tab.closedAt}
+                                items={tab.Items}
+                                accentColor="amber"
+                              />
+                            </div>
                           </div>
-                          <div className="text-right">
+                          <div className="text-right shrink-0">
                             <span className={`font-black tracking-widest px-4 py-2 rounded-xl text-xl drop-shadow-[0_0_5px_rgba(255,255,255,0.1)] ${tab.status === "CANCELLED" ? "text-slate-500 bg-white/5 border border-white/5" : "text-amber-400 bg-amber-500/10 border border-amber-500/20"}`}>
                               ₹{tab.totalAmount.toFixed(2)}
                             </span>
