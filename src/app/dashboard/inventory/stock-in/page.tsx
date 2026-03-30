@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button"
 import { logStockIn } from "./actions"
 import { revertLedgerEntry } from "../actions"
 import { Truck, Search, Undo2 } from "lucide-react"
+import { StockInForm } from "./StockInForm"
 import {
   Table,
   TableBody,
@@ -56,45 +57,7 @@ export default async function StockInPage() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8 relative z-10">
         
         {/* Left Form */}
-        <div className="md:col-span-1 glass-panel p-8 rounded-3xl self-start hover:border-white/20 transition-all">
-          <div className="flex items-center gap-4 mb-8">
-             <div className="h-12 w-12 bg-primary/20 rounded-2xl flex items-center justify-center border border-primary/30 shadow-[0_0_15px_-3px_oklch(0.55_0.16_150_/_0.3)]">
-               <Truck className="w-6 h-6 text-primary" />
-             </div>
-             <h3 className="text-xl font-bold text-white">Receive Shipment</h3>
-          </div>
-          
-          <form action={logStockIn} className="space-y-6">
-            <div className="space-y-2">
-              <Label htmlFor="itemId" className="text-xs font-bold text-slate-400 uppercase tracking-widest">Select Item</Label>
-              <select name="itemId" id="itemId" required defaultValue="" className="w-full h-12 px-4 py-2 rounded-xl border border-white/10 bg-black/40 text-white placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all shadow-inner font-medium">
-                <option value="" disabled className="bg-slate-900 text-slate-500">Select an item...</option>
-                {items.map(item => (
-                  <option key={item.id} value={item.id} className="bg-slate-900 text-white">{item.name} ({item.unit})</option>
-                ))}
-              </select>
-            </div>
-            
-            <div className="space-y-2">
-              <Label htmlFor="quantity" className="text-xs font-bold text-slate-400 uppercase tracking-widest">Quantity Received</Label>
-              <Input id="quantity" name="quantity" type="number" step="0.01" min="0.01" placeholder="e.g. 50" required className="h-12 bg-black/40 border-white/10 text-white placeholder:text-slate-600 rounded-xl focus-visible:ring-primary/50 shadow-inner" />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="cost" className="text-xs font-bold text-slate-400 uppercase tracking-widest">Cost per unit (₹) <span className="opacity-50 font-normal ml-1">Optional</span></Label>
-              <Input id="cost" name="cost" type="number" step="0.01" min="0" placeholder="e.g. 150.50" className="h-12 bg-black/40 border-white/10 text-white placeholder:text-slate-600 rounded-xl focus-visible:ring-primary/50 shadow-inner" />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="notes" className="text-xs font-bold text-slate-400 uppercase tracking-widest">Delivery Note / Invoice Ref</Label>
-              <Input id="notes" name="notes" placeholder="Invoice #1234..." className="h-12 bg-black/40 border-white/10 text-white placeholder:text-slate-600 rounded-xl focus-visible:ring-primary/50 shadow-inner" />
-            </div>
-
-            <Button type="submit" className="w-full h-14 mt-4 text-lg font-bold bg-primary hover:bg-emerald-500 text-white shadow-[0_0_20px_-5px_oklch(0.55_0.16_150_/_0.5)] rounded-xl transition-all active:scale-[0.98]">
-              Log Intake
-            </Button>
-          </form>
-        </div>
+        <StockInForm items={items} />
 
         {/* Right Table */}
         <div className="md:col-span-2 glass-panel rounded-3xl overflow-hidden flex flex-col">
