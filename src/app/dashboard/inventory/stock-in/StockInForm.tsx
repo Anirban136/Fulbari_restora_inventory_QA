@@ -5,7 +5,7 @@ import { Truck, Loader2, AlertCircle, CheckCircle2 } from "lucide-react"
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
-import { ItemSearchableSelect } from "./ItemSearchableSelect"
+import { ItemSearchableSelect } from "@/components/inventory/ItemSearchableSelect"
 import { logStockIn } from "./actions"
 
 interface Item {

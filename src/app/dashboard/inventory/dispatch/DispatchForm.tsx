@@ -6,6 +6,7 @@ import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { ArrowLeftRight, AlertTriangle, CheckCircle2 } from "lucide-react"
+import { ItemSearchableSelect } from "@/components/inventory/ItemSearchableSelect"
 
 type Item = {
   id: string
@@ -46,22 +47,12 @@ export function DispatchForm({ items, outlets }: { items: Item[]; outlets: Outle
           <Label htmlFor="itemId" className="text-xs font-bold text-slate-400 uppercase tracking-widest">
             Select Item
           </Label>
-          <select
-            name="itemId"
-            id="itemId"
-            required
-            defaultValue=""
-            className="w-full h-12 px-4 py-2 rounded-xl border border-white/10 bg-black/40 text-white placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all shadow-inner font-medium"
-          >
-            <option value="" disabled className="bg-slate-900 text-slate-500">
-              Select an item...
-            </option>
-            {items.map((item) => (
-              <option key={item.id} value={item.id} className="bg-slate-900 text-white">
-                {item.name} ({item.currentStock} {item.unit} central stock)
-              </option>
-            ))}
-          </select>
+          <ItemSearchableSelect 
+            items={items} 
+            name="itemId" 
+            placeholder="Search item to dispatch..." 
+            showStock={true} 
+          />
         </div>
 
         <div className="space-y-2">
