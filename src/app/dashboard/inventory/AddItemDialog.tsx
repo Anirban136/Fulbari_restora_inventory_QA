@@ -68,6 +68,10 @@ export function AddItemDialog({ vendors }: { vendors: any[] }) {
               <Input id="sellPrice" name="sellPrice" type="number" step="0.01" placeholder="e.g. 150" className="h-12 bg-white/5 border-white/10 text-white placeholder:text-slate-600 rounded-xl focus-visible:ring-primary/50" />
             </div>
           </div>
+          <div className="space-y-2">
+            <Label htmlFor="minStock" className="text-xs font-bold text-slate-400 uppercase tracking-widest text-amber-400">Low Stock Alert Threshold</Label>
+            <Input id="minStock" name="minStock" type="number" step="0.01" placeholder="Set minimum quantity before warning (e.g. 5)" className="h-12 bg-white/5 border-amber-500/20 text-white placeholder:text-slate-700 rounded-xl focus-visible:ring-amber-500/50 shadow-[0_0_15px_-5px_rgba(245,158,11,0.1)]" />
+          </div>
           <Button type="submit" className="w-full h-14 text-lg font-bold bg-white text-black hover:bg-slate-200 mt-4 rounded-xl shadow-[0_0_20px_rgba(255,255,255,0.2)]">Save Item</Button>
         </form>
       </DialogContent>

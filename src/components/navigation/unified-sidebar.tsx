@@ -18,7 +18,8 @@ import {
   Settings,
   LogOut,
   ChevronRight,
-  Users
+  Users,
+  ShieldCheck
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { UserControls } from "@/components/user-controls"
@@ -52,6 +53,7 @@ export function UnifiedSidebar({ user }: { user: any }) {
     { name: "Dispatch", href: "/dashboard/inventory/dispatch", icon: ArrowLeftRight, roles: ["OWNER", "INV_MANAGER"] },
     { name: "Outlets Stock", href: "/dashboard/stores", icon: Store, roles: ["OWNER", "INV_MANAGER"] },
     { name: "Vendors", href: "/dashboard/vendors", icon: Users, roles: ["OWNER"] },
+    { name: "Passcode Control", href: "/dashboard/settings/passwords", icon: ShieldCheck, roles: ["OWNER"] },
   ]
 
   const filteredItems = navItems.filter(item => 
@@ -139,7 +141,7 @@ export function UnifiedSidebar({ user }: { user: any }) {
           </nav>
 
           <div className="p-6 border-t border-white/10 bg-black/40 shrink-0">
-            <UserControls />
+            <UserControls role={user.role} />
           </div>
         </aside>
       </div>

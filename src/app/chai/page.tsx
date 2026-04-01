@@ -7,6 +7,7 @@ import Link from "next/link"
 import { getServerSession } from "next-auth"
 import { authOptions } from "@/lib/auth"
 import { formatTimeIST, formatDateIST, getISTDateBounds } from "@/lib/utils"
+import AppLayout from "@/components/layouts/app-layout"
 import { TabReceiptModal } from "@/components/TabReceiptModal"
 
 export default async function ChaiDashboard() {
@@ -64,14 +65,8 @@ export default async function ChaiDashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-background selection:bg-blue-500/30 relative overflow-hidden flex flex-col items-center">
-      
-      {/* Background Decorators */}
-      <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-10 mix-blend-overlay pointer-events-none z-0"></div>
-      <div className="absolute top-[-10%] right-[-10%] w-[500px] h-[500px] bg-blue-600/10 rounded-full blur-[150px] pointer-events-none z-0"></div>
-      <div className="absolute bottom-[-10%] left-[-10%] w-[500px] h-[500px] bg-sky-500/10 rounded-full blur-[150px] pointer-events-none z-0"></div>
-
-      <div className="w-full max-w-6xl px-6 py-10 relative z-10 flex flex-col min-h-screen">
+    <AppLayout>
+      <div className="w-full max-w-6xl px-6 py-10 relative z-10 flex flex-col min-h-full">
         
         <header className="flex items-center justify-between pb-8 mb-8 border-b border-white/10">
           <div className="flex items-center gap-4">
@@ -85,7 +80,6 @@ export default async function ChaiDashboard() {
               <p className="text-blue-400 font-bold mt-1 tracking-widest uppercase text-xs">Manager & POS Operations</p>
             </div>
           </div>
-          <UserControls />
         </header>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 flex-1">
@@ -275,6 +269,6 @@ export default async function ChaiDashboard() {
 
         </div>
       </div>
-    </div>
+    </AppLayout>
   )
 }

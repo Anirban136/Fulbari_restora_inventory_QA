@@ -34,9 +34,11 @@ export async function addItem(data: FormData) {
   const vendorId = data.get("vendorId") as string
   const costPerUnitRaw = data.get("costPerUnit") as string
   const sellPriceRaw = data.get("sellPrice") as string
+  const minStockRaw = data.get("minStock") as string
   
   const costPerUnit = costPerUnitRaw ? parseFloat(costPerUnitRaw) : null
   const sellPrice = sellPriceRaw ? parseFloat(sellPriceRaw) : null
+  const minStock = minStockRaw ? parseFloat(minStockRaw) : 0
 
   await prisma.item.create({
     data: { 
@@ -44,7 +46,8 @@ export async function addItem(data: FormData) {
       unit, 
       vendorId: vendorId || null, 
       costPerUnit,
-      sellPrice
+      sellPrice,
+      minStock
     },
   })
 
@@ -64,10 +67,12 @@ export async function updateItem(data: FormData) {
   const costPerUnitRaw = data.get("costPerUnit") as string
   const sellPriceRaw = data.get("sellPrice") as string
   const currentStockRaw = data.get("currentStock") as string
+  const minStockRaw = data.get("minStock") as string
   
   const costPerUnit = costPerUnitRaw ? parseFloat(costPerUnitRaw) : null
   const sellPrice = sellPriceRaw ? parseFloat(sellPriceRaw) : null
   const currentStock = currentStockRaw ? parseFloat(currentStockRaw) : 0
+  const minStock = minStockRaw ? parseFloat(minStockRaw) : 0
 
   await prisma.item.update({
     where: { id: itemId },
@@ -77,7 +82,8 @@ export async function updateItem(data: FormData) {
       vendorId: vendorId || null, 
       costPerUnit,
       sellPrice,
-      currentStock
+      currentStock,
+      minStock
     },
   })
 

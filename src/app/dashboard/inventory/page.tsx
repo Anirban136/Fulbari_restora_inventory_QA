@@ -67,6 +67,7 @@ export default async function GlobalCatalogPage() {
                 <TableHead className="font-bold text-slate-400 uppercase tracking-widest text-xs h-14 bg-black/40 backdrop-blur-md sticky top-0 z-20">Item Name</TableHead>
                 <TableHead className="font-bold text-slate-400 uppercase tracking-widest text-xs h-14 bg-black/40 backdrop-blur-md sticky top-0 z-20">Unit</TableHead>
                 <TableHead className="font-bold text-slate-400 uppercase tracking-widest text-xs h-14 bg-black/40 backdrop-blur-md sticky top-0 z-20 text-right">Central Stock</TableHead>
+                <TableHead className="font-bold text-slate-400 uppercase tracking-widest text-xs h-14 bg-black/40 backdrop-blur-md sticky top-0 z-20 text-right">Min Stock</TableHead>
                 <TableHead className="font-bold text-slate-400 uppercase tracking-widest text-xs h-14 bg-black/40 backdrop-blur-md sticky top-0 z-20 text-right">Cost Price</TableHead>
                 <TableHead className="font-bold text-slate-400 uppercase tracking-widest text-xs h-14 bg-black/40 backdrop-blur-md sticky top-0 z-20 text-right">Sell Price</TableHead>
                 <TableHead className="font-bold text-slate-400 uppercase tracking-widest text-xs h-14 bg-black/40 backdrop-blur-md sticky top-0 z-20">Vendor</TableHead>
@@ -78,7 +79,7 @@ export default async function GlobalCatalogPage() {
             <TableBody>
               {items.length === 0 ? (
                 <TableRow className="border-b border-white/10">
-                  <TableCell colSpan={isOwner ? 7 : 6} className="h-32 text-center text-slate-500">
+                  <TableCell colSpan={isOwner ? 8 : 7} className="h-32 text-center text-slate-500">
                      <span className="flex flex-col items-center justify-center">
                        <Search className="w-8 h-8 opacity-20 mb-2" />
                        No items found in catalog. Add your first item.
@@ -91,9 +92,18 @@ export default async function GlobalCatalogPage() {
                     <TableCell className="font-medium text-slate-200 group-hover:text-white transition-colors">{item.name}</TableCell>
                     <TableCell className="text-slate-500">{item.unit}</TableCell>
                     <TableCell className="text-right">
-                      <span className="inline-flex items-center justify-center px-4 py-1 rounded-xl bg-primary/20 border border-primary/30 text-primary-foreground font-black tracking-widest text-sm shadow-[0_0_10px_-2px_oklch(0.55_0.16_150_/_0.3)]">
-                        {item.currentStock} <span className="text-[10px] ml-1 opacity-70 uppercase">{item.unit}</span>
-                      </span>
+                      {item.minStock > 0 && item.currentStock <= item.minStock ? (
+                        <span className="inline-flex items-center justify-center px-4 py-1 rounded-xl bg-red-500/20 border border-red-500/30 text-red-500 font-black tracking-widest text-sm shadow-[0_0_15px_-2px_rgba(239,68,68,0.3)] animate-pulse">
+                          {item.currentStock} <span className="text-[10px] ml-1 opacity-70 uppercase">{item.unit}</span>
+                        </span>
+                      ) : (
+                        <span className="inline-flex items-center justify-center px-4 py-1 rounded-xl bg-primary/20 border border-primary/30 text-primary-foreground font-black tracking-widest text-sm shadow-[0_0_10px_-2px_oklch(0.55_0.16_150_/_0.3)]">
+                          {item.currentStock} <span className="text-[10px] ml-1 opacity-70 uppercase">{item.unit}</span>
+                        </span>
+                      )}
+                    </TableCell>
+                    <TableCell className="text-right text-slate-400 font-medium">
+                      {item.minStock || '—'}
                     </TableCell>
                     <TableCell className="text-right text-slate-300 font-bold">
                       {item.costPerUnit ? `₹${item.costPerUnit.toFixed(2)}` : '—'}

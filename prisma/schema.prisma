@@ -53,6 +53,7 @@ model Item {
   vendorId      String?  // FK to Vendor table
   costPerUnit   Float?
   sellPrice     Float?   // Selling price per unit
+  minStock      Float    @default(0) // Threshold for low stock warning
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 

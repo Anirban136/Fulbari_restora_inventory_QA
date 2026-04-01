@@ -69,9 +69,15 @@ export function EditItemDialog({ item, vendors }: { item: any, vendors: any[] })
               <Input id={`edit_sell_${item.id}`} name="sellPrice" type="number" step="0.01" defaultValue={item.sellPrice || ""} className="h-12 bg-white/5 border-white/10 text-white rounded-xl" />
             </div>
           </div>
-          <div className="space-y-2">
-            <Label htmlFor={`edit_stock_${item.id}`} className="text-xs font-bold text-slate-400 uppercase tracking-widest">Current Stock ({item.unit})</Label>
-            <Input id={`edit_stock_${item.id}`} name="currentStock" type="number" step="0.01" defaultValue={item.currentStock} required className="h-12 bg-white/5 border-white/10 text-white rounded-xl text-primary font-black" />
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor={`edit_stock_${item.id}`} className="text-xs font-bold text-slate-400 uppercase tracking-widest">Current Stock ({item.unit})</Label>
+              <Input id={`edit_stock_${item.id}`} name="currentStock" type="number" step="0.01" defaultValue={item.currentStock} required className="h-12 bg-white/5 border-white/10 text-white rounded-xl text-primary font-black" />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor={`edit_min_stock_${item.id}`} className="text-xs font-bold text-amber-500/80 uppercase tracking-widest">Min Stock</Label>
+              <Input id={`edit_min_stock_${item.id}`} name="minStock" type="number" step="0.01" defaultValue={item.minStock || 0} required className="h-12 bg-white/5 border-amber-500/20 text-white rounded-xl font-bold focus-visible:ring-amber-500/50" />
+            </div>
           </div>
           <Button type="submit" className="w-full h-14 text-lg font-bold bg-white text-black hover:bg-slate-200 mt-4 rounded-xl">Save Changes</Button>
         </form>

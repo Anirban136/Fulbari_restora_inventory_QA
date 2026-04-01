@@ -1,24 +1,33 @@
 import { prisma } from "@/lib/prisma"
 export const dynamic = 'force-dynamic'
-import { TrendingUp, CreditCard, Activity, BarChart3, Crown, Receipt } from "lucide-react"
+import { TrendingUp, CreditCard, Activity, BarChart3, Crown, Receipt, AlertTriangle, PackageSearch } from "lucide-react"
 import { getISTDateBounds } from "@/lib/utils"
 import { GrossRevenueModal } from "@/components/GrossRevenueModal"
 
 export default async function DashboardOverview() {
   const { startUTC: startOfDay, endUTC: endOfDay } = getISTDateBounds();
 
-  // 1. Fetch Today's Revenue & Sold Items
-  const todaysClosedTabs = await prisma.tab.findMany({
-    where: { status: "CLOSED", closedAt: { gte: startOfDay, lte: endOfDay } },
-    include: { 
-      Outlet: true,
-      Items: {
-        include: {
-          MenuItem: true
+  // 1. Fetch Data
+  const [todaysClosedTabs, lowStockItems] = await Promise.all([
+    prisma.tab.findMany({
+      where: { status: "CLOSED", closedAt: { gte: startOfDay, lte: endOfDay } },
+      include: { 
+        Outlet: true,
+        Items: {
+          include: {
+            MenuItem: true
+          }
         }
       }
-    }
-  })
+    }),
+    prisma.item.findMany({
+      where: { minStock: { gt: 0 } },
+      orderBy: { name: 'asc' }
+    })
+  ])
+
+  // Filter low stock items in JS (Prisma doesn't support field-to-field comparison in where clause easily)
+  const alerts = lowStockItems.filter(item => item.currentStock <= item.minStock)
 
   let totalRevenue = 0
   let cashRevenue = 0
@@ -75,6 +84,35 @@ export default async function DashboardOverview() {
         </h2>
         <p className="text-muted-foreground mt-2 text-lg">Real-time performance metrics across all operations.</p>
       </header>
+
+      {/* Low Stock Alerts */}
+      {alerts.length > 0 && (
+        <div className="glass-panel border-red-500/20 bg-red-500/5 p-6 rounded-[2rem] flex flex-col sm:flex-row items-center gap-6 animate-in slide-in-from-top-4 duration-500 shadow-[0_20px_50px_-20px_rgba(239,68,68,0.2)]">
+          <div className="h-16 w-16 bg-red-500/10 rounded-2xl flex items-center justify-center shrink-0 border border-red-500/20 shadow-[0_0_20px_rgba(239,68,68,0.2)]">
+            <AlertTriangle className="text-red-500 w-8 h-8 animate-pulse" />
+          </div>
+          <div className="flex-1 text-center sm:text-left">
+            <h3 className="text-xl font-black text-white flex items-center justify-center sm:justify-start gap-2 uppercase tracking-tight">
+              Inventory Alerts Needed
+              <span className="bg-red-500 text-white text-[10px] px-2 py-0.5 rounded-full ml-2 animate-bounce">{alerts.length}</span>
+            </h3>
+            <div className="mt-3 flex flex-wrap justify-center sm:justify-start gap-2">
+              {alerts.map(item => (
+                <div key={item.id} className="px-3 py-1.5 bg-black/40 border border-red-500/20 rounded-xl flex items-center gap-2 group hover:border-red-500/50 transition-colors">
+                  <span className="text-xs font-bold text-slate-300">{item.name}:</span>
+                  <span className="text-xs font-black text-red-400">{item.currentStock} {item.unit}</span>
+                  <span className="text-[10px] text-slate-500 font-bold uppercase tracking-tighter">(Min: {item.minStock})</span>
+                </div>
+              ))}
+            </div>
+          </div>
+          <a href="/dashboard/inventory" className="shrink-0 w-full sm:w-auto">
+            <button className="w-full sm:w-auto px-6 py-3 bg-red-600 hover:bg-red-500 text-white text-xs font-black uppercase tracking-widest rounded-xl transition-all shadow-lg active:scale-95 flex items-center justify-center gap-2">
+              <PackageSearch className="w-4 h-4" /> Resolve Now
+            </button>
+          </a>
+        </div>
+      )}
 
       {/* High-Level Metrics */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
