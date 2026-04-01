@@ -23,7 +23,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
-import { AddVendorDialog } from "./AddVendorDialog"
 import { AddItemDialog } from "./AddItemDialog"
 import { EditItemDialog } from "./EditItemDialog"
 
@@ -56,7 +55,6 @@ export default async function GlobalCatalogPage() {
         </div>
         
         <div className="flex flex-col gap-3 min-w-[200px] w-full sm:w-auto">
-          <AddVendorDialog />
           <AddItemDialog vendors={vendors} />
         </div>
       </div>

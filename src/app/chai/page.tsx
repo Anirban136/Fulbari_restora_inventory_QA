@@ -4,6 +4,8 @@ import { Button } from "@/components/ui/button"
 import { UserControls } from "@/components/user-controls"
 import { CupSoda, PackageOpen, LayoutGrid, Search, History, Receipt } from "lucide-react"
 import Link from "next/link"
+import { getServerSession } from "next-auth"
+import { authOptions } from "@/lib/auth"
 import { formatTimeIST, formatDateIST, getISTDateBounds } from "@/lib/utils"
 import { TabReceiptModal } from "@/components/TabReceiptModal"
 
@@ -11,6 +13,9 @@ export default async function ChaiDashboard() {
   const chaiJoint = await prisma.outlet.findFirst({ where: { type: "CHAI_JOINT" }})
   
   if (!chaiJoint) return <div className="min-h-screen bg-background text-white p-10 font-bold">Chai Joint outlet not configured.</div>
+
+  const session = await getServerSession(authOptions)
+  const isOwner = session?.user?.role === "OWNER"
 
   const { startUTC: todayStart, endUTC: todayEnd } = getISTDateBounds();
 
@@ -106,11 +111,13 @@ export default async function ChaiDashboard() {
                     <span>Today's Report</span>
                     <Receipt className="w-5 h-5 text-blue-500" />
                   </div>
-                  <a href="/api/export/transactions?outlet=CHAI_JOINT" download>
-                    <Button variant="ghost" size="sm" className="h-8 px-2 text-[10px] text-blue-400 hover:bg-blue-500/10 border border-blue-500/20">
-                      Download CSV
-                    </Button>
-                  </a>
+                  {isOwner && (
+                    <a href="/api/export/transactions?outlet=CHAI_JOINT" download>
+                      <Button variant="ghost" size="sm" className="h-8 px-2 text-[10px] text-blue-400 hover:bg-blue-500/10 border border-blue-500/20">
+                        Download CSV
+                      </Button>
+                    </a>
+                  )}
                 </h2>
                <div className="space-y-3">
                  <div className="flex justify-between items-center bg-white/5 p-3 rounded-xl border border-white/5">
@@ -247,22 +254,23 @@ export default async function ChaiDashboard() {
                </div>
             </div>
 
-            {/* 7-Day History Reports */}
-            <div className="glass-panel p-6 rounded-3xl mt-2 border border-sky-500/10 hover:border-sky-500/30 transition-colors">
-               <h2 className="text-lg font-bold text-white uppercase tracking-widest mb-6 flex items-center justify-between">
-                 <span>Daily ExceL Reports</span>
-               </h2>
-               <div className="flex overflow-x-auto gap-4 pb-2 custom-scrollbar">
-                  {last7Days.map((day) => (
-                    <div key={day.dateStr} className="min-w-[140px] p-4 bg-white/5 border border-white/10 rounded-2xl flex flex-col items-center gap-3 hover:bg-white/10 transition-colors">
-                      <span className="text-xs font-bold text-slate-400 uppercase tracking-widest text-center whitespace-nowrap">{day.isToday ? "Today" : day.displayDate}</span>
-                      <a href={`/api/export/transactions?outlet=CHAI_JOINT&date=${day.dateStr}`} download className="w-full">
-                        <Button variant="secondary" className="w-full text-xs h-8 bg-sky-500/20 text-sky-400 hover:bg-sky-500/40 border border-sky-500/30">Download</Button>
-                      </a>
-                    </div>
-                  ))}
-               </div>
-            </div>
+            {isOwner && (
+              <div className="glass-panel p-6 rounded-3xl mt-2 border border-sky-500/10 hover:border-sky-500/30 transition-colors">
+                <h2 className="text-lg font-bold text-white uppercase tracking-widest mb-6 flex items-center justify-between">
+                  <span>Daily ExceL Reports</span>
+                </h2>
+                <div className="flex overflow-x-auto gap-4 pb-2 custom-scrollbar">
+                   {last7Days.map((day) => (
+                     <div key={day.dateStr} className="min-w-[140px] p-4 bg-white/5 border border-white/10 rounded-2xl flex flex-col items-center gap-3 hover:bg-white/10 transition-colors">
+                       <span className="text-xs font-bold text-slate-400 uppercase tracking-widest text-center whitespace-nowrap">{day.isToday ? "Today" : day.displayDate}</span>
+                       <a href={`/api/export/transactions?outlet=CHAI_JOINT&date=${day.dateStr}`} download className="w-full">
+                         <Button variant="secondary" className="w-full text-xs h-8 bg-sky-500/20 text-sky-400 hover:bg-sky-500/40 border border-sky-500/30">Download</Button>
+                       </a>
+                     </div>
+                   ))}
+                </div>
+              </div>
+            )}
           </div>
 
         </div>

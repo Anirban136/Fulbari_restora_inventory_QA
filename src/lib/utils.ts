@@ -39,3 +39,22 @@ export function getISTDateBounds() {
   
   return { startUTC, endUTC };
 }
+
+export function getISTMonthBounds() {
+  const now = new Date();
+  
+  // IST is UTC + 5:30
+  const istOffset = 5.5 * 3600000;
+  const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
+  const istDate = new Date(utc + istOffset);
+  
+  const startOfMonthIST = new Date(istDate.getFullYear(), istDate.getMonth(), 1, 0, 0, 0, 0);
+  const endOfMonthIST = new Date(istDate.getFullYear(), istDate.getMonth() + 1, 0, 23, 59, 59, 999);
+  
+  // Convert back to UTC for Prisma
+  const startUTC = new Date(startOfMonthIST.getTime() - istOffset);
+  const endUTC = new Date(endOfMonthIST.getTime() - istOffset);
+  
+  return { startUTC, endUTC };
+}
+

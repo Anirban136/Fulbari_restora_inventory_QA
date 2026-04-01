@@ -17,7 +17,8 @@ import {
   History,
   Settings,
   LogOut,
-  ChevronRight
+  ChevronRight,
+  Users
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { UserControls } from "@/components/user-controls"
@@ -50,6 +51,7 @@ export function UnifiedSidebar({ user }: { user: any }) {
     { name: "Stock In", href: "/dashboard/inventory/stock-in", icon: Package, roles: ["OWNER", "INV_MANAGER"] },
     { name: "Dispatch", href: "/dashboard/inventory/dispatch", icon: ArrowLeftRight, roles: ["OWNER", "INV_MANAGER"] },
     { name: "Outlets Stock", href: "/dashboard/stores", icon: Store, roles: ["OWNER", "INV_MANAGER"] },
+    { name: "Vendors", href: "/dashboard/vendors", icon: Users, roles: ["OWNER"] },
   ]
 
   const filteredItems = navItems.filter(item => 
