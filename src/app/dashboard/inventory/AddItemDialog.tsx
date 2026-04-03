@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/dialog"
 import { addItem } from "./actions"
 
-export function AddItemDialog({ vendors }: { vendors: any[] }) {
+export function AddItemDialog() {
   const [open, setOpen] = useState(false)
 
   async function handleSubmit(formData: FormData) {

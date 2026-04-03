@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/dialog"
 import { updateItem } from "./actions"
 
-export function EditItemDialog({ item, vendors }: { item: any, vendors: any[] }) {
+export function EditItemDialog({ item }: { item: any }) {
   const [open, setOpen] = useState(false)
 
   async function handleSubmit(formData: FormData) {

@@ -30,15 +30,9 @@ export default async function GlobalCatalogPage() {
   const session = await getServerSession(authOptions)
   const isOwner = session?.user?.role === "OWNER"
 
-  const [items, vendors] = await Promise.all([
-    prisma.item.findMany({
-      include: { Vendor: true },
-      orderBy: { name: 'asc' }
-    }),
-    prisma.vendor.findMany({
-      orderBy: { name: 'asc' }
-    })
-  ])
+  const items = await prisma.item.findMany({
+    orderBy: { name: 'asc' }
+  })
 
   return (
     <div className="space-y-8 relative">
@@ -55,7 +49,7 @@ export default async function GlobalCatalogPage() {
         </div>
         
         <div className="flex flex-col gap-3 min-w-[200px] w-full sm:w-auto">
-          <AddItemDialog vendors={vendors} />
+          <AddItemDialog />
         </div>
       </div>
 
@@ -71,7 +65,7 @@ export default async function GlobalCatalogPage() {
                 <TableHead className="font-bold text-slate-400 uppercase tracking-widest text-xs h-14 bg-black/40 backdrop-blur-md sticky top-0 z-20 text-right">Min Stock</TableHead>
                 <TableHead className="font-bold text-slate-400 uppercase tracking-widest text-xs h-14 bg-black/40 backdrop-blur-md sticky top-0 z-20 text-right">Cost Price</TableHead>
                 <TableHead className="font-bold text-slate-400 uppercase tracking-widest text-xs h-14 bg-black/40 backdrop-blur-md sticky top-0 z-20 text-right">Sell Price</TableHead>
-                <TableHead className="font-bold text-slate-400 uppercase tracking-widest text-xs h-14 bg-black/40 backdrop-blur-md sticky top-0 z-20">Vendor</TableHead>
+
                 {(isOwner || session?.user?.role === "INV_MANAGER") && (
                   <TableHead className="font-bold text-slate-400 uppercase tracking-widest text-xs h-14 bg-black/40 backdrop-blur-md sticky top-0 z-20 text-center">Actions</TableHead>
                 )}
@@ -80,7 +74,7 @@ export default async function GlobalCatalogPage() {
             <TableBody>
               {items.length === 0 ? (
                 <TableRow className="border-b border-white/10">
-                  <TableCell colSpan={isOwner ? 9 : 8} className="h-32 text-center text-slate-500">
+                  <TableCell colSpan={isOwner ? 8 : 7} className="h-32 text-center text-slate-500">
                      <span className="flex flex-col items-center justify-center">
                        <Search className="w-8 h-8 opacity-20 mb-2" />
                        No items found in catalog. Add your first item.
@@ -113,12 +107,12 @@ export default async function GlobalCatalogPage() {
                     <TableCell className="text-right text-emerald-400 font-bold">
                       {item.sellPrice ? `₹${item.sellPrice.toFixed(2)}` : '—'}
                     </TableCell>
-                    <TableCell className="text-slate-400 font-medium">{item.Vendor?.name || item.vendor || '—'}</TableCell>
+
                     {(isOwner || session?.user?.role === "INV_MANAGER") && (
                       <TableCell className="text-center">
                         <div className="flex items-center justify-center gap-2">
                           {/* Edit Dialog */}
-                          <EditItemDialog item={item} vendors={vendors} />
+                          <EditItemDialog item={item} />
 
                           {/* Delete Dialog (Only for Owner) */}
 
