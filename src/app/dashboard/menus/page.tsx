@@ -76,12 +76,14 @@ export default async function MenusPage() {
 
               <div className="space-y-2">
                 <Label htmlFor="category" className="text-xs font-bold text-slate-400 uppercase tracking-widest">Category</Label>
-                <Input id="category" name="category" list="category-options" placeholder="Drinks, Snacks" defaultValue="General" required className="h-12 bg-black/40 border-white/10 text-white placeholder:text-slate-600 rounded-xl focus-visible:ring-indigo-500/50 shadow-inner" />
-                <datalist id="category-options">
-                  {existingCategories.map((cat) => (
-                    <option key={cat as string} value={cat as string} />
-                  ))}
-                </datalist>
+                <select name="category" id="category" required defaultValue="" className="w-full h-12 px-4 py-2 rounded-xl border border-white/10 bg-black/40 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all font-medium">
+                  <option value="" disabled className="bg-slate-900 text-slate-500">Select a category...</option>
+                  <option value="Chai" className="bg-slate-900 text-white">Chai</option>
+                  <option value="Coffee" className="bg-slate-900 text-white">Coffee</option>
+                  <option value="Ciggerette" className="bg-slate-900 text-white">Ciggerette</option>
+                  <option value="Beverage" className="bg-slate-900 text-white">Beverage</option>
+                  <option value="Others" className="bg-slate-900 text-white">Others</option>
+                </select>
               </div>
             </div>
 
