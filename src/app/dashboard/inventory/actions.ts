@@ -30,6 +30,7 @@ export async function addItem(data: FormData) {
   }
 
   const name = data.get("name") as string
+  const category = data.get("category") as string || "Uncategorized"
   const unit = data.get("unit") as string
   const vendorId = data.get("vendorId") as string
   const costPerUnitRaw = data.get("costPerUnit") as string
@@ -43,6 +44,7 @@ export async function addItem(data: FormData) {
   await prisma.item.create({
     data: { 
       name, 
+      category,
       unit, 
       vendorId: vendorId || null, 
       costPerUnit,
@@ -62,6 +64,7 @@ export async function updateItem(data: FormData) {
 
   const itemId = data.get("itemId") as string
   const name = data.get("name") as string
+  const category = data.get("category") as string || "Uncategorized"
   const unit = data.get("unit") as string
   const vendorId = data.get("vendorId") as string
   const costPerUnitRaw = data.get("costPerUnit") as string
@@ -78,6 +81,7 @@ export async function updateItem(data: FormData) {
     where: { id: itemId },
     data: { 
       name, 
+      category,
       unit, 
       vendorId: vendorId || null, 
       costPerUnit,

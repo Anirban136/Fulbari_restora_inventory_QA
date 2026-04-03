@@ -47,8 +47,31 @@ export function EditItemDialog({ item, vendors }: { item: any, vendors: any[] })
             <Input id={`edit_name_${item.id}`} name="name" defaultValue={item.name} required className="h-12 bg-white/5 border-white/10 text-white rounded-xl" />
           </div>
           <div className="space-y-2">
+            <Label htmlFor={`edit_category_${item.id}`} className="text-xs font-bold text-slate-400 uppercase tracking-widest">Category</Label>
+            <select name="category" id={`edit_category_${item.id}`} defaultValue={item.category || "Uncategorized"} required className="w-full h-12 px-4 py-2 rounded-xl border border-white/10 bg-black/40 text-white focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all font-medium">
+              <option value="Dairy" className="bg-slate-900 text-white">Dairy</option>
+              <option value="Produce" className="bg-slate-900 text-white">Produce</option>
+              <option value="Meat" className="bg-slate-900 text-white">Meat</option>
+              <option value="Spices" className="bg-slate-900 text-white">Spices</option>
+              <option value="Beverages" className="bg-slate-900 text-white">Beverages</option>
+              <option value="Bakery" className="bg-slate-900 text-white">Bakery</option>
+              <option value="Cleaning Supplies" className="bg-slate-900 text-white">Cleaning Supplies</option>
+              <option value="Packaging" className="bg-slate-900 text-white">Packaging</option>
+              <option value="Dry Goods" className="bg-slate-900 text-white">Dry Goods</option>
+              <option value="Uncategorized" className="bg-slate-900 text-white">Other / Uncategorized</option>
+            </select>
+          </div>
+          <div className="space-y-2">
             <Label htmlFor={`edit_unit_${item.id}`} className="text-xs font-bold text-slate-400 uppercase tracking-widest">Unit Type</Label>
-            <Input id={`edit_unit_${item.id}`} name="unit" defaultValue={item.unit} required className="h-12 bg-white/5 border-white/10 text-white rounded-xl" />
+            <select name="unit" id={`edit_unit_${item.id}`} defaultValue={item.unit} required className="w-full h-12 px-4 py-2 rounded-xl border border-white/10 bg-black/40 text-white focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all font-medium">
+              <option value="kg" className="bg-slate-900 text-white">kg</option>
+              <option value="gm" className="bg-slate-900 text-white">gm</option>
+              <option value="lit" className="bg-slate-900 text-white">litre (lit)</option>
+              <option value="ml" className="bg-slate-900 text-white">ml</option>
+              <option value="packet" className="bg-slate-900 text-white">packet</option>
+              <option value="box" className="bg-slate-900 text-white">box</option>
+              <option value="pcs" className="bg-slate-900 text-white">pieces (pcs)</option>
+            </select>
           </div>
           <div className="space-y-2">
             <Label htmlFor={`edit_vendor_${item.id}`} className="text-xs font-bold text-slate-400 uppercase tracking-widest">Select Vendor</Label>

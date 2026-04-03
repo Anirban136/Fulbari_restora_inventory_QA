@@ -47,6 +47,7 @@ model Vendor {
 model Item {
   id            String   @id @default(cuid())
   name          String
+  category      String   @default("Uncategorized")
   unit          String   // kg, litre, pieces, packets
   currentStock  Float    @default(0) // Central inventory stock
   vendor        String?  // Legacy text field

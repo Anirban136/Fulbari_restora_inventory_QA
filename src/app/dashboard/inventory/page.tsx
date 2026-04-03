@@ -65,6 +65,7 @@ export default async function GlobalCatalogPage() {
             <TableHeader>
               <TableRow className="border-b border-white/10 hover:bg-transparent">
                 <TableHead className="font-bold text-slate-400 uppercase tracking-widest text-xs h-14 bg-black/40 backdrop-blur-md sticky top-0 z-20">Item Name</TableHead>
+                <TableHead className="font-bold text-slate-400 uppercase tracking-widest text-xs h-14 bg-black/40 backdrop-blur-md sticky top-0 z-20">Category</TableHead>
                 <TableHead className="font-bold text-slate-400 uppercase tracking-widest text-xs h-14 bg-black/40 backdrop-blur-md sticky top-0 z-20">Unit</TableHead>
                 <TableHead className="font-bold text-slate-400 uppercase tracking-widest text-xs h-14 bg-black/40 backdrop-blur-md sticky top-0 z-20 text-right">Central Stock</TableHead>
                 <TableHead className="font-bold text-slate-400 uppercase tracking-widest text-xs h-14 bg-black/40 backdrop-blur-md sticky top-0 z-20 text-right">Min Stock</TableHead>
@@ -79,7 +80,7 @@ export default async function GlobalCatalogPage() {
             <TableBody>
               {items.length === 0 ? (
                 <TableRow className="border-b border-white/10">
-                  <TableCell colSpan={isOwner ? 8 : 7} className="h-32 text-center text-slate-500">
+                  <TableCell colSpan={isOwner ? 9 : 8} className="h-32 text-center text-slate-500">
                      <span className="flex flex-col items-center justify-center">
                        <Search className="w-8 h-8 opacity-20 mb-2" />
                        No items found in catalog. Add your first item.
@@ -90,6 +91,7 @@ export default async function GlobalCatalogPage() {
                 items.map((item: any) => (
                   <TableRow key={item.id} className="border-b border-white/5 hover:bg-white/5 transition-colors group">
                     <TableCell className="font-medium text-slate-200 group-hover:text-white transition-colors">{item.name}</TableCell>
+                    <TableCell className="text-slate-400 text-xs font-bold uppercase tracking-wider">{item.category}</TableCell>
                     <TableCell className="text-slate-500">{item.unit}</TableCell>
                     <TableCell className="text-right">
                       {item.minStock > 0 && item.currentStock <= item.minStock ? (
