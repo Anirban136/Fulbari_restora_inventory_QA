@@ -85,3 +85,44 @@ export async function closeTab(data: FormData) {
 
   redirect(`/tabs?target=${tab.Outlet.type}`)
 }
+
+export async function reopenTab(tabId: string) {
+  const tab = await prisma.tab.findUnique({ where: { id: tabId }, include: { Outlet: true, Items: { include: { MenuItem: true } } }})
+  if (!tab || tab.status !== "CLOSED") return
+
+  // Reverse inventory deductions
+  for (const item of tab.Items) {
+     if (item.MenuItem.itemId) {
+       try {
+         await prisma.outletStock.update({
+           where: { outletId_itemId: { outletId: tab.outletId, itemId: item.MenuItem.itemId } },
+           data: { quantity: { increment: item.quantity } }
+         })
+         
+         await prisma.inventoryLedger.create({
+           data: {
+             type: "REVERSAL",
+             itemId: item.MenuItem.itemId,
+             outletId: tab.outletId,
+             quantity: item.quantity,
+             userId: tab.userId,
+             notes: `Tab Re-opened Reversal (Tab ${tab.id})`
+           }
+         })
+       } catch (e) {
+         console.error("Failed to increment inventory for reversal", item.MenuItem.name, e)
+       }
+     }
+  }
+
+  await prisma.tab.update({
+    where: { id: tabId },
+    data: {
+      status: "OPEN",
+      paymentMode: null,
+      closedAt: null
+    }
+  })
+
+  redirect(`/tabs/${tabId}`)
+}

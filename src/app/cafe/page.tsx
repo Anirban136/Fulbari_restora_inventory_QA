@@ -2,13 +2,14 @@ import { prisma } from "@/lib/prisma"
 export const dynamic = 'force-dynamic'
 import { Button } from "@/components/ui/button"
 import { UserControls } from "@/components/user-controls" // reuse logout button component
-import { Coffee, PackageOpen, LayoutGrid, Search, History, Receipt } from "lucide-react"
+import { Coffee, PackageOpen, LayoutGrid, Search, History, Receipt, Edit } from "lucide-react"
 import Link from "next/link"
 import { getServerSession } from "next-auth"
 import { authOptions } from "@/lib/auth"
 import { formatTimeIST, formatDateIST, getISTDateBounds } from "@/lib/utils"
 import AppLayout from "@/components/layouts/app-layout"
 import { TabReceiptModal } from "@/components/TabReceiptModal"
+import { reopenTab } from "@/app/tabs/[tabId]/actions"
 
 export default async function CafeDashboard() {
   const cafe = await prisma.outlet.findFirst({ where: { type: "CAFE" }})
@@ -222,7 +223,7 @@ export default async function CafeDashboard() {
                             </div>
                             <span className="font-bold text-slate-200 group-hover:text-white text-lg transition-colors block truncate">{tab.customerName || "Walk-in Customer"}</span>
                             <p className="text-xs text-slate-500 mt-1 font-medium">Billed by: <span className="text-slate-400">{tab.User.name}</span></p>
-                            <div className="mt-3">
+                            <div className="mt-3 flex flex-wrap items-center gap-2">
                               <TabReceiptModal
                                 tabId={tab.id}
                                 customerName={tab.customerName}
@@ -232,6 +233,13 @@ export default async function CafeDashboard() {
                                 items={tab.Items}
                                 accentColor="amber"
                               />
+                              {(tab.status === "CLOSED" || tab.status === "CANCELLED") && (
+                                <form action={reopenTab.bind(null, tab.id)}>
+                                  <Button type="submit" variant="ghost" size="sm" className="h-8 text-xs font-bold text-slate-400 hover:text-amber-400 hover:bg-amber-500/10 transition-colors border border-transparent hover:border-amber-500/20">
+                                    <Edit className="w-3 h-3 mr-1" /> Edit Bill
+                                  </Button>
+                                </form>
+                              )}
                             </div>
                           </div>
                           <div className="text-right shrink-0">
