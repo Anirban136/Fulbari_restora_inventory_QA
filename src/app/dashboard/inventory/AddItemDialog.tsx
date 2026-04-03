@@ -47,7 +47,16 @@ export function AddItemDialog({ vendors }: { vendors: any[] }) {
           </div>
           <div className="space-y-2">
             <Label htmlFor="unit" className="text-xs font-bold text-slate-400 uppercase tracking-widest">Unit Type</Label>
-            <Input id="unit" name="unit" placeholder="e.g. kg, litre, pieces" required className="h-12 bg-white/5 border-white/10 text-white placeholder:text-slate-600 rounded-xl focus-visible:ring-primary/50" />
+            <select name="unit" id="unit" required className="w-full h-12 px-4 py-2 rounded-xl border border-white/10 bg-black/40 text-white focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all font-medium">
+              <option value="" className="bg-slate-900 text-slate-500">Select a unit...</option>
+              <option value="kg" className="bg-slate-900 text-white">kg</option>
+              <option value="gm" className="bg-slate-900 text-white">gm</option>
+              <option value="lit" className="bg-slate-900 text-white">litre (lit)</option>
+              <option value="ml" className="bg-slate-900 text-white">ml</option>
+              <option value="packet" className="bg-slate-900 text-white">packet</option>
+              <option value="box" className="bg-slate-900 text-white">box</option>
+              <option value="pcs" className="bg-slate-900 text-white">pieces (pcs)</option>
+            </select>
           </div>
           <div className="space-y-2">
             <Label htmlFor="vendorId" className="text-xs font-bold text-slate-400 uppercase tracking-widest">Select Vendor</Label>
