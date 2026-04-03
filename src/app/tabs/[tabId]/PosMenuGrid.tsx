@@ -23,12 +23,12 @@ export function PosMenuGrid({ categorizedMenu, tabId, isCafe }: { categorizedMen
             <button
               key={category}
               onClick={() => setSelectedCategory(category)}
-              className={`w-full text-center bg-white/5 backdrop-blur-md ${isCafe ? "hover:bg-orange-500/10 hover:border-orange-500/50 hover:shadow-[0_0_25px_-5px_rgba(249,115,22,0.3)]" : "hover:bg-sky-500/10 hover:border-sky-500/50 hover:shadow-[0_0_25px_-5px_rgba(14,165,233,0.3)]"} border border-white/10 rounded-2xl p-6 transition-all active:scale-95 group shadow-lg flex flex-col items-center justify-center gap-3 aspect-square max-h-[160px]`}
+              className={`w-full text-center bg-white/5 backdrop-blur-md ${isCafe ? "hover:bg-orange-500/10 hover:border-orange-500/50 hover:shadow-[0_0_25px_-5px_rgba(249,115,22,0.3)]" : "hover:bg-sky-500/10 hover:border-sky-500/50 hover:shadow-[0_0_25px_-5px_rgba(14,165,233,0.3)]"} border border-white/10 rounded-2xl p-6 transition-all active:scale-95 group shadow-lg flex flex-col items-center justify-center gap-3 min-h-[150px]`}
             >
-              <div className={`p-3 rounded-xl bg-white/5 ${isCafe ? "group-hover:bg-orange-500/20" : "group-hover:bg-sky-500/20"} transition-colors`}>
+              <div className={`p-3 rounded-xl bg-white/5 shrink-0 ${isCafe ? "group-hover:bg-orange-500/20" : "group-hover:bg-sky-500/20"} transition-colors`}>
                 <Tag className={`w-8 h-8 ${isCafe ? "text-orange-400" : "text-sky-400"}`} />
               </div>
-              <div className={`font-black text-slate-200 ${isCafe ? "group-hover:text-orange-300" : "group-hover:text-sky-300"} text-lg sm:text-xl truncate w-full transition-colors`}>
+              <div className={`font-black text-slate-200 ${isCafe ? "group-hover:text-orange-300" : "group-hover:text-sky-300"} text-base sm:text-lg w-full transition-colors leading-tight shrink-0 px-1`}>
                 {category}
               </div>
               <p className="text-xs text-slate-500 font-bold tracking-widest">{categorizedMenu[category].length} ITEMS</p>
