@@ -5,6 +5,18 @@ import { authOptions } from "@/lib/auth"
 import { Users, Truck, IndianRupee, Package, Search, Phone, MapPin } from "lucide-react"
 import { getISTMonthBounds, formatDateIST } from "@/lib/utils"
 import { AddVendorDialog } from "../inventory/AddVendorDialog"
+import { EditVendorDialog } from "../inventory/EditVendorDialog"
+import { deleteVendor } from "../inventory/actions"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
+import { Button } from "@/components/ui/button"
+import { Trash2 } from "lucide-react"
 import {
   Table,
   TableBody,
@@ -95,12 +107,15 @@ export default async function VendorsPage() {
                 <TableHead className="font-bold text-slate-400 uppercase tracking-widest text-xs h-14 bg-black/40 backdrop-blur-md sticky top-0 z-20 px-6">Contact Info</TableHead>
                 <TableHead className="font-bold text-slate-400 uppercase tracking-widest text-xs h-14 bg-black/40 backdrop-blur-md sticky top-0 z-20 text-right px-6">Monthly Collection</TableHead>
                 <TableHead className="font-bold text-slate-400 uppercase tracking-widest text-xs h-14 bg-black/40 backdrop-blur-md sticky top-0 z-20 text-right px-6">Monthly Payment</TableHead>
+                {isOwner && (
+                  <TableHead className="font-bold text-slate-400 uppercase tracking-widest text-xs h-14 bg-black/40 backdrop-blur-md sticky top-0 z-20 text-center px-6">Actions</TableHead>
+                )}
               </TableRow>
             </TableHeader>
             <TableBody>
               {vendorStats.length === 0 ? (
                 <TableRow className="border-b border-white/10">
-                  <TableCell colSpan={4} className="h-40 text-center text-slate-500">
+                  <TableCell colSpan={isOwner ? 5 : 4} className="h-40 text-center text-slate-500">
                     <span className="flex flex-col items-center justify-center">
                       <Truck className="w-10 h-10 opacity-20 mb-3" />
                       No vendors registered yet.
@@ -148,6 +163,37 @@ export default async function VendorsPage() {
                         <span className="text-[10px] text-emerald-500/60 font-medium uppercase tracking-widest mt-1">estimated due</span>
                       </div>
                     </TableCell>
+                    {isOwner && (
+                      <TableCell className="px-6 py-5 text-center">
+                        <div className="flex items-center justify-center gap-1">
+                          <EditVendorDialog vendor={vendor} />
+                          <Dialog>
+                            <DialogTrigger render={
+                              <button className="p-2 rounded-xl text-red-400/60 hover:text-red-400 hover:bg-red-500/10 border border-transparent hover:border-red-500/20 transition-all focus:outline-none focus:ring-2 focus:ring-red-500/50" title="Delete Vendor">
+                                <Trash2 className="w-4 h-4" />
+                              </button>
+                            } />
+                            <DialogContent className="sm:max-w-[400px] bg-black/90 backdrop-blur-2xl border-red-500/20 rounded-3xl shadow-[0_0_50px_rgba(239,68,68,0.15)]">
+                              <DialogHeader className="mb-2">
+                                <div className="w-12 h-12 bg-red-500/10 rounded-2xl flex items-center justify-center mb-4 border border-red-500/20">
+                                  <Trash2 className="w-6 h-6 text-red-400" />
+                                </div>
+                                <DialogTitle className="text-xl font-black text-white">Delete Vendor?</DialogTitle>
+                                <DialogDescription className="text-slate-400 leading-relaxed">
+                                  Are you completely sure you want to delete <span className="text-white font-bold">{vendor.name}</span>? Central catalog items associated with this vendor will have their vendor removed.
+                                </DialogDescription>
+                              </DialogHeader>
+                              <form action={deleteVendor} className="mt-4">
+                                <input type="hidden" name="vendorId" value={vendor.id} />
+                                <Button type="submit" variant="destructive" className="w-full h-11 font-bold rounded-xl transition-all active:scale-95">
+                                  Yes, Delete Vendor
+                                </Button>
+                              </form>
+                            </DialogContent>
+                          </Dialog>
+                        </div>
+                      </TableCell>
+                    )}
                   </TableRow>
                 ))
               )}

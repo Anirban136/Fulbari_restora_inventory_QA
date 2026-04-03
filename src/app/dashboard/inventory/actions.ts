@@ -23,6 +23,50 @@ export async function addVendor(data: FormData) {
   revalidatePath("/dashboard/inventory")
 }
 
+export async function editVendor(data: FormData) {
+  const session = await getServerSession(authOptions)
+  if (!session || (session.user.role !== "OWNER" && session.user.role !== "INV_MANAGER")) {
+    throw new Error("Unauthorized")
+  }
+
+  const vendorId = data.get("vendorId") as string
+  const name = data.get("name") as string
+  const contact = data.get("contact") as string
+  const email = data.get("email") as string
+  const address = data.get("address") as string
+
+  await prisma.vendor.update({
+    where: { id: vendorId },
+    data: { name, contact, email, address },
+  })
+
+  revalidatePath("/dashboard/vendors")
+  revalidatePath("/dashboard/inventory")
+}
+
+export async function deleteVendor(data: FormData) {
+  const session = await getServerSession(authOptions)
+  if (!session || session.user.role !== "OWNER") {
+    throw new Error("Unauthorized")
+  }
+
+  const vendorId = data.get("vendorId") as string
+
+  // Gracefully remove vendor relation from items before deleting
+  await prisma.$transaction([
+    prisma.item.updateMany({
+      where: { vendorId },
+      data: { vendorId: null }
+    }),
+    prisma.vendor.delete({
+      where: { id: vendorId }
+    })
+  ])
+
+  revalidatePath("/dashboard/vendors")
+  revalidatePath("/dashboard/inventory")
+}
+
 export async function addItem(data: FormData) {
   const session = await getServerSession(authOptions)
   if (!session || (session.user.role !== "OWNER" && session.user.role !== "INV_MANAGER")) {
