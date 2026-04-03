@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button"
 import { addMenuItem, toggleMenuItem } from "./actions"
 import { MenuSquare, Settings2, Search } from "lucide-react"
 import { EditMenuItemDialog } from "./EditMenuItemDialog"
+import { AddMenuItemForm } from "./AddMenuItemForm"
 import {
   Table,
   TableBody,
@@ -55,56 +56,7 @@ export default async function MenusPage() {
              <h3 className="text-xl font-bold text-white">Add Menu Item</h3>
           </div>
           
-          <form action={addMenuItem} className="space-y-6">
-            <div className="space-y-2">
-              <Label htmlFor="outletId" className="text-xs font-bold text-slate-400 uppercase tracking-widest">Select POS Outlet</Label>
-              <select name="outletId" id="outletId" required defaultValue="" className="w-full h-12 px-4 py-2 rounded-xl border border-white/10 bg-black/40 text-white placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all shadow-inner font-medium">
-                <option value="" disabled className="bg-slate-900 text-slate-500">Cafe or Chai Joint...</option>
-                {outlets.map(o => <option key={o.id} value={o.id} className="bg-slate-900 text-white">{o.name}</option>)}
-              </select>
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="name" className="text-xs font-bold text-slate-400 uppercase tracking-widest">Display Name on POS</Label>
-              <Input id="name" name="name" placeholder="e.g. Masala Chai" required className="h-12 bg-black/40 border-white/10 text-white placeholder:text-slate-600 rounded-xl focus-visible:ring-indigo-500/50 shadow-inner" />
-            </div>
-            
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="price" className="text-xs font-bold text-slate-400 uppercase tracking-widest">Price (₹)</Label>
-                <Input id="price" name="price" type="number" step="0.5" min="0" placeholder="e.g. 20" required className="h-12 bg-black/40 border-white/10 text-white placeholder:text-slate-600 rounded-xl focus-visible:ring-indigo-500/50 shadow-inner font-mono text-lg" />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="category" className="text-xs font-bold text-slate-400 uppercase tracking-widest">Category</Label>
-                <select name="category" id="category" required defaultValue="" className="w-full h-12 px-4 py-2 rounded-xl border border-white/10 bg-black/40 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all font-medium">
-                  <option value="" disabled className="bg-slate-900 text-slate-500">Select a category...</option>
-                  <option value="Chai" className="bg-slate-900 text-white">Chai</option>
-                  <option value="Coffee" className="bg-slate-900 text-white">Coffee</option>
-                  <option value="Ciggerette" className="bg-slate-900 text-white">Ciggerette</option>
-                  <option value="Beverage" className="bg-slate-900 text-white">Beverage</option>
-                  <option value="Others" className="bg-slate-900 text-white">Others</option>
-                </select>
-              </div>
-            </div>
-
-            <div className="space-y-2 pt-2 border-t border-white/5">
-              <Label htmlFor="itemId" className="text-xs font-bold text-slate-400 uppercase tracking-widest flex items-center gap-2">
-                <Settings2 className="w-3 h-3" /> Auto-Deduct Inventory
-              </Label>
-              <select name="itemId" id="itemId" className="w-full h-12 px-4 py-2 rounded-xl border border-white/10 bg-black/40 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all shadow-inner font-medium">
-                <option value="" className="bg-slate-900 text-slate-300">None (Standalone POS Item)</option>
-                {globalItems.map(item => (
-                  <option key={item.id} value={item.id} className="bg-slate-900 text-white">Deduct: {item.name}</option>
-                ))}
-              </select>
-              <p className="text-[10px] text-slate-500 pt-1 uppercase tracking-widest leading-relaxed">Optional: Link to catalog. 1 sale = -1 unit deduced immediately.</p>
-            </div>
-
-            <Button type="submit" className="w-full h-14 mt-6 text-lg font-bold bg-indigo-600 hover:bg-indigo-500 text-white shadow-[0_0_20px_-5px_rgba(99,102,241,0.5)] rounded-xl transition-all active:scale-[0.98]">
-              Add to Menu
-            </Button>
-          </form>
+          <AddMenuItemForm outlets={outlets} globalItems={globalItems} />
         </div>
 
         {/* MENU LIST */}

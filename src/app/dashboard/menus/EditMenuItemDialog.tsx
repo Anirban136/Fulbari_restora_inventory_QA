@@ -10,19 +10,26 @@ import { updateMenuItem } from "./actions"
 
 export function EditMenuItemDialog({ menuItem, outlets, globalItems, existingCategories }: { menuItem: any, outlets: any[], globalItems: any[], existingCategories: string[] }) {
   const [open, setOpen] = useState(false)
+  const [selectedOutletId, setSelectedOutletId] = useState(menuItem.outletId || "")
 
-  // Map category correctly if it matches one of our presets, otherwise it might be "Others"
-  const presetCategories = ["CHAI", "COFFEE", "CIGGERETTE", "BEVERAGE", "OTHERS"];
+  const selectedOutlet = outlets.find(o => o.id === selectedOutletId)
+  const isCafe = selectedOutlet?.type === "CAFE" || selectedOutlet?.name?.toLowerCase().includes("cafe")
+
+  const cafeCategories = ["Breakfast", "Tea & Coffee", "Maggie & Pasta", "Burger & Sandwich", "Momo", "Snacks", "Mocktail", "Others"]
+  const chaiCategories = ["Chai", "Coffee", "Ciggerette", "Beverage", "Others"]
+
+  const categories = isCafe ? cafeCategories : chaiCategories
   
-  // Format the existing category to match the <select> style, mapping it safely.
+  // Format the existing category to match the <select> style
   let defaultCategory = menuItem.categoryId || "";
   
-  // Convert standard DB value back to dropdown literal if it matches exactly
-  if (defaultCategory === "CHAI") defaultCategory = "Chai";
-  if (defaultCategory === "COFFEE") defaultCategory = "Coffee";
-  if (defaultCategory === "CIGGERETTE") defaultCategory = "Ciggerette";
-  if (defaultCategory === "BEVERAGE") defaultCategory = "Beverage";
-  if (defaultCategory === "OTHERS") defaultCategory = "Others";
+  // DB stores in uppercase, so reverse map if matches
+  const matchCat = [...cafeCategories, ...chaiCategories].find(c => c.toUpperCase() === defaultCategory)
+  if (matchCat) {
+    defaultCategory = matchCat
+  } else if (defaultCategory && !categories.includes(defaultCategory)) {
+    defaultCategory = "Others" // fallback
+  }
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -49,7 +56,14 @@ export function EditMenuItemDialog({ menuItem, outlets, globalItems, existingCat
           
           <div className="space-y-2">
             <Label htmlFor={`edit_outlet_${menuItem.id}`} className="text-xs font-bold text-slate-400 uppercase tracking-widest">Select POS Outlet</Label>
-            <select name="outletId" id={`edit_outlet_${menuItem.id}`} required defaultValue={menuItem.outletId} className="w-full h-12 px-4 py-2 rounded-xl border border-white/10 bg-black/40 text-white placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all shadow-inner font-medium">
+            <select 
+              name="outletId" 
+              id={`edit_outlet_${menuItem.id}`} 
+              required 
+              value={selectedOutletId}
+              onChange={(e) => setSelectedOutletId(e.target.value)}
+              className="w-full h-12 px-4 py-2 rounded-xl border border-white/10 bg-black/40 text-white placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all shadow-inner font-medium"
+            >
               <option value="" disabled className="bg-slate-900 text-slate-500">Cafe or Chai Joint...</option>
               {outlets.map(o => <option key={o.id} value={o.id} className="bg-slate-900 text-white">{o.name}</option>)}
             </select>
@@ -69,11 +83,8 @@ export function EditMenuItemDialog({ menuItem, outlets, globalItems, existingCat
             <div className="space-y-2">
               <Label htmlFor={`edit_category_${menuItem.id}`} className="text-xs font-bold text-slate-400 uppercase tracking-widest">Category</Label>
               <select name="category" id={`edit_category_${menuItem.id}`} required defaultValue={defaultCategory} className="w-full h-12 px-4 py-2 rounded-xl border border-white/10 bg-black/40 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all font-medium">
-                <option value="Chai" className="bg-slate-900 text-white">Chai</option>
-                <option value="Coffee" className="bg-slate-900 text-white">Coffee</option>
-                <option value="Ciggerette" className="bg-slate-900 text-white">Ciggerette</option>
-                <option value="Beverage" className="bg-slate-900 text-white">Beverage</option>
-                <option value="Others" className="bg-slate-900 text-white">Others</option>
+                <option value="" disabled className="bg-slate-900 text-slate-500">Select a category...</option>
+                {categories.map(c => <option key={c} value={c} className="bg-slate-900 text-white">{c}</option>)}
               </select>
             </div>
           </div>
