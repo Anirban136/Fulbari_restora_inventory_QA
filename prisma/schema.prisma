@@ -19,6 +19,7 @@ model User {
 
   Tabs      Tab[]    // Tabs created by this user
   Dispatches InventoryLedger[] // Dispatches approved by this user
+  VendorPayments VendorPayment[] // Payments made to vendors
 }
 
 model Outlet {
@@ -42,6 +43,19 @@ model Vendor {
   updatedAt DateTime @updatedAt
 
   Ledger    InventoryLedger[]
+  Payments  VendorPayment[]
+}
+
+model VendorPayment {
+  id        String   @id @default(cuid())
+  vendorId  String
+  amount    Float
+  notes     String?
+  paidBy    String
+  createdAt DateTime @default(now())
+
+  Vendor    Vendor   @relation(fields: [vendorId], references: [id], onDelete: Cascade)
+  User      User     @relation(fields: [paidBy], references: [id])
 }
 
 model Item {

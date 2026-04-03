@@ -67,6 +67,33 @@ export async function deleteVendor(data: FormData) {
   revalidatePath("/dashboard/inventory")
 }
 
+export async function payVendor(data: FormData) {
+  const session = await getServerSession(authOptions)
+  if (!session || session.user.role !== "OWNER") {
+    throw new Error("Unauthorized")
+  }
+
+  const vendorId = data.get("vendorId") as string
+  const amountStr = data.get("amount") as string
+  const notes = data.get("notes") as string || ""
+
+  const amount = parseFloat(amountStr)
+  if (!vendorId || isNaN(amount) || amount <= 0) {
+    throw new Error("Invalid payment data")
+  }
+
+  await prisma.vendorPayment.create({
+    data: {
+      vendorId,
+      amount,
+      notes: notes || `Payment of ₹${amount}`,
+      paidBy: session.user.id,
+    }
+  })
+
+  revalidatePath("/dashboard/vendors")
+}
+
 export async function addItem(data: FormData) {
   const session = await getServerSession(authOptions)
   if (!session || (session.user.role !== "OWNER" && session.user.role !== "INV_MANAGER")) {
