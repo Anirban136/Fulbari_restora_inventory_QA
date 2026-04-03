@@ -36,18 +36,15 @@ export default async function VendorsPage() {
 
   const { startUTC, endUTC } = getISTMonthBounds()
 
-  // Fetch vendors with their items and stock-in logs for the current month
+  // Fetch vendors with their stock-in logs for the current month
   const vendors = await prisma.vendor.findMany({
     include: {
-      Items: {
-        include: {
-          Ledger: {
-            where: {
-              type: "STOCK_IN",
-              createdAt: { gte: startUTC, lte: endUTC }
-            }
-          }
-        }
+      Ledger: {
+        where: {
+          type: "STOCK_IN",
+          createdAt: { gte: startUTC, lte: endUTC }
+        },
+        include: { Item: true }
       }
     },
     orderBy: { name: 'asc' }
@@ -58,12 +55,17 @@ export default async function VendorsPage() {
     let monthlyCollection = 0
     let monthlyPayment = 0
 
-    vendor.Items.forEach(item => {
-      item.Ledger.forEach(log => {
-        monthlyCollection += log.quantity
-        // Use the item's costPerUnit at calculation time
-        monthlyPayment += log.quantity * (item.costPerUnit || 0)
-      })
+    vendor.Ledger.forEach(log => {
+      monthlyCollection += log.quantity
+      // In the new architecture, we parse cost from log.notes or fallback to item.costPerUnit, but for absolute accuracy we use the item cost as a fallback or parse from note: "Intake Cost: ₹X - notes"
+      // Since `log.notes` has format "Vendor/Cost Info: Cost=50. " we can parse it, or just use the current item.costPerUnit
+      // Actually parsing the exact cost applied at intake:
+      let transactionCost = log.Item.costPerUnit || 0
+      if (log.notes && log.notes.includes("Cost=")) {
+        const match = log.notes.match(/Cost=([\d.]+)/)
+        if (match && match[1]) transactionCost = parseFloat(match[1])
+      }
+      monthlyPayment += log.quantity * transactionCost
     })
 
     return {

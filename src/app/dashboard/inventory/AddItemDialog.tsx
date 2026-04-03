@@ -77,15 +77,6 @@ export function AddItemDialog({ vendors }: { vendors: any[] }) {
               <option value="pcs" className="bg-slate-900 text-white">pieces (pcs)</option>
             </select>
           </div>
-          <div className="space-y-2">
-            <Label htmlFor="vendorId" className="text-xs font-bold text-slate-400 uppercase tracking-widest">Select Vendor</Label>
-            <select name="vendorId" id="vendorId" className="w-full h-12 px-4 py-2 rounded-xl border border-white/10 bg-black/40 text-white focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all font-medium">
-              <option value="" className="bg-slate-900 text-slate-500">Select a vendor...</option>
-              {vendors.map(v => (
-                <option key={v.id} value={v.id} className="bg-slate-900 text-white">{v.name}</option>
-              ))}
-            </select>
-          </div>
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="costPerUnit" className="text-xs font-bold text-slate-400 uppercase tracking-widest">Cost Price (₹)</Label>

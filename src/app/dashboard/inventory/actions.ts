@@ -52,9 +52,9 @@ export async function deleteVendor(data: FormData) {
 
   const vendorId = data.get("vendorId") as string
 
-  // Gracefully remove vendor relation from items before deleting
+  // Gracefully remove vendor relation from ledger before deleting
   await prisma.$transaction([
-    prisma.item.updateMany({
+    prisma.inventoryLedger.updateMany({
       where: { vendorId },
       data: { vendorId: null }
     }),
@@ -75,8 +75,7 @@ export async function addItem(data: FormData) {
 
   const name = data.get("name") as string
   const category = data.get("category") as string || "Uncategorized"
-  const unit = data.get("unit") as string
-  const vendorId = data.get("vendorId") as string
+  const unit = data.get("unit") as string || "pieces"
   const costPerUnitRaw = data.get("costPerUnit") as string
   const sellPriceRaw = data.get("sellPrice") as string
   const minStockRaw = data.get("minStock") as string
@@ -90,7 +89,6 @@ export async function addItem(data: FormData) {
       name, 
       category,
       unit, 
-      vendorId: vendorId || null, 
       costPerUnit,
       sellPrice,
       minStock
@@ -110,7 +108,6 @@ export async function updateItem(data: FormData) {
   const name = data.get("name") as string
   const category = data.get("category") as string || "Uncategorized"
   const unit = data.get("unit") as string
-  const vendorId = data.get("vendorId") as string
   const costPerUnitRaw = data.get("costPerUnit") as string
   const sellPriceRaw = data.get("sellPrice") as string
   const currentStockRaw = data.get("currentStock") as string
@@ -127,7 +124,6 @@ export async function updateItem(data: FormData) {
       name, 
       category,
       unit, 
-      vendorId: vendorId || null, 
       costPerUnit,
       sellPrice,
       currentStock,

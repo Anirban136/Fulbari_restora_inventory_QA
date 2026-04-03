@@ -41,7 +41,7 @@ model Vendor {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  Items     Item[]
+  Ledger    InventoryLedger[]
 }
 
 model Item {
@@ -50,15 +50,12 @@ model Item {
   category      String   @default("Uncategorized")
   unit          String   // kg, litre, pieces, packets
   currentStock  Float    @default(0) // Central inventory stock
-  vendor        String?  // Legacy text field
-  vendorId      String?  // FK to Vendor table
   costPerUnit   Float?
   sellPrice     Float?   // Selling price per unit
   minStock      Float    @default(0) // Threshold for low stock warning
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 
-  Vendor        Vendor?  @relation(fields: [vendorId], references: [id])
   Ledger        InventoryLedger[]
   OutletStock   OutletStock[]
   MenuItems     MenuItem[] // If this item maps to a menu item directly (e.g., Samosa)
@@ -70,12 +67,14 @@ model InventoryLedger {
   itemId      String
   quantity    Float
   outletId    String?  // Null if STOCK_IN, populated if DISPATCH or CONSUMPTION
+  vendorId    String?  // Specifically for STOCK_IN tracking
   userId      String   // Who did this action
   notes       String?
   createdAt   DateTime @default(now())
 
   Item        Item     @relation(fields: [itemId], references: [id])
   User        User     @relation(fields: [userId], references: [id])
+  Vendor      Vendor?  @relation(fields: [vendorId], references: [id])
 }
 
 model OutletStock {

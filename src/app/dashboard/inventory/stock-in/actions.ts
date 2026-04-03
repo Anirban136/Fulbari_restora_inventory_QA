@@ -16,6 +16,7 @@ export async function logStockIn(data: FormData) {
     const quantityStr = data.get("quantity") as string
     const costStr = data.get("cost") as string
     const notes = (data.get("notes") as string) || ""
+    const vendorId = data.get("vendorId") as string || null
 
     const quantity = parseFloat(quantityStr)
     const cost = costStr ? parseFloat(costStr) : 0
@@ -32,6 +33,7 @@ export async function logStockIn(data: FormData) {
           type: "STOCK_IN",
           itemId,
           quantity,
+          vendorId,
           userId: session.user.id,
           notes: `Vendor/Cost Info: Cost=${isNaN(cost) ? 0 : cost}. ${notes}`,
         }

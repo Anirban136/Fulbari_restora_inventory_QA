@@ -32,9 +32,10 @@ export default async function StockInPage() {
   const isOwner = session?.user?.role === "OWNER"
 
   const items = await prisma.item.findMany({ orderBy: { name: 'asc' } })
+  const vendors = await prisma.vendor.findMany({ orderBy: { name: 'asc' } })
   const recentLogs = await prisma.inventoryLedger.findMany({
     where: { type: "STOCK_IN" },
-    include: { Item: true, User: true },
+    include: { Item: true, User: true, Vendor: true },
     orderBy: { createdAt: 'desc' },
     take: 15
   })
@@ -57,7 +58,7 @@ export default async function StockInPage() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8 relative z-10">
         
         {/* Left Form */}
-        <StockInForm items={items} />
+        <StockInForm items={items} vendors={vendors} />
 
         {/* Right Table */}
         <div className="md:col-span-2 glass-panel rounded-3xl overflow-hidden flex flex-col">
