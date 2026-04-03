@@ -1,8 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { Printer, Loader2, CheckCircle2, AlertCircle, Bluetooth } from "lucide-react"
-import { printReceipt, type ReceiptData } from "@/lib/thermal-printer"
+import { Printer, Loader2, CheckCircle2 } from "lucide-react"
 
 interface PrintReceiptButtonProps {
   outletName: string
@@ -31,37 +30,178 @@ export function PrintReceiptButton({
   closedAt,
   accentColor = "amber"
 }: PrintReceiptButtonProps) {
-  const [status, setStatus] = useState<"idle" | "printing" | "success" | "error">("idle")
-  const [errorMsg, setErrorMsg] = useState("")
+  const [status, setStatus] = useState<"idle" | "printing" | "success">("idle")
 
-  async function handlePrint() {
+  function handlePrint() {
     setStatus("printing")
-    setErrorMsg("")
 
-    const receiptData: ReceiptData = {
-      outletName: outletName,
-      tokenNumber: tokenNumber || 0,
-      customerName: customerName || "Walk-in Customer",
-      tabId,
-      items: items.map(item => ({
-        name: item.MenuItem.name,
-        quantity: item.quantity,
-        price: item.priceAtTime
-      })),
-      totalAmount,
-      paymentMode: paymentMode || "N/A",
-      closedAt: closedAt || new Date()
+    const dateObj = closedAt ? (typeof closedAt === 'string' ? new Date(closedAt) : closedAt) : new Date()
+    const dateStr = dateObj.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })
+    const timeStr = dateObj.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true })
+
+    const itemsHtml = items.map(item => `
+      <tr>
+        <td style="text-align:left;padding:2px 0;">${item.quantity}x ${item.MenuItem.name}</td>
+        <td style="text-align:right;padding:2px 0;">Rs.${(item.quantity * item.priceAtTime).toFixed(0)}</td>
+      </tr>
+    `).join('')
+
+    // Generate TWO receipts: Customer + Kitchen
+    const receiptHtml = `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Receipt - Token #${tokenNumber || ''}</title>
+  <style>
+    @media print {
+      @page {
+        size: 58mm auto;
+        margin: 0;
+      }
+      body { margin: 0; padding: 0; }
+      .page-break { page-break-after: always; }
     }
+    body {
+      font-family: 'Courier New', monospace;
+      font-size: 12px;
+      width: 48mm;
+      margin: 0 auto;
+      padding: 4mm;
+      color: #000;
+      background: #fff;
+    }
+    .receipt { padding-bottom: 8mm; }
+    .center { text-align: center; }
+    .right { text-align: right; }
+    .bold { font-weight: bold; }
+    .big { font-size: 18px; font-weight: bold; }
+    .huge { font-size: 24px; font-weight: bold; }
+    .separator { border-top: 1px dashed #000; margin: 4px 0; }
+    .double-separator { border-top: 2px solid #000; margin: 4px 0; }
+    table { width: 100%; border-collapse: collapse; }
+    .kitchen-badge {
+      border: 2px solid #000;
+      padding: 4px 8px;
+      font-size: 16px;
+      font-weight: bold;
+      display: inline-block;
+      margin: 4px 0;
+    }
+    .token-box {
+      border: 2px solid #000;
+      padding: 4px 12px;
+      font-size: 22px;
+      font-weight: bold;
+      display: inline-block;
+      margin: 6px 0;
+    }
+  </style>
+</head>
+<body>
+  <!-- CUSTOMER COPY -->
+  <div class="receipt page-break">
+    <div class="center">
+      <div class="big">${outletName.toUpperCase()}</div>
+    </div>
+    <div class="double-separator"></div>
+    <div class="center">
+      <div class="token-box">TOKEN #${tokenNumber || '0'}</div>
+    </div>
+    <div class="double-separator"></div>
+    <div>
+      <div>Customer: ${customerName || 'Walk-in'}</div>
+      <div>Date: ${dateStr}  ${timeStr}</div>
+      <div>Bill: #${tabId.slice(-6)}</div>
+    </div>
+    <div class="separator"></div>
+    <table>
+      <tr class="bold">
+        <td style="text-align:left">ITEM</td>
+        <td style="text-align:right">AMOUNT</td>
+      </tr>
+    </table>
+    <div class="separator"></div>
+    <table>${itemsHtml}</table>
+    <div class="separator"></div>
+    <table>
+      <tr class="bold">
+        <td style="text-align:left;font-size:16px;">TOTAL</td>
+        <td style="text-align:right;font-size:16px;">Rs.${totalAmount.toFixed(0)}</td>
+      </tr>
+    </table>
+    <div class="separator"></div>
+    <div>Payment: ${paymentMode || 'N/A'}</div>
+    <br>
+    <div class="center">Thank you! Visit again.</div>
+    <br><br>
+  </div>
 
-    const result = await printReceipt(receiptData)
+  <!-- KITCHEN COPY -->
+  <div class="receipt">
+    <div class="center">
+      <div class="big">${outletName.toUpperCase()}</div>
+    </div>
+    <div class="center">
+      <div class="kitchen-badge">** KITCHEN COPY **</div>
+    </div>
+    <div class="double-separator"></div>
+    <div class="center">
+      <div class="token-box">TOKEN #${tokenNumber || '0'}</div>
+    </div>
+    <div class="double-separator"></div>
+    <div>
+      <div>Customer: ${customerName || 'Walk-in'}</div>
+      <div>Time: ${timeStr}</div>
+    </div>
+    <div class="separator"></div>
+    <table>
+      <tr class="bold">
+        <td style="text-align:left">ITEM</td>
+        <td style="text-align:right">QTY</td>
+      </tr>
+    </table>
+    <div class="separator"></div>
+    <table>
+      ${items.map(item => `
+        <tr>
+          <td style="text-align:left;padding:3px 0;font-size:14px;font-weight:bold;">${item.MenuItem.name}</td>
+          <td style="text-align:right;padding:3px 0;font-size:16px;font-weight:bold;">${item.quantity}</td>
+        </tr>
+      `).join('')}
+    </table>
+    <div class="double-separator"></div>
+    <div class="center bold" style="font-size:16px;">PREPARE THIS ORDER</div>
+    <br><br><br>
+  </div>
 
-    if (result.success) {
+  <script>
+    window.onload = function() {
+      window.print();
+      setTimeout(function() { window.close(); }, 1000);
+    }
+  </script>
+</body>
+</html>`
+
+    // Open a popup window with the receipt
+    const printWindow = window.open('', '_blank', 'width=300,height=600')
+    if (printWindow) {
+      printWindow.document.write(receiptHtml)
+      printWindow.document.close()
       setStatus("success")
       setTimeout(() => setStatus("idle"), 3000)
     } else {
-      setStatus("error")
-      setErrorMsg(result.error || "Unknown error")
-      setTimeout(() => setStatus("idle"), 5000)
+      // Popup was blocked, try inline
+      const blob = new Blob([receiptHtml], { type: 'text/html' })
+      const url = URL.createObjectURL(blob)
+      const link = document.createElement('a')
+      link.href = url
+      link.target = '_blank'
+      link.click()
+      URL.revokeObjectURL(url)
+      setStatus("success")
+      setTimeout(() => setStatus("idle"), 3000)
     }
   }
 
@@ -76,22 +216,17 @@ export function PrintReceiptButton({
       <button
         onClick={handlePrint}
         disabled={status === "printing"}
-        className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border text-xs font-bold uppercase tracking-wider transition-all active:scale-95 disabled:opacity-50 disabled:cursor-wait ${colors}`}
+        className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-xl border text-xs font-bold uppercase tracking-wider transition-all active:scale-95 disabled:opacity-50 disabled:cursor-wait ${colors}`}
       >
         {status === "printing" ? (
           <>
             <Loader2 className="w-3.5 h-3.5 animate-spin" />
-            Printing...
+            Preparing...
           </>
         ) : status === "success" ? (
           <>
             <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
-            Printed!
-          </>
-        ) : status === "error" ? (
-          <>
-            <AlertCircle className="w-3.5 h-3.5 text-red-400" />
-            Failed
+            Sent to Printer!
           </>
         ) : (
           <>
@@ -100,12 +235,9 @@ export function PrintReceiptButton({
           </>
         )}
       </button>
-      {status === "error" && errorMsg && (
-        <p className="text-[10px] text-red-400/80 mt-1 max-w-[200px] leading-tight">{errorMsg}</p>
-      )}
       {tokenNumber && status === "idle" && (
-        <span className="text-[10px] text-slate-500 mt-1 flex items-center gap-1">
-          <Bluetooth className="w-2.5 h-2.5" /> Token #{tokenNumber}
+        <span className="text-[10px] text-slate-500 mt-1">
+          🖨️ Token #{tokenNumber} • 2 copies
         </span>
       )}
     </div>
