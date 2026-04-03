@@ -43,3 +43,30 @@ export async function toggleMenuItem(menuItemId: string, isAvailable: boolean) {
 
   revalidatePath("/dashboard/menus")
 }
+
+export async function updateMenuItem(data: FormData) {
+  const session = await getServerSession(authOptions)
+  if (!session || session.user.role !== "OWNER") throw new Error("Unauthorized")
+
+  const id = data.get("id") as string
+  const outletId = data.get("outletId") as string
+  const name = data.get("name") as string
+  const price = parseFloat(data.get("price") as string)
+  const categoryId = (data.get("category") as string)?.toUpperCase().trim() || "GENERAL"
+  const itemId = data.get("itemId") as string
+
+  if (!id || !outletId || !name || isNaN(price)) return
+
+  await prisma.menuItem.update({
+    where: { id },
+    data: {
+      outletId,
+      name,
+      price,
+      categoryId,
+      itemId: itemId || null,
+    }
+  })
+
+  revalidatePath("/dashboard/menus")
+}

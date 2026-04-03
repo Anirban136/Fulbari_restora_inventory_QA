@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { addMenuItem, toggleMenuItem } from "./actions"
 import { MenuSquare, Settings2, Search } from "lucide-react"
+import { EditMenuItemDialog } from "./EditMenuItemDialog"
 import {
   Table,
   TableBody,
@@ -116,7 +117,7 @@ export default async function MenusPage() {
                   <TableHead className="font-bold text-slate-400 uppercase tracking-widest text-xs h-14 bg-black/40 backdrop-blur-md sticky top-0 z-20">Item Name</TableHead>
                   <TableHead className="font-bold text-slate-400 uppercase tracking-widest text-xs h-14 bg-black/40 backdrop-blur-md sticky top-0 z-20">Category</TableHead>
                   <TableHead className="font-bold text-slate-400 uppercase tracking-widest text-xs h-14 bg-black/40 backdrop-blur-md sticky top-0 z-20 text-right">Price</TableHead>
-                  <TableHead className="font-bold text-slate-400 uppercase tracking-widest text-xs h-14 bg-black/40 backdrop-blur-md sticky top-0 z-20 text-center">Status</TableHead>
+                  <TableHead className="font-bold text-slate-400 uppercase tracking-widest text-xs h-14 bg-black/40 backdrop-blur-md sticky top-0 z-20 text-center">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -141,16 +142,19 @@ export default async function MenusPage() {
                          </span>
                       </TableCell>
                       <TableCell className="text-center">
-                         <form action={toggleMenuItem.bind(null, menuItem.id, menuItem.isAvailable)}>
-                           <Button 
-                             type="submit" 
-                             variant="outline" 
-                             size="sm" 
-                             className={`h-8 px-4 text-xs font-bold tracking-widest uppercase rounded-lg transition-all ${menuItem.isAvailable ? "border-indigo-500/30 bg-indigo-500/10 text-indigo-400 hover:bg-indigo-500/20" : "border-white/10 text-slate-500 hover:bg-white/10 hover:text-white"}`}
-                           >
-                             {menuItem.isAvailable ? "Active" : "OOS"}
-                           </Button>
-                         </form>
+                         <div className="flex items-center justify-center gap-2">
+                           <EditMenuItemDialog menuItem={menuItem} outlets={outlets} globalItems={globalItems} existingCategories={existingCategories as string[]} />
+                           <form action={toggleMenuItem.bind(null, menuItem.id, menuItem.isAvailable)}>
+                             <Button 
+                               type="submit" 
+                               variant="outline" 
+                               size="sm" 
+                               className={`h-8 px-4 text-xs font-bold tracking-widest uppercase rounded-lg transition-all ${menuItem.isAvailable ? "border-indigo-500/30 bg-indigo-500/10 text-indigo-400 hover:bg-indigo-500/20" : "border-white/10 text-slate-500 hover:bg-white/10 hover:text-white"}`}
+                             >
+                               {menuItem.isAvailable ? "Active" : "OOS"}
+                             </Button>
+                           </form>
+                         </div>
                       </TableCell>
                     </TableRow>
                   ))
