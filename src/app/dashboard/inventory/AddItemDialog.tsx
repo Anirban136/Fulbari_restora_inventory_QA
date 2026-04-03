@@ -52,7 +52,8 @@ export function AddItemDialog({ vendors }: { vendors: any[] }) {
               <option value="Cigarettes" className="bg-slate-900 text-white">Cigarettes</option>
               <option value="Dairy & Milk" className="bg-slate-900 text-white">Dairy & Milk</option>
               <option value="Produce" className="bg-slate-900 text-white">Produce</option>
-              <option value="Vegetables & Fruits" className="bg-slate-900 text-white">Vegetables & Fruits</option>
+              <option value="Vegetables" className="bg-slate-900 text-white">Vegetables</option>
+              <option value="Fruits" className="bg-slate-900 text-white">Fruits</option>
               <option value="Meat" className="bg-slate-900 text-white">Meat</option>
               <option value="Spices" className="bg-slate-900 text-white">Spices</option>
               <option value="Beverages" className="bg-slate-900 text-white">Beverages</option>
