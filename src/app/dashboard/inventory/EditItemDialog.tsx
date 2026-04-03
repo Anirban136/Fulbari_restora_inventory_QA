@@ -49,7 +49,8 @@ export function EditItemDialog({ item, vendors }: { item: any, vendors: any[] })
           <div className="space-y-2">
             <Label htmlFor={`edit_category_${item.id}`} className="text-xs font-bold text-slate-400 uppercase tracking-widest">Category</Label>
             <select name="category" id={`edit_category_${item.id}`} defaultValue={item.category || "Uncategorized"} required className="w-full h-12 px-4 py-2 rounded-xl border border-white/10 bg-black/40 text-white focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all font-medium">
-              <option value="Dairy" className="bg-slate-900 text-white">Dairy</option>
+              <option value="Cigarettes" className="bg-slate-900 text-white">Cigarettes</option>
+              <option value="Dairy & Milk" className="bg-slate-900 text-white">Dairy & Milk</option>
               <option value="Produce" className="bg-slate-900 text-white">Produce</option>
               <option value="Meat" className="bg-slate-900 text-white">Meat</option>
               <option value="Spices" className="bg-slate-900 text-white">Spices</option>
