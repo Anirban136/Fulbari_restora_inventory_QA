@@ -102,7 +102,11 @@ export async function closeTab(data: FormData) {
     }
   })
 
-  redirect(`/tabs?target=${tab.Outlet.type}`)
+  revalidatePath(`/tabs/${tabId}`)
+  revalidatePath(`/tabs`)
+  revalidatePath(`/cafe`)
+  revalidatePath(`/chai`)
+  revalidatePath(`/dashboard`)
 }
 
 export async function reopenTab(tabId: string) {

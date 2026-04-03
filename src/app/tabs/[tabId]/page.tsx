@@ -4,8 +4,9 @@ import Link from "next/link"
 import { notFound } from "next/navigation"
 import { addTabItem, removeTabItem, closeTab } from "./actions"
 import { Button } from "@/components/ui/button"
-import { ArrowLeft, ShoppingCart, CreditCard, Banknote, SplitSquareHorizontal } from "lucide-react"
+import { ArrowLeft, ShoppingCart, CreditCard, Banknote, SplitSquareHorizontal, CheckCircle2, Printer } from "lucide-react"
 import { PosMenuGrid } from "./PosMenuGrid"
+import { PrintReceiptButton } from "@/components/PrintReceiptButton"
 
 export default async function TabTerminal({ params }: { params: Promise<{ tabId: string }> }) {
   const { tabId } = await params
@@ -18,8 +19,86 @@ export default async function TabTerminal({ params }: { params: Promise<{ tabId:
     }
   })
 
-  if (!tab || tab.status !== "OPEN") return notFound()
+  if (!tab) return notFound()
 
+  const isCafe = tab.Outlet.type === "CAFE"
+
+  // ===== CLOSED STATE: Show Receipt + Print Screen =====
+  if (tab.status === "CLOSED" || tab.status === "CANCELLED") {
+    return (
+      <div className={`min-h-screen bg-background flex items-center justify-center p-6 relative`}>
+        {/* Background */}
+        <div className={`absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] ${isCafe ? "bg-orange-900/15" : "bg-sky-900/15"} rounded-full blur-[150px] pointer-events-none`}></div>
+        
+        <div className="w-full max-w-md relative z-10">
+          {/* Success Header */}
+          <div className="text-center mb-8">
+            <div className={`w-20 h-20 mx-auto rounded-3xl flex items-center justify-center mb-6 ${isCafe ? "bg-orange-500/20 border border-orange-500/30 shadow-[0_0_40px_-5px_rgba(249,115,22,0.4)]" : "bg-sky-500/20 border border-sky-500/30 shadow-[0_0_40px_-5px_rgba(14,165,233,0.4)]"}`}>
+              <CheckCircle2 className={`w-10 h-10 ${isCafe ? "text-orange-400" : "text-sky-400"}`} />
+            </div>
+            <h1 className="text-3xl font-black text-white mb-2">Bill Closed!</h1>
+            {tab.tokenNumber && (
+              <div className={`inline-block px-6 py-2 rounded-2xl ${isCafe ? "bg-orange-500/20 border border-orange-500/30" : "bg-sky-500/20 border border-sky-500/30"} mb-3`}>
+                <span className={`text-4xl font-black ${isCafe ? "text-orange-400" : "text-sky-400"} tracking-tight`}>
+                  Token #{tab.tokenNumber}
+                </span>
+              </div>
+            )}
+            <p className="text-slate-400 text-sm font-medium">{tab.customerName || "Walk-in Customer"}</p>
+          </div>
+
+          {/* Receipt Summary */}
+          <div className="glass-panel rounded-3xl p-6 mb-6">
+            <div className="space-y-2 mb-4">
+              {tab.Items.map((item: any) => (
+                <div key={item.id} className="flex justify-between items-center text-sm">
+                  <span className="text-slate-300 font-medium">{item.quantity}x {item.MenuItem.name}</span>
+                  <span className="text-white font-bold">₹{(item.quantity * item.priceAtTime).toFixed(0)}</span>
+                </div>
+              ))}
+            </div>
+            <div className={`border-t ${isCafe ? "border-orange-500/20" : "border-sky-500/20"} pt-4 flex justify-between items-center`}>
+              <span className="text-sm font-bold text-slate-400 uppercase tracking-widest">Total</span>
+              <span className="text-3xl font-black text-white">₹{tab.totalAmount.toFixed(0)}</span>
+            </div>
+            <div className="flex justify-between items-center mt-2">
+              <span className="text-xs text-slate-500 uppercase tracking-widest">Payment</span>
+              <span className={`text-xs font-bold uppercase tracking-widest ${isCafe ? "text-orange-400" : "text-sky-400"}`}>{tab.paymentMode || "N/A"}</span>
+            </div>
+          </div>
+
+          {/* Action Buttons */}
+          <div className="space-y-3">
+            {/* Print Bill Button - Prominent */}
+            {isCafe && tab.tokenNumber && (
+              <div className="flex justify-center">
+                <PrintReceiptButton
+                  outletName={tab.Outlet.name}
+                  tokenNumber={tab.tokenNumber}
+                  customerName={tab.customerName}
+                  tabId={tab.id}
+                  items={tab.Items}
+                  totalAmount={tab.totalAmount}
+                  paymentMode={tab.paymentMode}
+                  closedAt={tab.closedAt}
+                  accentColor={isCafe ? "amber" : "sky"}
+                />
+              </div>
+            )}
+
+            {/* Go Back Button */}
+            <Link href={`/tabs?target=${tab.Outlet.type}`} className="block">
+              <Button className={`w-full h-14 text-lg font-black tracking-widest uppercase rounded-xl transition-all active:scale-[0.98] ${isCafe ? "bg-orange-600 hover:bg-orange-500 shadow-[0_0_30px_-5px_rgba(249,115,22,0.4)]" : "bg-sky-600 hover:bg-sky-500 shadow-[0_0_30px_-5px_rgba(14,165,233,0.4)]"} text-white`}>
+                Done — Back to Terminal
+              </Button>
+            </Link>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  // ===== OPEN STATE: Normal POS Interface =====
   const availableMenu = await prisma.menuItem.findMany({
     where: { outletId: tab.outletId, isAvailable: true },
     orderBy: { categoryId: 'asc' }
@@ -33,8 +112,6 @@ export default async function TabTerminal({ params }: { params: Promise<{ tabId:
     acc[categoryName].push(item)
     return acc
   }, {})
-
-  const isCafe = tab.Outlet.type === "CAFE"
 
   return (
     <div className={`h-screen bg-background flex flex-col lg:flex-row overflow-hidden ${isCafe ? "selection:bg-orange-500/30 selection:text-orange-100" : "selection:bg-sky-500/30 selection:text-sky-100"} relative`}>
@@ -76,7 +153,7 @@ export default async function TabTerminal({ params }: { params: Promise<{ tabId:
             </div>
           ) : (
             <ul className="space-y-3">
-              {tab.Items.map(item => (
+              {tab.Items.map((item: any) => (
                 <li key={item.id} className="p-2 sm:p-4 flex gap-2 sm:gap-4 bg-white/5 border border-white/10 rounded-2xl animate-in slide-in-from-right-4 duration-300 hover:border-white/20 transition-colors">
                   <div className={`font-black ${isCafe ? "text-orange-950 bg-orange-400 shadow-[0_0_15px_-3px_#fb923c]" : "text-sky-950 bg-sky-400 shadow-[0_0_15px_-3px_#38bdf8]"} px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg h-fit tracking-wider w-8 sm:w-12 text-center text-xs sm:text-base`}>{item.quantity}x</div>
                   <div className="flex-1 min-w-0">
