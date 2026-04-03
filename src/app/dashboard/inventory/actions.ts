@@ -160,3 +160,72 @@ export async function revertLedgerEntry(data: FormData) {
   revalidatePath("/dashboard/inventory/dispatch")
   revalidatePath("/dashboard/stores")
 }
+
+export async function editDispatchQuantity(data: FormData) {
+  const session = await getServerSession(authOptions)
+  if (!session || session.user.role !== "OWNER") {
+    throw new Error("Unauthorized — only Admin Owner can edit stock entries")
+  }
+
+  const ledgerId = data.get("ledgerId") as string
+  const newQuantityRaw = data.get("newQuantity") as string
+  const newQuantity = parseFloat(newQuantityRaw)
+
+  if (!ledgerId || isNaN(newQuantity) || newQuantity <= 0) return
+
+  const entry = await prisma.inventoryLedger.findUnique({
+    where: { id: ledgerId },
+  })
+
+  if (!entry || entry.type !== "DISPATCH" || !entry.outletId) return
+
+  const diff = newQuantity - entry.quantity
+
+  if (diff === 0) return // No change
+
+  if (diff > 0) {
+    // Dispatching MORE: Check central stock
+    const item = await prisma.item.findUnique({ where: { id: entry.itemId } })
+    if (!item) throw new Error("Item not found")
+    if (item.currentStock < diff) {
+      throw new Error(`Cannot increase dispatch. Only ${item.currentStock} ${item.unit} available.`)
+    }
+
+    await prisma.$transaction([
+      prisma.item.update({
+        where: { id: entry.itemId },
+        data: { currentStock: { decrement: diff } },
+      }),
+      prisma.outletStock.update({
+        where: { outletId_itemId: { outletId: entry.outletId, itemId: entry.itemId } },
+        data: { quantity: { increment: diff } },
+      }),
+      prisma.inventoryLedger.update({
+        where: { id: ledgerId },
+        data: { quantity: newQuantity, notes: (entry.notes || "") + ` (Edited: was ${entry.quantity})` },
+      }),
+    ])
+  } else {
+    // Dispatching LESS: Return difference to central stock
+    const absDiff = Math.abs(diff)
+    await prisma.$transaction([
+      prisma.item.update({
+        where: { id: entry.itemId },
+        data: { currentStock: { increment: absDiff } },
+      }),
+      prisma.outletStock.update({
+        where: { outletId_itemId: { outletId: entry.outletId, itemId: entry.itemId } },
+        data: { quantity: { decrement: absDiff } },
+      }),
+      prisma.inventoryLedger.update({
+        where: { id: ledgerId },
+        data: { quantity: newQuantity, notes: (entry.notes || "") + ` (Edited: was ${entry.quantity})` },
+      }),
+    ])
+  }
+
+  revalidatePath("/dashboard/inventory")
+  revalidatePath("/dashboard/inventory/stock-in")
+  revalidatePath("/dashboard/inventory/dispatch")
+  revalidatePath("/dashboard/stores")
+}

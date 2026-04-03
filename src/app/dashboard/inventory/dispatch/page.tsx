@@ -3,9 +3,10 @@ export const dynamic = 'force-dynamic'
 import { getServerSession } from "next-auth"
 import { authOptions } from "@/lib/auth"
 import { DispatchForm } from "./DispatchForm"
-import { revertLedgerEntry } from "../actions"
-import { Search, Undo2 } from "lucide-react"
+import { revertLedgerEntry, editDispatchQuantity } from "../actions"
+import { Search, Undo2, Edit } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
 import {
   Table,
   TableBody,
@@ -77,7 +78,7 @@ export default async function DispatchPage() {
                   <TableHead className="font-bold text-slate-400 uppercase tracking-widest text-[10px] h-12 bg-black/40 sticky top-0 z-20">Destination</TableHead>
                   <TableHead className="font-bold text-slate-400 uppercase tracking-widest text-[10px] h-12 bg-black/40 sticky top-0 z-20 text-right">Qty Out</TableHead>
                   {isOwner && (
-                    <TableHead className="font-bold text-slate-400 uppercase tracking-widest text-[10px] h-12 bg-black/40 sticky top-0 z-20 text-center">Revert</TableHead>
+                    <TableHead className="font-bold text-slate-400 uppercase tracking-widest text-[10px] h-12 bg-black/40 sticky top-0 z-20 text-center">Actions</TableHead>
                   )}
                 </TableRow>
               </TableHeader>
@@ -97,7 +98,10 @@ export default async function DispatchPage() {
                       <TableCell className="text-slate-500 font-medium whitespace-nowrap text-sm">
                         <span className="text-slate-300">{formatDateIST(log.createdAt)}</span> <span className="opacity-50">{formatTimeIST(log.createdAt)}</span>
                       </TableCell>
-                      <TableCell className="font-bold text-slate-200 group-hover:text-white transition-colors">{log.Item.name}</TableCell>
+                      <TableCell>
+                        <div className="font-bold text-slate-200 group-hover:text-white transition-colors">{log.Item.name}</div>
+                        <div className="text-[10px] text-slate-500 uppercase tracking-widest font-black mt-1">{log.Item.category || "Uncategorized"}</div>
+                      </TableCell>
                       <TableCell className="font-medium text-slate-400 tracking-wide uppercase text-xs">{outlets.find(o => o.id === log.outletId)?.name}</TableCell>
                       <TableCell className="text-right">
                          <span className="inline-flex items-center text-blue-400 font-black tracking-widest text-sm drop-shadow-[0_0_8px_rgba(59,130,246,0.3)]">
@@ -105,7 +109,47 @@ export default async function DispatchPage() {
                          </span>
                       </TableCell>
                       {isOwner && (
-                        <TableCell className="text-center">
+                        <TableCell className="text-center flex justify-center gap-2">
+                          {/* Edit Dialog */}
+                          <Dialog>
+                            <DialogTrigger render={
+                              <button className="p-2 rounded-xl text-blue-400/60 hover:text-blue-400 hover:bg-blue-500/10 border border-transparent hover:border-blue-500/20 transition-all" title="Edit dispatched quantity" />
+                            }>
+                              <Edit className="w-4 h-4" />
+                            </DialogTrigger>
+                            <DialogContent className="sm:max-w-[400px] bg-black/90 backdrop-blur-2xl border-blue-500/20 rounded-3xl shadow-[0_0_50px_rgba(59,130,246,0.15)]">
+                              <DialogHeader className="mb-2">
+                                <div className="w-12 h-12 bg-blue-500/10 rounded-2xl flex items-center justify-center mb-4 border border-blue-500/20">
+                                  <Edit className="w-6 h-6 text-blue-400" />
+                                </div>
+                                <DialogTitle className="text-xl font-black text-white">Edit Dispatch Quantity</DialogTitle>
+                                <DialogDescription className="text-slate-400 leading-relaxed">
+                                  Modify the dispatched quantity of <span className="text-white font-bold">{log.Item.name}</span> to <span className="text-white font-bold">{outlets.find(o => o.id === log.outletId)?.name}</span>. Currently dispatched: <span className="text-blue-400 font-bold">{log.quantity} {log.Item.unit}</span>.
+                                </DialogDescription>
+                              </DialogHeader>
+                              <form action={editDispatchQuantity} className="mt-4 space-y-4">
+                                <input type="hidden" name="ledgerId" value={log.id} />
+                                <div className="space-y-2">
+                                  <label htmlFor={`newQty-${log.id}`} className="text-xs font-bold text-slate-400 uppercase tracking-widest">New Quantity</label>
+                                  <Input 
+                                    id={`newQty-${log.id}`}
+                                    name="newQuantity" 
+                                    type="number" 
+                                    step="0.01" 
+                                    min="0.01" 
+                                    defaultValue={log.quantity}
+                                    required
+                                    className="h-12 bg-black/40 border-white/10 text-white placeholder:text-slate-600 rounded-xl focus-visible:ring-blue-500/50 shadow-inner"
+                                  />
+                                </div>
+                                <Button type="submit" className="w-full h-11 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl transition-all active:scale-95">
+                                  Save Changes
+                                </Button>
+                              </form>
+                            </DialogContent>
+                          </Dialog>
+
+                          {/* Revert Dialog */}
                           <Dialog>
                             <DialogTrigger render={
                               <button className="p-2 rounded-xl text-amber-400/60 hover:text-amber-400 hover:bg-amber-500/10 border border-transparent hover:border-amber-500/20 transition-all" title="Revert this dispatch" />

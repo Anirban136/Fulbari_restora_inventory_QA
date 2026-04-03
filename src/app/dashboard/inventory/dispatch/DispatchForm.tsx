@@ -1,6 +1,6 @@
 "use client"
 
-import { useActionState } from "react"
+import { useActionState, useState, useMemo, useEffect } from "react"
 import { dispatchStock } from "./actions"
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
@@ -11,6 +11,7 @@ import { ItemSearchableSelect } from "@/components/inventory/ItemSearchableSelec
 type Item = {
   id: string
   name: string
+  category: string
   currentStock: number
   unit: string
 }
@@ -32,6 +33,24 @@ export function DispatchForm({ items, outlets }: { items: Item[]; outlets: Outle
   )
 
   const isSuccess = !state.error && state !== initialState
+  const [selectedCategory, setSelectedCategory] = useState<string>("")
+
+  // Only reset if it is a brand new loaded list to avoid unneeded renders
+  useEffect(() => {
+    if (!selectedCategory && items.length > 0) {
+      setSelectedCategory("All Categories")
+    }
+  }, [items, selectedCategory])
+
+  const sortedCategories = useMemo(() => {
+    const cats = Array.from(new Set(items.map(i => i.category || 'Uncategorized')))
+    return cats.sort((a,b) => a.localeCompare(b))
+  }, [items])
+
+  const filteredItems = useMemo(() => {
+    if (selectedCategory === "All Categories" || !selectedCategory) return items;
+    return items.filter(item => (item.category || "Uncategorized") === selectedCategory)
+  }, [items, selectedCategory])
 
   return (
     <div className="md:col-span-1 glass-panel p-8 rounded-3xl self-start hover:border-white/20 transition-all">
@@ -43,14 +62,33 @@ export function DispatchForm({ items, outlets }: { items: Item[]; outlets: Outle
       </div>
 
       <form action={formAction} className="space-y-6">
+        
+        <div className="space-y-2">
+          <Label htmlFor="categoryFilter" className="text-xs font-bold text-slate-400 uppercase tracking-widest">
+            Select Category
+          </Label>
+          <select
+            id="categoryFilter"
+            value={selectedCategory}
+            onChange={(e) => setSelectedCategory(e.target.value)}
+            className="w-full h-12 px-4 py-2 rounded-xl border border-white/10 bg-black/40 text-white placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all shadow-inner font-medium"
+          >
+            <option value="All Categories" className="bg-slate-900 text-white font-bold">-- All Categories --</option>
+            {sortedCategories.map(cat => (
+              <option key={cat} value={cat} className="bg-slate-900 text-white">{cat}</option>
+            ))}
+          </select>
+        </div>
+
         <div className="space-y-2">
           <Label htmlFor="itemId" className="text-xs font-bold text-slate-400 uppercase tracking-widest">
             Select Item
           </Label>
           <ItemSearchableSelect 
-            items={items} 
+            key={selectedCategory}
+            items={filteredItems} 
             name="itemId" 
-            placeholder="Search item to dispatch..." 
+            placeholder={filteredItems.length === 0 ? "No items in category..." : "Search item to dispatch..."} 
             showStock={true} 
           />
         </div>
