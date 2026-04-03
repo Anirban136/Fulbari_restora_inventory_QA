@@ -126,6 +126,7 @@ model Tab {
   userId        String   // Staff who opened it
   customerName  String?
   tableName     String?  // specifically for CAFE tables
+  tokenNumber   Int?     // Daily auto-incrementing token for receipts
   status        String   // OPEN, CLOSED, CANCELLED
   totalAmount   Float    @default(0)
   paymentMode   String?  // CASH, ONLINE, SPLIT

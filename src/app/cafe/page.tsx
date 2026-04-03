@@ -9,6 +9,7 @@ import { authOptions } from "@/lib/auth"
 import { formatTimeIST, formatDateIST, getISTDateBounds } from "@/lib/utils"
 import AppLayout from "@/components/layouts/app-layout"
 import { TabReceiptModal } from "@/components/TabReceiptModal"
+import { PrintReceiptButton } from "@/components/PrintReceiptButton"
 import { reopenTab } from "@/app/tabs/[tabId]/actions"
 
 export default async function CafeDashboard() {
@@ -233,6 +234,19 @@ export default async function CafeDashboard() {
                                 items={tab.Items}
                                 accentColor="amber"
                               />
+                              {tab.status === "CLOSED" && tab.tokenNumber && (
+                                <PrintReceiptButton
+                                  outletName={cafe.name}
+                                  tokenNumber={tab.tokenNumber}
+                                  customerName={tab.customerName}
+                                  tabId={tab.id}
+                                  items={tab.Items}
+                                  totalAmount={tab.totalAmount}
+                                  paymentMode={tab.paymentMode}
+                                  closedAt={tab.closedAt}
+                                  accentColor="amber"
+                                />
+                              )}
                               {(tab.status === "CLOSED" || tab.status === "CANCELLED") && (
                                 <form action={reopenTab.bind(null, tab.id)}>
                                   <Button type="submit" variant="ghost" size="sm" className="h-8 text-xs font-bold text-slate-400 hover:text-amber-400 hover:bg-amber-500/10 transition-colors border border-transparent hover:border-amber-500/20">

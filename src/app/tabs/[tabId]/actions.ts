@@ -74,11 +74,30 @@ export async function closeTab(data: FormData) {
      }
   }
 
+  // Generate token number for CAFE (daily auto-increment)
+  let tokenNumber: number | null = null
+  if (tab.Outlet.type === "CAFE") {
+    const todayStart = new Date()
+    todayStart.setHours(0, 0, 0, 0)
+    
+    const lastToken = await prisma.tab.findFirst({
+      where: {
+        outletId: tab.outletId,
+        tokenNumber: { not: null },
+        openedAt: { gte: todayStart }
+      },
+      orderBy: { tokenNumber: 'desc' }
+    })
+    
+    tokenNumber = (lastToken?.tokenNumber || 0) + 1
+  }
+
   await prisma.tab.update({
     where: { id: tabId },
     data: {
       status: "CLOSED",
       paymentMode,
+      tokenNumber,
       closedAt: new Date()
     }
   })
