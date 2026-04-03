@@ -98,7 +98,10 @@ export default async function StockInPage() {
                       <TableCell className="text-slate-500 font-medium whitespace-nowrap text-sm">
                         <span className="text-slate-300">{formatDateIST(log.createdAt)}</span> <span className="opacity-50">{formatTimeIST(log.createdAt)}</span>
                       </TableCell>
-                      <TableCell className="font-bold text-slate-200 group-hover:text-white transition-colors">{log.Item.name}</TableCell>
+                      <TableCell>
+                        <div className="font-bold text-slate-200 group-hover:text-white transition-colors">{log.Item.name}</div>
+                        <div className="text-[10px] text-slate-500 uppercase tracking-widest font-black mt-1">{log.Item.category || "Uncategorized"}</div>
+                      </TableCell>
                       <TableCell className="text-right">
                         <span className="inline-flex items-center text-emerald-400 font-black tracking-widest text-sm drop-shadow-[0_0_8px_rgba(52,211,153,0.3)]">
                            +{log.quantity} <span className="text-[10px] ml-1 opacity-70 uppercase">{log.Item.unit}</span>

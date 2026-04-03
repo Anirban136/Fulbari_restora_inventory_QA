@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useMemo, useEffect } from "react"
 import { Truck, Loader2, AlertCircle, CheckCircle2 } from "lucide-react"
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
@@ -11,12 +11,32 @@ import { logStockIn } from "./actions"
 interface Item {
   id: string
   name: string
+  category?: string
   unit: string
 }
 
 export function StockInForm({ items }: { items: Item[] }) {
   const [loading, setLoading] = useState(false)
   const [status, setStatus] = useState<{ error?: string; success?: boolean } | null>(null)
+  
+  const [selectedCategory, setSelectedCategory] = useState<string>("")
+
+  // Only reset if it is a brand new loaded list to avoid unneeded renders
+  useEffect(() => {
+    if (!selectedCategory && items.length > 0) {
+      setSelectedCategory("All Categories")
+    }
+  }, [items, selectedCategory])
+
+  const sortedCategories = useMemo(() => {
+    const cats = Array.from(new Set(items.map(i => i.category || 'Uncategorized')))
+    return cats.sort((a,b) => a.localeCompare(b))
+  }, [items])
+
+  const filteredItems = useMemo(() => {
+    if (selectedCategory === "All Categories" || !selectedCategory) return items;
+    return items.filter(item => (item.category || "Uncategorized") === selectedCategory)
+  }, [items, selectedCategory])
 
   async function handleSubmit(formData: FormData) {
     setLoading(true)
@@ -65,9 +85,31 @@ export function StockInForm({ items }: { items: Item[] }) {
           </div>
         )}
 
+        <div className="space-y-2">
+          <Label htmlFor="categoryFilter" className="text-xs font-bold text-slate-400 uppercase tracking-widest">
+            Select Category
+          </Label>
+          <select
+            id="categoryFilter"
+            value={selectedCategory}
+            onChange={(e) => setSelectedCategory(e.target.value)}
+            className="w-full h-12 px-4 py-2 rounded-xl border border-white/10 bg-black/40 text-white placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all shadow-inner font-medium"
+          >
+            <option value="All Categories" className="bg-slate-900 text-white font-bold">-- All Categories --</option>
+            {sortedCategories.map(cat => (
+              <option key={cat} value={cat} className="bg-slate-900 text-white">{cat}</option>
+            ))}
+          </select>
+        </div>
+
         <div className="space-y-4">
           <Label htmlFor="itemId" className="text-xs font-bold text-slate-400 uppercase tracking-widest">Item Name (Type to search)</Label>
-          <ItemSearchableSelect items={items} />
+          <ItemSearchableSelect 
+            key={selectedCategory}
+            items={filteredItems} 
+            name="itemId" 
+            placeholder={filteredItems.length === 0 ? "No items in category..." : "Type product name..."} 
+          />
         </div>
         
         <div className="space-y-2">
