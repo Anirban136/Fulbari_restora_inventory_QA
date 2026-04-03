@@ -1,7 +1,6 @@
 import { prisma } from "@/lib/prisma"
 import { getServerSession } from "next-auth"
 import { authOptions } from "@/lib/auth"
-import AppLayout from "@/components/layouts/app-layout"
 import { ShieldAlert, KeyRound, UserRound, ShieldCheck } from "lucide-react"
 import { EditPinDialog } from "./EditPinDialog"
 import { redirect } from "next/navigation"
