@@ -16,7 +16,7 @@ export function EditMenuItemDialog({ menuItem, outlets, globalItems, existingCat
   const isCafe = selectedOutlet?.type === "CAFE" || selectedOutlet?.name?.toLowerCase().includes("cafe")
 
   const cafeCategories = ["Breakfast", "Tea & Coffee", "Maggie & Pasta", "Burger & Sandwich", "Momo", "Snacks", "Mocktail", "Others"]
-  const chaiCategories = ["Chai", "Coffee", "Ciggerette", "Beverage", "Others"]
+  const chaiCategories = ["Tea & Coffee", "Cigarette", "Beverages", "Others"]
 
   const categories = isCafe ? cafeCategories : chaiCategories
   

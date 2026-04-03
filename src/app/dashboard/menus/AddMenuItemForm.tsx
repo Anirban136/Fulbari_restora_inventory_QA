@@ -14,7 +14,7 @@ export function AddMenuItemForm({ outlets, globalItems }: { outlets: any[], glob
   const isCafe = selectedOutlet?.type === "CAFE" || selectedOutlet?.name?.toLowerCase().includes("cafe")
 
   const cafeCategories = ["Breakfast", "Tea & Coffee", "Maggie & Pasta", "Burger & Sandwich", "Momo", "Snacks", "Mocktail", "Others"]
-  const chaiCategories = ["Chai", "Coffee", "Ciggerette", "Beverage", "Others"]
+  const chaiCategories = ["Tea & Coffee", "Cigarette", "Beverages", "Others"]
 
   const categories = isCafe ? cafeCategories : chaiCategories
 
