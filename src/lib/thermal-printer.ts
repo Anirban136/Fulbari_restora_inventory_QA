@@ -192,49 +192,89 @@ function generateReceipt(data: ReceiptData): Uint8Array {
 }
 
 /**
+ * Common service/characteristic UUIDs for thermal printers
+ */
+const PRINTER_SERVICE_UUIDS = [
+  '0000ff00-0000-1000-8000-00805f9b34fb', // Most common (Gobbler, generic Chinese)
+  '000018f0-0000-1000-8000-00805f9b34fb', // Some printers
+  '49535343-fe7d-4ae5-8fa9-9fafd205e455', // Microchip/IS based
+  'e7810a71-73ae-499d-8c15-faa9aef0c3f2', // nRF UART
+  '0000ffe0-0000-1000-8000-00805f9b34fb', // HM-10 BLE module
+]
+
+/**
  * Connect to a Bluetooth thermal printer and return the characteristic for writing
  */
 async function connectPrinter(): Promise<any | null> {
   try {
-    // Request Bluetooth device (user picks the printer from browser dialog)
+    // Use acceptAllDevices for maximum compatibility — user will pick the printer
     const device = await navigator.bluetooth.requestDevice({
-      filters: [
-        { namePrefix: 'Gobbler' },
-        { namePrefix: 'BlueTooth Printer' },
-        { namePrefix: 'Printer' },
-        { namePrefix: 'BT' },
-      ],
-      optionalServices: [
-        '000018f0-0000-1000-8000-00805f9b34fb', // Common printer service UUID
-        '49535343-fe7d-4ae5-8fa9-9fafd205e455', // Another common one
-        'e7810a71-73ae-499d-8c15-faa9aef0c3f2', // Serial port service
-      ]
+      acceptAllDevices: true,
+      optionalServices: PRINTER_SERVICE_UUIDS
     })
+
+    console.log('[Printer] Selected device:', device.name || device.id)
 
     if (!device.gatt) {
       throw new Error('GATT not available on this device')
     }
 
     const server = await device.gatt.connect()
-    const services = await server.getPrimaryServices()
+    console.log('[Printer] GATT server connected')
 
-    // Find the writable characteristic
-    for (const service of services) {
-      const characteristics = await service.getCharacteristics()
-      for (const char of characteristics) {
-        if (char.properties.write || char.properties.writeWithoutResponse) {
-          return char
+    // Try each known service UUID
+    for (const serviceUuid of PRINTER_SERVICE_UUIDS) {
+      try {
+        const service = await server.getPrimaryService(serviceUuid)
+        console.log('[Printer] Found service:', serviceUuid)
+        
+        const characteristics = await service.getCharacteristics()
+        console.log('[Printer] Characteristics found:', characteristics.length)
+        
+        // Find the writable characteristic
+        for (const char of characteristics) {
+          console.log('[Printer] Char UUID:', char.uuid, 'write:', char.properties.write, 'writeNoResp:', char.properties.writeWithoutResponse)
+          if (char.properties.write || char.properties.writeWithoutResponse) {
+            console.log('[Printer] Using characteristic:', char.uuid)
+            return char
+          }
         }
+      } catch (e) {
+        // Service not found on this device, try next
+        continue
       }
     }
 
-    throw new Error('No writable characteristic found on printer')
+    // Fallback: try to discover ALL services (some printers use custom UUIDs)
+    console.log('[Printer] Trying fallback: discovering all services...')
+    try {
+      const services = await server.getPrimaryServices()
+      console.log('[Printer] Total services found:', services.length)
+      
+      for (const service of services) {
+        console.log('[Printer] Service:', service.uuid)
+        try {
+          const characteristics = await service.getCharacteristics()
+          for (const char of characteristics) {
+            if (char.properties.write || char.properties.writeWithoutResponse) {
+              console.log('[Printer] Found writable char in service', service.uuid, ':', char.uuid)
+              return char
+            }
+          }
+        } catch (e) {
+          continue
+        }
+      }
+    } catch (e) {
+      console.error('[Printer] Failed to discover services:', e)
+    }
+
+    throw new Error('No writable characteristic found. Check that the printer is turned on and paired.')
   } catch (error: any) {
     if (error.name === 'NotFoundError') {
-      // User cancelled the device picker
       return null
     }
-    console.error('Bluetooth connection error:', error)
+    console.error('[Printer] Connection error:', error)
     throw error
   }
 }
@@ -243,17 +283,26 @@ async function connectPrinter(): Promise<any | null> {
  * Send data to printer in chunks (BLE has a max packet size ~512 bytes)
  */
 async function sendToPrinter(characteristic: any, data: Uint8Array) {
-  const CHUNK_SIZE = 100 // Safe chunk size for BLE
+  // Use smaller chunks for maximum compatibility with cheap BLE modules
+  const CHUNK_SIZE = 80
+  console.log(`[Printer] Sending ${data.length} bytes in ${Math.ceil(data.length / CHUNK_SIZE)} chunks`)
+  
   for (let i = 0; i < data.length; i += CHUNK_SIZE) {
     const chunk = data.slice(i, i + CHUNK_SIZE)
-    if (characteristic.properties.writeWithoutResponse) {
-      await characteristic.writeValueWithoutResponse(chunk)
-    } else {
-      await characteristic.writeValueWithResponse(chunk)
+    try {
+      if (characteristic.properties.writeWithoutResponse) {
+        await characteristic.writeValueWithoutResponse(chunk)
+      } else {
+        await characteristic.writeValueWithResponse(chunk)
+      }
+    } catch (e: any) {
+      console.error(`[Printer] Failed to write chunk at offset ${i}:`, e)
+      throw new Error(`Print failed at byte ${i}: ${e.message}`)
     }
-    // Small delay between chunks for printer to process
-    await new Promise(resolve => setTimeout(resolve, 50))
+    // Delay between chunks to let the printer buffer process
+    await new Promise(resolve => setTimeout(resolve, 80))
   }
+  console.log('[Printer] All data sent successfully')
 }
 
 /**
