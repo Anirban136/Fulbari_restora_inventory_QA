@@ -66,6 +66,7 @@ model Item {
   costPerUnit   Float?
   sellPrice     Float?   // Selling price per unit
   minStock      Float    @default(0) // Threshold for low stock warning
+  piecesPerBox  Int?     // For items like Cigarettes (e.g. 20 pieces in a box)
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 

@@ -86,14 +86,18 @@ export function EditItemDialog({ item }: { item: any }) {
               <Input id={`edit_sell_${item.id}`} name="sellPrice" type="number" step="0.01" defaultValue={item.sellPrice || ""} className="h-12 bg-white/5 border-white/10 text-white rounded-xl" />
             </div>
           </div>
+          <div className="space-y-2">
+            <Label htmlFor={`edit_stock_${item.id}`} className="text-xs font-bold text-slate-400 uppercase tracking-widest leading-relaxed">Current Stock ({item.unit}) <span className="text-primary/50 text-[10px] ml-1 tracking-normal font-normal lowercase">(Manual correction)</span></Label>
+            <Input id={`edit_stock_${item.id}`} name="currentStock" type="number" step="0.01" defaultValue={item.currentStock} required className="h-12 bg-white/5 border-white/10 text-white rounded-xl text-primary font-black focus-visible:ring-primary/40 shadow-inner" />
+          </div>
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor={`edit_stock_${item.id}`} className="text-xs font-bold text-slate-400 uppercase tracking-widest">Current Stock ({item.unit})</Label>
-              <Input id={`edit_stock_${item.id}`} name="currentStock" type="number" step="0.01" defaultValue={item.currentStock} required className="h-12 bg-white/5 border-white/10 text-white rounded-xl text-primary font-black" />
+              <Label htmlFor={`edit_min_stock_${item.id}`} className="text-xs font-bold text-amber-500/80 uppercase tracking-widest text-glow">Min Stock</Label>
+              <Input id={`edit_min_stock_${item.id}`} name="minStock" type="number" step="0.01" defaultValue={item.minStock || 0} required className="h-12 bg-white/5 border-amber-500/20 text-white rounded-xl font-bold focus-visible:ring-amber-500/50" />
             </div>
             <div className="space-y-2">
-              <Label htmlFor={`edit_min_stock_${item.id}`} className="text-xs font-bold text-amber-500/80 uppercase tracking-widest">Min Stock</Label>
-              <Input id={`edit_min_stock_${item.id}`} name="minStock" type="number" step="0.01" defaultValue={item.minStock || 0} required className="h-12 bg-white/5 border-amber-500/20 text-white rounded-xl font-bold focus-visible:ring-amber-500/50" />
+              <Label htmlFor={`edit_pieces_per_box_${item.id}`} className="text-xs font-bold text-blue-400 uppercase tracking-widest">Pieces in Box</Label>
+              <Input id={`edit_pieces_per_box_${item.id}`} name="piecesPerBox" type="number" defaultValue={item.piecesPerBox || ""} className="h-12 bg-white/5 border-blue-500/20 text-white rounded-xl focus-visible:ring-blue-500/50" />
             </div>
           </div>
           <Button type="submit" className="w-full h-14 text-lg font-bold bg-white text-black hover:bg-slate-200 mt-4 rounded-xl">Save Changes</Button>

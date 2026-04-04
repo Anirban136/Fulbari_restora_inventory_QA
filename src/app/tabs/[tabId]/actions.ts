@@ -4,7 +4,7 @@ import { prisma } from "@/lib/prisma"
 import { revalidatePath } from "next/cache"
 import { redirect } from "next/navigation"
 
-export async function addTabItem(tabId: string, menuItemId: string, price: number) {
+export async function addTabItem(tabId: string, menuItemId: string, price: number, forcedQuantity: number = 1) {
   // Check if it already exists to increment quantity instead
   const existingItem = await prisma.tabItem.findFirst({
     where: { tabId, menuItemId }
@@ -13,18 +13,18 @@ export async function addTabItem(tabId: string, menuItemId: string, price: numbe
   if (existingItem) {
     await prisma.tabItem.update({
       where: { id: existingItem.id },
-      data: { quantity: { increment: 1 } }
+      data: { quantity: { increment: forcedQuantity } }
     })
   } else {
     await prisma.tabItem.create({
-      data: { tabId, menuItemId, priceAtTime: price, quantity: 1 }
+      data: { tabId, menuItemId, priceAtTime: price, quantity: forcedQuantity }
     })
   }
 
   // Update tab total
   await prisma.tab.update({
     where: { id: tabId },
-    data: { totalAmount: { increment: price } }
+    data: { totalAmount: { increment: price * forcedQuantity } }
   })
 
   revalidatePath(`/tabs/${tabId}`)

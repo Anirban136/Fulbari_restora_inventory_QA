@@ -115,20 +115,34 @@ export function DispatchForm({ items, outlets }: { items: Item[]; outlets: Outle
           </select>
         </div>
 
-        <div className="space-y-2">
-          <Label htmlFor="quantity" className="text-xs font-bold text-slate-400 uppercase tracking-widest">
-            Quantity to Dispatch
-          </Label>
-          <Input
-            id="quantity"
-            name="quantity"
-            type="number"
-            step="0.01"
-            min="0.01"
-            placeholder="e.g. 10"
-            required
-            className="h-12 bg-black/40 border-white/10 text-white placeholder:text-slate-600 rounded-xl focus-visible:ring-blue-500/50 shadow-inner"
-          />
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="space-y-2">
+            <Label htmlFor="quantity" className="text-xs font-bold text-slate-400 uppercase tracking-widest">
+              Quantity to Dispatch
+            </Label>
+            <Input
+              id="quantity"
+              name="quantity"
+              type="number"
+              step="0.01"
+              min="0.01"
+              placeholder="e.g. 10"
+              required
+              className="h-12 bg-black/40 border-white/10 text-white placeholder:text-slate-600 rounded-xl focus-visible:ring-blue-500/50 shadow-inner"
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="unitType" className="text-xs font-bold text-slate-400 uppercase tracking-widest">Unit Type</Label>
+            <select
+              id="unitType"
+              name="unitType"
+              required
+              className="w-full h-12 px-4 py-2 rounded-xl border border-white/10 bg-black/40 text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all shadow-inner font-medium"
+            >
+              <option value="pieces" className="bg-slate-900 text-white">Pieces (pcs)</option>
+              <option value="box" className="bg-slate-900 text-white font-bold">Boxes (Box)</option>
+            </select>
+          </div>
         </div>
 
         {/* Error Message */}

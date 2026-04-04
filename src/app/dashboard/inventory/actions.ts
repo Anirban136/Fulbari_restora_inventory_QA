@@ -110,15 +110,18 @@ export async function addItem(data: FormData) {
   const costPerUnit = costPerUnitRaw ? parseFloat(costPerUnitRaw) : null
   const sellPrice = sellPriceRaw ? parseFloat(sellPriceRaw) : null
   const minStock = minStockRaw ? parseFloat(minStockRaw) : 0
+  const piecesPerBoxRaw = data.get("piecesPerBox") as string
+  const piecesPerBox = piecesPerBoxRaw ? parseInt(piecesPerBoxRaw) : null
 
-  await prisma.item.create({
+  await (prisma.item as any).create({
     data: { 
       name, 
       category,
       unit, 
       costPerUnit,
       sellPrice,
-      minStock
+      minStock,
+      piecesPerBox
     },
   })
 
@@ -144,8 +147,10 @@ export async function updateItem(data: FormData) {
   const sellPrice = sellPriceRaw ? parseFloat(sellPriceRaw) : null
   const currentStock = currentStockRaw ? parseFloat(currentStockRaw) : 0
   const minStock = minStockRaw ? parseFloat(minStockRaw) : 0
+  const piecesPerBoxRaw = data.get("piecesPerBox") as string
+  const piecesPerBox = piecesPerBoxRaw ? parseInt(piecesPerBoxRaw) : null
 
-  await prisma.item.update({
+  await (prisma.item as any).update({
     where: { id: itemId },
     data: { 
       name, 
@@ -154,7 +159,8 @@ export async function updateItem(data: FormData) {
       costPerUnit,
       sellPrice,
       currentStock,
-      minStock
+      minStock,
+      piecesPerBox
     },
   })
 

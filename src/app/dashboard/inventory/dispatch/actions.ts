@@ -13,20 +13,24 @@ export async function dispatchStock(data: FormData): Promise<{ error?: string }>
 
   const itemId = data.get("itemId") as string
   const outletId = data.get("outletId") as string
+  const unitType = data.get("unitType") as string
   const quantity = parseFloat(data.get("quantity") as string)
 
   if (!itemId || !outletId || isNaN(quantity) || quantity <= 0) {
     return { error: "Invalid input. Please fill all fields with valid values." }
   }
 
-  const item = await prisma.item.findUnique({ where: { id: itemId } })
+  const item = await prisma.item.findUnique({ where: { id: itemId } }) as any
   if (!item) {
     return { error: "Item not found." }
   }
 
-  if (item.currentStock < quantity) {
+  const finalQuantity = unitType === "box" ? quantity * (item.piecesPerBox || 1) : quantity
+  const notePrefix = unitType === "box" ? `[BOX-DISPATCH: ${quantity} boxes] ` : ""
+
+  if (item.currentStock < finalQuantity) {
     return {
-      error: `Dispatch not possible! Requested ${quantity} ${item.unit} but only ${item.currentStock} ${item.unit} available in central stock.`
+      error: `Dispatch not possible! Requested ${finalQuantity} pieces but only ${item.currentStock} available in central stock.`
     }
   }
 
@@ -35,14 +39,14 @@ export async function dispatchStock(data: FormData): Promise<{ error?: string }>
     // 1. Decrement Central Stock
     await tx.item.update({
       where: { id: itemId },
-      data: { currentStock: { decrement: quantity } }
+      data: { currentStock: { decrement: finalQuantity } }
     })
 
     // 2. Increment Outlet Stock
     await tx.outletStock.upsert({
       where: { outletId_itemId: { outletId, itemId } },
-      update: { quantity: { increment: quantity } },
-      create: { outletId, itemId, quantity }
+      update: { quantity: { increment: finalQuantity } },
+      create: { outletId, itemId, quantity: finalQuantity }
     })
 
     // 3. Create Ledger Entry
@@ -51,8 +55,9 @@ export async function dispatchStock(data: FormData): Promise<{ error?: string }>
         type: "DISPATCH",
         itemId,
         outletId,
-        quantity,
+        quantity: finalQuantity,
         userId: session.user.id,
+        notes: notePrefix
       }
     })
   })
