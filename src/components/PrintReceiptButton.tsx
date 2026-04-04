@@ -29,8 +29,8 @@ interface PrintReceiptButtonProps {
   accentColor?: string
 }
 
-// Generate ESC/POS bytes for a branded Fulbari Cafe receipt
-function generateEscPosBytes(data: {
+// Generate PLAIN TEXT receipt bytes (no ESC/POS commands - maximum compatibility)
+function generateReceiptBytes(data: {
   outletName: string
   tokenNumber: number
   customerName: string
@@ -41,20 +41,13 @@ function generateEscPosBytes(data: {
   closedAt: Date
   isKitchenCopy: boolean
 }): Uint8Array {
-  const ESC = 0x1B, GS = 0x1D, LF = 0x0A
-  const parts: Uint8Array[] = []
   const encoder = new TextEncoder()
-
-  const addText = (text: string) => parts.push(encoder.encode(text + '\n'))
-  const addRaw = (text: string) => parts.push(encoder.encode(text))
-  const addCmd = (...bytes: number[]) => parts.push(new Uint8Array(bytes))
-  const addLF = () => addCmd(LF)
-
   const W = 32
-  const SEP =   '--------------------------------'
-  const DSEP =  '================================'
-  const STAR =  '* * * * * * * * * * * * * * * * *'
-  const DOT =   '................................'
+  const SEP =  '--------------------------------'
+  const DSEP = '================================'
+  const STAR = '********************************'
+  const DOT =  '................................'
+  const LF = '\n'
 
   function pad(left: string, right: string): string {
     const spaces = W - left.length - right.length
@@ -69,149 +62,86 @@ function generateEscPosBytes(data: {
   const dateStr = data.closedAt.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })
   const timeStr = data.closedAt.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true })
 
-  // ====== INIT ======
-  addCmd(ESC, 0x40)
-  addCmd(ESC, 0x61, 0x01) // Center
+  let r = ''
 
-  // ====== DECORATIVE HEADER ======
-  addText(STAR)
+  // Header
+  r += STAR + LF
+  r += LF
+  r += center('FULBARI CAFE') + LF
+  r += center('~ Since Day One ~') + LF
+  r += LF
+  r += STAR + LF
 
-  // Brand name - BIG
-  addCmd(ESC, 0x45, 0x01) // Bold
-  addCmd(ESC, 0x21, 0x30) // Double size
-  addText('FULBARI')
-  addCmd(ESC, 0x21, 0x00) // Normal
-  addCmd(ESC, 0x45, 0x00) // Bold off
-
-  // Sub-brand
-  addCmd(ESC, 0x45, 0x01)
-  addCmd(ESC, 0x21, 0x10) // Double height
-  addText('C A F E')
-  addCmd(ESC, 0x21, 0x00)
-  addCmd(ESC, 0x45, 0x00)
-
-  // Tagline
-  addText(center('~ Since Day One ~'))
-
-  addText(STAR)
-
-  // ====== KITCHEN COPY BADGE ======
+  // Kitchen badge
   if (data.isKitchenCopy) {
-    addLF()
-    addCmd(ESC, 0x45, 0x01, ESC, 0x21, 0x30)
-    addText('KITCHEN ORDER')
-    addCmd(ESC, 0x21, 0x00, ESC, 0x45, 0x00)
-    addText(DSEP)
+    r += LF
+    r += center('*** KITCHEN ORDER ***') + LF
+    r += DSEP + LF
   }
 
-  // ====== TOKEN NUMBER - PROMINENT ======
-  addLF()
-  addText(center('+--------------------+'))
-  addCmd(ESC, 0x45, 0x01, ESC, 0x21, 0x30)
-  addText('TOKEN #' + data.tokenNumber)
-  addCmd(ESC, 0x21, 0x00, ESC, 0x45, 0x00)
-  addText(center('+--------------------+'))
-  addLF()
+  // Token
+  r += LF
+  r += center('+------------------+') + LF
+  r += center('|  TOKEN #' + data.tokenNumber + '  |') + LF
+  r += center('+------------------+') + LF
+  r += LF
 
-  // ====== CUSTOMER & DATE INFO ======
-  addCmd(ESC, 0x61, 0x00) // Left
-  addText(DSEP)
-  addCmd(ESC, 0x45, 0x01)
-  addText(' Customer: ' + data.customerName)
-  addCmd(ESC, 0x45, 0x00)
-  addText(' Date: ' + dateStr)
-  addText(' Time: ' + timeStr)
-  addText(' Bill No: #' + data.tabId.slice(-6))
-  addText(DSEP)
+  // Customer info
+  r += DSEP + LF
+  r += ' Customer: ' + data.customerName + LF
+  r += ' Date: ' + dateStr + LF
+  r += ' Time: ' + timeStr + LF
+  r += ' Bill No: #' + data.tabId.slice(-6) + LF
+  r += DSEP + LF
+  r += LF
 
   if (data.isKitchenCopy) {
-    // ====== KITCHEN: Items only ======
-    addLF()
-    addCmd(ESC, 0x45, 0x01)
-    addText(pad(' ITEM', 'QTY '))
-    addCmd(ESC, 0x45, 0x00)
-    addText(SEP)
+    // Kitchen: Items & qty only
+    r += pad(' ITEM', 'QTY ') + LF
+    r += SEP + LF
     for (const item of data.items) {
-      addCmd(ESC, 0x45, 0x01)
-      addCmd(ESC, 0x21, 0x10) // Double height for readability
-      addText(pad(' ' + item.name, item.quantity + ' '))
-      addCmd(ESC, 0x21, 0x00)
-      addCmd(ESC, 0x45, 0x00)
+      r += pad(' ' + item.name, item.quantity + ' ') + LF
     }
-    addText(DSEP)
-    addLF()
-    addCmd(ESC, 0x61, 0x01) // Center
-    addCmd(ESC, 0x45, 0x01, ESC, 0x21, 0x30)
-    addText('PREPARE NOW')
-    addCmd(ESC, 0x21, 0x00, ESC, 0x45, 0x00)
-    addText(center('>>> URGENT <<<'))
+    r += DSEP + LF
+    r += LF
+    r += center('*** PREPARE NOW ***') + LF
+    r += center('>>> URGENT <<<') + LF
   } else {
-    // ====== CUSTOMER: Full bill ======
-    addLF()
-    addCmd(ESC, 0x45, 0x01)
-    addText(pad(' ITEM', 'AMOUNT '))
-    addCmd(ESC, 0x45, 0x00)
-    addText(SEP)
-
+    // Customer: Full bill
+    r += pad(' ITEM', 'AMOUNT ') + LF
+    r += SEP + LF
     for (const item of data.items) {
       const il = ' ' + item.quantity + 'x ' + item.name
       const pr = 'Rs.' + (item.quantity * item.price).toFixed(0) + ' '
       if (il.length + pr.length + 1 > W) {
-        addText(il)
-        addText(pad('', pr))
+        r += il + LF
+        r += pad('', pr) + LF
       } else {
-        addText(pad(il, pr))
+        r += pad(il, pr) + LF
       }
     }
-
-    addText(DOT)
-
-    // Subtotal
-    addText(pad(' Subtotal:', 'Rs.' + data.totalAmount.toFixed(0) + ' '))
-
-    addText(DSEP)
-
-    // GRAND TOTAL - BIG
-    addCmd(ESC, 0x45, 0x01)
-    addCmd(ESC, 0x21, 0x30) // Double size
-    addCmd(ESC, 0x61, 0x01) // Center
-    addText('Rs.' + data.totalAmount.toFixed(0) + '/-')
-    addCmd(ESC, 0x21, 0x00)
-    addCmd(ESC, 0x45, 0x00)
-
-    addText(DSEP)
-
-    // Payment info
-    addCmd(ESC, 0x61, 0x00) // Left
-    addCmd(ESC, 0x45, 0x01)
-    addText(pad(' Paid via:', data.paymentMode + ' '))
-    addCmd(ESC, 0x45, 0x00)
-
-    addLF()
-    addText(STAR)
-
-    // Footer
-    addCmd(ESC, 0x61, 0x01) // Center
-    addText(center('Thank You!'))
-    addCmd(ESC, 0x45, 0x01)
-    addText(center('Visit Again'))
-    addCmd(ESC, 0x45, 0x00)
-    addLF()
-    addText(center('~ Fulbari Cafe ~'))
-    addText(center('Good Food, Good Mood'))
-
-    addText(STAR)
+    r += DOT + LF
+    r += pad(' Subtotal:', 'Rs.' + data.totalAmount.toFixed(0) + ' ') + LF
+    r += DSEP + LF
+    r += LF
+    r += center('TOTAL: Rs.' + data.totalAmount.toFixed(0) + '/-') + LF
+    r += LF
+    r += DSEP + LF
+    r += pad(' Paid via:', data.paymentMode + ' ') + LF
+    r += LF
+    r += STAR + LF
+    r += center('Thank You!') + LF
+    r += center('Visit Again') + LF
+    r += LF
+    r += center('~ Fulbari Cafe ~') + LF
+    r += center('Good Food, Good Mood') + LF
+    r += STAR + LF
   }
 
-  // Feed & cut
-  addCmd(LF, LF, LF, LF)
-  addCmd(GS, 0x56, 0x01)
+  // Feed paper
+  r += LF + LF + LF + LF + LF
 
-  const total = parts.reduce((s, p) => s + p.length, 0)
-  const result = new Uint8Array(total)
-  let offset = 0
-  for (const part of parts) { result.set(part, offset); offset += part.length }
-  return result
+  return encoder.encode(r)
 }
 
 export function PrintReceiptButton({
@@ -322,7 +252,7 @@ export function PrintReceiptButton({
 
   // ---- SEND TO PRINTER ----
   async function sendChunks(char: any, data: Uint8Array) {
-    const CHUNK = 100
+    const CHUNK = 20 // Very small chunks for maximum compatibility
     for (let i = 0; i < data.length; i += CHUNK) {
       const chunk = data.slice(i, i + CHUNK)
       if (char.properties.writeWithoutResponse) {
@@ -348,59 +278,14 @@ export function PrintReceiptButton({
       tabId, items: receiptItems, totalAmount, paymentMode: paymentMode || 'N/A', closedAt: dateObj,
     }
 
-    // Android: RawBT
+    // Android: RawBT - use same plain text receipt
     if (isAndroid) {
-      const E = '\x1B', G = '\x1D', L = '\n'
-      const W = 32
-      const S = '--------------------------------'
-      const D = '================================'
-      const ST = '* * * * * * * * * * * * * * * * *'
-      const DOT = '................................'
-      const p = (l: string, r: string) => l + ' '.repeat(Math.max(1, W - l.length - r.length)) + r
-      const c = (t: string) => ' '.repeat(Math.max(0, Math.floor((W - t.length) / 2))) + t
-      const ds = baseData.closedAt.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })
-      const ts = baseData.closedAt.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true })
-      
-      function gen(kitchen: boolean) {
-        let r = E+'@'+E+'a\x01'
-        // Header
-        r += ST+L
-        r += E+'E\x01'+E+'!\x30'+'FULBARI'+L+E+'!\x00'+E+'E\x00'
-        r += E+'E\x01'+E+'!\x10'+'C A F E'+L+E+'!\x00'+E+'E\x00'
-        r += c('~ Since Day One ~')+L
-        r += ST+L
-        // Kitchen badge
-        if (kitchen) {
-          r += L+E+'E\x01'+E+'!\x30'+'KITCHEN ORDER'+L+E+'!\x00'+E+'E\x00'+D+L
-        }
-        // Token
-        r += L+c('+--------------------+')+L
-        r += E+'E\x01'+E+'!\x30'+'TOKEN #'+baseData.tokenNumber+L+E+'!\x00'+E+'E\x00'
-        r += c('+--------------------+')+L+L
-        // Customer info
-        r += E+'a\x00'+D+L
-        r += E+'E\x01'+' Customer: '+baseData.customerName+L+E+'E\x00'
-        r += ' Date: '+ds+L+' Time: '+ts+L+' Bill No: #'+baseData.tabId.slice(-6)+L+D+L
-
-        if (kitchen) {
-          r += L+E+'E\x01'+p(' ITEM','QTY ')+L+E+'E\x00'+S+L
-          for (const i of baseData.items) r += E+'E\x01'+E+'!\x10'+p(' '+i.name,i.quantity+' ')+L+E+'!\x00'+E+'E\x00'
-          r += D+L+L+E+'a\x01'+E+'E\x01'+E+'!\x30'+'PREPARE NOW'+L+E+'!\x00'+E+'E\x00'+c('>>> URGENT <<<')+L
-        } else {
-          r += L+E+'E\x01'+p(' ITEM','AMOUNT ')+L+E+'E\x00'+S+L
-          for (const i of baseData.items) {
-            const il=' '+i.quantity+'x '+i.name, pr='Rs.'+(i.quantity*i.price).toFixed(0)+' '
-            r += (il.length+pr.length+1>W) ? il+L+p('',pr)+L : p(il,pr)+L
-          }
-          r += DOT+L+p(' Subtotal:','Rs.'+baseData.totalAmount.toFixed(0)+' ')+L+D+L
-          r += E+'E\x01'+E+'!\x30'+E+'a\x01'+'Rs.'+baseData.totalAmount.toFixed(0)+'/-'+L+E+'!\x00'+E+'E\x00'
-          r += D+L+E+'a\x00'+E+'E\x01'+p(' Paid via:',baseData.paymentMode+' ')+L+E+'E\x00'
-          r += L+ST+L+E+'a\x01'+c('Thank You!')+L+E+'E\x01'+c('Visit Again')+L+E+'E\x00'
-          r += L+c('~ Fulbari Cafe ~')+L+c('Good Food, Good Mood')+L+ST+L
-        }
-        return r+L+L+L+L+G+'V\x01'
-      }
-      const base64 = btoa(unescape(encodeURIComponent(gen(false)+gen(true))))
+      const customerText = generateReceiptBytes({ ...baseData, isKitchenCopy: false })
+      const kitchenText = generateReceiptBytes({ ...baseData, isKitchenCopy: true })
+      // Combine both receipts into one string
+      const decoder = new TextDecoder()
+      const fullText = decoder.decode(customerText) + decoder.decode(kitchenText)
+      const base64 = btoa(unescape(encodeURIComponent(fullText)))
       window.location.href = 'rawbt:base64,' + base64
       setPrintStatus("success")
       setTimeout(() => setPrintStatus("idle"), 3000)
@@ -416,10 +301,10 @@ export function PrintReceiptButton({
     }
 
     try {
-      const customerBytes = generateEscPosBytes({ ...baseData, isKitchenCopy: false })
+      const customerBytes = generateReceiptBytes({ ...baseData, isKitchenCopy: false })
       await sendChunks(charRef.current, customerBytes)
       await new Promise(r => setTimeout(r, 500))
-      const kitchenBytes = generateEscPosBytes({ ...baseData, isKitchenCopy: true })
+      const kitchenBytes = generateReceiptBytes({ ...baseData, isKitchenCopy: true })
       await sendChunks(charRef.current, kitchenBytes)
       setPrintStatus("success")
       setTimeout(() => setPrintStatus("idle"), 4000)
