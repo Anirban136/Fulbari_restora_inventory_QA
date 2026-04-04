@@ -67,8 +67,10 @@ function generateReceiptBytes(data: {
   // Header
   r += STAR + LF
   r += LF
-  r += center('FULBARI CAFE') + LF
-  r += center('~ Since Day One ~') + LF
+  r += center('FULBARI RESTORA') + LF
+  r += center('Old Delhi Road, Sankar Nursery') + LF
+  r += center('Rajyadharpur, Serampore') + LF
+  r += center('Ph: 9432750140') + LF
   r += LF
   r += STAR + LF
 
@@ -133,7 +135,7 @@ function generateReceiptBytes(data: {
     r += center('Thank You!') + LF
     r += center('Visit Again') + LF
     r += LF
-    r += center('~ Fulbari Cafe ~') + LF
+    r += center('~ Fulbari Restora ~') + LF
     r += center('Good Food, Good Mood') + LF
     r += STAR + LF
   }
@@ -150,7 +152,7 @@ export function PrintReceiptButton({
   accentColor = "amber"
 }: PrintReceiptButtonProps) {
   const [btStatus, setBtStatus] = useState<"disconnected" | "connecting" | "connected" | "error">("disconnected")
-  const [printStatus, setPrintStatus] = useState<"idle" | "printing" | "success" | "error">("idle")
+  const [printStatus, setPrintStatus] = useState<"idle" | "printing_customer" | "printing_kitchen" | "success" | "error">("idle")
   const [deviceName, setDeviceName] = useState("")
   const [errorMsg, setErrorMsg] = useState("")
   
@@ -265,8 +267,8 @@ export function PrintReceiptButton({
   }
 
   // ---- PRINT ----
-  async function handlePrint() {
-    setPrintStatus("printing")
+  async function handlePrint(type: 'CUSTOMER' | 'KITCHEN') {
+    setPrintStatus(type === 'CUSTOMER' ? "printing_customer" : "printing_kitchen")
     setErrorMsg("")
 
     const dateObj = closedAt ? (typeof closedAt === 'string' ? new Date(closedAt) : closedAt) : new Date()
@@ -278,14 +280,13 @@ export function PrintReceiptButton({
       tabId, items: receiptItems, totalAmount, paymentMode: paymentMode || 'N/A', closedAt: dateObj,
     }
 
-    // Android: RawBT - use same plain text receipt
+    const isKitchen = type === 'KITCHEN'
+
+    // Android: RawBT - single copy based on button clicked
     if (isAndroid) {
-      const customerText = generateReceiptBytes({ ...baseData, isKitchenCopy: false })
-      const kitchenText = generateReceiptBytes({ ...baseData, isKitchenCopy: true })
-      // Combine both receipts into one string
+      const text = generateReceiptBytes({ ...baseData, isKitchenCopy: isKitchen })
       const decoder = new TextDecoder()
-      const fullText = decoder.decode(customerText) + decoder.decode(kitchenText)
-      const base64 = btoa(unescape(encodeURIComponent(fullText)))
+      const base64 = btoa(unescape(encodeURIComponent(decoder.decode(text))))
       window.location.href = 'rawbt:base64,' + base64
       setPrintStatus("success")
       setTimeout(() => setPrintStatus("idle"), 3000)
@@ -301,11 +302,8 @@ export function PrintReceiptButton({
     }
 
     try {
-      const customerBytes = generateReceiptBytes({ ...baseData, isKitchenCopy: false })
-      await sendChunks(charRef.current, customerBytes)
-      await new Promise(r => setTimeout(r, 500))
-      const kitchenBytes = generateReceiptBytes({ ...baseData, isKitchenCopy: true })
-      await sendChunks(charRef.current, kitchenBytes)
+      const bytesToPrint = generateReceiptBytes({ ...baseData, isKitchenCopy: isKitchen })
+      await sendChunks(charRef.current, bytesToPrint)
       setPrintStatus("success")
       setTimeout(() => setPrintStatus("idle"), 4000)
     } catch (e: any) {
@@ -369,10 +367,10 @@ export function PrintReceiptButton({
         <p className="text-[11px] text-red-400/80 text-center leading-tight px-2">{errorMsg}</p>
       )}
 
-      {/* Print Bill Button */}
+      {/* Print Customer Copy */}
       <button
-        onClick={handlePrint}
-        disabled={printStatus === "printing" || (!isAndroid && btStatus !== "connected")}
+        onClick={() => handlePrint('CUSTOMER')}
+        disabled={printStatus.startsWith("printing") || (!isAndroid && btStatus !== "connected")}
         className={`w-full flex items-center justify-center gap-2 px-4 py-3.5 rounded-xl border text-sm font-black uppercase tracking-widest transition-all active:scale-[0.98] disabled:opacity-30 disabled:cursor-not-allowed ${
           printStatus === "success"
             ? "bg-emerald-500/20 border-emerald-500/30 text-emerald-400"
@@ -383,20 +381,35 @@ export function PrintReceiptButton({
             : "bg-sky-600 border-sky-500/50 text-white hover:bg-sky-500 shadow-[0_0_25px_-5px_rgba(14,165,233,0.4)]"
         }`}
       >
-        {printStatus === "printing" ? (
-          <><Loader2 className="w-4 h-4 animate-spin" /> Printing...</>
-        ) : printStatus === "success" ? (
-          <><CheckCircle2 className="w-4 h-4" /> Printed! ✓</>
-        ) : printStatus === "error" ? (
-          <><AlertCircle className="w-4 h-4" /> {errorMsg || "Failed"}</>
+        {printStatus === "printing_customer" ? (
+          <><Loader2 className="w-4 h-4 animate-spin" /> Printing Customer...</>
         ) : (
-          <><Printer className="w-4 h-4" /> Print Bill</>
+          <><Printer className="w-4 h-4" /> Print Customer Copy</>
+        )}
+      </button>
+
+      {/* Print Kitchen Copy */}
+      <button
+        onClick={() => handlePrint('KITCHEN')}
+        disabled={printStatus.startsWith("printing") || (!isAndroid && btStatus !== "connected")}
+        className={`w-full flex items-center justify-center gap-2 px-4 py-3.5 rounded-xl border text-sm font-black uppercase tracking-widest transition-all active:scale-[0.98] disabled:opacity-30 disabled:cursor-not-allowed ${
+          printStatus === "success"
+            ? "bg-emerald-500/20 border-emerald-500/30 text-emerald-400"
+            : printStatus === "error"
+            ? "bg-red-500/20 border-red-500/30 text-red-400"
+            : "bg-purple-600 border-purple-500/50 text-white hover:bg-purple-500 shadow-[0_0_25px_-5px_rgba(147,51,234,0.4)]"
+        }`}
+      >
+        {printStatus === "printing_kitchen" ? (
+          <><Loader2 className="w-4 h-4 animate-spin" /> Printing Kitchen...</>
+        ) : (
+          <><Printer className="w-4 h-4" /> Print Kitchen Copy</>
         )}
       </button>
 
       {tokenNumber && (
-        <span className="text-[10px] text-slate-500">
-          Token #{tokenNumber} • Customer + Kitchen copies
+        <span className="text-[10px] text-slate-500 mt-2">
+          Token #{tokenNumber}
         </span>
       )}
     </div>
