@@ -67,7 +67,7 @@ function generateReceiptBytes(data: {
   // Header
   r += STAR + LF
   r += LF
-  r += center('FULBARI RESTORA') + LF
+  r += center('FULBARI CAFE') + LF
   r += center('Old Delhi Road, Sankar Nursery') + LF
   r += center('Rajyadharpur, Serampore') + LF
   r += center('Ph: 9432750140') + LF
@@ -135,7 +135,7 @@ function generateReceiptBytes(data: {
     r += center('Thank You!') + LF
     r += center('Visit Again') + LF
     r += LF
-    r += center('~ Fulbari Restora ~') + LF
+    r += center('~ Fulbari Cafe ~') + LF
     r += center('Good Food, Good Mood') + LF
     r += STAR + LF
   }
