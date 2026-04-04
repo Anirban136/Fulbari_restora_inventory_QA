@@ -92,23 +92,6 @@ export function StockInForm({ items, vendors }: { items: Item[], vendors: Vendor
         )}
 
         <div className="space-y-2">
-          <div className="flex items-center justify-between">
-            <Label htmlFor="vendorId" className="text-xs font-bold text-slate-400 uppercase tracking-widest">Select Vendor</Label>
-            <div className="scale-75 origin-right translate-y-2 relative z-10"><AddVendorDialog /></div>
-          </div>
-          <select
-            id="vendorId"
-            name="vendorId"
-            className="w-full h-12 px-4 py-2 rounded-xl border border-white/10 bg-black/40 text-white placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all shadow-inner font-medium"
-          >
-            <option value="" className="bg-slate-900 text-white font-bold">-- No Vendor Selected --</option>
-            {vendors.map(v => (
-              <option key={v.id} value={v.id} className="bg-slate-900 text-white">{v.name}</option>
-            ))}
-          </select>
-        </div>
-
-        <div className="space-y-2">
           <Label htmlFor="categoryFilter" className="text-xs font-bold text-slate-400 uppercase tracking-widest">
             Select Category
           </Label>
@@ -133,6 +116,23 @@ export function StockInForm({ items, vendors }: { items: Item[], vendors: Vendor
             name="itemId" 
             placeholder={filteredItems.length === 0 ? "No items in category..." : "Type product name..."} 
           />
+        </div>
+
+        <div className="space-y-2">
+          <div className="flex items-center justify-between">
+            <Label htmlFor="vendorId" className="text-xs font-bold text-slate-400 uppercase tracking-widest">Select Vendor</Label>
+            <div className="scale-75 origin-right translate-y-2 relative z-10"><AddVendorDialog /></div>
+          </div>
+          <select
+            id="vendorId"
+            name="vendorId"
+            className="w-full h-12 px-4 py-2 rounded-xl border border-white/10 bg-black/40 text-white placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all shadow-inner font-medium"
+          >
+            <option value="" className="bg-slate-900 text-white font-bold">-- No Vendor Selected --</option>
+            {vendors.map(v => (
+              <option key={v.id} value={v.id} className="bg-slate-900 text-white">{v.name}</option>
+            ))}
+          </select>
         </div>
         
         <div className="space-y-2">
