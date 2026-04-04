@@ -1,4 +1,4 @@
-"use client"
+"use client" // Updated layout order v2
 
 import { useState, useMemo, useEffect } from "react"
 import { Truck, Loader2, AlertCircle, CheckCircle2 } from "lucide-react"
