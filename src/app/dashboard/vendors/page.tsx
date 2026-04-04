@@ -2,7 +2,8 @@ import { prisma } from "@/lib/prisma"
 export const dynamic = 'force-dynamic'
 import { getServerSession } from "next-auth"
 import { authOptions } from "@/lib/auth"
-import { Users, Truck, IndianRupee, Package, Search, Phone, MapPin } from "lucide-react"
+import Link from "next/link"
+import { Users, Truck, IndianRupee, Package, Search, Phone, MapPin, FileText } from "lucide-react"
 import { getISTMonthBounds, formatDateIST, formatTimeIST } from "@/lib/utils"
 import { AddVendorDialog } from "../inventory/AddVendorDialog"
 import { EditVendorDialog } from "../inventory/EditVendorDialog"
@@ -156,13 +157,13 @@ export default async function VendorsPage() {
                 vendorStats.map((vendor: any) => (
                   <TableRow key={vendor.id} className="border-b border-white/5 hover:bg-white/5 transition-colors group">
                     <TableCell className="px-6 py-5">
-                      <div className="flex flex-col">
-                        <span className="font-black text-slate-100 group-hover:text-emerald-400 transition-colors text-base">{vendor.name}</span>
+                      <Link href={`/dashboard/vendors/${vendor.id}`} className="flex flex-col group/link">
+                        <span className="font-black text-slate-100 group-hover/link:text-emerald-400 transition-colors text-base underline-offset-4 hover:underline">{vendor.name}</span>
                         <div className="flex items-center gap-1.5 mt-1 opacity-60">
                            <MapPin className="w-3 h-3" />
                            <span className="text-xs text-slate-400 truncate max-w-[200px]">{vendor.address || 'No address provided'}</span>
                         </div>
-                      </div>
+                      </Link>
                     </TableCell>
                     <TableCell className="px-6 py-5">
                       <div className="space-y-1">
@@ -219,6 +220,9 @@ export default async function VendorsPage() {
                     {isOwner && (
                       <TableCell className="px-6 py-5 text-center">
                         <div className="flex items-center justify-center gap-1.5 flex-wrap">
+                          <Link href={`/dashboard/vendors/${vendor.id}`} className="p-2 rounded-xl text-blue-400/60 hover:text-blue-400 hover:bg-blue-500/10 border border-transparent hover:border-blue-500/20 transition-all focus:outline-none" title="View History">
+                            <FileText className="w-4 h-4" />
+                          </Link>
                           <PayVendorDialog vendor={vendor} balanceDue={vendor.balanceDue} />
                           <EditVendorDialog vendor={vendor} />
                           <Dialog>
