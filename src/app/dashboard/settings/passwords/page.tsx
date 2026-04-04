@@ -48,7 +48,7 @@ export default async function PasscodeManagementPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-white/5">
-              {users.map((u) => (
+              {users.map((u: any) => (
                 <tr key={u.id} className="group hover:bg-white/[0.02] transition-colors">
                   <td className="px-8 py-6">
                     <div className="flex items-center gap-4">
