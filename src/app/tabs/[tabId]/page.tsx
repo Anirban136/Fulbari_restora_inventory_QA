@@ -69,9 +69,6 @@ export default async function TabTerminal({ params }: { params: Promise<{ tabId:
 
           {/* Action Buttons */}
           <div className="space-y-3">
-            {/* Print Bill Button - Prominent */}
-            {isCafe && tab.tokenNumber && (
-              <div className="flex justify-center">
                 <PrintReceiptButton
                   outletName={tab.Outlet.name}
                   tokenNumber={tab.tokenNumber}
@@ -83,12 +80,10 @@ export default async function TabTerminal({ params }: { params: Promise<{ tabId:
                   closedAt={tab.closedAt}
                   accentColor={isCafe ? "amber" : "sky"}
                 />
-              </div>
-            )}
 
             {/* Go Back Button */}
             <Link href={`/tabs?target=${tab.Outlet.type}`} className="block">
-              <Button className={`w-full h-14 text-lg font-black tracking-widest uppercase rounded-xl transition-all active:scale-[0.98] ${isCafe ? "bg-orange-600 hover:bg-orange-500 shadow-[0_0_30px_-5px_rgba(249,115,22,0.4)]" : "bg-sky-600 hover:bg-sky-500 shadow-[0_0_30px_-5px_rgba(14,165,233,0.4)]"} text-white`}>
+              <Button variant="outline" className={`w-full h-12 text-sm font-bold tracking-widest uppercase rounded-xl transition-all active:scale-[0.98] border-white/10 text-slate-300 hover:bg-white/10`}>
                 Done — Back to Terminal
               </Button>
             </Link>
