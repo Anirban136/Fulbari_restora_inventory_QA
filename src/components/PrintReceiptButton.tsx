@@ -158,27 +158,23 @@ export function PrintReceiptButton({
       closedAt: dateObj,
     }
 
-    // Generate both receipts (customer + kitchen)
-    const customerReceipt = generateEscPosReceipt({ ...baseData, isKitchenCopy: false })
-    const kitchenReceipt = generateEscPosReceipt({ ...baseData, isKitchenCopy: true })
+    // Detect if we're on Android (for RawBT) or Desktop (for window.print)
+    const isAndroid = /android/i.test(navigator.userAgent)
 
-    const fullReceipt = customerReceipt + kitchenReceipt
-
-    // Convert to base64 for RawBT URL scheme
-    const base64 = btoa(unescape(encodeURIComponent(fullReceipt)))
-
-    // Try RawBT direct print (Android with RawBT app installed)
-    // RawBT URL scheme sends ESC/POS directly to printer - no dialog!
-    try {
+    if (isAndroid) {
+      // Android: Use RawBT URL scheme for direct printing
+      const customerReceipt = generateEscPosReceipt({ ...baseData, isKitchenCopy: false })
+      const kitchenReceipt = generateEscPosReceipt({ ...baseData, isKitchenCopy: true })
+      const fullReceipt = customerReceipt + kitchenReceipt
+      const base64 = btoa(unescape(encodeURIComponent(fullReceipt)))
       window.location.href = 'rawbt:base64,' + base64
-      setStatus("success")
-      setTimeout(() => setStatus("idle"), 3000)
-    } catch (e) {
-      // Fallback to window.print if RawBT is not available
+    } else {
+      // Desktop/Laptop: Use window.print() with formatted receipt popup
       fallbackPrint(baseData)
-      setStatus("success")
-      setTimeout(() => setStatus("idle"), 3000)
     }
+
+    setStatus("success")
+    setTimeout(() => setStatus("idle"), 3000)
   }
 
   function fallbackPrint(data: any) {
