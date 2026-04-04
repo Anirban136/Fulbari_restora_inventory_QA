@@ -60,7 +60,8 @@ export default async function GlobalCatalogPage() {
               <TableRow className="border-b border-white/10 hover:bg-transparent">
                 <TableHead className="font-bold text-slate-400 uppercase tracking-widest text-xs h-14 bg-black/40 backdrop-blur-md sticky top-0 z-20">Item Name</TableHead>
                 <TableHead className="font-bold text-slate-400 uppercase tracking-widest text-xs h-14 bg-black/40 backdrop-blur-md sticky top-0 z-20">Category</TableHead>
-                <TableHead className="font-bold text-slate-400 uppercase tracking-widest text-xs h-14 bg-black/40 backdrop-blur-md sticky top-0 z-20">Unit</TableHead>
+                <TableHead className="font-bold text-slate-400 uppercase tracking-widest text-xs h-14 bg-black/40 backdrop-blur-md sticky top-0 z-20 text-right">Unit</TableHead>
+                <TableHead className="font-bold text-slate-400 uppercase tracking-widest text-xs h-14 bg-black/40 backdrop-blur-md sticky top-0 z-20 text-center">Box Size</TableHead>
                 <TableHead className="font-bold text-slate-400 uppercase tracking-widest text-xs h-14 bg-black/40 backdrop-blur-md sticky top-0 z-20 text-right">Central Stock</TableHead>
                 <TableHead className="font-bold text-slate-400 uppercase tracking-widest text-xs h-14 bg-black/40 backdrop-blur-md sticky top-0 z-20 text-right">Min Stock</TableHead>
                 <TableHead className="font-bold text-slate-400 uppercase tracking-widest text-xs h-14 bg-black/40 backdrop-blur-md sticky top-0 z-20 text-right">Cost Price</TableHead>
@@ -74,7 +75,7 @@ export default async function GlobalCatalogPage() {
             <TableBody>
               {items.length === 0 ? (
                 <TableRow className="border-b border-white/10">
-                  <TableCell colSpan={isOwner ? 8 : 7} className="h-32 text-center text-slate-500">
+                  <TableCell colSpan={isOwner ? 9 : 8} className="h-32 text-center text-slate-500">
                      <span className="flex flex-col items-center justify-center">
                        <Search className="w-8 h-8 opacity-20 mb-2" />
                        No items found in catalog. Add your first item.
@@ -86,7 +87,14 @@ export default async function GlobalCatalogPage() {
                   <TableRow key={item.id} className="border-b border-white/5 hover:bg-white/5 transition-colors group">
                     <TableCell className="font-medium text-slate-200 group-hover:text-white transition-colors">{item.name}</TableCell>
                     <TableCell className="text-slate-400 text-xs font-bold uppercase tracking-wider">{item.category}</TableCell>
-                    <TableCell className="text-slate-500">{item.unit}</TableCell>
+                    <TableCell className="text-slate-500 text-right">{item.unit}</TableCell>
+                    <TableCell className="text-center font-bold text-blue-400">
+                      {item.piecesPerBox ? (
+                        <span className="inline-flex items-center gap-1 bg-blue-500/10 px-2 py-0.5 rounded border border-blue-500/20">
+                          {item.piecesPerBox} <span className="text-[10px] opacity-60">pcs</span>
+                        </span>
+                      ) : '—'}
+                    </TableCell>
                     <TableCell className="text-right">
                       {item.minStock > 0 && item.currentStock <= item.minStock ? (
                         <span className="inline-flex items-center justify-center px-4 py-1 rounded-xl bg-red-500/20 border border-red-500/30 text-red-500 font-black tracking-widest text-sm shadow-[0_0_15px_-2px_rgba(239,68,68,0.3)] animate-pulse">

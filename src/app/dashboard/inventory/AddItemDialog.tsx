@@ -17,18 +17,24 @@ import { addItem } from "./actions"
 
 export function AddItemDialog() {
   const [open, setOpen] = useState(false)
+  const [category, setCategory] = useState("")
+  const [unit, setUnit] = useState("")
 
   async function handleSubmit(formData: FormData) {
     await addItem(formData)
     setOpen(false)
+    setCategory("")
+    setUnit("")
   }
+
+  const showPiecesPerBox = category === "Cigarettes" && unit === "packet"
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger render={
-        <Button className="h-12 px-6 rounded-xl bg-primary hover:bg-emerald-500 text-white font-bold shadow-[0_0_20px_-5px_oklch(0.55_0.16_150_/_0.5)] transition-all active:scale-95 gap-2 w-full" />
-      }>
-        <PlusCircle className="w-5 h-5" /> Add New Item
+      <DialogTrigger asChild>
+        <Button className="h-12 px-6 rounded-xl bg-primary hover:bg-emerald-500 text-white font-bold shadow-[0_0_20px_-5px_oklch(0.55_0.16_150_/_0.5)] transition-all active:scale-95 gap-2 w-full">
+          <PlusCircle className="w-5 h-5" /> Add New Item
+        </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[450px] bg-black/80 backdrop-blur-2xl border-white/10 rounded-3xl shadow-[0_0_50px_rgba(0,0,0,0.8)]">
         <DialogHeader className="mb-4">
@@ -47,7 +53,14 @@ export function AddItemDialog() {
           </div>
           <div className="space-y-2">
             <Label htmlFor="category" className="text-xs font-bold text-slate-400 uppercase tracking-widest">Category</Label>
-            <select name="category" id="category" required className="w-full h-12 px-4 py-2 rounded-xl border border-white/10 bg-black/40 text-white focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all font-medium">
+            <select 
+              name="category" 
+              id="category" 
+              required 
+              value={category}
+              onChange={(e) => setCategory(e.target.value)}
+              className="w-full h-12 px-4 py-2 rounded-xl border border-white/10 bg-black/40 text-white focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all font-medium"
+            >
               <option value="" className="bg-slate-900 text-slate-500">Select a category...</option>
               <option value="Cigarettes" className="bg-slate-900 text-white">Cigarettes</option>
               <option value="Dairy & Milk" className="bg-slate-900 text-white">Dairy & Milk</option>
@@ -66,7 +79,14 @@ export function AddItemDialog() {
           </div>
           <div className="space-y-2">
             <Label htmlFor="unit" className="text-xs font-bold text-slate-400 uppercase tracking-widest">Unit Type</Label>
-            <select name="unit" id="unit" required className="w-full h-12 px-4 py-2 rounded-xl border border-white/10 bg-black/40 text-white focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all font-medium">
+            <select 
+              name="unit" 
+              id="unit" 
+              required 
+              value={unit}
+              onChange={(e) => setUnit(e.target.value)}
+              className="w-full h-12 px-4 py-2 rounded-xl border border-white/10 bg-black/40 text-white focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all font-medium"
+            >
               <option value="" className="bg-slate-900 text-slate-500">Select a unit...</option>
               <option value="kg" className="bg-slate-900 text-white">kg</option>
               <option value="gm" className="bg-slate-900 text-white">gm</option>
@@ -92,10 +112,12 @@ export function AddItemDialog() {
               <Label htmlFor="minStock" className="text-xs font-bold text-slate-400 uppercase tracking-widest text-amber-400">Low Stock Alert</Label>
               <Input id="minStock" name="minStock" type="number" step="0.01" placeholder="e.g. 5" className="h-12 bg-white/5 border-amber-500/20 text-white placeholder:text-slate-700 rounded-xl focus-visible:ring-amber-500/50" />
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="piecesPerBox" className="text-xs font-bold text-slate-400 uppercase tracking-widest text-blue-400">Pieces in Box</Label>
-              <Input id="piecesPerBox" name="piecesPerBox" type="number" placeholder="e.g. 20" className="h-12 bg-white/5 border-blue-500/20 text-white placeholder:text-slate-700 rounded-xl focus-visible:ring-blue-500/50" />
-            </div>
+            {showPiecesPerBox && (
+              <div className="space-y-2 animate-in zoom-in-95 duration-200">
+                <Label htmlFor="piecesPerBox" className="text-xs font-bold text-slate-400 uppercase tracking-widest text-blue-400">Pieces in Box</Label>
+                <Input id="piecesPerBox" name="piecesPerBox" type="number" placeholder="e.g. 20" required className="h-12 bg-white/5 border-blue-500/20 text-white placeholder:text-slate-700 rounded-xl focus-visible:ring-blue-500/50" />
+              </div>
+            )}
           </div>
           <Button type="submit" className="w-full h-14 text-lg font-bold bg-white text-black hover:bg-slate-200 mt-4 rounded-xl shadow-[0_0_20px_rgba(255,255,255,0.2)]">Save Item</Button>
         </form>

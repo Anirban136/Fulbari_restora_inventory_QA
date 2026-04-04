@@ -17,18 +17,22 @@ import { updateItem } from "./actions"
 
 export function EditItemDialog({ item }: { item: any }) {
   const [open, setOpen] = useState(false)
+  const [category, setCategory] = useState(item.category || "")
+  const [unit, setUnit] = useState(item.unit || "")
 
   async function handleSubmit(formData: FormData) {
     await updateItem(formData)
     setOpen(false)
   }
 
+  const showPiecesPerBox = category === "Cigarettes" && unit === "packet"
+
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger render={
-        <button className="p-2 rounded-xl text-amber-400/60 hover:text-amber-400 hover:bg-amber-500/10 border border-transparent hover:border-amber-500/20 transition-all" title={`Edit ${item.name}`} />
-      }>
-        <Edit className="w-4 h-4" />
+      <DialogTrigger asChild>
+        <button className="p-2 rounded-xl text-amber-400/60 hover:text-amber-400 hover:bg-amber-500/10 border border-transparent hover:border-amber-500/20 transition-all" title={`Edit ${item.name}`}>
+          <Edit className="w-4 h-4" />
+        </button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[450px] bg-black/80 backdrop-blur-2xl border-white/10 rounded-3xl shadow-[0_0_50px_rgba(0,0,0,0.8)]">
         <DialogHeader className="mb-4">
@@ -48,7 +52,14 @@ export function EditItemDialog({ item }: { item: any }) {
           </div>
           <div className="space-y-2">
             <Label htmlFor={`edit_category_${item.id}`} className="text-xs font-bold text-slate-400 uppercase tracking-widest">Category</Label>
-            <select name="category" id={`edit_category_${item.id}`} defaultValue={item.category || "Uncategorized"} required className="w-full h-12 px-4 py-2 rounded-xl border border-white/10 bg-black/40 text-white focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all font-medium">
+            <select 
+              name="category" 
+              id={`edit_category_${item.id}`} 
+              value={category}
+              onChange={(e) => setCategory(e.target.value)}
+              required 
+              className="w-full h-12 px-4 py-2 rounded-xl border border-white/10 bg-black/40 text-white focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all font-medium"
+            >
               <option value="Cigarettes" className="bg-slate-900 text-white">Cigarettes</option>
               <option value="Dairy & Milk" className="bg-slate-900 text-white">Dairy & Milk</option>
               <option value="Produce" className="bg-slate-900 text-white">Produce</option>
@@ -66,7 +77,14 @@ export function EditItemDialog({ item }: { item: any }) {
           </div>
           <div className="space-y-2">
             <Label htmlFor={`edit_unit_${item.id}`} className="text-xs font-bold text-slate-400 uppercase tracking-widest">Unit Type</Label>
-            <select name="unit" id={`edit_unit_${item.id}`} defaultValue={item.unit} required className="w-full h-12 px-4 py-2 rounded-xl border border-white/10 bg-black/40 text-white focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all font-medium">
+            <select 
+              name="unit" 
+              id={`edit_unit_${item.id}`} 
+              value={unit}
+              onChange={(e) => setUnit(e.target.value)}
+              required 
+              className="w-full h-12 px-4 py-2 rounded-xl border border-white/10 bg-black/40 text-white focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all font-medium"
+            >
               <option value="kg" className="bg-slate-900 text-white">kg</option>
               <option value="gm" className="bg-slate-900 text-white">gm</option>
               <option value="lit" className="bg-slate-900 text-white">litre (lit)</option>
@@ -95,10 +113,12 @@ export function EditItemDialog({ item }: { item: any }) {
               <Label htmlFor={`edit_min_stock_${item.id}`} className="text-xs font-bold text-amber-500/80 uppercase tracking-widest text-glow">Min Stock</Label>
               <Input id={`edit_min_stock_${item.id}`} name="minStock" type="number" step="0.01" defaultValue={item.minStock || 0} required className="h-12 bg-white/5 border-amber-500/20 text-white rounded-xl font-bold focus-visible:ring-amber-500/50" />
             </div>
-            <div className="space-y-2">
-              <Label htmlFor={`edit_pieces_per_box_${item.id}`} className="text-xs font-bold text-blue-400 uppercase tracking-widest">Pieces in Box</Label>
-              <Input id={`edit_pieces_per_box_${item.id}`} name="piecesPerBox" type="number" defaultValue={item.piecesPerBox || ""} className="h-12 bg-white/5 border-blue-500/20 text-white rounded-xl focus-visible:ring-blue-500/50" />
-            </div>
+            {showPiecesPerBox && (
+              <div className="space-y-2 animate-in zoom-in-95 duration-200">
+                <Label htmlFor={`edit_pieces_per_box_${item.id}`} className="text-xs font-bold text-blue-400 uppercase tracking-widest">Pieces in Box</Label>
+                <Input id={`edit_pieces_per_box_${item.id}`} name="piecesPerBox" type="number" defaultValue={item.piecesPerBox || ""} required className="h-12 bg-white/5 border-blue-500/20 text-white rounded-xl focus-visible:ring-blue-500/50" />
+              </div>
+            )}
           </div>
           <Button type="submit" className="w-full h-14 text-lg font-bold bg-white text-black hover:bg-slate-200 mt-4 rounded-xl">Save Changes</Button>
         </form>
