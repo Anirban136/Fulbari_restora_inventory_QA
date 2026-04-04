@@ -70,3 +70,14 @@ export async function updateMenuItem(data: FormData) {
 
   revalidatePath("/dashboard/menus")
 }
+
+export async function deleteMenuItem(menuItemId: string) {
+  const session = await getServerSession(authOptions)
+  if (!session || session.user.role !== "OWNER") throw new Error("Unauthorized")
+
+  await prisma.menuItem.delete({
+    where: { id: menuItemId }
+  })
+
+  revalidatePath("/dashboard/menus")
+}

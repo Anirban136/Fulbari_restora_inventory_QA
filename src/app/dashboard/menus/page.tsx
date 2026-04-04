@@ -3,8 +3,8 @@ export const dynamic = 'force-dynamic'
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
-import { addMenuItem, toggleMenuItem } from "./actions"
-import { MenuSquare, Settings2, Search } from "lucide-react"
+import { addMenuItem, toggleMenuItem, deleteMenuItem } from "./actions"
+import { MenuSquare, Settings2, Search, Trash2 } from "lucide-react"
 import { EditMenuItemDialog } from "./EditMenuItemDialog"
 import { AddMenuItemForm } from "./AddMenuItemForm"
 import {
@@ -15,6 +15,14 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
 
 export default async function MenusPage() {
   const outlets = await prisma.outlet.findMany({
@@ -29,7 +37,7 @@ export default async function MenusPage() {
 
   const globalItems = await prisma.item.findMany({ orderBy: { name: 'asc' } })
 
-  const existingCategories = Array.from(new Set(menuItems.map(item => item.categoryId).filter(Boolean)))
+  const existingCategories = Array.from(new Set(menuItems.map((item: any) => item.categoryId).filter(Boolean)))
 
   return (
     <div className="space-y-8 relative">
@@ -83,7 +91,7 @@ export default async function MenusPage() {
                     </TableCell>
                   </TableRow>
                  ) : (
-                  menuItems.map((menuItem) => (
+                  menuItems.map((menuItem: any) => (
                     <TableRow key={menuItem.id} className={`border-b border-white/5 hover:bg-white/5 transition-colors group ${!menuItem.isAvailable ? "opacity-40 grayscale" : ""}`}>
                       <TableCell className="font-medium text-slate-400 tracking-wide uppercase text-xs">{menuItem.Outlet.name}</TableCell>
                       <TableCell className="font-bold text-slate-200 text-base">{menuItem.name}</TableCell>
@@ -106,6 +114,29 @@ export default async function MenusPage() {
                                {menuItem.isAvailable ? "Active" : "OOS"}
                              </Button>
                            </form>
+                           <Dialog>
+                             <DialogTrigger>
+                               <div className="flex h-8 w-8 items-center justify-center text-red-500/70 hover:text-red-400 hover:bg-red-500/10 rounded-lg cursor-pointer">
+                                 <Trash2 className="h-4 w-4" />
+                               </div>
+                             </DialogTrigger>
+                             <DialogContent className="sm:max-w-[400px] bg-black/90 backdrop-blur-2xl border-red-500/20 rounded-3xl shadow-[0_0_50px_rgba(239,68,68,0.15)]">
+                               <DialogHeader className="mb-2">
+                                 <div className="w-12 h-12 bg-red-500/10 rounded-2xl flex items-center justify-center mb-4 border border-red-500/20">
+                                   <Trash2 className="w-6 h-6 text-red-400" />
+                                 </div>
+                                 <DialogTitle className="text-xl font-black text-white">Delete Menu Item?</DialogTitle>
+                                 <DialogDescription className="text-slate-400 leading-relaxed">
+                                   Are you sure you want to delete <span className="text-white font-bold">{menuItem.name}</span> from the {menuItem.Outlet.name} menu? This action cannot be undone.
+                                 </DialogDescription>
+                               </DialogHeader>
+                               <form action={deleteMenuItem.bind(null, menuItem.id)} className="mt-4">
+                                 <Button type="submit" variant="destructive" className="w-full h-11 font-bold rounded-xl transition-all active:scale-95">
+                                   Yes, Delete Item
+                                 </Button>
+                               </form>
+                             </DialogContent>
+                           </Dialog>
                          </div>
                       </TableCell>
                     </TableRow>
