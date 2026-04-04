@@ -19,7 +19,8 @@ import {
   LogOut,
   ChevronRight,
   Users,
-  ShieldCheck
+  ShieldCheck,
+  AlertTriangle
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { UserControls } from "@/components/user-controls"
@@ -43,6 +44,7 @@ export function UnifiedSidebar({ user }: { user: any }) {
 
   const navItems: NavItem[] = [
     { name: "Home Dashboard", href: "/dashboard", icon: Home, roles: ["OWNER"] },
+    { name: "Database Reset", href: "/dashboard/wipe", icon: AlertTriangle, roles: ["OWNER"] },
     { name: "Cafe Hub", href: "/cafe", icon: Coffee, roles: ["OWNER", "CAFE_STAFF"] },
     { name: "Chai Hub", href: "/chai", icon: Coffee, roles: ["OWNER", "CHAI_STAFF"] },
     { name: "Restaurant", href: "/restaurant", icon: Store, roles: ["OWNER", "REST_STAFF"] },
@@ -54,7 +56,6 @@ export function UnifiedSidebar({ user }: { user: any }) {
     { name: "Outlets Stock", href: "/dashboard/stores", icon: Store, roles: ["OWNER", "INV_MANAGER"] },
     { name: "Vendors", href: "/dashboard/vendors", icon: Users, roles: ["OWNER"] },
     { name: "Passcode Control", href: "/dashboard/settings/passwords", icon: ShieldCheck, roles: ["OWNER"] },
-    { name: "Database Reset", href: "/dashboard/wipe", icon: X, roles: ["OWNER"] },
   ]
 
   const filteredItems = navItems.filter(item => 
