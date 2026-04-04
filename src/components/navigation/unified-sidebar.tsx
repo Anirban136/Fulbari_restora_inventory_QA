@@ -54,6 +54,7 @@ export function UnifiedSidebar({ user }: { user: any }) {
     { name: "Outlets Stock", href: "/dashboard/stores", icon: Store, roles: ["OWNER", "INV_MANAGER"] },
     { name: "Vendors", href: "/dashboard/vendors", icon: Users, roles: ["OWNER"] },
     { name: "Passcode Control", href: "/dashboard/settings/passwords", icon: ShieldCheck, roles: ["OWNER"] },
+    { name: "Database Reset", href: "/dashboard/wipe", icon: X, roles: ["OWNER"] },
   ]
 
   const filteredItems = navItems.filter(item => 
