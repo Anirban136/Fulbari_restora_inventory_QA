@@ -75,9 +75,11 @@ export async function deleteMenuItem(menuItemId: string) {
   const session = await getServerSession(authOptions)
   if (!session || session.user.role !== "OWNER") throw new Error("Unauthorized")
 
-  await prisma.menuItem.delete({
-    where: { id: menuItemId }
-  })
+  // Delete related TabItems first to avoid foreign key constraint errors
+  await prisma.$transaction([
+    prisma.tabItem.deleteMany({ where: { menuItemId } }),
+    prisma.menuItem.delete({ where: { id: menuItemId } })
+  ])
 
   revalidatePath("/dashboard/menus")
 }
