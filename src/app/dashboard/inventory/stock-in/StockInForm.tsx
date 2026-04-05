@@ -129,7 +129,7 @@ export function StockInForm({ items, vendors }: { items: Item[], vendors: Vendor
                 <span className="text-sm font-bold text-white mt-0.5 whitespace-nowrap">Non-updateable catalog data</span>
               </div>
               <div className="px-4 py-2 rounded-xl bg-blue-500/20 border border-blue-500/30 text-blue-100 font-black tracking-tighter text-lg whitespace-nowrap shadow-[0_0_15px_-5px_rgba(59,130,246,0.4)]">
-                {selectedItem.piecesPerBox} <span className="text-xs opacity-60 uppercase font-black ml-1">{selectedItem.unit}</span> / BOX
+                {selectedItem.piecesPerBox} <span className="text-xs opacity-60 uppercase font-black ml-1">pcs</span> / BOX
               </div>
             </div>
           )}
