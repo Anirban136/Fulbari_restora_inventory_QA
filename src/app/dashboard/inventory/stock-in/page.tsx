@@ -108,7 +108,7 @@ export default async function StockInPage() {
                           <span className="inline-flex items-center text-emerald-400 font-black tracking-widest text-sm drop-shadow-[0_0_8px_rgba(52,211,153,0.3)]">
                             +{log.quantity} <span className="text-[10px] ml-1 opacity-70 uppercase font-black">{log.Item.unit === 'box' ? 'pcs' : log.Item.unit}</span>
                           </span>
-                          {log.notes.includes("BOX-ENTRY") && (
+                          {log.notes?.includes("BOX-ENTRY") && (
                             <span className="text-[9px] text-emerald-500/50 font-black uppercase tracking-tighter -mt-0.5">Bulk Box Entry</span>
                           )}
                         </span>
