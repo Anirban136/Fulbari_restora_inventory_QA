@@ -1,0 +1,150 @@
+import { prisma } from "@/lib/prisma"
+export const dynamic = 'force-dynamic'
+import { getServerSession } from "next-auth"
+import { authOptions } from "@/lib/auth"
+import { Label } from "@/components/ui/label"
+import { Input } from "@/components/ui/input"
+import { Button } from "@/components/ui/button"
+import { logStockIn } from "./actions"
+import { revertLedgerEntry } from "../actions"
+import { Truck, Search, Undo2 } from "lucide-react"
+import { StockInForm } from "./StockInForm"
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
+import { formatTimeIST, formatDateIST } from "@/lib/utils"
+
+export default async function StockInPage() {
+  const session = await getServerSession(authOptions)
+  const isOwner = session?.user?.role === "OWNER"
+
+  const items = await prisma.item.findMany({ orderBy: { name: 'asc' } })
+  const vendors = await prisma.vendor.findMany({ orderBy: { name: 'asc' } })
+  const recentLogs = await prisma.inventoryLedger.findMany({
+    where: { type: "STOCK_IN" },
+    include: { Item: true, User: true, Vendor: true },
+    orderBy: { createdAt: 'desc' },
+    take: 15
+  })
+
+  return (
+    <div className="space-y-8 relative">
+      {/* Background Decorators */}
+      <div className="absolute top-[20%] right-[-100px] w-[500px] h-[500px] bg-primary/5 rounded-full blur-[120px] pointer-events-none"></div>
+
+      <div className="glass-panel p-6 rounded-3xl relative z-10 flex items-center justify-between">
+        <div>
+          <h2 className="text-3xl font-black text-white tracking-tight flex items-center gap-3">
+            Stock Intake
+            <div className="h-2 w-2 rounded-full bg-emerald-500 shadow-[0_0_10px_#10b981]"></div>
+          </h2>
+          <p className="text-muted-foreground mt-1 font-medium text-sm tracking-wide uppercase">Log new warehouse deliveries and update central inventory.</p>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-8 relative z-10">
+        
+        {/* Left Form */}
+        <StockInForm items={items} vendors={vendors} />
+
+        {/* Right Table */}
+        <div className="md:col-span-2 glass-panel rounded-3xl overflow-hidden flex flex-col">
+          <div className="p-6 border-b border-white/10 bg-white/5 backdrop-blur-md flex items-center justify-between">
+            <h3 className="text-lg font-bold text-white tracking-wide">Recent Deliveries Overview</h3>
+            {isOwner && (
+              <span className="text-[10px] font-black tracking-widest bg-amber-500/10 border border-amber-500/20 text-amber-400 px-3 py-1 rounded-full uppercase">
+                Revert available
+              </span>
+            )}
+          </div>
+          <div className="flex-1 overflow-auto max-h-[600px] p-0">
+            <Table>
+              <TableHeader>
+                <TableRow className="border-b border-white/10 hover:bg-transparent">
+                  <TableHead className="font-bold text-slate-400 uppercase tracking-widest text-[10px] h-12 bg-black/40 sticky top-0 z-20">Date / Time</TableHead>
+                  <TableHead className="font-bold text-slate-400 uppercase tracking-widest text-[10px] h-12 bg-black/40 sticky top-0 z-20">Item</TableHead>
+                  <TableHead className="font-bold text-slate-400 uppercase tracking-widest text-[10px] h-12 bg-black/40 sticky top-0 z-20 text-right">Qty In</TableHead>
+                  <TableHead className="font-bold text-slate-400 uppercase tracking-widest text-[10px] h-12 bg-black/40 sticky top-0 z-20">Received By</TableHead>
+                  {isOwner && (
+                    <TableHead className="font-bold text-slate-400 uppercase tracking-widest text-[10px] h-12 bg-black/40 sticky top-0 z-20 text-center">Revert</TableHead>
+                  )}
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                 {recentLogs.length === 0 ? (
+                   <TableRow className="border-b border-white/10">
+                    <TableCell colSpan={isOwner ? 5 : 4} className="h-40 text-center text-slate-500">
+                      <span className="flex flex-col items-center justify-center">
+                        <Search className="w-8 h-8 opacity-20 mb-2" />
+                        No recent incoming stock logged.
+                      </span>
+                    </TableCell>
+                  </TableRow>
+                 ) : (
+                  recentLogs.map((log) => (
+                    <TableRow key={log.id} className="border-b border-white/5 hover:bg-white/5 transition-colors group">
+                      <TableCell className="text-slate-500 font-medium whitespace-nowrap text-sm">
+                        <span className="text-slate-300">{formatDateIST(log.createdAt)}</span> <span className="opacity-50">{formatTimeIST(log.createdAt)}</span>
+                      </TableCell>
+                      <TableCell>
+                        <div className="font-bold text-slate-200 group-hover:text-white transition-colors">{log.Item.name}</div>
+                        <div className="text-[10px] text-slate-500 uppercase tracking-widest font-black mt-1">{log.Item.category || "Uncategorized"}</div>
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <span className="inline-flex items-center text-emerald-400 font-black tracking-widest text-sm drop-shadow-[0_0_8px_rgba(52,211,153,0.3)]">
+                           +{log.quantity} <span className="text-[10px] ml-1 opacity-70 uppercase">{log.Item.unit}</span>
+                        </span>
+                      </TableCell>
+                      <TableCell className="text-slate-500 text-sm font-medium">{log.User.name}</TableCell>
+                      {isOwner && (
+                        <TableCell className="text-center">
+                          <Dialog>
+                            <DialogTrigger render={
+                              <button className="p-2 rounded-xl text-amber-400/60 hover:text-amber-400 hover:bg-amber-500/10 border border-transparent hover:border-amber-500/20 transition-all" title="Revert this stock entry" />
+                            }>
+                              <Undo2 className="w-4 h-4" />
+                            </DialogTrigger>
+                            <DialogContent className="sm:max-w-[400px] bg-black/90 backdrop-blur-2xl border-amber-500/20 rounded-3xl shadow-[0_0_50px_rgba(245,158,11,0.15)]">
+                              <DialogHeader className="mb-2">
+                                <div className="w-12 h-12 bg-amber-500/10 rounded-2xl flex items-center justify-center mb-4 border border-amber-500/20">
+                                  <Undo2 className="w-6 h-6 text-amber-400" />
+                                </div>
+                                <DialogTitle className="text-xl font-black text-white">Revert Stock Entry?</DialogTitle>
+                                <DialogDescription className="text-slate-400 leading-relaxed">
+                                  This will reverse the intake of <span className="text-emerald-400 font-bold">+{log.quantity} {log.Item.unit}</span> of <span className="text-white font-bold">{log.Item.name}</span> and delete this ledger record.
+                                </DialogDescription>
+                              </DialogHeader>
+                              <form action={revertLedgerEntry} className="mt-4">
+                                <input type="hidden" name="ledgerId" value={log.id} />
+                                <Button type="submit" className="w-full h-11 bg-amber-600 hover:bg-amber-500 text-white font-bold rounded-xl transition-all active:scale-95">
+                                  Yes, Revert Intake
+                                </Button>
+                              </form>
+                            </DialogContent>
+                          </Dialog>
+                        </TableCell>
+                      )}
+                    </TableRow>
+                  ))
+                 )}
+              </TableBody>
+            </Table>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}

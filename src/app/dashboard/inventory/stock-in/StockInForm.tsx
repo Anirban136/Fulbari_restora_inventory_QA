@@ -1,0 +1,204 @@
+"use client" // Updated layout order v2
+
+import { useState, useMemo, useEffect } from "react"
+import { Truck, Loader2, AlertCircle, CheckCircle2 } from "lucide-react"
+import { Label } from "@/components/ui/label"
+import { Input } from "@/components/ui/input"
+import { Button } from "@/components/ui/button"
+import { ItemSearchableSelect } from "@/components/inventory/ItemSearchableSelect"
+import { AddVendorDialog } from "../AddVendorDialog"
+import { logStockIn } from "./actions"
+
+interface Item {
+  id: string
+  name: string
+  category?: string
+  unit: string
+  piecesPerBox?: number | null
+}
+
+interface Vendor {
+  id: string
+  name: string
+}
+
+export function StockInForm({ items, vendors }: { items: Item[], vendors: Vendor[] }) {
+  const [loading, setLoading] = useState(false)
+  const [status, setStatus] = useState<{ error?: string; success?: boolean } | null>(null)
+  
+  const [selectedCategory, setSelectedCategory] = useState<string>("")
+  const [selectedItem, setSelectedItem] = useState<Item | null>(null)
+  const [unitType, setUnitType] = useState<string>("pieces")
+
+  // Only reset if it is a brand new loaded list to avoid unneeded renders
+  useEffect(() => {
+    if (!selectedCategory && items.length > 0) {
+      setSelectedCategory("All Categories")
+    }
+  }, [items, selectedCategory])
+
+  const sortedCategories = useMemo(() => {
+    const cats = Array.from(new Set(items.map(i => i.category || 'Uncategorized')))
+    return cats.sort((a,b) => a.localeCompare(b))
+  }, [items])
+
+  const filteredItems = useMemo(() => {
+    if (selectedCategory === "All Categories" || !selectedCategory) return items;
+    return items.filter(item => (item.category || "Uncategorized") === selectedCategory)
+  }, [items, selectedCategory])
+
+  async function handleSubmit(formData: FormData) {
+    setLoading(true)
+    setStatus(null)
+    
+    try {
+      const result = await logStockIn(formData)
+      if (result?.error) {
+        setStatus({ error: result.error })
+      } else {
+        setStatus({ success: true })
+        setSelectedItem(null) // Reset selected item view
+        // Clear success message after 3 seconds
+        setTimeout(() => setStatus(null), 3000)
+        // Reset form if success (optional, but good for multiple intakes)
+        const form = document.getElementById("stock-in-form") as HTMLFormElement
+        form?.reset()
+      }
+    } catch (err) {
+      setStatus({ error: "A network error occurred. Please check your connection." })
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  return (
+    <div className="xl:col-span-1 glass-panel p-8 rounded-3xl self-start hover:border-white/20 transition-all">
+      <div className="flex items-center gap-4 mb-8">
+        <div className="h-12 w-12 bg-primary/20 rounded-2xl flex items-center justify-center border border-primary/30 shadow-[0_0_15px_-3px_oklch(0.55_0.16_150_/_0.3)]">
+          <Truck className="w-6 h-6 text-primary" />
+        </div>
+        <h3 className="text-xl font-bold text-white">Receive Shipment</h3>
+      </div>
+      
+      <form id="stock-in-form" action={handleSubmit} className="space-y-6">
+        {status?.error && (
+          <div className="p-4 bg-red-500/10 border border-red-500/20 rounded-xl flex items-center gap-3 text-red-400 animate-in fade-in slide-in-from-top-1">
+            <AlertCircle className="w-5 h-5 flex-shrink-0" />
+            <p className="text-sm font-medium">{status.error}</p>
+          </div>
+        )}
+
+        {status?.success && (
+          <div className="p-4 bg-emerald-500/10 border border-emerald-500/20 rounded-xl flex items-center gap-3 text-emerald-400 animate-in fade-in slide-in-from-top-1">
+            <CheckCircle2 className="w-5 h-5 flex-shrink-0" />
+            <p className="text-sm font-medium">Stock logged successfully!</p>
+          </div>
+        )}
+
+        <div className="space-y-2">
+          <Label htmlFor="categoryFilter" className="text-xs font-bold text-slate-400 uppercase tracking-widest">
+            Select Category
+          </Label>
+          <select
+            id="categoryFilter"
+            value={selectedCategory}
+            onChange={(e) => setSelectedCategory(e.target.value)}
+            className="w-full h-12 px-4 py-2 rounded-xl border border-white/10 bg-black/40 text-white placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all shadow-inner font-medium"
+          >
+            <option value="All Categories" className="bg-slate-900 text-white font-bold">-- All Categories --</option>
+            {sortedCategories.map(cat => (
+              <option key={cat} value={cat} className="bg-slate-900 text-white">{cat}</option>
+            ))}
+          </select>
+        </div>
+
+        <div className="space-y-4">
+          <Label htmlFor="itemId" className="text-xs font-bold text-slate-400 uppercase tracking-widest">Item Name (Type to search)</Label>
+          <ItemSearchableSelect 
+            key={selectedCategory}
+            items={filteredItems} 
+            name="itemId" 
+            placeholder={filteredItems.length === 0 ? "No items in category..." : "Type product name..."} 
+            onSelect={(item) => setSelectedItem(item)}
+          />
+          
+          {selectedItem && selectedItem.piecesPerBox && (
+            <div className="p-4 rounded-2xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-between animate-in fade-in slide-in-from-left-2 transition-all">
+              <div className="flex flex-col">
+                <span className="text-[10px] font-black text-blue-400 uppercase tracking-widest whitespace-nowrap">Box Configuration</span>
+                <span className="text-sm font-bold text-white mt-0.5 whitespace-nowrap">Non-updateable catalog data</span>
+              </div>
+              <div className="px-4 py-2 rounded-xl bg-blue-500/20 border border-blue-500/30 text-blue-100 font-black tracking-tighter text-lg whitespace-nowrap shadow-[0_0_15px_-5px_rgba(59,130,246,0.4)]">
+                {selectedItem.piecesPerBox} <span className="text-xs opacity-60 uppercase font-black ml-1">{selectedItem.unit}</span> / BOX
+              </div>
+            </div>
+          )}
+        </div>
+
+        <div className="space-y-2">
+          <div className="flex items-center justify-between">
+            <Label htmlFor="vendorId" className="text-xs font-bold text-slate-400 uppercase tracking-widest">Select Vendor</Label>
+            <div className="scale-75 origin-right translate-y-2 relative z-10"><AddVendorDialog /></div>
+          </div>
+          <select
+            id="vendorId"
+            name="vendorId"
+            className="w-full h-12 px-4 py-2 rounded-xl border border-white/10 bg-black/40 text-white placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all shadow-inner font-medium"
+          >
+            <option value="" className="bg-slate-900 text-white font-bold">-- No Vendor Selected --</option>
+            {vendors.map(v => (
+              <option key={v.id} value={v.id} className="bg-slate-900 text-white">{v.name}</option>
+            ))}
+          </select>
+        </div>
+        
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="space-y-2">
+            <Label htmlFor="quantity" className="text-xs font-bold text-slate-400 uppercase tracking-widest">Quantity Received</Label>
+            <Input id="quantity" name="quantity" type="number" step="0.01" min="0.01" placeholder="e.g. 50" required className="h-12 bg-black/40 border-white/10 text-white placeholder:text-slate-600 rounded-xl focus-visible:ring-primary/50 shadow-inner" />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="unitType" className="text-xs font-bold text-slate-400 uppercase tracking-widest">Unit Type</Label>
+            <select
+              id="unitType"
+              name="unitType"
+              required
+              value={unitType}
+              onChange={(e) => setUnitType(e.target.value)}
+              className="w-full h-12 px-4 py-2 rounded-xl border border-white/10 bg-black/40 text-white focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all shadow-inner font-medium"
+            >
+              <option value="pieces" className="bg-slate-900 text-white italic capitalize">Pieces ({selectedItem?.unit || 'pcs'})</option>
+              <option value="box" className="bg-slate-900 text-white font-bold" disabled={!selectedItem?.piecesPerBox}>Boxes (Box)</option>
+            </select>
+          </div>
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="cost" className="text-xs font-bold text-slate-400 uppercase tracking-widest">
+            Cost per {unitType === 'box' ? 'Box' : 'Piece'} (₹) <span className="opacity-50 font-normal ml-1">Optional</span>
+          </Label>
+          <Input id="cost" name="cost" type="number" step="0.01" min="0" placeholder={`e.g. ${unitType === 'box' ? '2500' : '150'}`} className="h-12 bg-black/40 border-white/10 text-white placeholder:text-slate-600 rounded-xl focus-visible:ring-primary/50 shadow-inner" />
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="notes" className="text-xs font-bold text-slate-400 uppercase tracking-widest">Delivery Note / Invoice Ref</Label>
+          <Input id="notes" name="notes" placeholder="Invoice #1234..." className="h-12 bg-black/40 border-white/10 text-white placeholder:text-slate-600 rounded-xl focus-visible:ring-primary/50 shadow-inner" />
+        </div>
+
+        <Button 
+          type="submit" 
+          disabled={loading}
+          className="w-full h-14 mt-4 text-lg font-bold bg-primary hover:bg-emerald-500 text-white shadow-[0_0_20px_-5px_oklch(0.55_0.16_150_/_0.5)] rounded-xl transition-all active:scale-[0.98] disabled:opacity-50 disabled:pointer-events-none"
+        >
+          {loading ? (
+            <span className="flex items-center gap-2">
+              <Loader2 className="w-5 h-5 animate-spin" /> Logging...
+            </span>
+          ) : (
+            "Log Intake"
+          )}
+        </Button>
+      </form>
+    </div>
+  )
+}

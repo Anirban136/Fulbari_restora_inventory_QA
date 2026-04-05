@@ -1,0 +1,10 @@
+{
+  "functions": {
+    "src/app/api/**/*": {
+      "regions": ["hnd1"]
+    },
+    "src/app/**/*": {
+      "regions": ["hnd1"]
+    }
+  }
+}
