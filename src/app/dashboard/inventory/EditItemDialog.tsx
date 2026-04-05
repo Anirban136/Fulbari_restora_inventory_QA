@@ -29,11 +29,11 @@ export function EditItemDialog({ item }: { item: any }) {
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
+      <DialogTrigger render={
         <button className="p-2 rounded-xl text-amber-400/60 hover:text-amber-400 hover:bg-amber-500/10 border border-transparent hover:border-amber-500/20 transition-all" title={`Edit ${item.name}`}>
           <Edit className="w-4 h-4" />
         </button>
-      </DialogTrigger>
+      } />
       <DialogContent className="sm:max-w-[450px] bg-black/80 backdrop-blur-2xl border-white/10 rounded-3xl shadow-[0_0_50px_rgba(0,0,0,0.8)]">
         <DialogHeader className="mb-4">
           <div className="w-12 h-12 bg-amber-500/20 rounded-2xl flex items-center justify-center mb-4 border border-amber-500/30 shadow-[0_0_15px_-3px_rgba(245,158,11,0.3)]">
