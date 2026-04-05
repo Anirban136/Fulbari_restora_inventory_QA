@@ -8,10 +8,7 @@ interface Item {
   name: string
   unit: string
   currentStock?: number
-<<<<<<< HEAD
   piecesPerBox?: number | null
-=======
->>>>>>> e6b0872507fa39290faeb12e670b353a0ac202ee
 }
 
 interface ItemSearchableSelectProps {
@@ -21,10 +18,7 @@ interface ItemSearchableSelectProps {
   showStock?: boolean
   required?: boolean
   defaultValue?: string
-<<<<<<< HEAD
   onSelect?: (item: Item) => void
-=======
->>>>>>> e6b0872507fa39290faeb12e670b353a0ac202ee
 }
 
 export function ItemSearchableSelect({ 
@@ -33,12 +27,8 @@ export function ItemSearchableSelect({
   placeholder = "Type product name...", 
   showStock = false,
   required = true,
-<<<<<<< HEAD
   defaultValue = "",
   onSelect
-=======
-  defaultValue = ""
->>>>>>> e6b0872507fa39290faeb12e670b353a0ac202ee
 }: ItemSearchableSelectProps) {
   const [open, setOpen] = useState(false)
   const [searchTerm, setSearchTerm] = useState("")
@@ -120,10 +110,7 @@ export function ItemSearchableSelect({
                     setSelectedItem(item)
                     setSearchTerm(item.name)
                     setOpen(false)
-<<<<<<< HEAD
                     if (onSelect) onSelect(item)
-=======
->>>>>>> e6b0872507fa39290faeb12e670b353a0ac202ee
                   }}
                   className={`px-4 py-3 cursor-pointer hover:bg-white/5 flex items-center justify-between transition-colors ${selectedItem?.id === item.id ? "bg-primary/10 text-primary border-l-2 border-primary" : "text-slate-300 border-l-2 border-transparent"}`}
                 >

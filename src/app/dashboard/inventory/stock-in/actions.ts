@@ -23,26 +23,17 @@ export async function logStockIn(data: FormData) {
     if (!item) return { error: "Item not found" }
 
     const quantity = parseFloat(quantityStr)
-<<<<<<< HEAD
     const inputCost = costStr ? parseFloat(costStr) : 0
-=======
-    const cost = costStr ? parseFloat(costStr) : 0
->>>>>>> e6b0872507fa39290faeb12e670b353a0ac202ee
 
     if (isNaN(quantity) || quantity <= 0) {
       return { error: "Invalid quantity" }
     }
 
-<<<<<<< HEAD
     const piecesPerBox = item.piecesPerBox || 1
     const finalQuantity = unitType === "box" ? quantity * piecesPerBox : quantity
     const unitCost = unitType === "box" ? inputCost / piecesPerBox : inputCost
     
     const notePrefix = unitType === "box" ? `[BOX-ENTRY: ${quantity} boxes @ ₹${inputCost}/box] ` : ""
-=======
-    const finalQuantity = unitType === "box" ? quantity * (item.piecesPerBox || 1) : quantity
-    const notePrefix = unitType === "box" ? `[BOX-ENTRY: ${quantity} boxes] ` : ""
->>>>>>> e6b0872507fa39290faeb12e670b353a0ac202ee
 
     // Transaction to update Inventory Ledger and Global Catalog
     await prisma.$transaction([
@@ -53,22 +44,14 @@ export async function logStockIn(data: FormData) {
           quantity: finalQuantity,
           vendorId,
           userId: session.user.id,
-<<<<<<< HEAD
           notes: `${notePrefix}Cost Info: Cost=${isNaN(unitCost) ? 0 : unitCost.toFixed(4)}. ${notes}`,
-=======
-          notes: `${notePrefix}Cost Info: Cost=${isNaN(cost) ? 0 : cost}. ${notes}`,
->>>>>>> e6b0872507fa39290faeb12e670b353a0ac202ee
         }
       }),
       prisma.item.update({
         where: { id: itemId },
         data: {
           currentStock: { increment: finalQuantity },
-<<<<<<< HEAD
           costPerUnit: isNaN(unitCost) ? undefined : (unitCost || undefined),
-=======
-          costPerUnit: isNaN(cost) ? undefined : (cost || undefined),
->>>>>>> e6b0872507fa39290faeb12e670b353a0ac202ee
         }
       })
     ])
