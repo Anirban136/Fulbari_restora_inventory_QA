@@ -27,7 +27,7 @@ export function AddItemDialog() {
     setUnit("")
   }
 
-  const showPiecesPerBox = category === "Cigarettes" && unit === "packet"
+  const showPiecesPerBox = unit === "box" || unit === "packet"
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
