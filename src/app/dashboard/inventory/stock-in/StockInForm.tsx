@@ -14,7 +14,10 @@ interface Item {
   name: string
   category?: string
   unit: string
+<<<<<<< HEAD
   piecesPerBox?: number | null
+=======
+>>>>>>> e6b0872507fa39290faeb12e670b353a0ac202ee
 }
 
 interface Vendor {
@@ -27,8 +30,11 @@ export function StockInForm({ items, vendors }: { items: Item[], vendors: Vendor
   const [status, setStatus] = useState<{ error?: string; success?: boolean } | null>(null)
   
   const [selectedCategory, setSelectedCategory] = useState<string>("")
+<<<<<<< HEAD
   const [selectedItem, setSelectedItem] = useState<Item | null>(null)
   const [unitType, setUnitType] = useState<string>("pieces")
+=======
+>>>>>>> e6b0872507fa39290faeb12e670b353a0ac202ee
 
   // Only reset if it is a brand new loaded list to avoid unneeded renders
   useEffect(() => {
@@ -57,7 +63,10 @@ export function StockInForm({ items, vendors }: { items: Item[], vendors: Vendor
         setStatus({ error: result.error })
       } else {
         setStatus({ success: true })
+<<<<<<< HEAD
         setSelectedItem(null) // Reset selected item view
+=======
+>>>>>>> e6b0872507fa39290faeb12e670b353a0ac202ee
         // Clear success message after 3 seconds
         setTimeout(() => setStatus(null), 3000)
         // Reset form if success (optional, but good for multiple intakes)
@@ -119,6 +128,7 @@ export function StockInForm({ items, vendors }: { items: Item[], vendors: Vendor
             items={filteredItems} 
             name="itemId" 
             placeholder={filteredItems.length === 0 ? "No items in category..." : "Type product name..."} 
+<<<<<<< HEAD
             onSelect={(item) => setSelectedItem(item)}
           />
           
@@ -133,6 +143,9 @@ export function StockInForm({ items, vendors }: { items: Item[], vendors: Vendor
               </div>
             </div>
           )}
+=======
+          />
+>>>>>>> e6b0872507fa39290faeb12e670b353a0ac202ee
         </div>
 
         <div className="space-y-2">
@@ -163,21 +176,33 @@ export function StockInForm({ items, vendors }: { items: Item[], vendors: Vendor
               id="unitType"
               name="unitType"
               required
+<<<<<<< HEAD
               value={unitType}
               onChange={(e) => setUnitType(e.target.value)}
               className="w-full h-12 px-4 py-2 rounded-xl border border-white/10 bg-black/40 text-white focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all shadow-inner font-medium"
             >
               <option value="pieces" className="bg-slate-900 text-white italic capitalize">Pieces ({selectedItem?.unit || 'pcs'})</option>
               <option value="box" className="bg-slate-900 text-white font-bold" disabled={!selectedItem?.piecesPerBox}>Boxes (Box)</option>
+=======
+              className="w-full h-12 px-4 py-2 rounded-xl border border-white/10 bg-black/40 text-white focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all shadow-inner font-medium"
+            >
+              <option value="pieces" className="bg-slate-900 text-white italic capitalize">Pieces ({filteredItems.find(i => i.id === selectedCategory /* This is logic fix needed below */)?.unit || 'pcs'})</option>
+              <option value="box" className="bg-slate-900 text-white font-bold">Boxes (Box)</option>
+>>>>>>> e6b0872507fa39290faeb12e670b353a0ac202ee
             </select>
           </div>
         </div>
 
         <div className="space-y-2">
+<<<<<<< HEAD
           <Label htmlFor="cost" className="text-xs font-bold text-slate-400 uppercase tracking-widest">
             Cost per {unitType === 'box' ? 'Box' : 'Piece'} (₹) <span className="opacity-50 font-normal ml-1">Optional</span>
           </Label>
           <Input id="cost" name="cost" type="number" step="0.01" min="0" placeholder={`e.g. ${unitType === 'box' ? '2500' : '150'}`} className="h-12 bg-black/40 border-white/10 text-white placeholder:text-slate-600 rounded-xl focus-visible:ring-primary/50 shadow-inner" />
+=======
+          <Label htmlFor="cost" className="text-xs font-bold text-slate-400 uppercase tracking-widest">Cost per unit (₹) <span className="opacity-50 font-normal ml-1">Optional</span></Label>
+          <Input id="cost" name="cost" type="number" step="0.01" min="0" placeholder="e.g. 150.50" className="h-12 bg-black/40 border-white/10 text-white placeholder:text-slate-600 rounded-xl focus-visible:ring-primary/50 shadow-inner" />
+>>>>>>> e6b0872507fa39290faeb12e670b353a0ac202ee
         </div>
 
         <div className="space-y-2">
