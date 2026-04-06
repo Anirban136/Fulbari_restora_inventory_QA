@@ -77,7 +77,7 @@ export default async function OutletsStockPage() {
                         <TableCell className="font-medium text-slate-300 transition-colors">{stock.Item.name}</TableCell>
                         <TableCell className="text-right">
                            <span className={`inline-flex items-center justify-center px-3 py-1 rounded-lg font-black tracking-widest text-xs shadow-inner ${stock.quantity <= 0 ? 'bg-red-500/20 border border-red-500/30 text-red-400 shadow-[0_0_10px_-2px_rgba(239,68,68,0.4)]' : 'bg-purple-500/20 border border-purple-500/30 text-purple-300'}`}>
-                             {stock.quantity} <span className="text-[9px] ml-1 opacity-70 uppercase">{stock.Item.unit}</span>
+                             {stock.quantity} <span className="text-[9px] ml-1 opacity-70 uppercase">{stock.Item.piecesPerBox ? 'pcs' : stock.Item.unit}</span>
                            </span>
                         </TableCell>
                       </TableRow>

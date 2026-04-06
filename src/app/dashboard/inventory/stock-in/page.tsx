@@ -106,7 +106,7 @@ export default async function StockInPage() {
                       <TableCell className="text-right">
                         <span className="inline-flex flex-col items-end">
                           <span className="inline-flex items-center text-emerald-400 font-black tracking-widest text-sm drop-shadow-[0_0_8px_rgba(52,211,153,0.3)]">
-                            +{log.quantity} <span className="text-[10px] ml-1 opacity-70 uppercase font-black">{log.Item.unit === 'box' ? 'pcs' : log.Item.unit}</span>
+                            +{log.quantity} <span className="text-[10px] ml-1 opacity-70 uppercase font-black">{log.Item.piecesPerBox ? 'pcs' : log.Item.unit}</span>
                           </span>
                           {log.notes?.includes("BOX-ENTRY") && (
                             <span className="text-[9px] text-emerald-500/50 font-black uppercase tracking-tighter -mt-0.5">Bulk Box Entry</span>
@@ -129,7 +129,7 @@ export default async function StockInPage() {
                                 </div>
                                 <DialogTitle className="text-xl font-black text-white">Revert Stock Entry?</DialogTitle>
                                 <DialogDescription className="text-slate-400 leading-relaxed">
-                                  This will reverse the intake of <span className="text-emerald-400 font-bold">+{log.quantity} {log.Item.unit}</span> of <span className="text-white font-bold">{log.Item.name}</span> and delete this ledger record.
+                                  This will reverse the intake of <span className="text-emerald-400 font-bold">+{log.quantity} {log.Item.piecesPerBox ? 'pcs' : log.Item.unit}</span> of <span className="text-white font-bold">{log.Item.name}</span> and delete this ledger record.
                                 </DialogDescription>
                               </DialogHeader>
                               <form action={revertLedgerEntry} className="mt-4">

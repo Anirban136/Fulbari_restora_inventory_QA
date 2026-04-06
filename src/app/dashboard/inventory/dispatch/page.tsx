@@ -105,7 +105,7 @@ export default async function DispatchPage() {
                       <TableCell className="font-medium text-slate-400 tracking-wide uppercase text-xs">{outlets.find(o => o.id === log.outletId)?.name}</TableCell>
                       <TableCell className="text-right">
                          <span className="inline-flex items-center text-blue-400 font-black tracking-widest text-sm drop-shadow-[0_0_8px_rgba(59,130,246,0.3)]">
-                           {log.quantity} <span className="text-[10px] ml-1 opacity-70 uppercase">{log.Item.unit}</span>
+                           {log.quantity} <span className="text-[10px] ml-1 opacity-70 uppercase">{log.Item.piecesPerBox ? 'pcs' : log.Item.unit}</span>
                          </span>
                       </TableCell>
                       {isOwner && (
@@ -124,7 +124,7 @@ export default async function DispatchPage() {
                                 </div>
                                 <DialogTitle className="text-xl font-black text-white">Edit Dispatch Quantity</DialogTitle>
                                 <DialogDescription className="text-slate-400 leading-relaxed">
-                                  Modify the dispatched quantity of <span className="text-white font-bold">{log.Item.name}</span> to <span className="text-white font-bold">{outlets.find(o => o.id === log.outletId)?.name}</span>. Currently dispatched: <span className="text-blue-400 font-bold">{log.quantity} {log.Item.unit}</span>.
+                                  Modify the dispatched quantity of <span className="text-white font-bold">{log.Item.name}</span> to <span className="text-white font-bold">{outlets.find(o => o.id === log.outletId)?.name}</span>. Currently dispatched: <span className="text-blue-400 font-bold">{log.quantity} {log.Item.piecesPerBox ? 'pcs' : log.Item.unit}</span>.
                                 </DialogDescription>
                               </DialogHeader>
                               <form action={editDispatchQuantity} className="mt-4 space-y-4">
@@ -163,7 +163,7 @@ export default async function DispatchPage() {
                                 </div>
                                 <DialogTitle className="text-xl font-black text-white">Revert Dispatch?</DialogTitle>
                                 <DialogDescription className="text-slate-400 leading-relaxed">
-                                  This will reverse the dispatch of <span className="text-blue-400 font-bold">{log.quantity} {log.Item.unit}</span> of <span className="text-white font-bold">{log.Item.name}</span> to <span className="text-white font-bold">{outlets.find(o => o.id === log.outletId)?.name}</span> — restoring stock to central and reducing outlet stock accordingly.
+                                  This will reverse the dispatch of <span className="text-blue-400 font-bold">{log.quantity} {log.Item.piecesPerBox ? 'pcs' : log.Item.unit}</span> of <span className="text-white font-bold">{log.Item.name}</span> to <span className="text-white font-bold">{outlets.find(o => o.id === log.outletId)?.name}</span> — restoring stock to central and reducing outlet stock accordingly.
                                 </DialogDescription>
                               </DialogHeader>
                               <form action={revertLedgerEntry} className="mt-4">
