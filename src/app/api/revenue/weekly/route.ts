@@ -1,17 +1,8 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { getISTDateBounds } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
-
-function getISTMidnight(offsetDays: number): Date {
-  const now = new Date();
-  const utcMs = now.getTime() + now.getTimezoneOffset() * 60000;
-  const istBase = new Date(utcMs + 3600000 * 5.5);
-  istBase.setDate(istBase.getDate() + offsetDays);
-  istBase.setHours(0, 0, 0, 0);
-  // Convert back to UTC for Prisma
-  return new Date(istBase.getTime() - 3600000 * 5.5);
-}
 
 export async function GET() {
   const days: {
@@ -22,9 +13,12 @@ export async function GET() {
     total: number;
   }[] = [];
 
+  const now = new Date();
+
   for (let i = 6; i >= 0; i--) {
-    const startUTC = getISTMidnight(-i);
-    const endUTC = new Date(startUTC.getTime() + 24 * 60 * 60 * 1000 - 1);
+    // Generate a base date exactly i days ago
+    const offsetDate = new Date(now.getTime() - i * 24 * 60 * 60 * 1000);
+    const { startUTC, endUTC } = getISTDateBounds(offsetDate);
 
     const tabs = await prisma.tab.findMany({
       where: {

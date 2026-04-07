@@ -25,8 +25,9 @@ export async function dispatchStock(data: FormData): Promise<{ error?: string }>
     return { error: "Item not found." }
   }
 
-  const finalQuantity = unitType === "box" ? quantity * (item.piecesPerBox || 1) : quantity
-  const notePrefix = unitType === "box" ? `[BOX-DISPATCH: ${quantity} boxes] ` : ""
+  const isContainer = unitType === "box" || unitType === "packet" || unitType === "plate"
+  const finalQuantity = isContainer ? quantity * (item.piecesPerBox || 1) : quantity
+  const notePrefix = isContainer ? `[${unitType.toUpperCase()}-DISPATCH: ${quantity} ${unitType}s] ` : ""
 
   if (item.currentStock < finalQuantity) {
     return {

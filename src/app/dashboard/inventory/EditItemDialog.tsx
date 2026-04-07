@@ -14,10 +14,10 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog"
 import { updateItem } from "./actions"
+import { CategoryCombobox } from "../menus/CategoryCombobox"
 
-export function EditItemDialog({ item }: { item: any }) {
+export function EditItemDialog({ item, existingCategories = [] }: { item: any; existingCategories?: string[] }) {
   const [open, setOpen] = useState(false)
-  const [category, setCategory] = useState(item.category || "")
   const [unit, setUnit] = useState(item.unit || "")
 
   async function handleSubmit(formData: FormData) {
@@ -25,7 +25,7 @@ export function EditItemDialog({ item }: { item: any }) {
     setOpen(false)
   }
 
-  const showPiecesPerBox = unit === "box" || unit === "packet"
+  const showPiecesPerBox = unit === "box" || unit === "packet" || unit === "plate"
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -52,28 +52,11 @@ export function EditItemDialog({ item }: { item: any }) {
           </div>
           <div className="space-y-2">
             <Label htmlFor={`edit_category_${item.id}`} className="text-xs font-bold text-slate-400 uppercase tracking-widest">Category</Label>
-            <select 
+            <CategoryCombobox 
               name="category" 
-              id={`edit_category_${item.id}`} 
-              value={category}
-              onChange={(e) => setCategory(e.target.value)}
-              required 
-              className="w-full h-12 px-4 py-2 rounded-xl border border-white/10 bg-black/40 text-white focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all font-medium"
-            >
-              <option value="Cigarettes" className="bg-slate-900 text-white">Cigarettes</option>
-              <option value="Dairy & Milk" className="bg-slate-900 text-white">Dairy & Milk</option>
-              <option value="Produce" className="bg-slate-900 text-white">Produce</option>
-              <option value="Vegetables" className="bg-slate-900 text-white">Vegetables</option>
-              <option value="Fruits" className="bg-slate-900 text-white">Fruits</option>
-              <option value="Meat" className="bg-slate-900 text-white">Meat</option>
-              <option value="Spices" className="bg-slate-900 text-white">Spices</option>
-              <option value="Beverages" className="bg-slate-900 text-white">Beverages</option>
-              <option value="Bakery" className="bg-slate-900 text-white">Bakery</option>
-              <option value="Cleaning Supplies" className="bg-slate-900 text-white">Cleaning Supplies</option>
-              <option value="Packaging" className="bg-slate-900 text-white">Packaging</option>
-              <option value="Dry Goods" className="bg-slate-900 text-white">Dry Goods</option>
-              <option value="Uncategorized" className="bg-slate-900 text-white">Other / Uncategorized</option>
-            </select>
+              suggestions={existingCategories} 
+              defaultValue={item.category || ""}
+            />
           </div>
           <div className="space-y-2">
             <Label htmlFor={`edit_unit_${item.id}`} className="text-xs font-bold text-slate-400 uppercase tracking-widest">Unit Type</Label>
@@ -91,6 +74,7 @@ export function EditItemDialog({ item }: { item: any }) {
               <option value="ml" className="bg-slate-900 text-white">ml</option>
               <option value="packet" className="bg-slate-900 text-white">packet</option>
               <option value="box" className="bg-slate-900 text-white">box</option>
+              <option value="plate" className="bg-slate-900 text-white">plate</option>
               <option value="pcs" className="bg-slate-900 text-white">pieces (pcs)</option>
             </select>
           </div>
@@ -115,7 +99,7 @@ export function EditItemDialog({ item }: { item: any }) {
             </div>
             {showPiecesPerBox && (
               <div className="space-y-2 animate-in zoom-in-95 duration-200">
-                <Label htmlFor={`edit_pieces_per_box_${item.id}`} className="text-xs font-bold text-blue-400 uppercase tracking-widest">Pieces in Box</Label>
+                <Label htmlFor={`edit_pieces_per_box_${item.id}`} className="text-xs font-bold text-blue-400 uppercase tracking-widest">Pieces in {unit || 'Container'}</Label>
                 <Input id={`edit_pieces_per_box_${item.id}`} name="piecesPerBox" type="number" defaultValue={item.piecesPerBox || ""} required className="h-12 bg-white/5 border-blue-500/20 text-white rounded-xl focus-visible:ring-blue-500/50" />
               </div>
             )}

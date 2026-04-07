@@ -14,8 +14,9 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog"
 import { addItem } from "./actions"
+import { CategoryCombobox } from "../menus/CategoryCombobox"
 
-export function AddItemDialog() {
+export function AddItemDialog({ existingCategories = [] }: { existingCategories?: string[] }) {
   const [open, setOpen] = useState(false)
   const [category, setCategory] = useState("")
   const [unit, setUnit] = useState("")
@@ -23,11 +24,11 @@ export function AddItemDialog() {
   async function handleSubmit(formData: FormData) {
     await addItem(formData)
     setOpen(false)
-    setCategory("")
+    setUnit("")
     setUnit("")
   }
 
-  const showPiecesPerBox = unit === "box" || unit === "packet"
+  const showPiecesPerBox = unit === "box" || unit === "packet" || unit === "plate"
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -53,29 +54,11 @@ export function AddItemDialog() {
           </div>
           <div className="space-y-2">
             <Label htmlFor="category" className="text-xs font-bold text-slate-400 uppercase tracking-widest">Category</Label>
-            <select 
+            <CategoryCombobox 
+              key={open ? 'open' : 'closed'} 
               name="category" 
-              id="category" 
-              required 
-              value={category}
-              onChange={(e) => setCategory(e.target.value)}
-              className="w-full h-12 px-4 py-2 rounded-xl border border-white/10 bg-black/40 text-white focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all font-medium"
-            >
-              <option value="" className="bg-slate-900 text-slate-500">Select a category...</option>
-              <option value="Cigarettes" className="bg-slate-900 text-white">Cigarettes</option>
-              <option value="Dairy & Milk" className="bg-slate-900 text-white">Dairy & Milk</option>
-              <option value="Produce" className="bg-slate-900 text-white">Produce</option>
-              <option value="Vegetables" className="bg-slate-900 text-white">Vegetables</option>
-              <option value="Fruits" className="bg-slate-900 text-white">Fruits</option>
-              <option value="Meat" className="bg-slate-900 text-white">Meat</option>
-              <option value="Spices" className="bg-slate-900 text-white">Spices</option>
-              <option value="Beverages" className="bg-slate-900 text-white">Beverages</option>
-              <option value="Bakery" className="bg-slate-900 text-white">Bakery</option>
-              <option value="Cleaning Supplies" className="bg-slate-900 text-white">Cleaning Supplies</option>
-              <option value="Packaging" className="bg-slate-900 text-white">Packaging</option>
-              <option value="Dry Goods" className="bg-slate-900 text-white">Dry Goods</option>
-              <option value="Uncategorized" className="bg-slate-900 text-white">Other / Uncategorized</option>
-            </select>
+              suggestions={existingCategories} 
+            />
           </div>
           <div className="space-y-2">
             <Label htmlFor="unit" className="text-xs font-bold text-slate-400 uppercase tracking-widest">Unit Type</Label>
@@ -94,6 +77,7 @@ export function AddItemDialog() {
               <option value="ml" className="bg-slate-900 text-white">ml</option>
               <option value="packet" className="bg-slate-900 text-white">packet</option>
               <option value="box" className="bg-slate-900 text-white">box</option>
+              <option value="plate" className="bg-slate-900 text-white">plate</option>
               <option value="pcs" className="bg-slate-900 text-white">pieces (pcs)</option>
             </select>
           </div>
@@ -114,7 +98,7 @@ export function AddItemDialog() {
             </div>
             {showPiecesPerBox && (
               <div className="space-y-2 animate-in zoom-in-95 duration-200">
-                <Label htmlFor="piecesPerBox" className="text-xs font-bold text-slate-400 uppercase tracking-widest text-blue-400">Pieces in Box</Label>
+                <Label htmlFor="piecesPerBox" className="text-xs font-bold text-blue-400 uppercase tracking-widest text-blue-400">Pieces in {unit || 'Container'}</Label>
                 <Input id="piecesPerBox" name="piecesPerBox" type="number" placeholder="e.g. 20" required className="h-12 bg-white/5 border-blue-500/20 text-white placeholder:text-slate-700 rounded-xl focus-visible:ring-blue-500/50" />
               </div>
             )}

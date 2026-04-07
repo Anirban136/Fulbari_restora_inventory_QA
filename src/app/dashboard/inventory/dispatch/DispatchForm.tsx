@@ -14,6 +14,7 @@ type Item = {
   category: string
   currentStock: number
   unit: string
+  piecesPerBox?: number | null
 }
 
 type Outlet = {
@@ -34,6 +35,7 @@ export function DispatchForm({ items, outlets }: { items: Item[]; outlets: Outle
 
   const isSuccess = !state.error && state !== initialState
   const [selectedCategory, setSelectedCategory] = useState<string>("")
+  const [selectedItem, setSelectedItem] = useState<Item | null>(null)
 
   // Only reset if it is a brand new loaded list to avoid unneeded renders
   useEffect(() => {
@@ -90,7 +92,20 @@ export function DispatchForm({ items, outlets }: { items: Item[]; outlets: Outle
             name="itemId" 
             placeholder={filteredItems.length === 0 ? "No items in category..." : "Search item to dispatch..."} 
             showStock={true} 
+            onSelect={(item) => setSelectedItem(item as Item)}
           />
+          
+          {selectedItem && selectedItem.piecesPerBox && (
+            <div className="p-4 rounded-2xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-between animate-in fade-in slide-in-from-left-2 transition-all">
+              <div className="flex flex-col">
+                <span className="text-[10px] font-black text-blue-400 uppercase tracking-widest whitespace-nowrap">Container Configuration</span>
+                <span className="text-sm font-bold text-white mt-0.5 whitespace-nowrap">{selectedItem.unit} conversion active</span>
+              </div>
+              <div className="px-4 py-2 rounded-xl bg-blue-500/20 border border-blue-500/30 text-blue-100 font-black tracking-tighter text-lg whitespace-nowrap shadow-[0_0_15px_-5px_rgba(59,130,246,0.4)]">
+                {selectedItem.piecesPerBox} <span className="text-xs opacity-60 uppercase font-black ml-1">pcs</span> / {selectedItem.unit.toUpperCase()}
+              </div>
+            </div>
+          )}
         </div>
 
         <div className="space-y-2">
@@ -139,8 +154,14 @@ export function DispatchForm({ items, outlets }: { items: Item[]; outlets: Outle
               required
               className="w-full h-12 px-4 py-2 rounded-xl border border-white/10 bg-black/40 text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all shadow-inner font-medium"
             >
-              <option value="pieces" className="bg-slate-900 text-white">Pieces (pcs)</option>
-              <option value="box" className="bg-slate-900 text-white font-bold">Boxes (Box)</option>
+              <option value="pieces" className="bg-slate-900 text-white italic capitalize">Pieces ({selectedItem?.unit || 'pcs'})</option>
+              {selectedItem?.piecesPerBox && (
+                <>
+                  <option value="box" className="bg-slate-900 text-white font-bold">Boxes (Box)</option>
+                  <option value="packet" className="bg-slate-900 text-white font-bold">Packets (Packet)</option>
+                  <option value="plate" className="bg-slate-900 text-white font-bold">Plates (Plate)</option>
+                </>
+              )}
             </select>
           </div>
         </div>

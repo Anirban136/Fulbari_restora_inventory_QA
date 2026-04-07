@@ -9,7 +9,7 @@ import { PayVendorDialog } from "../../inventory/PayVendorDialog"
 import {
   ArrowLeft, Phone, MapPin, Mail, IndianRupee,
   ShoppingCart, Wallet, Scale, Hash,
-  TrendingUp, TrendingDown, Package
+  TrendingUp, TrendingDown, Package, Trash2
 } from "lucide-react"
 import {
   Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
@@ -27,7 +27,7 @@ export default async function VendorDetailPage({ params }: { params: Promise<{ v
     where: { id: vendorId },
     include: {
       Ledger: {
-        where: { type: "STOCK_IN" },
+        where: { type: { in: ["STOCK_IN", "WASTE"] } },
         include: { Item: true, User: true },
         orderBy: { createdAt: 'asc' }
       },
@@ -44,7 +44,7 @@ export default async function VendorDetailPage({ params }: { params: Promise<{ v
   type TimelineEntry = {
     id: string
     date: Date
-    type: 'PURCHASE' | 'PAYMENT'
+    type: 'PURCHASE' | 'PAYMENT' | 'WASTE'
     description: string
     itemName?: string
     quantity?: number
@@ -58,7 +58,7 @@ export default async function VendorDetailPage({ params }: { params: Promise<{ v
 
   const timeline: TimelineEntry[] = []
 
-  // Add all stock-in entries as PURCHASE
+  // Add all stock-in and waste entries
   for (const entry of vendor.Ledger) {
     let rate = entry.Item.costPerUnit || 0
     // Check if cost was overridden in notes
@@ -68,20 +68,37 @@ export default async function VendorDetailPage({ params }: { params: Promise<{ v
     }
     const amount = entry.quantity * rate
 
-    timeline.push({
-      id: entry.id,
-      date: entry.createdAt,
-      type: 'PURCHASE',
-      description: `${entry.quantity} ${entry.Item.unit} ${entry.Item.name}`,
-      itemName: entry.Item.name,
-      quantity: entry.quantity,
-      unit: entry.Item.unit,
-      rate,
-      debit: amount,
-      credit: 0,
-      user: entry.User.name,
-      notes: entry.notes || undefined
-    })
+    if (entry.type === "STOCK_IN") {
+      timeline.push({
+        id: entry.id,
+        date: entry.createdAt,
+        type: 'PURCHASE',
+        description: `${entry.quantity} ${entry.Item.unit} ${entry.Item.name}`,
+        itemName: entry.Item.name,
+        quantity: entry.quantity,
+        unit: entry.Item.unit,
+        rate,
+        debit: amount,
+        credit: 0,
+        user: entry.User.name,
+        notes: entry.notes || undefined
+      })
+    } else if (entry.type === "WASTE") {
+      timeline.push({
+        id: entry.id,
+        date: entry.createdAt,
+        type: 'WASTE',
+        description: `Waste/Damage: ${entry.quantity} ${entry.Item.unit} ${entry.Item.name}`,
+        itemName: entry.Item.name,
+        quantity: entry.quantity,
+        unit: entry.Item.unit,
+        rate,
+        debit: 0,
+        credit: amount,
+        user: entry.User.name,
+        notes: entry.notes || undefined
+      })
+    }
   }
 
   // Add all payments as PAYMENT
@@ -108,9 +125,10 @@ export default async function VendorDetailPage({ params }: { params: Promise<{ v
   })
 
   // Calculate stats
-  const totalPurchased = ledger.reduce((sum, e) => sum + e.debit, 0)
-  const totalPaid = ledger.reduce((sum, e) => sum + e.credit, 0)
-  const balanceDue = totalPurchased - totalPaid
+  const totalPurchased = ledger.reduce((sum, e) => sum + (e.type === 'PURCHASE' ? e.debit : 0), 0)
+  const totalPaid = ledger.reduce((sum, e) => sum + (e.type === 'PAYMENT' ? e.credit : 0), 0)
+  const totalWaste = ledger.reduce((sum, e) => sum + (e.type === 'WASTE' ? e.credit : 0), 0)
+  const balanceDue = totalPurchased - totalPaid - totalWaste
   const totalTransactions = ledger.length
 
   // Group by month for display
@@ -170,13 +188,13 @@ export default async function VendorDetailPage({ params }: { params: Promise<{ v
             </div>
 
             {/* Pay Button */}
-            <PayVendorDialog vendor={vendor} balanceDue={Math.max(0, balanceDue)} />
+            <PayVendorDialog vendor={vendor} balanceDue={Math.max(0, balanceDue)} wasteDeductions={totalWaste} />
           </div>
         </div>
       </div>
 
       {/* Summary Stats Cards */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 relative z-10">
+      <div className="grid grid-cols-2 md:grid-cols-5 gap-4 relative z-10">
         <div className="glass-panel p-5 rounded-2xl border-amber-500/10">
           <div className="flex items-center gap-3 mb-3">
             <div className="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center">
@@ -229,6 +247,20 @@ export default async function VendorDetailPage({ params }: { params: Promise<{ v
           <span className="text-2xl font-black text-white">{totalTransactions}</span>
           <p className="text-[10px] text-slate-500 mt-1 uppercase">Total entries</p>
         </div>
+
+        <div className="glass-panel p-5 rounded-2xl border-red-500/10">
+          <div className="flex items-center gap-3 mb-3">
+            <div className="w-10 h-10 rounded-xl bg-red-500/10 border border-red-500/20 flex items-center justify-center">
+              <Trash2 className="w-5 h-5 text-red-500" />
+            </div>
+            <span className="text-[10px] font-black text-red-400 uppercase tracking-widest">Penalized</span>
+          </div>
+          <span className="text-2xl font-black text-white flex items-center gap-0.5">
+            <IndianRupee className="w-5 h-5 text-red-400" />
+            {totalWaste.toLocaleString('en-IN', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
+          </span>
+          <p className="text-[10px] text-slate-500 mt-1 uppercase">Waste Return</p>
+        </div>
       </div>
 
       {/* Transaction Ledger */}
@@ -248,8 +280,9 @@ export default async function VendorDetailPage({ params }: { params: Promise<{ v
             </div>
           ) : (
             Object.entries(monthGroups).reverse().map(([month, entries]) => {
-              const monthDebit = entries.reduce((s, e) => s + e.debit, 0)
-              const monthCredit = entries.reduce((s, e) => s + e.credit, 0)
+              const monthDebit = entries.reduce((s, e) => s + (e.type === 'PURCHASE' ? e.debit : 0), 0)
+              const monthCredit = entries.reduce((s, e) => s + (e.type === 'PAYMENT' ? e.credit : 0), 0)
+              const monthWaste = entries.reduce((s, e) => s + (e.type === 'WASTE' ? e.credit : 0), 0)
 
               return (
                 <div key={month}>
@@ -265,6 +298,12 @@ export default async function VendorDetailPage({ params }: { params: Promise<{ v
                         <TrendingDown className="w-3 h-3" />
                         ₹{monthCredit.toLocaleString('en-IN', { maximumFractionDigits: 0 })} paid
                       </span>
+                      {monthWaste > 0 && (
+                        <span className="text-red-400 flex items-center gap-1">
+                          <TrendingDown className="w-3 h-3" />
+                          ₹{monthWaste.toLocaleString('en-IN', { maximumFractionDigits: 0 })} waste
+                        </span>
+                      )}
                     </div>
                   </div>
 
@@ -296,10 +335,15 @@ export default async function VendorDetailPage({ params }: { params: Promise<{ v
                                 <ShoppingCart className="w-3 h-3" />
                                 Purchase
                               </span>
-                            ) : (
+                            ) : entry.type === 'PAYMENT' ? (
                               <span className="inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[10px] font-bold uppercase tracking-wider">
                                 <Wallet className="w-3 h-3" />
                                 Payment
+                              </span>
+                            ) : (
+                               <span className="inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-red-500/10 border border-red-500/20 text-red-500 text-[10px] font-bold uppercase tracking-wider">
+                                <Trash2 className="w-3 h-3" />
+                                Waste
                               </span>
                             )}
                           </TableCell>
@@ -370,6 +414,10 @@ export default async function VendorDetailPage({ params }: { params: Promise<{ v
                 <div className="text-right">
                   <span className="text-[10px] text-emerald-400/60 uppercase block">Total Credit</span>
                   <span className="text-sm font-black text-emerald-400">₹{totalPaid.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</span>
+                </div>
+                <div className="text-right">
+                  <span className="text-[10px] text-red-400/60 uppercase block">Waste Deducted</span>
+                  <span className="text-sm font-black text-red-400">₹{totalWaste.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</span>
                 </div>
                 <div className="text-right pl-4 border-l border-white/10">
                   <span className="text-[10px] text-slate-500 uppercase block">Net Balance</span>

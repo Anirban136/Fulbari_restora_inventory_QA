@@ -64,7 +64,7 @@ export default async function MenusPage() {
              <h3 className="text-xl font-bold text-white">Add Menu Item</h3>
           </div>
           
-          <AddMenuItemForm outlets={outlets} globalItems={globalItems} />
+          <AddMenuItemForm outlets={outlets} globalItems={globalItems} existingCategories={existingCategories as string[]} />
         </div>
 
         {/* MENU LIST */}

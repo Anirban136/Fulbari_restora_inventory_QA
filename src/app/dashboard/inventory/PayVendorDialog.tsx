@@ -21,9 +21,10 @@ interface PayVendorDialogProps {
     name: string
   }
   balanceDue: number
+  wasteDeductions?: number
 }
 
-export function PayVendorDialog({ vendor, balanceDue }: PayVendorDialogProps) {
+export function PayVendorDialog({ vendor, balanceDue, wasteDeductions = 0 }: PayVendorDialogProps) {
   const [open, setOpen] = useState(false)
   const [customAmount, setCustomAmount] = useState("")
   const [useFullAmount, setUseFullAmount] = useState(false)
@@ -64,7 +65,17 @@ export function PayVendorDialog({ vendor, balanceDue }: PayVendorDialogProps) {
           </DialogDescription>
         </DialogHeader>
 
-        <form action={handleSubmit} className="space-y-5 mt-2">
+        {wasteDeductions > 0 && (
+          <div className="mx-6 px-4 py-3 bg-red-500/10 border border-red-500/20 rounded-xl flex items-start gap-3">
+            <span className="text-xl">⚠️</span>
+            <div>
+              <p className="text-sm font-bold text-red-400">₹{wasteDeductions.toLocaleString('en-IN', { minimumFractionDigits: 2 })} deducted</p>
+              <p className="text-xs text-red-400/80 mt-0.5">due to bad, spoiled, or damaged products.</p>
+            </div>
+          </div>
+        )}
+
+        <form action={handleSubmit} className="space-y-5 px-6 mt-4 pb-6">
           <input type="hidden" name="vendorId" value={vendor.id} />
           <input type="hidden" name="amount" value={effectiveAmount} />
 

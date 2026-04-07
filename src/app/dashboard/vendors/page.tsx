@@ -43,7 +43,7 @@ export default async function VendorsPage() {
     include: {
       Ledger: {
         where: {
-          type: "STOCK_IN",
+          type: { in: ["STOCK_IN", "WASTE"] },
           createdAt: { gte: startUTC, lte: endUTC }
         },
         include: { Item: true }
@@ -63,26 +63,38 @@ export default async function VendorsPage() {
   const vendorStats = vendors.map((vendor: any) => {
     let monthlyCollection = 0
     let monthlyOwed = 0
+    let monthlyWasteQty = 0
+    let monthlyWasteValue = 0
 
     vendor.Ledger.forEach((log: any) => {
-      monthlyCollection += log.quantity
       let transactionCost = log.Item.costPerUnit || 0
       if (log.notes && log.notes.includes("Cost=")) {
         const match = log.notes.match(/Cost=([\d.]+)/)
         if (match && match[1]) transactionCost = parseFloat(match[1])
       }
-      monthlyOwed += log.quantity * transactionCost
+
+      if (log.type === "STOCK_IN") {
+        monthlyCollection += log.quantity
+        monthlyOwed += log.quantity * transactionCost
+      } else if (log.type === "WASTE") {
+        monthlyWasteQty += log.quantity
+        monthlyWasteValue += log.quantity * transactionCost
+      }
     })
 
     // Sum all payments made this month
     const monthlyPaid = vendor.Payments.reduce((sum: number, p: any) => sum + p.amount, 0)
 
-    // Balance due = what we owe minus what we've paid
-    const balanceDue = Math.max(0, monthlyOwed - monthlyPaid)
+    // Balance due = what we owe minus what we've paid minus waste value
+    // (If waste > owed, balance is 0)
+    const balanceDue = Math.max(0, monthlyOwed - monthlyPaid - monthlyWasteValue)
+    
+    // Net Collection = stock in minus waste out
+    const netCollection = Math.max(0, monthlyCollection - monthlyWasteQty)
 
     return {
       ...vendor,
-      monthlyCollection,
+      netCollection,
       monthlyOwed,
       monthlyPaid,
       balanceDue
@@ -180,9 +192,9 @@ export default async function VendorsPage() {
                       <div className="inline-flex flex-col items-end">
                         <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary-foreground font-black text-sm">
                           <Package className="w-3.5 h-3.5" />
-                          {vendor.monthlyCollection.toFixed(1)}
+                          {vendor.netCollection.toFixed(1)}
                         </span>
-                        <span className="text-[10px] text-slate-500 uppercase tracking-tighter mt-1">units received</span>
+                        <span className="text-[10px] text-slate-500 uppercase tracking-tighter mt-1">net units received</span>
                       </div>
                     </TableCell>
                     {/* Total Owed */}

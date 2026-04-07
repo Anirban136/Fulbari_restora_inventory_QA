@@ -3,6 +3,7 @@
 import { prisma } from "@/lib/prisma"
 import { revalidatePath } from "next/cache"
 import { redirect } from "next/navigation"
+import { getISTDateBounds } from "@/lib/utils"
 
 export async function addTabItem(tabId: string, menuItemId: string, price: number, forcedQuantity: number = 1) {
   // Check if it already exists to increment quantity instead
@@ -77,8 +78,7 @@ export async function closeTab(data: FormData) {
   // Generate token number for CAFE (daily auto-increment)
   let tokenNumber: number | null = null
   if (tab.Outlet.type === "CAFE") {
-    const todayStart = new Date()
-    todayStart.setHours(0, 0, 0, 0)
+    const { startUTC: todayStart } = getISTDateBounds()
     
     const lastToken = await prisma.tab.findFirst({
       where: {

@@ -20,7 +20,8 @@ import {
   ChevronRight,
   Users,
   ShieldCheck,
-  AlertTriangle
+  AlertTriangle,
+  Trash2
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { UserControls } from "@/components/user-controls"
@@ -49,10 +50,11 @@ export function UnifiedSidebar({ user }: { user: any }) {
     { name: "Chai Hub", href: "/chai", icon: Coffee, roles: ["OWNER", "CHAI_STAFF"] },
     { name: "Restaurant", href: "/restaurant", icon: Store, roles: ["OWNER", "REST_STAFF"] },
     { name: "Transactions", href: "/dashboard/transactions", icon: Receipt, roles: ["OWNER"] },
-    { name: "Global Menus", href: "/dashboard/menus", icon: ClipboardList, roles: ["OWNER"] },
+    { name: "Global Menus", href: "/dashboard/menus", icon: ClipboardList, roles: ["OWNER", "INV_MANAGER"] },
     { name: "Global Catalog", href: "/dashboard/inventory", icon: Package, roles: ["OWNER", "INV_MANAGER"] },
     { name: "Stock In", href: "/dashboard/inventory/stock-in", icon: Package, roles: ["OWNER", "INV_MANAGER"] },
     { name: "Dispatch", href: "/dashboard/inventory/dispatch", icon: ArrowLeftRight, roles: ["OWNER", "INV_MANAGER"] },
+    { name: "Waste Tracking", href: "/dashboard/inventory/waste", icon: Trash2, roles: ["OWNER", "INV_MANAGER"] },
     { name: "Outlets Stock", href: "/dashboard/stores", icon: Store, roles: ["OWNER", "INV_MANAGER"] },
     { name: "Vendors", href: "/dashboard/vendors", icon: Users, roles: ["OWNER"] },
     { name: "Passcode Control", href: "/dashboard/settings/passwords", icon: ShieldCheck, roles: ["OWNER"] },

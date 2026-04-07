@@ -7,7 +7,7 @@ import { authOptions } from "@/lib/auth"
 
 export async function addMenuItem(data: FormData) {
   const session = await getServerSession(authOptions)
-  if (!session || session.user.role !== "OWNER") {
+  if (!session || (session.user.role !== "OWNER" && session.user.role !== "INV_MANAGER")) {
     throw new Error("Unauthorized")
   }
 
@@ -19,22 +19,42 @@ export async function addMenuItem(data: FormData) {
 
   if (!outletId || !name || isNaN(price)) return
 
-  await prisma.menuItem.create({
-    data: {
-      outletId,
-      name,
-      price,
-      categoryId: categoryId,
-      itemId: itemId || null, // Optional link to central catalog
-    }
-  })
+  if (outletId === "BOTH") {
+    // Add to every CAFE and CHAI_JOINT outlet
+    const outlets = await prisma.outlet.findMany({
+      where: { type: { in: ["CAFE", "CHAI_JOINT"] } }
+    })
+    await prisma.$transaction(
+      outlets.map(o =>
+        prisma.menuItem.create({
+          data: {
+            outletId: o.id,
+            name,
+            price,
+            categoryId,
+            itemId: itemId || null,
+          }
+        })
+      )
+    )
+  } else {
+    await prisma.menuItem.create({
+      data: {
+        outletId,
+        name,
+        price,
+        categoryId: categoryId,
+        itemId: itemId || null,
+      }
+    })
+  }
 
   revalidatePath("/dashboard/menus")
 }
 
 export async function toggleMenuItem(menuItemId: string, isAvailable: boolean) {
   const session = await getServerSession(authOptions)
-  if (!session || session.user.role !== "OWNER") throw new Error("Unauthorized")
+  if (!session || (session.user.role !== "OWNER" && session.user.role !== "INV_MANAGER")) throw new Error("Unauthorized")
 
   await prisma.menuItem.update({
     where: { id: menuItemId },
@@ -46,7 +66,7 @@ export async function toggleMenuItem(menuItemId: string, isAvailable: boolean) {
 
 export async function updateMenuItem(data: FormData) {
   const session = await getServerSession(authOptions)
-  if (!session || session.user.role !== "OWNER") throw new Error("Unauthorized")
+  if (!session || (session.user.role !== "OWNER" && session.user.role !== "INV_MANAGER")) throw new Error("Unauthorized")
 
   const id = data.get("id") as string
   const outletId = data.get("outletId") as string
@@ -73,7 +93,7 @@ export async function updateMenuItem(data: FormData) {
 
 export async function deleteMenuItem(menuItemId: string) {
   const session = await getServerSession(authOptions)
-  if (!session || session.user.role !== "OWNER") throw new Error("Unauthorized")
+  if (!session || (session.user.role !== "OWNER" && session.user.role !== "INV_MANAGER")) throw new Error("Unauthorized")
 
   // Delete related TabItems first to avoid foreign key constraint errors
   await prisma.$transaction([
