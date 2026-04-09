@@ -3,7 +3,7 @@ export const dynamic = 'force-dynamic'
 import { getServerSession } from "next-auth"
 import { authOptions } from "@/lib/auth"
 import Link from "next/link"
-import { Users, Truck, IndianRupee, Package, Search, Phone, MapPin, FileText } from "lucide-react"
+import { Users, Truck, IndianRupee, Package, Search, Phone, MapPin, FileText, ClipboardList, Activity, History, ArrowRight } from "lucide-react"
 import { getISTMonthBounds, formatDateIST, formatTimeIST } from "@/lib/utils"
 import { AddVendorDialog } from "../inventory/AddVendorDialog"
 import { EditVendorDialog } from "../inventory/EditVendorDialog"
@@ -27,13 +27,22 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
+import { cn } from "@/lib/utils"
 
 export default async function VendorsPage() {
   const session = await getServerSession(authOptions)
   const isOwner = session?.user?.role === "OWNER"
 
   if (!isOwner) {
-    return <div className="p-8 text-center text-red-400">Unauthorized</div>
+    return (
+      <div className="min-h-[60vh] flex flex-col items-center justify-center space-y-4">
+        <div className="w-20 h-20 bg-red-500/10 rounded-3xl flex items-center justify-center border border-red-500/20 shadow-2xl">
+          <ShieldCheck className="w-10 h-10 text-red-500" />
+        </div>
+        <h2 className="text-2xl font-black text-white uppercase tracking-tighter">Access Denied</h2>
+        <p className="text-muted-foreground text-sm font-bold uppercase tracking-widest">OWNER PRIVILEGES REQUIRED</p>
+      </div>
+    )
   }
 
   const { startUTC, endUTC } = getISTMonthBounds()
@@ -82,14 +91,8 @@ export default async function VendorsPage() {
       }
     })
 
-    // Sum all payments made this month
     const monthlyPaid = vendor.Payments.reduce((sum: number, p: any) => sum + p.amount, 0)
-
-    // Balance due = what we owe minus what we've paid minus waste value
-    // (If waste > owed, balance is 0)
     const balanceDue = Math.max(0, monthlyOwed - monthlyPaid - monthlyWasteValue)
-    
-    // Net Collection = stock in minus waste out
     const netCollection = Math.max(0, monthlyCollection - monthlyWasteQty)
 
     return {
@@ -106,198 +109,257 @@ export default async function VendorsPage() {
   const totalBalance = vendorStats.reduce((sum: number, v: any) => sum + v.balanceDue, 0)
 
   return (
-    <div className="space-y-8 relative">
-      {/* Background Decorators */}
-      <div className="absolute top-[-50px] right-[-50px] w-[400px] h-[400px] bg-emerald-500/10 rounded-full blur-[100px] pointer-events-none"></div>
+    <div className="space-y-10 relative pb-20">
+      {/* Background Decorators - Vibrant Ambient blobs */}
+      <div className="absolute top-[-100px] left-[-10% ] w-[30%] h-[500px] bg-emerald-500/5 rounded-full blur-[150px] pointer-events-none -z-10"></div>
+      <div className="absolute top-[20%] right-[-5%] w-[25%] h-[400px] bg-purple-500/5 rounded-full blur-[120px] pointer-events-none -z-10"></div>
 
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 relative z-10 glass-panel p-4 lg:p-6 rounded-2xl lg:rounded-3xl">
-        <div>
-          <h2 className="text-xl lg:text-3xl font-black text-foreground tracking-tight flex items-center gap-3">
-            Vendor Management
-            <div className="h-2 w-2 rounded-full bg-emerald-500 animate-bounce shadow-[0_0_10px_#10b981]"></div>
-          </h2>
-          <p className="text-muted-foreground mt-1 font-medium text-[10px] lg:text-sm tracking-wide uppercase">Track supplier performance and obligations.</p>
+      {/* Hero Section */}
+      <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-8 relative z-10">
+        <div className="space-y-4">
+          <div className="flex items-center gap-4">
+             <div className="hidden sm:flex p-4 bg-emerald-500/10 rounded-3xl border border-emerald-500/20 shadow-[0_0_30px_rgba(16,185,129,0.1)]">
+               <Truck className="text-emerald-500 w-8 h-8" />
+             </div>
+             <div className="flex flex-col">
+               <h2 className="text-4xl lg:text-7xl font-black tracking-tighter text-white leading-tight uppercase">
+                 VENDOR <span className="text-emerald-400">LEDGER</span>
+               </h2>
+               <p className="text-muted-foreground mt-2 font-black text-[9px] lg:text-xs tracking-[0.3em] uppercase opacity-60 flex items-center gap-2">
+                 <Truck className="sm:hidden w-3 h-3 text-emerald-500" />
+                 SUPPLY CHAIN • FINANCIAL OBLIGATIONS
+               </p>
+             </div>
+          </div>
         </div>
         
-        <div className="flex flex-col sm:flex-row gap-2 lg:gap-3">
-          {/* Total Owed */}
-          <div className="px-3 py-1.5 rounded-xl lg:rounded-2xl bg-amber-500/10 border border-amber-500/20 flex flex-row sm:flex-col items-center sm:items-end justify-between sm:justify-center gap-4 sm:gap-0">
-             <span className="text-[8px] lg:text-[10px] font-black text-amber-500 dark:text-amber-400 uppercase tracking-widest">Total Owed</span>
-             <span className="text-sm lg:text-lg font-black text-foreground">₹{totalOwed.toLocaleString('en-IN', { minimumFractionDigits: 0 })}</span>
-          </div>
-          {/* Total Paid */}
-          <div className="px-3 py-1.5 rounded-xl lg:rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex flex-row sm:flex-col items-center sm:items-end justify-between sm:justify-center gap-4 sm:gap-0">
-             <span className="text-[8px] lg:text-[10px] font-black text-emerald-500 dark:text-emerald-400 uppercase tracking-widest">Total Paid</span>
-             <span className="text-sm lg:text-lg font-black text-foreground">₹{totalPaid.toLocaleString('en-IN', { minimumFractionDigits: 0 })}</span>
-          </div>
-          {/* Balance */}
-          <div className={`px-3 py-1.5 rounded-xl lg:rounded-2xl flex flex-row sm:flex-col items-center sm:items-end justify-between sm:justify-center gap-4 sm:gap-0 ${totalBalance > 0 ? 'bg-red-500/10 border border-red-500/20' : 'bg-emerald-500/10 border border-emerald-500/20'}`}>
-             <span className={`text-[8px] lg:text-[10px] font-black uppercase tracking-widest ${totalBalance > 0 ? 'text-red-500 dark:text-red-400' : 'text-emerald-500 dark:text-emerald-400'}`}>Balance Due</span>
-             <span className="text-sm lg:text-lg font-black text-foreground">₹{totalBalance.toLocaleString('en-IN', { minimumFractionDigits: 0 })}</span>
-          </div>
+        <div className="flex items-center gap-3 self-start lg:self-end">
           <AddVendorDialog />
         </div>
       </div>
 
-      <div className="glass-panel rounded-2xl overflow-hidden relative z-10 shadow-2xl">
-        <div className="p-0 max-h-[75vh] overflow-auto custom-scrollbar-premium table-dense">
-          <Table>
-            <TableHeader>
-              <TableRow className="border-b border-border/10 hover:bg-transparent">
-                <TableHead className="font-bold text-muted-foreground uppercase tracking-widest text-[9px] h-10 bg-muted/20 dark:bg-black/40 backdrop-blur-md sticky top-0 z-20 px-3">Vendor</TableHead>
-                <TableHead className="font-bold text-muted-foreground uppercase tracking-widest text-[9px] h-10 bg-muted/20 dark:bg-black/40 backdrop-blur-md sticky top-0 z-20 px-3">Contact</TableHead>
-                <TableHead className="font-bold text-muted-foreground uppercase tracking-widest text-[9px] h-10 bg-muted/20 dark:bg-black/40 backdrop-blur-md sticky top-0 z-20 text-right px-3">Units</TableHead>
-                <TableHead className="font-bold text-muted-foreground uppercase tracking-widest text-[9px] h-10 bg-muted/20 dark:bg-black/40 backdrop-blur-md sticky top-0 z-20 text-right px-3">Owed</TableHead>
-                <TableHead className="font-bold text-muted-foreground uppercase tracking-widest text-[9px] h-10 bg-muted/20 dark:bg-black/40 backdrop-blur-md sticky top-0 z-20 text-right px-3">Paid</TableHead>
-                <TableHead className="font-bold text-muted-foreground uppercase tracking-widest text-[9px] h-10 bg-muted/20 dark:bg-black/40 backdrop-blur-md sticky top-0 z-20 text-right px-3">Due</TableHead>
-                {isOwner && (
-                  <TableHead className="font-bold text-muted-foreground uppercase tracking-widest text-[9px] h-10 bg-muted/20 dark:bg-black/40 backdrop-blur-md sticky top-0 z-20 text-center px-3">Act</TableHead>
-                )}
-              </TableRow>
-            </TableHeader>
-            <TableBody>
+      {/* Executive Stats Widgets - High-Density Neon Design */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 relative z-10">
+        {/* Total Owed Card */}
+        <div className="group relative glass-panel p-6 rounded-[2rem] border-white/5 bg-white/[0.02] hover:bg-white/[0.04] transition-all duration-500 overflow-hidden">
+           <div className="absolute top-0 right-0 p-6 opacity-10 group-hover:scale-110 transition-transform">
+             <IndianRupee className="w-12 h-12 text-amber-500" />
+           </div>
+           <p className="text-[10px] font-black text-amber-500 uppercase tracking-[0.3em] mb-4">Current Monthly Debt</p>
+           <h3 className="text-4xl font-black text-white tracking-tighter drop-shadow-[0_0_15px_rgba(245,158,11,0.2)]">
+             ₹{totalOwed.toLocaleString('en-IN', { minimumFractionDigits: 0 })}
+           </h3>
+           <div className="mt-4 flex items-center gap-2">
+             <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse shadow-[0_0_5px_#f59e0b]"></span>
+             <span className="text-[9px] font-black text-amber-500/60 uppercase tracking-widest">Awaiting Settlement</span>
+           </div>
+        </div>
+
+        {/* Total Paid Card */}
+        <div className="group relative glass-panel p-6 rounded-[2rem] border-white/5 bg-white/[0.02] hover:bg-white/[0.04] transition-all duration-500 overflow-hidden">
+           <div className="absolute top-0 right-0 p-6 opacity-10 group-hover:scale-110 transition-transform">
+             <History className="w-12 h-12 text-emerald-500" />
+           </div>
+           <p className="text-[10px] font-black text-emerald-500 uppercase tracking-[0.3em] mb-4">Settled This Month</p>
+           <h3 className="text-4xl font-black text-white tracking-tighter drop-shadow-[0_0_15px_rgba(16,185,129,0.2)]">
+             ₹{totalPaid.toLocaleString('en-IN', { minimumFractionDigits: 0 })}
+           </h3>
+           <div className="mt-4 flex items-center gap-2">
+             <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 shadow-[0_0_5px_#10b981]"></span>
+             <span className="text-[9px] font-black text-emerald-500/60 uppercase tracking-widest">Transaction Verified</span>
+           </div>
+        </div>
+
+        {/* Balance Due Card */}
+        <div className={cn(
+          "group relative glass-panel p-6 rounded-[2rem] border border-white/5 transition-all duration-500 overflow-hidden",
+          totalBalance > 0 
+            ? "bg-red-500/[0.02] hover:bg-red-500/[0.04] border-red-500/10" 
+            : "bg-emerald-500/[0.02] border-emerald-500/10"
+        )}>
+           <div className="absolute top-0 right-0 p-6 opacity-10 group-hover:scale-110 transition-transform">
+             <AlertTriangle className={cn("w-12 h-12", totalBalance > 0 ? "text-red-500" : "text-emerald-500")} />
+           </div>
+           <p className={cn("text-[10px] font-black uppercase tracking-[0.3em] mb-4", totalBalance > 0 ? "text-red-500" : "text-emerald-500")}>
+             {totalBalance > 0 ? "Immediate Obligation" : "Account Master Settled"}
+           </p>
+           <h3 className="text-4xl font-black text-white tracking-tighter drop-shadow-[0_0_15px_rgba(239,68,68,0.2)]">
+             ₹{totalBalance.toLocaleString('en-IN', { minimumFractionDigits: 0 })}
+           </h3>
+           <div className="mt-4 flex items-center gap-2">
+             <span className={cn("w-1.5 h-1.5 rounded-full", totalBalance > 0 ? "bg-red-500 animate-ping shadow-[0_0_5px_#ef4444]" : "bg-emerald-500 shadow-[0_0_5px_#10b981]")}></span>
+             <span className={cn("text-[9px] font-black uppercase tracking-widest leading-none", totalBalance > 0 ? "text-red-500/60" : "text-emerald-500/60")}>
+               {totalBalance > 0 ? "ACTION REQUIRED" : "CLEAN LEDGER"}
+             </span>
+           </div>
+        </div>
+      </div>
+
+      {/* Main Vendor Table - Premium Glass Experience */}
+      <div className="glass-panel overflow-hidden rounded-[2.5rem] border border-white/5 bg-white/[0.01] shadow-2xl relative w-full">
+        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-emerald-500/20 to-transparent"></div>
+        
+        <div className="overflow-x-auto custom-scrollbar-premium w-full">
+          <table className="w-full text-left border-collapse min-w-[1200px]">
+            <thead>
+              <tr className="bg-white/[0.03] border-b border-white/5">
+                <th className="px-8 py-6 text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground/40">VENDOR PROFILE</th>
+                <th className="px-8 py-6 text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground/40">COMMUNICATION</th>
+                <th className="px-8 py-6 text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground/40 text-right">VOLUME</th>
+                <th className="px-8 py-6 text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground/40 text-right">TOTAL BILL</th>
+                <th className="px-8 py-6 text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground/40 text-right">PAID (₹)</th>
+                <th className="px-8 py-6 text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground/40 text-right">DUE (₹)</th>
+                <th className="px-8 py-6 text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground/40 text-center">OPS</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-white/[0.03]">
               {vendorStats.length === 0 ? (
-                <TableRow className="border-b border-white/10">
-                  <TableCell colSpan={isOwner ? 7 : 6} className="h-40 text-center text-slate-500">
-                    <span className="flex flex-col items-center justify-center">
-                      <Truck className="w-10 h-10 opacity-20 mb-3" />
-                      No vendors registered yet.
-                    </span>
-                  </TableCell>
-                </TableRow>
+                <tr>
+                  <td colSpan={7} className="py-32 text-center">
+                    <Truck className="w-16 h-16 text-muted-foreground/10 mx-auto mb-4 animate-pulse" />
+                    <p className="text-muted-foreground/30 font-black uppercase tracking-[0.5em] text-xs">NO VENDORS REGISTERED</p>
+                  </td>
+                </tr>
               ) : (
-                vendorStats.map((vendor: any) => (
-                  <TableRow key={vendor.id} className="border-b border-white/5 hover:bg-white/5 transition-colors group">
-                    <TableCell className="px-4 lg:px-6 py-3 lg:py-5">
-                      <Link href={`/dashboard/vendors/${vendor.id}`} className="flex flex-col group/link">
-                        <span className="font-black text-foreground group-hover/link:text-emerald-500 transition-colors text-sm lg:text-base underline-offset-4 hover:underline">{vendor.name}</span>
-                        <div className="flex items-center gap-1.5 mt-1 opacity-60">
-                           <MapPin className="w-3 h-3" />
-                           <span className="text-xs text-muted-foreground truncate max-w-[200px]">{vendor.address || 'No address provided'}</span>
+                vendorStats.map(vendor => (
+                  <TableRow key={vendor.id} className="group hover:bg-white/[0.04] transition-all duration-300">
+                    <TableCell className="px-8 py-6">
+                      <Link href={`/dashboard/vendors/${vendor.id}`} className="flex flex-col space-y-1 group/link">
+                        <span className="text-lg font-black text-white uppercase tracking-tight group-hover/link:text-emerald-400 transition-colors">
+                          {vendor.name}
+                        </span>
+                        <div className="flex items-center gap-1.5 opacity-40">
+                          <MapPin className="w-3 h-3 text-emerald-400" />
+                          <span className="text-[10px] font-black uppercase tracking-widest truncate max-w-[200px]">{vendor.address || 'Field Location Not Set'}</span>
                         </div>
                       </Link>
                     </TableCell>
-                    <TableCell className="px-6 py-5">
-                      <div className="space-y-1">
-                        <div className="flex items-center gap-2 text-foreground/80">
+                    
+                    <TableCell className="px-8 py-6">
+                      <div className="flex flex-col space-y-1">
+                        <div className="flex items-center gap-2">
                            <Phone className="w-3.5 h-3.5 text-emerald-500/70" />
-                           <span className="text-sm font-medium">{vendor.contact || 'No contact'}</span>
+                           <span className="text-xs font-black text-white/80 tracking-tight">{vendor.contact || 'No Direct Link'}</span>
                         </div>
                         {vendor.email && (
-                          <div className="text-xs text-muted-foreground lowercase ml-5">{vendor.email}</div>
+                          <span className="text-[9px] font-black text-muted-foreground/40 uppercase tracking-widest ml-5">{vendor.email}</span>
                         )}
                       </div>
                     </TableCell>
-                    <TableCell className="text-right px-6 py-5">
+
+                    <TableCell className="px-8 py-6 text-right">
                       <div className="inline-flex flex-col items-end">
-                        <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary-foreground font-black text-sm">
-                          <Package className="w-3.5 h-3.5" />
-                          {vendor.netCollection.toFixed(1)}
+                        <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 font-black text-xs uppercase tracking-widest">
+                          {vendor.netCollection.toFixed(1)} UNITS
                         </span>
-                        <span className="text-[10px] text-slate-500 uppercase tracking-tighter mt-1">net units received</span>
+                        <span className="text-[8px] text-muted-foreground/30 font-black uppercase tracking-widest mt-1">NET RECEPTION</span>
                       </div>
                     </TableCell>
-                    {/* Total Owed */}
-                    <TableCell className="text-right px-6 py-5">
+
+                    <TableCell className="px-8 py-6 text-right">
                       <div className="inline-flex flex-col items-end">
-                        <span className="text-base font-black text-amber-400 flex items-center gap-1">
-                          <IndianRupee className="w-3.5 h-3.5" />
-                          {vendor.monthlyOwed.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
+                        <span className="text-sm font-black text-amber-500/80">
+                          ₹{vendor.monthlyOwed.toLocaleString('en-IN', { minimumFractionDigits: 0 })}
                         </span>
-                        <span className="text-[10px] text-amber-500/60 font-medium uppercase tracking-widest mt-1">total bill</span>
+                        {/* Subtle sparkline decorator if I had more data, but let's keep it clean */}
                       </div>
                     </TableCell>
-                    {/* Already Paid */}
-                    <TableCell className="text-right px-6 py-5">
+
+                    <TableCell className="px-8 py-6 text-right">
+                      <span className="text-sm font-black text-emerald-400/80">
+                        ₹{vendor.monthlyPaid.toLocaleString('en-IN', { minimumFractionDigits: 0 })}
+                      </span>
+                    </TableCell>
+
+                    <TableCell className="px-8 py-6 text-right">
                       <div className="inline-flex flex-col items-end">
-                        <span className="text-base font-black text-emerald-400 flex items-center gap-1">
-                          <IndianRupee className="w-3.5 h-3.5" />
-                          {vendor.monthlyPaid.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
+                        <span className={cn(
+                          "text-xl font-black drop-shadow-[0_0_10px_rgba(239,68,68,0.2)]",
+                          vendor.balanceDue > 0 ? "text-red-400" : "text-emerald-400 drop-shadow-[0_0_10px_rgba(16,185,129,0.2)]"
+                        )}>
+                          ₹{vendor.balanceDue.toLocaleString('en-IN', { minimumFractionDigits: 0 })}
                         </span>
-                        <span className="text-[10px] text-emerald-500/60 font-medium uppercase tracking-widest mt-1">paid</span>
+                        <span className={cn(
+                          "text-[9px] font-black uppercase tracking-[0.2em] mt-1 opacity-60",
+                          vendor.balanceDue > 0 ? "text-red-500/80" : "text-emerald-500/80"
+                        )}>
+                          {vendor.balanceDue > 0 ? "BALANCE DUE" : "SETTLED"}
+                        </span>
                       </div>
                     </TableCell>
-                    {/* Balance Due */}
-                    <TableCell className="text-right px-6 py-5">
-                      <div className="inline-flex flex-col items-end">
-                        <span className={`text-xl font-black flex items-center gap-1 drop-shadow-sm ${vendor.balanceDue > 0 ? 'text-red-400' : 'text-emerald-400'}`}>
-                          <IndianRupee className="w-4 h-4" />
-                          {vendor.balanceDue.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
-                        </span>
-                        <span className={`text-[10px] font-medium uppercase tracking-widest mt-1 ${vendor.balanceDue > 0 ? 'text-red-500/60' : 'text-emerald-500/60'}`}>
-                          {vendor.balanceDue > 0 ? 'balance due' : 'settled ✓'}
-                        </span>
-                      </div>
-                    </TableCell>
-                    {isOwner && (
-                      <TableCell className="px-6 py-5 text-center">
-                        <div className="flex items-center justify-center gap-1.5 flex-wrap">
-                          <Link href={`/dashboard/vendors/${vendor.id}`} className="p-2 rounded-xl text-blue-400/60 hover:text-blue-400 hover:bg-blue-500/10 border border-transparent hover:border-blue-500/20 transition-all focus:outline-none" title="View History">
-                            <FileText className="w-4 h-4" />
-                          </Link>
-                          <PayVendorDialog vendor={vendor} balanceDue={vendor.balanceDue} />
-                          <EditVendorDialog vendor={vendor} />
+
+                    <TableCell className="px-8 py-6">
+                      <div className="flex items-center justify-center gap-2">
+                        <Link href={`/dashboard/vendors/${vendor.id}`} className="p-3 rounded-2xl bg-white/5 border border-white/5 text-blue-400/60 hover:text-blue-400 transition-all hover:bg-blue-500/10 active:scale-90" title="Full Ledger">
+                          <FileText className="w-4 h-4" />
+                        </Link>
+                        <PayVendorDialog vendor={vendor} balanceDue={vendor.balanceDue} />
+                        <EditVendorDialog vendor={vendor} />
+                        
+                        {isOwner && (
                           <Dialog>
                             <DialogTrigger render={
-                              <button className="p-2 rounded-xl text-red-400/60 hover:text-red-400 hover:bg-red-500/10 border border-transparent hover:border-red-500/20 transition-all focus:outline-none focus:ring-2 focus:ring-red-500/50" title="Delete Vendor">
+                              <button className="p-3 rounded-2xl bg-white/5 border border-white/5 text-red-400/60 hover:text-red-400 transition-all hover:bg-red-500/10 active:scale-90" title="Terminate Link">
                                 <Trash2 className="w-4 h-4" />
                               </button>
                             } />
-                            <DialogContent className="sm:max-w-[400px] bg-black/90 backdrop-blur-2xl border-red-500/20 rounded-3xl shadow-[0_0_50px_rgba(239,68,68,0.15)]">
-                              <DialogHeader className="mb-2">
-                                <div className="w-12 h-12 bg-red-500/10 rounded-2xl flex items-center justify-center mb-4 border border-red-500/20">
-                                  <Trash2 className="w-6 h-6 text-red-500 dark:text-red-400" />
+                            <DialogContent className="sm:max-w-[450px] bg-zinc-950/95 backdrop-blur-3xl border-red-500/20 rounded-[3rem] shadow-2xl p-10">
+                              <DialogHeader>
+                                <div className="w-20 h-20 bg-red-500/10 rounded-[2rem] flex items-center justify-center mb-10 border border-red-500/20">
+                                  <Trash2 className="w-10 h-10 text-red-500" />
                                 </div>
-                                <DialogTitle className="text-xl font-black text-foreground">Delete Vendor?</DialogTitle>
-                                <DialogDescription className="text-muted-foreground leading-relaxed">
-                                  Are you completely sure you want to delete <span className="text-foreground font-bold">{vendor.name}</span>? All payment history for this vendor will also be removed.
+                                <DialogTitle className="text-4xl font-black text-white tracking-tighter uppercase leading-none mb-6">Terminate Vendor?</DialogTitle>
+                                <DialogDescription className="text-slate-400 font-medium tracking-tight leading-relaxed text-sm">
+                                  Confirm full removal of <span className="text-white font-black">{vendor.name}</span>. This action wipes the payment ledger and cannot be reversed.
                                 </DialogDescription>
                               </DialogHeader>
-                              <form action={deleteVendor} className="mt-4">
+                              <form action={deleteVendor} className="mt-10">
                                 <input type="hidden" name="vendorId" value={vendor.id} />
-                                <Button type="submit" variant="destructive" className="w-full h-11 font-bold rounded-xl transition-all active:scale-95">
-                                  Yes, Delete Vendor
+                                <Button type="submit" variant="destructive" className="w-full h-16 font-black uppercase tracking-[0.3em] rounded-2xl transition-all active:scale-95 shadow-2xl">
+                                  CONFIRM TERMINATION
                                 </Button>
                               </form>
                             </DialogContent>
                           </Dialog>
-                        </div>
-                      </TableCell>
-                    )}
+                        )}
+                      </div>
+                    </TableCell>
                   </TableRow>
                 ))
               )}
-            </TableBody>
-          </Table>
+            </tbody>
+          </table>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 relative z-10">
-        <div className="glass-panel p-6 rounded-3xl border-white/5 bg-white/[0.02] flex flex-col items-center text-center">
-           <div className="w-12 h-12 rounded-2xl bg-amber-500/10 flex items-center justify-center mb-4 border border-amber-500/20">
-              <ClipboardList className="w-6 h-6 text-amber-500" />
+      {/* Insights Row - Glassmorphism 2.0 */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-8 relative z-10">
+        <div className="group glass-panel p-8 rounded-[2.5rem] border-white/5 bg-white/[0.02] hover:bg-white/[0.04] transition-all duration-500 flex flex-col items-center text-center shadow-xl">
+           <div className="w-16 h-16 rounded-[1.5rem] bg-amber-500/10 flex items-center justify-center mb-8 border border-amber-500/20 group-hover:rotate-12 transition-transform shadow-inner">
+              <ClipboardList className="w-8 h-8 text-amber-500" />
            </div>
-           <h4 className="text-sm font-bold text-foreground uppercase tracking-widest mb-2">Payment Tracking</h4>
-           <p className="text-xs text-muted-foreground px-4">Click "Pay" to record partial or full payments. The balance updates automatically.</p>
+           <h4 className="text-sm font-black text-white uppercase tracking-[0.3em] mb-4">Payment Tracking</h4>
+           <p className="text-[10px] font-medium text-muted-foreground/60 leading-relaxed uppercase tracking-widest px-6">Record partial or full settlements. Ledger balances update with sub-second latency.</p>
         </div>
-        <div className="glass-panel p-6 rounded-3xl border-white/5 bg-white/[0.02] flex flex-col items-center text-center">
-           <div className="w-12 h-12 rounded-2xl bg-blue-500/10 flex items-center justify-center mb-4 border border-blue-500/20">
-              <Activity className="w-6 h-6 text-blue-500" />
+
+        <div className="group glass-panel p-8 rounded-[2.5rem] border-white/5 bg-white/[0.02] hover:bg-white/[0.04] transition-all duration-500 flex flex-col items-center text-center shadow-xl">
+           <div className="w-16 h-16 rounded-[1.5rem] bg-blue-500/10 flex items-center justify-center mb-8 border border-blue-500/20 group-hover:-rotate-12 transition-transform shadow-inner">
+              <Activity className="w-8 h-8 text-blue-500" />
            </div>
-           <h4 className="text-sm font-bold text-foreground uppercase tracking-widest mb-2">Performance Tracking</h4>
-           <p className="text-xs text-muted-foreground px-4">Monitor which vendors provide the most stock volume month-over-month.</p>
+           <h4 className="text-sm font-black text-white uppercase tracking-[0.3em] mb-4">Integrity Monitoring</h4>
+           <p className="text-[10px] font-medium text-muted-foreground/60 leading-relaxed uppercase tracking-widest px-6">Track volume variance across all vendor nodes. Detect supply anomalies instantly.</p>
         </div>
-        <div className="glass-panel p-6 rounded-3xl border-white/5 bg-white/[0.02] flex flex-col items-center text-center">
-           <div className="w-12 h-12 rounded-2xl bg-purple-500/10 flex items-center justify-center mb-4 border border-purple-500/20">
-              <History className="w-6 h-6 text-purple-600 dark:text-purple-400" />
+
+        <div className="group glass-panel p-8 rounded-[2.5rem] border-white/5 bg-white/[0.02] hover:bg-white/[0.04] transition-all duration-500 flex flex-col items-center text-center shadow-xl">
+           <div className="w-16 h-16 rounded-[1.5rem] bg-purple-500/10 flex items-center justify-center mb-8 border border-purple-500/20 group-hover:scale-110 transition-transform shadow-inner">
+              <History className="w-8 h-8 text-purple-400" />
            </div>
-           <h4 className="text-sm font-bold text-foreground uppercase tracking-widest mb-2">Cycle: {new Date().toLocaleString('default', { month: 'long' })}</h4>
-           <p className="text-xs text-muted-foreground px-4">Current reporting period: {new Date().getDate()} days elapsed in this cycle.</p>
+           <h4 className="text-sm font-black text-white uppercase tracking-[0.3em] mb-4">Lifecycle: {new Date().toLocaleString('default', { month: 'long' })}</h4>
+           <p className="text-[10px] font-medium text-muted-foreground/60 leading-relaxed uppercase tracking-widest px-6">Current reporting window is active. {new Date().getDate()} days of financial history loaded.</p>
         </div>
       </div>
     </div>
   )
 }
 
-// Re-using icons from lucide-react that might not be imported above
-import { ClipboardList, Activity, History } from "lucide-react"
+import { ShieldCheck } from "lucide-react"
