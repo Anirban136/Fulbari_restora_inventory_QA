@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
-import { X, TrendingUp, Loader2 } from "lucide-react";
+import { X, TrendingUp, Loader2, Activity } from "lucide-react";
 
 type DayData = {
   date: string;
@@ -54,22 +54,39 @@ export function GrossRevenueModal({ totalRevenue }: { totalRevenue: number }) {
       <div
         id="gross-revenue-card"
         onClick={handleOpen}
-        className="glass-panel emerald-glow p-6 rounded-3xl relative overflow-hidden group hover:-translate-y-1 transition-transform duration-300 cursor-pointer select-none"
+        className="glass-panel emerald-glow p-8 rounded-[2rem] relative overflow-hidden group hover:-translate-y-2 transition-all duration-500 cursor-pointer select-none border-emerald-500/20 shadow-[0_20px_50px_-15px_rgba(16,185,129,0.2)]"
         title="Click to view 7-day revenue report"
       >
-        <div className="absolute -right-4 -top-4 w-24 h-24 bg-primary/20 rounded-full blur-xl group-hover:bg-primary/30 transition-colors" />
-        <div className="flex justify-between items-start mb-4">
-          <h3 className="text-xs font-bold text-muted-foreground uppercase tracking-widest">
-            Total Sale Today
-          </h3>
-          <TrendingUp className="text-emerald-600 dark:text-emerald-400 w-5 h-5" />
+        <div className="absolute -right-10 -top-10 w-40 h-40 bg-emerald-500/10 rounded-full blur-3xl group-hover:bg-emerald-500/20 transition-all duration-700" />
+        
+        <div className="flex justify-between items-start mb-6">
+          <div className="space-y-1">
+            <h3 className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em] opacity-70">
+              Executive Sale
+            </h3>
+            <p className="text-sm font-bold text-emerald-600 dark:text-emerald-400">Chai + Cafe Today</p>
+          </div>
+          <div className="p-3 bg-emerald-500/10 rounded-2xl border border-emerald-500/20 group-hover:rotate-12 transition-transform">
+            <TrendingUp className="text-emerald-500 w-6 h-6" />
+          </div>
         </div>
-        <p className="text-4xl font-black text-foreground">
-          ₹{totalRevenue.toFixed(2)}
-        </p>
-        {/* hint badge */}
-        <div className="mt-3 text-[10px] font-bold text-emerald-600 dark:text-emerald-300/60 uppercase tracking-widest">
-          Click for 7-day report ↗
+
+        <div className="relative">
+          <p className="text-5xl lg:text-6xl font-black text-foreground tracking-tighter text-gradient-emerald">
+            ₹{totalRevenue.toFixed(0)}
+          </p>
+        </div>
+
+        {/* Premium History Badge */}
+        <div className="mt-8 flex items-center justify-between">
+          <div className="flex items-center gap-2 px-3 py-1.5 bg-emerald-500/10 dark:bg-emerald-500/20 border border-emerald-500/20 rounded-full">
+            <Activity className="w-3 h-3 text-emerald-500 animate-pulse" />
+            <span className="text-[9px] font-black text-emerald-600 dark:text-emerald-400 uppercase tracking-widest">Live Feed</span>
+          </div>
+          
+          <button className="flex items-center gap-2 px-4 py-2 bg-foreground text-background rounded-xl text-[10px] font-black uppercase tracking-widest hover:scale-105 transition-all active:scale-95 shadow-lg">
+            View 7-Day History <TrendingUp className="w-3 h-3" />
+          </button>
         </div>
       </div>
 
