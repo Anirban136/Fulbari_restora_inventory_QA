@@ -43,7 +43,7 @@ export default async function MenusPage() {
     <div className="space-y-8 relative">
       <div className="absolute top-[30%] left-[80%] w-[400px] h-[400px] bg-indigo-500/10 rounded-full blur-[130px] pointer-events-none -translate-x-1/2"></div>
       
-      <div className="glass-panel p-6 rounded-3xl relative z-10 flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 relative z-10 glass-panel p-6 rounded-3xl">
         <div>
           <h2 className="text-3xl font-black text-white tracking-tight flex items-center gap-3">
             Menu Management
@@ -56,7 +56,7 @@ export default async function MenusPage() {
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-8 relative z-10">
         
         {/* ADD MENU FORM */}
-        <div className="xl:col-span-1 glass-panel p-8 rounded-3xl self-start hover:border-white/20 transition-all">
+        <div className="glass-panel p-6 sm:p-8 rounded-3xl self-start hover:border-white/20 transition-all">
           <div className="flex items-center gap-4 mb-8">
              <div className="h-12 w-12 bg-indigo-500/20 rounded-2xl flex items-center justify-center border border-indigo-500/30 shadow-[0_0_15px_-3px_rgba(99,102,241,0.3)]">
                <MenuSquare className="w-6 h-6 text-indigo-400" />

@@ -87,7 +87,7 @@ export default async function AdminTransactionsPage(props: { searchParams: Promi
     <div className="space-y-12 relative pb-20">
       <div className="absolute top-[10%] left-[30%] w-[600px] h-[600px] bg-blue-500/10 rounded-full blur-[150px] pointer-events-none -translate-y-1/2"></div>
       
-      <div className="glass-panel p-6 rounded-3xl relative z-10 flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 relative z-10 glass-panel p-6 rounded-3xl">
         <div>
           <h2 className="text-3xl font-black text-white tracking-tight flex items-center gap-3">
             Transactions History
