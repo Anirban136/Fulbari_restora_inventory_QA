@@ -2,6 +2,7 @@ import { prisma } from "@/lib/prisma"
 import { NextResponse } from "next/server"
 import { getServerSession } from "next-auth"
 import { authOptions } from "@/lib/auth"
+import { getISTDateBounds } from "@/lib/utils"
 
 export const dynamic = 'force-dynamic'
 
@@ -23,31 +24,14 @@ export async function GET(req: Request) {
     if (!outletType) return new NextResponse("Forbidden", { status: 403 }) // Only owner can fetch without specifying outlet
   }
 
-  // Determine the date bounds in UTC for the given IST day
-  let startUTC: Date, endUTC: Date;
+  // Determine the date bounds using the standard utility
+  const { startUTC, endUTC } = getISTDateBounds(targetDateStr ? new Date(targetDateStr) : undefined);
 
-  if (targetDateStr) {
-    // Manually parse YYYY-MM-DD into a UTC date, treating it as midnight IST
-    const [year, month, day] = targetDateStr.split("-").map(Number);
-    // New Date(year, monthIndex, day) in local time depends on the server's time zone.
-    // Instead, we construct the exact UTC timestamps that map to 00:00:00 and 23:59:59 in IST (+5:30).
-    // An IST midnight is UTC previous day 18:30:00.
-    startUTC = new Date(Date.UTC(year, month - 1, day, -5, -30, 0, 0));
-    endUTC = new Date(Date.UTC(year, month - 1, day, 18, 29, 59, 999));
-  } else {
-    // Default to today IST
-    const now = new Date();
-    const currentUTC = now.getTime() + (now.getTimezoneOffset() * 60000);
-    const istDate = new Date(currentUTC + (3600000 * 5.5));
-    
-    startUTC = new Date(Date.UTC(istDate.getFullYear(), istDate.getMonth(), istDate.getDate(), -5, -30, 0, 0));
-    endUTC = new Date(Date.UTC(istDate.getFullYear(), istDate.getMonth(), istDate.getDate(), 18, 29, 59, 999));
-  }
-
-  // Validate the query constraint
+  // Validate the query constraint - Match Dashboard Logic
+  // Dashboard shows tabs CLOSED today
   const whereClause: any = {
-    status: { in: ["CLOSED", "CANCELLED", "OPEN"] },
-    openedAt: { gte: startUTC, lte: endUTC }
+    status: { in: ["CLOSED", "CANCELLED"] },
+    closedAt: { gte: startUTC, lte: endUTC }
   }
 
   if (outletType) {
@@ -71,7 +55,7 @@ export async function GET(req: Request) {
         }
       }
     },
-    orderBy: { openedAt: "asc" }
+    orderBy: { closedAt: "asc" }
   })
 
   // Create CSV String
@@ -121,7 +105,7 @@ export async function GET(req: Request) {
 
   // Calculate Subtotals
   const totalCash = tabs.filter(t => t.paymentMode === "CASH").reduce((sum, t) => sum + t.totalAmount, 0);
-  const totalOnline = tabs.filter(t => t.paymentMode === "ONLINE").reduce((sum, t) => sum + t.totalAmount, 0);
+  const totalOnline = tabs.filter(t => t.paymentMode === "ONLINE" || t.paymentMode === "UPI").reduce((sum, t) => sum + t.totalAmount, 0);
   const totalSplit = tabs.filter(t => t.paymentMode === "SPLIT").reduce((sum, t) => sum + t.totalAmount, 0);
   const grandTotal = tabs.reduce((sum, t) => sum + t.totalAmount, 0);
 

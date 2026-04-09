@@ -149,3 +149,18 @@ export async function reopenTab(tabId: string) {
 
   redirect(`/tabs/${tabId}`)
 }
+
+export async function updateTab(tabId: string, totalAmount: number, paymentMode: string) {
+  await prisma.tab.update({
+    where: { id: tabId },
+    data: { 
+      totalAmount,
+      paymentMode
+    }
+  })
+  
+  revalidatePath('/dashboard')
+  revalidatePath('/cafe')
+  revalidatePath('/chai')
+  revalidatePath(`/tabs/${tabId}`)
+}

@@ -3,6 +3,7 @@ export const dynamic = 'force-dynamic'
 import { TrendingUp, CreditCard, Activity, BarChart3, Crown, Receipt, AlertTriangle, PackageSearch, Coffee } from "lucide-react"
 import { getISTDateBounds } from "@/lib/utils"
 import { GrossRevenueModal } from "@/components/GrossRevenueModal"
+import { EditTransactionModal } from "@/components/EditTransactionModal"
 
 export default async function DashboardOverview() {
   const { startUTC: startOfDay, endUTC: endOfDay } = getISTDateBounds();
@@ -241,7 +242,7 @@ export default async function DashboardOverview() {
           
           <div className="flex justify-between items-center mb-10">
             <div>
-              <h3 className="text-2xl font-black text-foreground tracking-tight uppercase">Flow Categories</h3>
+              <h3 className="text-2xl font-black text-foreground tracking-tight uppercase">High Selling Category</h3>
               <p className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em] mt-1 opacity-60">Revenue Distribution</p>
             </div>
             <BarChart3 className="text-primary w-8 h-8" />
@@ -281,7 +282,7 @@ export default async function DashboardOverview() {
           
           <div className="flex justify-between items-center mb-10">
             <div>
-              <h3 className="text-2xl font-black text-foreground tracking-tight uppercase">Elite Rank</h3>
+              <h3 className="text-2xl font-black text-foreground tracking-tight uppercase">High Selling Product</h3>
               <p className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em] mt-1 opacity-60">High-Velocity Items</p>
             </div>
             <Crown className="text-amber-500 w-8 h-8 animate-pulse" />
@@ -348,7 +349,7 @@ export default async function DashboardOverview() {
                <Receipt className="text-primary w-6 h-6" />
              </div>
              <div>
-               <h3 className="text-3xl font-black text-foreground tracking-tight uppercase">Flow Log</h3>
+               <h3 className="text-3xl font-black text-foreground tracking-tight uppercase">Today's Transactions</h3>
                <p className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em] opacity-60">Live Transaction Stream</p>
              </div>
           </div>
@@ -369,7 +370,10 @@ export default async function DashboardOverview() {
                 <div key={tab.id} className="glass-card p-6 rounded-[2.5rem] border-white/5 flex flex-col justify-between">
                   <div className="flex justify-between items-start mb-4">
                     <div className="flex flex-col">
-                      <span className="text-[9px] font-black text-primary uppercase tracking-[0.2em] mb-1">{tab.Outlet.name.replace('_', ' ')}</span>
+                      <div className="flex items-center gap-2 mb-1">
+                        <span className="text-[9px] font-black text-primary uppercase tracking-[0.2em]">{tab.Outlet.name.replace('_', ' ')}</span>
+                        <EditTransactionModal tabId={tab.id} currentAmount={tab.totalAmount} currentMode={tab.paymentMode || "CASH"} />
+                      </div>
                       <span className="text-lg font-black text-foreground truncate">{tab.customerName || "Walk-in Capture"}</span>
                     </div>
                     <span className="text-[10px] font-bold text-muted-foreground">{tab.closedAt ? new Date(tab.closedAt).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' }) : "N/A"}</span>
@@ -402,7 +406,12 @@ export default async function DashboardOverview() {
                   <tr key={tab.id} className="hover:bg-white/5 transition-all duration-300 group">
                     <td className="p-8 text-xs font-bold text-muted-foreground group-hover:text-foreground">{tab.closedAt ? new Date(tab.closedAt).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' }) : "N/A"}</td>
                     <td className="p-8 text-[11px] font-black text-primary uppercase tracking-widest">{tab.Outlet.name.replace('_', ' ')}</td>
-                    <td className="p-8 text-lg font-black text-foreground">{tab.customerName || "Direct Walk-in Capture"}</td>
+                    <td className="p-8 relative">
+                      <div className="flex items-center gap-4">
+                        <span className="text-lg font-black text-foreground">{tab.customerName || "Direct Walk-in Capture"}</span>
+                        <EditTransactionModal tabId={tab.id} currentAmount={tab.totalAmount} currentMode={tab.paymentMode || "CASH"} />
+                      </div>
+                    </td>
                     <td className="p-8 text-right">
                       <div className="flex flex-col items-end">
                         <span className="text-3xl font-black text-foreground tracking-tighter">₹{tab.totalAmount.toFixed(0)}</span>
