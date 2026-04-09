@@ -14,8 +14,8 @@ export function OutletStockFeed({ stocks }: { stocks: any[] }) {
   })
 
   const outletTheme = activeOutlet === "CAFE" 
-    ? { primary: "amber", color: "text-amber-500", bg: "bg-amber-500", border: "border-amber-500/20", glow: "shadow-[0_0_30px_rgba(245,158,11,0.1)]" }
-    : { primary: "indigo", color: "text-indigo-500", bg: "bg-indigo-500", border: "border-indigo-500/20", glow: "shadow-[0_0_30px_rgba(99,102,241,0.1)]" }
+    ? { primary: "amber", color: "text-amber-500", bg: "bg-amber-500", border: "border-amber-500/20", glow: "shadow-[0_0_30px_rgba(245,158,11,0.15)]" }
+    : { primary: "indigo", color: "text-indigo-500", bg: "bg-indigo-500", border: "border-indigo-500/20", glow: "shadow-[0_0_30px_rgba(99,102,241,0.15)]" }
 
   return (
     <div className={`glass-panel p-8 rounded-[3rem] relative overflow-hidden group border border-white/5 h-full transition-all duration-700 ${outletTheme.glow}`}>
@@ -73,6 +73,7 @@ export function OutletStockFeed({ stocks }: { stocks: any[] }) {
           filteredStocks.map(stock => {
             const isCritical = stock.quantity === 0
             const isLow = stock.quantity <= (stock.Item.minStock || 5)
+            const hasConversion = stock.Item.piecesPerBox > 0
             
             let statusColor = "text-emerald-500"
             let statusBg = "bg-emerald-500/5"
@@ -97,7 +98,7 @@ export function OutletStockFeed({ stocks }: { stocks: any[] }) {
             return (
               <div 
                 key={stock.id} 
-                className={`group/item p-6 rounded-[2rem] border transition-all duration-500 flex flex-col justify-between h-36 relative overflow-hidden ${statusBg} ${statusBorder} ${statusGlow} hover:scale-[1.03] hover:shadow-2xl active:scale-95`}
+                className={`group/item p-6 rounded-[2rem] border transition-all duration-500 flex flex-col justify-between h-40 relative overflow-hidden ${statusBg} ${statusBorder} ${statusGlow} hover:scale-[1.03] hover:shadow-2xl active:scale-95`}
               >
                 <div className={`absolute top-0 right-0 w-24 h-24 rounded-full blur-3xl -z-0 opacity-20 transition-all group-hover/item:opacity-40 ${statusColor.replace('text', 'bg')}`}></div>
                 
@@ -110,10 +111,17 @@ export function OutletStockFeed({ stocks }: { stocks: any[] }) {
                 </div>
 
                 <div className="relative z-10 flex justify-between items-end border-t border-white/5 pt-4 mt-auto">
-                  <p className={`text-3xl font-black tracking-tighter ${statusColor} drop-shadow-2xl`}>
-                    {stock.quantity}
-                    <span className="text-[10px] text-muted-foreground ml-1.5 font-bold uppercase tracking-widest">{stock.Item.unit}</span>
-                  </p>
+                  <div className="flex flex-col">
+                    <p className={`text-3xl font-black tracking-tighter ${statusColor} drop-shadow-2xl leading-none`}>
+                      {stock.quantity}
+                      <span className="text-[10px] text-muted-foreground ml-1.5 font-bold uppercase tracking-widest">{hasConversion ? 'PCS' : stock.Item.unit}</span>
+                    </p>
+                    {hasConversion && (
+                      <p className="text-[9px] font-black text-muted-foreground/40 uppercase tracking-widest mt-1.5">
+                        ({(stock.quantity / stock.Item.piecesPerBox).toFixed(1)} {stock.Item.unit})
+                      </p>
+                    )}
+                  </div>
                   <div className={`px-3 py-1 rounded-full text-[8px] font-black uppercase tracking-widest border ${statusBorder.replace('10', '20')} ${statusColor}`}>
                     {isCritical ? "DEPLETED" : isLow ? "LOW SIGNAL" : "OPTIMAL"}
                   </div>

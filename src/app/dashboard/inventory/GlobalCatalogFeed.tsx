@@ -95,11 +95,12 @@ export function GlobalCatalogFeed({
           filteredItems.map(item => {
             const isCritical = item.minStock > 0 && item.currentStock <= 0
             const isLow = item.minStock > 0 && item.currentStock <= item.minStock
+            const hasConversion = item.piecesPerBox > 0
 
             return (
               <div 
                 key={item.id} 
-                className={`glass-panel p-6 rounded-[2.5rem] border transition-all duration-500 flex flex-col justify-between group h-[280px] relative overflow-hidden hover:scale-[1.03] active:scale-95 hover:shadow-2xl ${isCritical ? 'border-red-500/40 bg-red-500/10' : isLow ? 'border-amber-500/40 bg-amber-500/10' : 'border-white/5 hover:border-primary/20 bg-white/[0.03]'}`}
+                className={`glass-panel p-6 rounded-[2.5rem] border transition-all duration-500 flex flex-col justify-between group h-[300px] relative overflow-hidden hover:scale-[1.03] active:scale-95 hover:shadow-2xl ${isCritical ? 'border-red-500/40 bg-red-500/10' : isLow ? 'border-amber-500/40 bg-amber-500/10' : 'border-white/5 hover:border-primary/20 bg-white/[0.03]'}`}
               >
                 {/* Glow Background Indicator */}
                 <div className={`absolute -top-10 -right-10 w-32 h-32 rounded-full blur-[80px] opacity-20 -z-10 transition-all duration-700 group-hover:scale-150 ${isCritical ? 'bg-red-500' : isLow ? 'bg-amber-500' : 'bg-primary'}`}></div>
@@ -118,12 +119,19 @@ export function GlobalCatalogFeed({
                   {/* Stock Metrics Row */}
                   <div className="grid grid-cols-2 gap-3 mt-6">
                     <div className={`bg-black/40 border p-4 rounded-3xl flex flex-col justify-center gap-1 ${isLow || isCritical ? 'border-amber-500/10' : 'border-white/5'}`}>
-                      <span className="text-[9px] font-black text-muted-foreground/60 uppercase tracking-widest opacity-60">Status</span>
-                      <div className="flex items-center gap-2">
-                         <span className={`text-2xl font-black tracking-tighter ${isCritical ? 'text-red-500 glow-red' : isLow ? 'text-amber-500' : 'text-white'}`}>
-                           {item.currentStock}
-                         </span>
-                         <span className="text-[9px] font-black text-muted-foreground/60 uppercase tracking-tighter self-end mb-1.5">{item.unit}</span>
+                      <span className="text-[9px] font-black text-muted-foreground/60 uppercase tracking-widest opacity-60">Parity</span>
+                      <div className="flex flex-col">
+                        <div className="flex items-center gap-2">
+                           <span className={`text-2xl font-black tracking-tighter ${isCritical ? 'text-red-500 glow-red' : isLow ? 'text-amber-500' : 'text-white'}`}>
+                             {item.currentStock}
+                           </span>
+                           <span className="text-[9px] font-black text-muted-foreground/60 uppercase tracking-tighter self-end mb-1.5">{hasConversion ? 'PCS' : item.unit}</span>
+                        </div>
+                        {hasConversion && (
+                          <span className="text-[8px] font-black text-muted-foreground/30 uppercase tracking-widest -mt-1">
+                            ({(item.currentStock / item.piecesPerBox).toFixed(1)} {item.unit})
+                          </span>
+                        )}
                       </div>
                     </div>
                     <div className="bg-black/40 border border-white/5 p-4 rounded-3xl flex flex-col justify-center gap-1">
@@ -138,7 +146,7 @@ export function GlobalCatalogFeed({
                 {/* Operations Footer */}
                 <div className="mt-auto flex justify-between items-center relative z-10 pt-4 border-t border-white/5">
                   <div className="flex flex-col">
-                    <span className="text-[8px] font-black text-muted-foreground/40 uppercase tracking-widest">Min Alert Level</span>
+                    <span className="text-[8px] font-black text-muted-foreground/40 uppercase tracking-widest">Redline Level</span>
                     <span className={`text-xs font-black ${isLow ? 'text-amber-500' : 'text-white/60'}`}>{item.minStock || 0} {item.unit}</span>
                   </div>
                   
