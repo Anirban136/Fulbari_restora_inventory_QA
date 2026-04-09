@@ -2,11 +2,12 @@ import { prisma } from "@/lib/prisma"
 export const dynamic = 'force-dynamic'
 import Link from "next/link"
 import { notFound } from "next/navigation"
-import { addTabItem, removeTabItem, closeTab } from "./actions"
+import { addTabItem, removeTabItem, closeTab, adjustTabItemQuantity } from "./actions"
 import { Button } from "@/components/ui/button"
-import { ArrowLeft, ShoppingCart, CreditCard, Banknote, SplitSquareHorizontal, CheckCircle2, Printer } from "lucide-react"
+import { ArrowLeft, ShoppingCart, CreditCard, Banknote, SplitSquareHorizontal, CheckCircle2, Printer, Plus, Minus } from "lucide-react"
 import { PosMenuGrid } from "./PosMenuGrid"
 import { PrintReceiptButton } from "@/components/PrintReceiptButton"
+import { cn } from "@/lib/utils"
 
 export default async function TabTerminal({ params }: { params: Promise<{ tabId: string }> }) {
   const { tabId } = await params
@@ -151,7 +152,38 @@ export default async function TabTerminal({ params }: { params: Promise<{ tabId:
             <ul className="space-y-3">
               {tab.Items.map((item: any) => (
                 <li key={item.id} className="p-2 sm:p-4 flex gap-2 sm:gap-4 bg-white/5 border border-white/10 rounded-2xl animate-in slide-in-from-right-4 duration-300 hover:border-white/20 transition-colors">
-                  <div className={`font-black ${isCafe ? "text-orange-950 bg-orange-400 shadow-[0_0_15px_-3px_#fb923c]" : "text-sky-950 bg-sky-400 shadow-[0_0_15px_-3px_#38bdf8]"} px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg h-fit tracking-wider w-8 sm:w-12 text-center text-xs sm:text-base`}>{item.quantity}x</div>
+                  <div className="flex items-center shrink-0">
+                    <div className="flex flex-col sm:flex-row items-center bg-black/40 rounded-xl sm:rounded-2xl overflow-hidden border border-white/10 shadow-inner group/adjuster">
+                      <form action={adjustTabItemQuantity.bind(null, item.id, tab.id, -1, item.priceAtTime)}>
+                        <button 
+                          type="submit" 
+                          className={cn(
+                            "p-2 sm:p-3 transition-all active:scale-90 bg-white/5 border-b sm:border-b-0 sm:border-r border-white/5",
+                            isCafe ? "hover:bg-orange-500 hover:text-orange-950" : "hover:bg-sky-500 hover:text-sky-950"
+                          )}
+                        >
+                          <Minus className="w-3 h-3 sm:w-4 sm:h-4" />
+                        </button>
+                      </form>
+                      <div className={cn(
+                        "px-2 sm:px-4 py-1 sm:py-2 font-black text-[10px] sm:text-base min-w-[2.5rem] sm:min-w-[4rem] text-center transition-colors",
+                        isCafe ? "text-orange-400" : "text-sky-400"
+                      )}>
+                        {item.quantity}<span className="text-[8px] sm:text-[10px] opacity-40 ml-0.5">X</span>
+                      </div>
+                      <form action={adjustTabItemQuantity.bind(null, item.id, tab.id, 1, item.priceAtTime)}>
+                        <button 
+                          type="submit" 
+                          className={cn(
+                            "p-2 sm:p-3 transition-all active:scale-90 bg-white/5 border-t sm:border-t-0 sm:border-l border-white/5",
+                            isCafe ? "hover:bg-orange-500 hover:text-orange-950" : "hover:bg-sky-500 hover:text-sky-950"
+                          )}
+                        >
+                          <Plus className="w-3 h-3 sm:w-4 sm:h-4" />
+                        </button>
+                      </form>
+                    </div>
+                  </div>
                   <div className="flex-1 min-w-0">
                     <p className="font-bold text-slate-200 text-sm sm:text-lg truncate">{item.MenuItem.name}</p>
                     <p className="text-slate-500 font-medium text-xs sm:text-sm">₹{item.priceAtTime.toFixed(2)} each</p>
