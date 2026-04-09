@@ -32,11 +32,11 @@ export function EditTransactionModal({ tabId, currentAmount, currentMode }: { ta
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
+      <DialogTrigger render={
         <Button variant="ghost" size="sm" className="h-8 w-8 p-0 hover:bg-white/10 text-muted-foreground hover:text-primary">
           <Pencil className="h-4 w-4" />
         </Button>
-      </DialogTrigger>
+      } />
       <DialogContent className="sm:max-w-[425px] bg-black/95 border-white/10 backdrop-blur-2xl text-white">
         <DialogHeader>
           <DialogTitle className="text-2xl font-black uppercase tracking-tighter">Edit Transaction</DialogTitle>
@@ -54,7 +54,12 @@ export function EditTransactionModal({ tabId, currentAmount, currentMode }: { ta
           </div>
           <div className="grid gap-2">
             <Label htmlFor="mode" className="text-[10px] font-black uppercase text-muted-foreground tracking-widest">Payment Mode</Label>
-            <Select value={mode} onValueChange={setMode}>
+            <Select 
+              value={mode} 
+              onValueChange={(val) => {
+                if (val !== null) setMode(val)
+              }}
+            >
               <SelectTrigger className="bg-white/5 border-white/10 h-12 text-lg font-bold text-white">
                 <SelectValue placeholder="Select mode" />
               </SelectTrigger>
