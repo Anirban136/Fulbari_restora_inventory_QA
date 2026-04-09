@@ -42,7 +42,10 @@ export default async function DashboardOverview() {
   const itemSales: Record<string, {name: string, qty: number, rev: number}> = {}
 
   todaysClosedTabs.forEach(tab => {
-    const isChaiOrCafe = tab.Outlet.name === "CHAI_JOINT" || tab.Outlet.name === "CAFE"
+    const outletName = tab.Outlet.name.toUpperCase();
+    const isChai = outletName.includes("CHAI");
+    const isCafe = outletName.includes("CAFE");
+    const isChaiOrCafe = isChai || isCafe;
     
     totalRevenue += tab.totalAmount
 
@@ -82,6 +85,18 @@ export default async function DashboardOverview() {
   const sortedCategories = Object.entries(categorySales).sort((a, b) => b[1] - a[1])
   const sortedItems = Object.entries(itemSales).sort((a, b) => b[1].qty - a[1].qty)
 
+  // Explicitly extract cafe and chai entries for the cards
+  const cafeEntry = Object.entries(outletStats).find(([name]) => name.toUpperCase().includes("CAFE"));
+  const chaiEntry = Object.entries(outletStats).find(([name]) => name.toUpperCase().includes("CHAI"));
+
+  const cafeTotal = cafeEntry ? cafeEntry[1].total : 0;
+  const cafeCash = cafeEntry ? cafeEntry[1].cash : 0;
+  const cafeDigital = cafeEntry ? cafeEntry[1].online : 0;
+
+  const chaiTotal = chaiEntry ? chaiEntry[1].total : 0;
+  const chaiCash = chaiEntry ? chaiEntry[1].cash : 0;
+  const chaiDigital = chaiEntry ? chaiEntry[1].online : 0;
+
   return (
     <div className="space-y-10 relative px-4 pt-6 pb-20 max-w-[1600px] mx-auto">
       {/* Background Decorators */}
@@ -91,7 +106,7 @@ export default async function DashboardOverview() {
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
           <div>
             <h2 className="text-4xl lg:text-7xl font-extrabold tracking-tighter text-foreground flex items-center gap-4">
-              Ops <span className="text-primary">Intelligence</span>
+              <span className="text-primary">Dashboard</span>
               <div className="h-4 w-4 rounded-full bg-emerald-500 animate-pulse-slow shadow-[0_0_30px_#10b981]"></div>
             </h2>
             <p className="text-muted-foreground mt-2 text-[10px] lg:text-sm font-black uppercase tracking-[0.4em] opacity-60">
@@ -116,32 +131,6 @@ export default async function DashboardOverview() {
           
           {/* Quick Stats - 5 Column Width on Desktop */}
           <div className="md:col-span-5 grid grid-cols-2 gap-4 sm:gap-6">
-             <div className="glass-card p-6 rounded-[2.5rem] flex flex-col justify-between hover:-translate-y-2 transition-all duration-500 bg-amber-500/5 group">
-                <div className="flex justify-between items-center">
-                  <div className="p-3 bg-amber-500/10 rounded-2xl group-hover:rotate-12 transition-transform">
-                    <Coffee className="w-6 h-6 text-amber-500" />
-                  </div>
-                  <span className="text-[10px] font-black text-muted-foreground/40 uppercase tracking-[0.2em]">Cafe Branch</span>
-                </div>
-                <div className="mt-8">
-                  <p className="text-[10px] font-black text-muted-foreground uppercase opacity-60 mb-1">Volume</p>
-                  <p className="text-3xl font-black text-foreground">₹{(outletStats["CAFE"]?.total || 0).toFixed(0)}</p>
-                </div>
-             </div>
-
-             <div className="glass-card p-6 rounded-[2.5rem] flex flex-col justify-between hover:-translate-y-2 transition-all duration-500 bg-indigo-500/5 group">
-                <div className="flex justify-between items-center">
-                  <div className="p-3 bg-indigo-500/10 rounded-2xl group-hover:rotate-12 transition-transform">
-                    <Activity className="w-6 h-6 text-indigo-500" />
-                  </div>
-                  <span className="text-[10px] font-black text-muted-foreground/40 uppercase tracking-[0.2em]">Chai Joint</span>
-                </div>
-                <div className="mt-8">
-                  <p className="text-[10px] font-black text-muted-foreground uppercase opacity-60 mb-1">Volume</p>
-                  <p className="text-3xl font-black text-foreground">₹{(outletStats["CHAI_JOINT"]?.total || 0).toFixed(0)}</p>
-                </div>
-             </div>
-
              <div className="glass-card p-6 rounded-[2.5rem] flex flex-col justify-between hover:-translate-y-2 transition-all duration-500 bg-emerald-500/5 group">
                 <div className="flex justify-between items-center">
                   <div className="p-3 bg-emerald-500/10 rounded-2xl group-hover:rotate-12 transition-transform">
@@ -150,7 +139,7 @@ export default async function DashboardOverview() {
                   <span className="text-[10px] font-black text-muted-foreground/40 uppercase tracking-[0.2em]">Hard Cash</span>
                 </div>
                 <div className="mt-8">
-                  <p className="text-[10px] font-black text-muted-foreground uppercase opacity-60 mb-1">Collected</p>
+                  <p className="text-[10px] font-black text-muted-foreground uppercase opacity-60 mb-1">Combined Collected</p>
                   <p className="text-3xl font-black text-foreground">₹{chaiCafeCash.toFixed(0)}</p>
                 </div>
              </div>
@@ -163,8 +152,55 @@ export default async function DashboardOverview() {
                   <span className="text-[10px] font-black text-muted-foreground/40 uppercase tracking-[0.2em]">Digital</span>
                 </div>
                 <div className="mt-8">
-                  <p className="text-[10px] font-black text-muted-foreground uppercase opacity-60 mb-1">UPI Flows</p>
+                  <p className="text-[10px] font-black text-muted-foreground uppercase opacity-60 mb-1">Combined UPI</p>
                   <p className="text-3xl font-black text-foreground">₹{chaiCafeDigital.toFixed(0)}</p>
+                </div>
+             </div>
+
+             {/* Specific Outlet Cards with Breakdowns */}
+             <div className="glass-card p-6 rounded-[2.5rem] flex flex-col justify-between hover:-translate-y-2 transition-all duration-500 bg-amber-500/5 group">
+                <div className="flex justify-between items-center">
+                  <div className="p-3 bg-amber-500/10 rounded-2xl group-hover:rotate-12 transition-transform">
+                    <Coffee className="w-6 h-6 text-amber-500" />
+                  </div>
+                  <span className="text-[10px] font-black text-muted-foreground/40 uppercase tracking-[0.2em]">Cafe Branch</span>
+                </div>
+                <div className="mt-6">
+                  <p className="text-[10px] font-black text-muted-foreground uppercase opacity-60 mb-1">Volume</p>
+                  <p className="text-3xl font-black text-foreground mb-4">₹{cafeTotal.toFixed(0)}</p>
+                  <div className="flex justify-between border-t border-white/5 pt-3">
+                    <div className="flex flex-col">
+                      <span className="text-[8px] font-black text-emerald-500 uppercase">Cash</span>
+                      <span className="text-xs font-black">₹{cafeCash.toFixed(0)}</span>
+                    </div>
+                    <div className="flex flex-col items-end">
+                      <span className="text-[8px] font-black text-blue-500 uppercase">UPI</span>
+                      <span className="text-xs font-black">₹{cafeDigital.toFixed(0)}</span>
+                    </div>
+                  </div>
+                </div>
+             </div>
+
+             <div className="glass-card p-6 rounded-[2.5rem] flex flex-col justify-between hover:-translate-y-2 transition-all duration-500 bg-indigo-500/5 group">
+                <div className="flex justify-between items-center">
+                  <div className="p-3 bg-indigo-500/10 rounded-2xl group-hover:rotate-12 transition-transform">
+                    <Activity className="w-6 h-6 text-indigo-500" />
+                  </div>
+                  <span className="text-[10px] font-black text-muted-foreground/40 uppercase tracking-[0.2em]">Chai Joint</span>
+                </div>
+                <div className="mt-6">
+                  <p className="text-[10px] font-black text-muted-foreground uppercase opacity-60 mb-1">Volume</p>
+                  <p className="text-3xl font-black text-foreground mb-4">₹{chaiTotal.toFixed(0)}</p>
+                  <div className="flex justify-between border-t border-white/5 pt-3">
+                    <div className="flex flex-col">
+                      <span className="text-[8px] font-black text-emerald-500 uppercase">Cash</span>
+                      <span className="text-xs font-black">₹{chaiCash.toFixed(0)}</span>
+                    </div>
+                    <div className="flex flex-col items-end">
+                      <span className="text-[8px] font-black text-blue-500 uppercase">UPI</span>
+                      <span className="text-xs font-black">₹{chaiDigital.toFixed(0)}</span>
+                    </div>
+                  </div>
                 </div>
              </div>
           </div>
