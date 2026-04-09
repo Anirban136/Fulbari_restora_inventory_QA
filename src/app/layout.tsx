@@ -3,6 +3,9 @@ import { Inter, Outfit } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "@/components/providers/auth-provider";
 
+import { ThemeProvider } from "@/components/providers/theme-provider";
+import { SmoothScroll } from "@/components/providers/smooth-scroll";
+
 const inter = Inter({
   variable: "--font-sans",
   subsets: ["latin"],
@@ -26,10 +29,20 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${inter.variable} ${outfit.variable} dark h-full antialiased selection:bg-emerald-500/30 selection:text-emerald-200`}
+      suppressHydrationWarning
+      className={`${inter.variable} ${outfit.variable} h-full antialiased selection:bg-emerald-500/30 selection:text-emerald-200`}
     >
       <body className="min-h-full flex flex-col">
-        <AuthProvider>{children}</AuthProvider>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="dark"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <SmoothScroll>
+            <AuthProvider>{children}</AuthProvider>
+          </SmoothScroll>
+        </ThemeProvider>
       </body>
     </html>
   );
