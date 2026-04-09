@@ -42,23 +42,25 @@ export function AddItemDialog({ existingCategories = [], variant = "default" }: 
           </Button>
         )
       } />
-      <DialogContent className="sm:max-w-[500px] bg-zinc-950/95 backdrop-blur-3xl border-white/10 rounded-[3rem] shadow-2xl p-0 overflow-hidden" showCloseButton={false}>
-        {/* Explicit Close Button for Mobile Nav */}
-        <DialogClose render={<button className="absolute top-6 right-6 p-3 rounded-2xl bg-white/5 border border-white/10 text-white/40 hover:text-white transition-all active:scale-90 z-50"><X className="w-5 h-5" /></button>} />
+      <DialogContent className="sm:max-w-[500px] w-[95vw] lg:w-full bg-zinc-950/95 backdrop-blur-3xl border-white/10 rounded-[2.5rem] sm:rounded-[3rem] shadow-2xl p-0 overflow-hidden max-h-[92vh] flex flex-col" showCloseButton={false}>
+        {/* Explicit Close Button - Positioned lower to avoid notches/status bars */}
+        <DialogClose render={<button className="absolute top-8 right-8 p-3 rounded-2xl bg-white/5 border border-white/10 text-white/40 hover:text-white transition-all active:scale-90 z-50"><X className="w-5 h-5" /></button>} />
         
         <div className="absolute top-0 right-0 w-40 h-40 bg-primary/10 rounded-full blur-[80px] -z-10"></div>
-        <div className="p-10">
-          <DialogHeader className="mb-10">
-             <div className="w-20 h-20 bg-primary/10 rounded-[2rem] flex items-center justify-center mb-6 border border-primary/20 shadow-inner">
-               <Package className="w-10 h-10 text-primary" />
+        
+        {/* Scrollable container for mobile comfort */}
+        <div className="flex-1 overflow-y-auto custom-scrollbar-premium p-6 sm:p-10">
+          <DialogHeader className="mb-8">
+             <div className="w-16 h-16 sm:w-20 sm:h-20 bg-primary/10 rounded-[1.5rem] sm:rounded-[2rem] flex items-center justify-center mb-6 border border-primary/20 shadow-inner">
+               <Package className="w-8 h-8 sm:w-10 sm:h-10 text-primary" />
              </div>
-            <DialogTitle className="text-4xl font-black text-white tracking-tighter uppercase leading-none">Global Item Entry</DialogTitle>
+            <DialogTitle className="text-3xl sm:text-4xl font-black text-white tracking-tighter uppercase leading-none">Global Item Entry</DialogTitle>
             <DialogDescription className="text-slate-400 font-medium mt-4 tracking-tight leading-relaxed text-sm">
               Define a new core product in the <span className="text-primary font-black uppercase">Global Repository</span>.
             </DialogDescription>
           </DialogHeader>
 
-          <form action={handleSubmit} className="space-y-8">
+          <form action={handleSubmit} className="space-y-6 sm:space-y-8">
             <div className="space-y-3">
               <Label htmlFor="name" className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.3em] ml-1">ITEM NAME</Label>
               <Input id="name" name="name" placeholder="e.g. PREMIUM ESPRESSO BEANS" required className="h-14 bg-white/[0.03] border-white/10 text-white placeholder:text-muted-foreground/20 rounded-2xl pl-5 pr-5 text-sm focus-visible:ring-primary/40 focus:border-primary/50 transition-all font-bold uppercase tracking-widest shadow-inner" />
@@ -114,14 +116,14 @@ export function AddItemDialog({ existingCategories = [], variant = "default" }: 
                 <Input id="minStock" name="minStock" type="number" step="0.01" placeholder="5.00" className="h-14 bg-white/[0.03] border-amber-500/20 text-amber-500 placeholder:text-amber-500/10 rounded-2xl focus-visible:ring-amber-500/40 font-black text-lg" />
               </div>
               {showPiecesPerBox && (
-                <div className="space-y-3 animate-in fade-in slide-in-from-right-4 duration-500">
+                <div className="space-y-3 animate-in fade-in slide-in-from-right-4 duration-300">
                   <Label htmlFor="piecesPerBox" className="text-[10px] font-black text-blue-400 uppercase tracking-[0.3em] ml-1">Pieces / {unit}</Label>
                   <Input id="piecesPerBox" name="piecesPerBox" type="number" placeholder="20" required className="h-14 bg-white/[0.03] border-blue-500/20 text-blue-400 placeholder:text-blue-400/10 rounded-2xl focus-visible:ring-blue-500/40 font-black text-lg shadow-inner" />
                 </div>
               )}
             </div>
 
-            <div className="pt-6">
+            <div className="pt-6 pb-4">
               <Button type="submit" className="w-full h-16 text-sm font-black uppercase tracking-[0.4em] bg-white text-black hover:bg-slate-100 rounded-2xl shadow-2xl transition-all active:scale-95 flex items-center justify-center gap-3">
                 SUBMIT <ArrowRight className="w-4 h-4" />
               </Button>

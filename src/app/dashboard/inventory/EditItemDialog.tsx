@@ -35,17 +35,19 @@ export function EditItemDialog({ item, existingCategories = [] }: { item: any; e
           <Edit className="w-4 h-4" />
         </button>
       } />
-      <DialogContent className="sm:max-w-[500px] bg-zinc-950/95 backdrop-blur-3xl border-white/10 rounded-[3rem] shadow-2xl p-0 overflow-hidden" showCloseButton={false}>
-        {/* Explicit Close Button for Mobile Nav */}
-        <DialogClose render={<button className="absolute top-6 right-6 p-3 rounded-2xl bg-white/5 border border-white/10 text-white/40 hover:text-white transition-all active:scale-90 z-50"><X className="w-5 h-5" /></button>} />
+      <DialogContent className="sm:max-w-[500px] w-[95vw] lg:w-full bg-zinc-950/95 backdrop-blur-3xl border-white/10 rounded-[2.5rem] sm:rounded-[3rem] shadow-2xl p-0 overflow-hidden max-h-[92vh] flex flex-col" showCloseButton={false}>
+        {/* Explicit Close Button - Positioned lower to avoid notches/status bars */}
+        <DialogClose render={<button className="absolute top-8 right-8 p-3 rounded-2xl bg-white/5 border border-white/10 text-white/40 hover:text-white transition-all active:scale-90 z-50"><X className="w-5 h-5" /></button>} />
         
         <div className="absolute top-0 right-0 w-40 h-40 bg-primary/10 rounded-full blur-[80px] -z-10"></div>
-        <div className="p-10">
-          <DialogHeader className="mb-10">
-             <div className="w-20 h-20 bg-primary/10 rounded-[2rem] flex items-center justify-center mb-6 border border-primary/20 shadow-inner">
-               <Package className="w-10 h-10 text-primary" />
+        
+        {/* Scrollable container for mobile comfort */}
+        <div className="flex-1 overflow-y-auto custom-scrollbar-premium p-6 sm:p-10">
+          <DialogHeader className="mb-8">
+             <div className="w-16 h-16 sm:w-20 sm:h-20 bg-primary/10 rounded-[1.5rem] sm:rounded-[2rem] flex items-center justify-center mb-6 border border-primary/20 shadow-inner">
+               <Package className="w-8 h-8 sm:w-10 sm:h-10 text-primary" />
              </div>
-            <DialogTitle className="text-4xl font-black text-white tracking-tighter uppercase leading-none truncate">Editing: {item.name}</DialogTitle>
+            <DialogTitle className="text-3xl sm:text-4xl font-black text-white tracking-tighter uppercase leading-none truncate">Editing: {item.name}</DialogTitle>
             <DialogDescription className="text-slate-400 font-medium mt-4 tracking-tight leading-relaxed text-sm">
               Update core product details in the <span className="text-primary font-black uppercase">Global Repository</span>.
             </DialogDescription>
@@ -121,7 +123,7 @@ export function EditItemDialog({ item, existingCategories = [] }: { item: any; e
               </div>
             )}
 
-            <div className="pt-4">
+            <div className="pt-4 pb-4">
               <Button type="submit" className="w-full h-16 text-sm font-black uppercase tracking-[0.4em] bg-white text-black hover:bg-slate-100 rounded-2xl shadow-2xl transition-all active:scale-95 flex items-center justify-center gap-3">
                 SAVE CHANGES <ArrowRight className="w-4 h-4" />
               </Button>
