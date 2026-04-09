@@ -32,8 +32,9 @@ import { cn } from "@/lib/utils"
 export default async function VendorsPage() {
   const session = await getServerSession(authOptions)
   const isOwner = session?.user?.role === "OWNER"
+  const isAuthorized = isOwner || session?.user?.role === "INV_MANAGER"
 
-  if (!isOwner) {
+  if (!isAuthorized) {
     return (
       <div className="min-h-[60vh] flex flex-col items-center justify-center space-y-4">
         <div className="w-20 h-20 bg-red-500/10 rounded-3xl flex items-center justify-center border border-red-500/20 shadow-2xl">

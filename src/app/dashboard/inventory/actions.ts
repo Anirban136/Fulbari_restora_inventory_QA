@@ -69,7 +69,7 @@ export async function deleteVendor(data: FormData) {
 
 export async function payVendor(data: FormData) {
   const session = await getServerSession(authOptions)
-  if (!session || session.user.role !== "OWNER") {
+  if (!session || (session.user.role !== "OWNER" && session.user.role !== "INV_MANAGER")) {
     throw new Error("Unauthorized")
   }
 
