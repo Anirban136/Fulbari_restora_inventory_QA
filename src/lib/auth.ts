@@ -9,17 +9,33 @@ export const authOptions: NextAuthOptions = {
         pin: { label: "PIN", type: "password" },
       },
       async authorize(credentials) {
-        if (!credentials?.pin) return null;
-
-        const { prisma } = await import("./prisma");
-        const user = await prisma.user.findUnique({
-          where: { pin: credentials.pin },
-        });
-
-        if (user) {
-          return { id: user.id, name: user.name, role: user.role };
+        console.log("Auth Attempt - Start");
+        if (!credentials?.pin) {
+          console.log("Auth Attempt - No PIN provided");
+          return null;
         }
-        return null;
+
+        try {
+          const { prisma } = await import("./prisma");
+          console.log("Auth Attempt - PIN received:", credentials.pin);
+          
+          const user = await prisma.user.findUnique({
+            where: { pin: credentials.pin },
+          });
+
+          if (user) {
+            console.log("Auth Attempt - Success: User found", user.name);
+            return { id: user.id, name: user.name, role: user.role };
+          }
+          
+          console.log("Auth Attempt - Failed: No user found for PIN");
+          return null;
+        } catch (error: any) {
+          console.error("Auth Attempt - CRITICAL ERROR:", error.message);
+          // Log the full error to help identify connection strings issues
+          console.error(error);
+          return null;
+        }
       },
     }),
   ],
