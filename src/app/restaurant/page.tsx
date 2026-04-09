@@ -5,19 +5,28 @@ import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { consumeStock } from "./actions"
 import { UserControls } from "@/components/user-controls"
-import { ChefHat, Flame, Search } from "lucide-react"
+import { ChefHat, Flame, Search, PackageOpen } from "lucide-react"
 import AppLayout from "@/components/layouts/app-layout"
+import { formatTimeIST, formatDateIST } from "@/lib/utils"
 
 export default async function RestaurantDashboard() {
   const restaurant = await prisma.outlet.findFirst({ where: { type: "RESTAURANT" }})
   
   if (!restaurant) return <div className="min-h-screen bg-background text-white p-10 font-bold">Restaurant outlet not configured.</div>
 
-  const localStock = await prisma.outletStock.findMany({
-    where: { outletId: restaurant.id, quantity: { gt: 0 } },
-    include: { Item: true },
-    orderBy: { Item: { name: 'asc' } }
-  })
+  const [localStock, incomingDispatches] = await Promise.all([
+    prisma.outletStock.findMany({
+      where: { outletId: restaurant.id, quantity: { gt: 0 } },
+      include: { Item: true },
+      orderBy: { Item: { name: 'asc' } }
+    }),
+    prisma.inventoryLedger.findMany({
+      where: { outletId: restaurant.id, type: "DISPATCH" },
+      include: { Item: true, User: true },
+      orderBy: { createdAt: 'desc' },
+      take: 10
+    })
+  ])
 
   return (
     <AppLayout>
@@ -30,7 +39,7 @@ export default async function RestaurantDashboard() {
 
         <div className="w-full max-w-6xl px-4 sm:px-6 py-10 relative z-10 flex flex-col min-h-full">
           
-          <header className="flex flex-col sm:flex-row items-start sm:items-center justify-between pb-8 mb-8 border-b border-white/10 gap-4">
+          <header className="flex flex-col sm:flex-row items-start sm:items-center justify-between pb-8 mb-8 border-b border-white/10 gap-4 text-glow">
             <div className="flex items-center gap-4">
              <div className="h-14 w-14 bg-gradient-to-br from-rose-500 to-orange-600 rounded-2xl flex items-center justify-center border border-white/10 shadow-[0_0_30px_-5px_oklch(0.65_0.22_25_/_0.5)] p-1">
                <div className="h-full w-full bg-background/50 rounded-xl flex items-center justify-center backdrop-blur-md">
@@ -47,6 +56,41 @@ export default async function RestaurantDashboard() {
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 flex-1">
           
+          {/* Incoming Dispatches */}
+          <div className="lg:col-span-12 glass-panel rounded-3xl overflow-hidden flex flex-col min-h-[300px] border border-rose-500/20 shadow-[0_20px_60px_-15px_rgba(244,63,94,0.05)]">
+             <div className="p-8 border-b border-white/10 bg-white/5 backdrop-blur-md flex items-center gap-4 shrink-0">
+               <PackageOpen className="w-6 h-6 text-rose-400" />
+               <h2 className="text-xl font-bold text-white uppercase tracking-widest">Incoming Deliveries from Warehouse</h2>
+             </div>
+             
+             <div className="flex-1 overflow-auto p-8 max-h-[400px] custom-scrollbar">
+                {incomingDispatches.length === 0 ? (
+                  <div className="flex flex-col items-center justify-center text-slate-500 py-10 animate-pulse h-full">
+                    <Search className="w-12 h-12 mb-4 opacity-20" />
+                    <p className="font-bold tracking-widest uppercase text-sm">No dispatches received yet.</p>
+                  </div>
+                ) : (
+                  <ul className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {incomingDispatches.map(log => (
+                      <li key={log.id} className="flex items-center justify-between p-5 rounded-2xl border border-white/5 bg-white/5 hover:bg-white/10 hover:border-white/20 transition-all group shadow-sm">
+                        <div>
+                          <p className="text-[10px] font-bold text-slate-500 mb-1 leading-none">{formatDateIST(log.createdAt)} at {formatTimeIST(log.createdAt)}</p>
+                          <span className="font-bold text-slate-200 group-hover:text-white text-lg transition-colors leading-tight block mb-1">{log.Item.name}</span>
+                          <p className="text-[10px] text-slate-500 font-medium leading-none">By: <span className="text-slate-400">{log.User.name}</span></p>
+                        </div>
+                        <div className="text-right">
+                          <span className="font-black text-rose-400 bg-rose-500/10 border border-rose-500/20 px-4 py-2 rounded-xl text-xl drop-shadow-[0_0_5px_rgba(244,63,94,0.3)]">
+                            +{log.quantity} <span className="text-[10px] ml-1 opacity-70 uppercase text-rose-300 tracking-widest">{log.Item.piecesPerBox ? 'pcs' : log.Item.unit}</span>
+                          </span>
+                          <p className="text-[9px] text-slate-500 font-black uppercase tracking-widest mt-2">{log.notes || "STOCK_IN"}</p>
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+             </div>
+          </div>
+
           {/* Consumption Logger */}
           <div className="lg:col-span-5 glass-panel p-8 rounded-3xl self-start hover:border-white/20 transition-all border border-rose-500/20 shadow-[0_20px_60px_-15px_rgba(244,63,94,0.1)]">
             <div className="flex items-center gap-3 mb-8">
@@ -101,7 +145,7 @@ export default async function RestaurantDashboard() {
                         <div className="mt-4 flex justify-between items-end">
                           <span className="text-xs font-bold text-slate-500 uppercase tracking-widest">Available</span>
                           <span className="font-black text-rose-400 bg-rose-500/10 border border-rose-500/20 px-3 py-1 rounded-lg text-lg drop-shadow-[0_0_5px_rgba(244,63,94,0.3)]">
-                            {stock.quantity} <span className="text-[10px] ml-1 opacity-70 uppercase text-rose-300 tracking-widest">{stock.Item.unit}</span>
+                            {stock.quantity} <span className="text-[10px] ml-1 opacity-70 uppercase text-rose-300 tracking-widest">{stock.Item.piecesPerBox ? 'pcs' : stock.Item.unit}</span>
                           </span>
                         </div>
                       </li>
