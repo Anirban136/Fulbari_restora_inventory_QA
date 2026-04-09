@@ -4,7 +4,7 @@ import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { PlusCircle, Package, ArrowRight } from "lucide-react"
+import { PlusCircle, Package, ArrowRight, X } from "lucide-react"
 import {
   Dialog,
   DialogContent,
@@ -12,6 +12,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
+  DialogClose,
 } from "@/components/ui/dialog"
 import { addItem } from "./actions"
 import { CategoryCombobox } from "../menus/CategoryCombobox"
@@ -41,7 +42,10 @@ export function AddItemDialog({ existingCategories = [], variant = "default" }: 
           </Button>
         )
       } />
-      <DialogContent className="sm:max-w-[500px] bg-zinc-950/95 backdrop-blur-3xl border-white/10 rounded-[3rem] shadow-2xl p-0 overflow-hidden">
+      <DialogContent className="sm:max-w-[500px] bg-zinc-950/95 backdrop-blur-3xl border-white/10 rounded-[3rem] shadow-2xl p-0 overflow-hidden" showCloseButton={false}>
+        {/* Explicit Close Button for Mobile Nav */}
+        <DialogClose render={<button className="absolute top-6 right-6 p-3 rounded-2xl bg-white/5 border border-white/10 text-white/40 hover:text-white transition-all active:scale-90 z-50"><X className="w-5 h-5" /></button>} />
+        
         <div className="absolute top-0 right-0 w-40 h-40 bg-primary/10 rounded-full blur-[80px] -z-10"></div>
         <div className="p-10">
           <DialogHeader className="mb-10">
@@ -117,8 +121,9 @@ export function AddItemDialog({ existingCategories = [], variant = "default" }: 
               )}
             </div>
 
-            <div className="pt-4 pb-4">
-              <Button type="submit" className="w-full h-16 text-sm font-black uppercase tracking-[0.4em] bg-white text-black hover:bg-slate-100 rounded-2xl shadow-2xl transition-all active:scale-95 flex items-center justify-center gap-3">
+            <div className="pt-4 flex flex-col sm:flex-row gap-4">
+              <DialogClose render={<Button type="button" variant="outline" className="flex-1 h-16 rounded-2xl border-white/10 bg-white/5 text-muted-foreground font-black uppercase tracking-widest hover:bg-white/10 hover:text-white transition-all active:scale-95 leading-none">CANCEL</Button>} />
+              <Button type="submit" className="flex-[2] h-16 text-sm font-black uppercase tracking-[0.4em] bg-white text-black hover:bg-slate-100 rounded-2xl shadow-2xl transition-all active:scale-95 flex items-center justify-center gap-3">
                 SUBMIT <ArrowRight className="w-4 h-4" />
               </Button>
             </div>

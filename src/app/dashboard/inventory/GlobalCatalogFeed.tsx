@@ -164,13 +164,13 @@ export function GlobalCatalogFeed({
                         </div>
                       </td>
                       <td className="px-8 py-6">
-                        <div className="flex items-center justify-center gap-2 opacity-20 group-hover:opacity-100 transition-opacity">
+                        <div className="flex items-center justify-center gap-2">
                           <EditItemDialog item={item} existingCategories={categories} />
                           
                           {isOwner && (
                             <button 
                               onClick={() => removeItem(item.id)}
-                              className="p-2 rounded-xl text-red-500/50 hover:text-red-500 hover:bg-red-500/10 transition-all border border-transparent hover:border-red-500/20" 
+                              className="p-2 rounded-xl text-red-500/50 hover:text-red-500 hover:bg-red-500/10 transition-all border border-white/5 hover:border-red-500/20 active:scale-95 shadow-lg shadow-red-500/5" 
                               title={`Delete ${item.name}`}
                             >
                               <Trash2 className="w-4 h-4" />
