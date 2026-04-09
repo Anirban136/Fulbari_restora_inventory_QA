@@ -75,13 +75,13 @@ export default async function WasteTrackingPage({ searchParams }: { searchParams
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-8 relative z-10">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 relative z-10">
         
         {/* Left Form */}
         <WasteForm items={items} vendors={vendors} />
 
         {/* Right Table */}
-        <div className="md:col-span-2 glass-panel rounded-3xl overflow-hidden flex flex-col">
+        <div className="lg:col-span-2 glass-panel rounded-3xl overflow-hidden flex flex-col">
           <div className="p-6 border-b border-white/10 bg-white/5 backdrop-blur-md flex items-center justify-between">
             <h3 className="text-lg font-bold text-white tracking-wide">Recent Waste / Spoilage</h3>
             <div className="flex items-center gap-3">

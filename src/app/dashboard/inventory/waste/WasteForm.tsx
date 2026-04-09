@@ -68,7 +68,7 @@ export function WasteForm({ items, vendors }: { items: Item[], vendors: Vendor[]
   }
 
   return (
-    <div className="xl:col-span-1 glass-panel p-8 rounded-3xl self-start hover:border-white/20 transition-all border border-red-500/10">
+    <div className="glass-panel p-6 sm:p-8 rounded-3xl self-start hover:border-white/20 transition-all border border-red-500/10">
       <div className="flex items-center gap-4 mb-8">
         <div className="h-12 w-12 bg-red-500/10 rounded-2xl flex items-center justify-center border border-red-500/20 shadow-[0_0_15px_-3px_rgba(239,68,68,0.3)]">
           <Trash2 className="w-6 h-6 text-red-500" />

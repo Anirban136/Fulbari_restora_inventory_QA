@@ -42,7 +42,7 @@ export default async function GlobalCatalogPage() {
       {/* Background Decorators */}
       <div className="absolute top-[-100px] left-[-100px] w-[400px] h-[400px] bg-primary/10 rounded-full blur-[120px] pointer-events-none"></div>
 
-      <div className="flex items-center justify-between relative z-10 glass-panel p-4 sm:p-6 rounded-3xl">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 relative z-10 glass-panel p-4 sm:p-6 rounded-3xl">
         <div>
           <h2 className="text-3xl font-black text-white tracking-tight flex items-center gap-3">
             Global Catalog
