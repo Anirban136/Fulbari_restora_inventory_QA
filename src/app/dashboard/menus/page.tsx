@@ -1,28 +1,9 @@
 import { prisma } from "@/lib/prisma"
 export const dynamic = 'force-dynamic'
-import { Label } from "@/components/ui/label"
-import { Input } from "@/components/ui/input"
-import { Button } from "@/components/ui/button"
 import { addMenuItem, toggleMenuItem, deleteMenuItem } from "./actions"
-import { MenuSquare, Settings2, Search, Trash2 } from "lucide-react"
-import { EditMenuItemDialog } from "./EditMenuItemDialog"
+import { MenuSquare } from "lucide-react"
 import { AddMenuItemForm } from "./AddMenuItemForm"
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table"
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog"
+import { MenuManagementTable } from "./MenuManagementTable"
 
 export default async function MenusPage() {
   const outlets = await prisma.outlet.findMany({
@@ -37,7 +18,7 @@ export default async function MenusPage() {
 
   const globalItems = await prisma.item.findMany({ orderBy: { name: 'asc' } })
 
-  const existingCategories = Array.from(new Set(menuItems.map((item: any) => item.categoryId).filter(Boolean)))
+  const existingCategories = Array.from(new Set(menuItems.map((item: any) => item.categoryId).filter(Boolean))) as string[]
 
   return (
     <div className="space-y-8 relative">
@@ -64,87 +45,17 @@ export default async function MenusPage() {
              <h3 className="text-xl font-bold text-foreground">Add Menu Item</h3>
           </div>
           
-          <AddMenuItemForm outlets={outlets} globalItems={globalItems} existingCategories={existingCategories as string[]} />
+          <AddMenuItemForm outlets={outlets} globalItems={globalItems} existingCategories={existingCategories} />
         </div>
 
-        {/* MENU LIST */}
+        {/* MENU LIST (Filterable Client Table) */}
         <div className="xl:col-span-2 glass-panel rounded-3xl overflow-hidden flex flex-col">
-          <div className="p-0 flex-1 overflow-auto max-h-[700px]">
-            <Table>
-              <TableHeader>
-                <TableRow className="border-b border-border/10 hover:bg-transparent">
-                  <TableHead className="font-bold text-muted-foreground uppercase tracking-widest text-[10px] h-14 bg-muted/20 dark:bg-black/40 backdrop-blur-md sticky top-0 z-20">Outlet</TableHead>
-                  <TableHead className="font-bold text-muted-foreground uppercase tracking-widest text-[10px] h-14 bg-muted/20 dark:bg-black/40 backdrop-blur-md sticky top-0 z-20">Item Name</TableHead>
-                  <TableHead className="font-bold text-muted-foreground uppercase tracking-widest text-[10px] h-14 bg-muted/20 dark:bg-black/40 backdrop-blur-md sticky top-0 z-20">Category</TableHead>
-                  <TableHead className="font-bold text-muted-foreground uppercase tracking-widest text-[10px] h-14 bg-muted/20 dark:bg-black/40 backdrop-blur-md sticky top-0 z-20 text-right">Price</TableHead>
-                  <TableHead className="font-bold text-muted-foreground uppercase tracking-widest text-[10px] h-14 bg-muted/20 dark:bg-black/40 backdrop-blur-md sticky top-0 z-20 text-center">Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                 {menuItems.length === 0 ? (
-                  <TableRow className="border-b border-white/10">
-                    <TableCell colSpan={5} className="h-40 text-center text-slate-500">
-                      <span className="flex flex-col items-center justify-center">
-                        <Search className="w-8 h-8 opacity-20 mb-2" />
-                        No menu items configured yet.
-                      </span>
-                    </TableCell>
-                  </TableRow>
-                 ) : (
-                  menuItems.map((menuItem: any) => (
-                    <TableRow key={menuItem.id} className={`border-b border-border/5 hover:bg-muted/5 transition-colors group ${!menuItem.isAvailable ? "opacity-40 grayscale" : ""}`}>
-                      <TableCell className="font-medium text-muted-foreground tracking-wide uppercase text-[10px]">{menuItem.Outlet.name}</TableCell>
-                      <TableCell className="font-bold text-foreground/90 text-base">{menuItem.name}</TableCell>
-                      <TableCell className="text-muted-foreground font-medium text-sm tracking-wide">{menuItem.categoryId}</TableCell>
-                      <TableCell className="text-right">
-                        <span className="inline-flex items-center text-emerald-600 dark:text-emerald-400 font-black text-lg">
-                           ₹{menuItem.price.toFixed(2)}
-                         </span>
-                      </TableCell>
-                      <TableCell className="text-center">
-                         <div className="flex items-center justify-center gap-2">
-                           <EditMenuItemDialog menuItem={menuItem} outlets={outlets} globalItems={globalItems} existingCategories={existingCategories as string[]} />
-                           <form action={toggleMenuItem.bind(null, menuItem.id, menuItem.isAvailable)}>
-                             <Button 
-                               type="submit" 
-                               variant="outline" 
-                               size="sm" 
-                               className={`h-8 px-4 text-xs font-bold tracking-widest uppercase rounded-lg transition-all ${menuItem.isAvailable ? "border-indigo-500/30 bg-indigo-500/10 text-indigo-400 hover:bg-indigo-500/20" : "border-white/10 text-slate-500 hover:bg-white/10 hover:text-white"}`}
-                             >
-                               {menuItem.isAvailable ? "Active" : "OOS"}
-                             </Button>
-                           </form>
-                           <Dialog>
-                             <DialogTrigger>
-                               <div className="flex h-8 w-8 items-center justify-center text-red-500/70 hover:text-red-400 hover:bg-red-500/10 rounded-lg cursor-pointer">
-                                 <Trash2 className="h-4 w-4" />
-                               </div>
-                             </DialogTrigger>
-                             <DialogContent className="sm:max-w-[400px] bg-background backdrop-blur-2xl border-border rounded-3xl shadow-[0_0_50px_rgba(239,68,68,0.1)]">
-                               <DialogHeader className="mb-2">
-                                 <div className="w-12 h-12 bg-red-500/10 rounded-2xl flex items-center justify-center mb-4 border border-red-500/20">
-                                   <Trash2 className="w-6 h-6 text-red-500 dark:text-red-400" />
-                                 </div>
-                                 <DialogTitle className="text-xl font-black text-foreground">Delete Menu Item?</DialogTitle>
-                                 <DialogDescription className="text-muted-foreground leading-relaxed">
-                                   Are you sure you want to delete <span className="text-foreground font-bold">{menuItem.name}</span> from the {menuItem.Outlet.name} menu? This action cannot be undone.
-                                 </DialogDescription>
-                               </DialogHeader>
-                               <form action={deleteMenuItem.bind(null, menuItem.id)} className="mt-4">
-                                 <Button type="submit" variant="destructive" className="w-full h-11 font-bold rounded-xl transition-all active:scale-95">
-                                   Yes, Delete Item
-                                 </Button>
-                               </form>
-                             </DialogContent>
-                           </Dialog>
-                         </div>
-                      </TableCell>
-                    </TableRow>
-                  ))
-                 )}
-              </TableBody>
-            </Table>
-          </div>
+          <MenuManagementTable 
+            menuItems={menuItems} 
+            outlets={outlets} 
+            globalItems={globalItems} 
+            existingCategories={existingCategories} 
+          />
         </div>
       </div>
     </div>
