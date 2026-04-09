@@ -33,11 +33,11 @@ export function AddItemDialog({ existingCategories = [], variant = "default" }: 
       <DialogTrigger render={
         variant === "compact" ? (
           <Button variant="outline" className="h-[40px] px-5 rounded-2xl border-white/10 bg-white/5 hover:bg-white/10 text-white font-black text-[10px] transition-all active:scale-95 gap-2 uppercase tracking-widest">
-            <PlusCircle className="w-4 h-4 text-primary" /> New Entry
+            <PlusCircle className="w-4 h-4 text-primary" /> New Item
           </Button>
         ) : (
           <Button className="h-14 px-8 rounded-[2rem] bg-primary hover:bg-emerald-500 text-primary-foreground font-black shadow-[0_15px_30px_-10px_rgba(16,185,129,0.5)] transition-all active:scale-95 gap-3 w-full uppercase tracking-[0.2em] text-xs">
-            <PlusCircle className="w-5 h-5" /> Initialize New Node
+            <PlusCircle className="w-5 h-5" /> ADD NEW ITEM
           </Button>
         )
       } />
@@ -48,21 +48,21 @@ export function AddItemDialog({ existingCategories = [], variant = "default" }: 
              <div className="w-20 h-20 bg-primary/10 rounded-[2rem] flex items-center justify-center mb-6 border border-primary/20 shadow-inner">
                <Package className="w-10 h-10 text-primary" />
              </div>
-            <DialogTitle className="text-4xl font-black text-white tracking-tighter uppercase leading-none">Catalog Entry</DialogTitle>
+            <DialogTitle className="text-4xl font-black text-white tracking-tighter uppercase leading-none">Global Item Entry</DialogTitle>
             <DialogDescription className="text-slate-400 font-medium mt-4 tracking-tight leading-relaxed text-sm">
-              Define a new core node in the <span className="text-primary font-black uppercase">Global Repository</span>. Initial stock is set to zero parity.
+              Define a new core product in the <span className="text-primary font-black uppercase">Global Repository</span>.
             </DialogDescription>
           </DialogHeader>
 
           <form action={handleSubmit} className="space-y-8">
             <div className="space-y-3">
-              <Label htmlFor="name" className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.3em] ml-1">Entity Identifier</Label>
+              <Label htmlFor="name" className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.3em] ml-1">ITEM NAME</Label>
               <Input id="name" name="name" placeholder="e.g. PREMIUM ESPRESSO BEANS" required className="h-14 bg-white/[0.03] border-white/10 text-white placeholder:text-muted-foreground/20 rounded-2xl pl-5 pr-5 text-sm focus-visible:ring-primary/40 focus:border-primary/50 transition-all font-bold uppercase tracking-widest shadow-inner" />
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-3">
-                <Label htmlFor="category" className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.3em] ml-1">Node Class</Label>
+                <Label htmlFor="category" className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.3em] ml-1">CATEGORY</Label>
                 <CategoryCombobox 
                   key={open ? 'open' : 'closed'} 
                   name="category" 
@@ -71,7 +71,7 @@ export function AddItemDialog({ existingCategories = [], variant = "default" }: 
               </div>
 
               <div className="space-y-3">
-                <Label htmlFor="unit" className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.3em] ml-1">Metric Unit</Label>
+                <Label htmlFor="unit" className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.3em] ml-1">UNIT</Label>
                 <select 
                   name="unit" 
                   id="unit" 
@@ -80,7 +80,7 @@ export function AddItemDialog({ existingCategories = [], variant = "default" }: 
                   onChange={(e) => setUnit(e.target.value)}
                   className="w-full h-14 px-6 py-2 rounded-2xl border border-white/10 bg-white/[0.03] text-white focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary/50 transition-all font-black uppercase tracking-widest text-xs appearance-none cursor-pointer shadow-inner"
                 >
-                  <option value="" className="bg-zinc-950 text-muted-foreground/30">Select Metric...</option>
+                  <option value="" className="bg-zinc-950 text-muted-foreground/30">Select Unit...</option>
                   <option value="kg" className="bg-zinc-950 text-white">Kilogram (kg)</option>
                   <option value="gm" className="bg-zinc-950 text-white">Gram (gm)</option>
                   <option value="lit" className="bg-zinc-950 text-white">Litre (lit)</option>
@@ -95,18 +95,18 @@ export function AddItemDialog({ existingCategories = [], variant = "default" }: 
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               <div className="space-y-3">
-                <Label htmlFor="costPerUnit" className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.3em] ml-1">Input Credit (₹)</Label>
+                <Label htmlFor="costPerUnit" className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.3em] ml-1">BUY PRICE (₹)</Label>
                 <Input id="costPerUnit" name="costPerUnit" type="number" step="0.01" placeholder="0.00" className="h-14 bg-white/[0.03] border-white/10 text-white placeholder:text-muted-foreground/10 rounded-2xl focus-visible:ring-primary/40 font-black text-lg" />
               </div>
               <div className="space-y-3">
-                <Label htmlFor="sellPrice" className="text-[10px] font-black text-primary uppercase tracking-[0.3em] ml-1">Output Credit (₹)</Label>
+                <Label htmlFor="sellPrice" className="text-[10px] font-black text-primary uppercase tracking-[0.3em] ml-1">SELL PRICE (₹)</Label>
                 <Input id="sellPrice" name="sellPrice" type="number" step="0.01" placeholder="0.00" className="h-14 bg-white/[0.03] border-primary/20 text-primary placeholder:text-primary/10 rounded-2xl focus-visible:ring-primary/40 font-black text-lg shadow-[0_0_20px_rgba(16,185,129,0.05)]" />
               </div>
             </div>
 
             <div className={`grid gap-6 transition-all duration-500 ${showPiecesPerBox ? 'grid-cols-1 sm:grid-cols-2' : 'grid-cols-1'}`}>
               <div className="space-y-3">
-                <Label htmlFor="minStock" className="text-[10px] font-black text-amber-500 uppercase tracking-[0.3em] ml-1">Redline Threshold</Label>
+                <Label htmlFor="minStock" className="text-[10px] font-black text-amber-500 uppercase tracking-[0.3em] ml-1">LOW STOCK ALERT</Label>
                 <Input id="minStock" name="minStock" type="number" step="0.01" placeholder="5.00" className="h-14 bg-white/[0.03] border-amber-500/20 text-amber-500 placeholder:text-amber-500/10 rounded-2xl focus-visible:ring-amber-500/40 font-black text-lg" />
               </div>
               {showPiecesPerBox && (
@@ -119,7 +119,7 @@ export function AddItemDialog({ existingCategories = [], variant = "default" }: 
 
             <div className="pt-4 pb-4">
               <Button type="submit" className="w-full h-16 text-sm font-black uppercase tracking-[0.4em] bg-white text-black hover:bg-slate-100 rounded-2xl shadow-2xl transition-all active:scale-95 flex items-center justify-center gap-3">
-                Commit Node <ArrowRight className="w-4 h-4" />
+                SUBMIT <ArrowRight className="w-4 h-4" />
               </Button>
             </div>
           </form>

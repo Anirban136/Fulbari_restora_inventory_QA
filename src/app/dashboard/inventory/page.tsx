@@ -37,7 +37,7 @@ export default async function GlobalCatalogPage() {
                </h2>
                <p className="text-muted-foreground mt-2 font-black text-[9px] lg:text-xs tracking-[0.3em] uppercase opacity-60 flex items-center gap-2">
                  <Layers className="sm:hidden w-3 h-3 text-primary" />
-                 REPOSITORY CONTROL • NODE MANAGEMENT
+                 REPOSITORY CONTROL • PRODUCT MANAGEMENT
                </p>
              </div>
           </div>
@@ -48,7 +48,7 @@ export default async function GlobalCatalogPage() {
         </div>
       </header>
 
-      {/* Main Dynamic Hybrid Feed (Client Component) */}
+      {/* Main Dynamic Table Feed (Client Component) */}
       <div className="w-full">
         <GlobalCatalogFeed 
           items={items} 
