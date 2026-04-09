@@ -83,7 +83,7 @@ export function UnifiedSidebar({ user }: { user: any }) {
 
       {/* Desktop Sidebar / Mobile Overaly */}
       <div className={cn(
-        "fixed inset-y-0 left-0 z-40 w-72 transform transition-transform duration-500 ease-in-out lg:translate-x-0 lg:static lg:inset-0",
+        "fixed inset-y-0 left-0 z-40 w-72 transform transition-transform duration-500 ease-in-out lg:translate-x-0 lg:sticky lg:top-0 lg:h-screen",
         isOpen ? "translate-x-0" : "-translate-x-full"
       )}>
         {/* Backdrop for mobile */}

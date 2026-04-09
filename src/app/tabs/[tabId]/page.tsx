@@ -110,7 +110,7 @@ export default async function TabTerminal({ params }: { params: Promise<{ tabId:
   }, {})
 
   return (
-    <div className={`h-screen bg-background flex flex-col lg:flex-row overflow-hidden ${isCafe ? "selection:bg-orange-500/30 selection:text-orange-100" : "selection:bg-sky-500/30 selection:text-sky-100"} relative`}>
+    <div className={`min-h-screen lg:h-screen bg-background flex flex-col lg:flex-row lg:overflow-hidden ${isCafe ? "selection:bg-orange-500/30 selection:text-orange-100" : "selection:bg-sky-500/30 selection:text-sky-100"} relative`}>
       
       {/* Background Decorators */}
       <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-10 mix-blend-overlay pointer-events-none z-0"></div>
@@ -134,7 +134,7 @@ export default async function TabTerminal({ params }: { params: Promise<{ tabId:
       </div>
 
       {/* Right Pane: CART / BILL */}
-      <div className="w-full lg:w-1/3 lg:min-w-[400px] lg:max-w-[500px] h-[50vh] lg:h-auto bg-black/40 backdrop-blur-2xl flex flex-col border-t lg:border-t-0 lg:border-l border-white/10 shadow-[0_-20px_80px_rgba(0,0,0,0.8)] lg:shadow-[-20px_0_40px_rgba(0,0,0,0.5)] z-20 shrink-0 relative">
+      <div className="w-full lg:w-1/3 lg:min-w-[400px] lg:max-w-[500px] bg-black/40 backdrop-blur-2xl flex flex-col border-t lg:border-t-0 lg:border-l border-white/10 shadow-[0_-20px_80px_rgba(0,0,0,0.8)] lg:shadow-[-20px_0_40px_rgba(0,0,0,0.5)] z-20 shrink-0 relative lg:h-full">
         <header className="p-3 sm:p-8 border-b border-white/10 bg-white/5 relative overflow-hidden shrink-0">
           <div className={`absolute top-0 right-0 w-32 h-32 ${isCafe ? "bg-orange-500/10" : "bg-sky-500/10"} rounded-full blur-[40px] pointer-events-none`}></div>
           <h2 className="text-xl sm:text-3xl font-black text-white tracking-tight break-words relative z-10 text-glow">{tab.customerName}</h2>

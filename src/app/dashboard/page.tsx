@@ -275,7 +275,8 @@ export default async function DashboardOverview() {
               </a>
             </div>
          </div>
-         <div className="p-0 max-h-[400px] overflow-auto custom-scrollbar bg-muted/5 dark:bg-black/20">
+         <div className="p-0 overflow-x-auto custom-scrollbar bg-muted/5 dark:bg-black/20">
+            <div className="min-w-[800px]">
             {todaysClosedTabs.length === 0 ? (
                <div className="text-center py-10 text-muted-foreground font-medium tracking-widest uppercase">No transactions recorded today.</div>
             ) : (
@@ -300,6 +301,7 @@ export default async function DashboardOverview() {
                  </tbody>
                </table>
             )}
+            </div>
          </div>
       </div>
     </div>

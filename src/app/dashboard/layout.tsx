@@ -7,7 +7,7 @@ export default async function DashboardLayout({
 }) {
   return (
     <AppLayout>
-      <div className="p-8 lg:p-12">
+      <div className="p-4 sm:p-6 lg:p-10">
         {children}
       </div>
     </AppLayout>
