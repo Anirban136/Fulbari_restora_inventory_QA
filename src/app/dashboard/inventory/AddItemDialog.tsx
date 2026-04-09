@@ -121,9 +121,8 @@ export function AddItemDialog({ existingCategories = [], variant = "default" }: 
               )}
             </div>
 
-            <div className="pt-4 flex flex-col sm:flex-row gap-4">
-              <DialogClose render={<Button type="button" variant="outline" className="flex-1 h-16 rounded-2xl border-white/10 bg-white/5 text-muted-foreground font-black uppercase tracking-widest hover:bg-white/10 hover:text-white transition-all active:scale-95 leading-none">CANCEL</Button>} />
-              <Button type="submit" className="flex-[2] h-16 text-sm font-black uppercase tracking-[0.4em] bg-white text-black hover:bg-slate-100 rounded-2xl shadow-2xl transition-all active:scale-95 flex items-center justify-center gap-3">
+            <div className="pt-6">
+              <Button type="submit" className="w-full h-16 text-sm font-black uppercase tracking-[0.4em] bg-white text-black hover:bg-slate-100 rounded-2xl shadow-2xl transition-all active:scale-95 flex items-center justify-center gap-3">
                 SUBMIT <ArrowRight className="w-4 h-4" />
               </Button>
             </div>
