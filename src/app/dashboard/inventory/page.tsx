@@ -20,7 +20,7 @@ export default async function GlobalCatalogPage() {
   const existingCategories = Array.from(new Set(items.map((item: any) => item.category).filter(Boolean))) as string[]
 
   return (
-    <div className="space-y-6 lg:space-y-12 relative pb-20 max-w-[1600px] mx-auto px-4 lg:px-8">
+    <div className="space-y-6 lg:space-y-12 relative pb-20 max-w-[1600px] mx-auto overflow-x-visible">
       {/* Background Decorators */}
       <div className="absolute top-[-100px] right-0 w-[500px] h-[500px] bg-primary/10 rounded-full blur-[150px] pointer-events-none -z-10"></div>
       
@@ -49,12 +49,14 @@ export default async function GlobalCatalogPage() {
       </header>
 
       {/* Main Dynamic Hybrid Feed (Client Component) */}
-      <GlobalCatalogFeed 
-        items={items} 
-        categories={existingCategories} 
-        isOwner={isOwner}
-        isManager={isManager}
-      />
+      <div className="w-full">
+        <GlobalCatalogFeed 
+          items={items} 
+          categories={existingCategories} 
+          isOwner={isOwner}
+          isManager={isManager}
+        />
+      </div>
     </div>
   )
 }

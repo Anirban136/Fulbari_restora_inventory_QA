@@ -36,9 +36,9 @@ export function GlobalCatalogFeed({
   }, [items, searchTerm, activeCategory])
 
   return (
-    <div className="space-y-6 lg:space-y-8 relative z-10 w-full overflow-x-hidden">
+    <div className="space-y-6 lg:space-y-8 relative z-10 w-full overflow-x-visible">
       {/* 1. Universal Search & Filter Hub */}
-      <div className="flex flex-col gap-4 glass-panel p-4 lg:p-6 rounded-[2rem] border border-white/5 shadow-2xl relative overflow-hidden backdrop-blur-3xl mx-0 lg:mx-0">
+      <div className="flex flex-col gap-4 glass-panel p-4 lg:p-6 rounded-[2rem] border border-white/5 shadow-2xl relative overflow-hidden backdrop-blur-3xl mx-0">
         <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-[80px] -z-10"></div>
         
         <div className="flex flex-col lg:flex-row gap-4 justify-between items-start lg:items-center">
@@ -63,7 +63,7 @@ export function GlobalCatalogFeed({
         <div className="flex items-center gap-2 overflow-x-auto pb-2 -mx-2 px-2 no-scrollbar">
           <button
             onClick={() => setActiveCategory("ALL")}
-            className={`px-5 py-2 rounded-xl text-[9px] font-black uppercase tracking-[0.2em] transition-all duration-300 shrink-0 border ${activeCategory === "ALL" ? "bg-primary text-primary-foreground border-primary shadow-lg scale-105" : "bg-white/5 text-muted-foreground/60 border-white/10 hover:border-white/20 hover:text-white"}`}
+            className={`px-5 py-2 rounded-xl text-[9px] font-black uppercase tracking-[0.2em] transition-all duration-300 shrink-0 border ${activeCategory === "ALL" ? "bg-primary text-primary-foreground border-primary shadow-lg" : "bg-white/5 text-muted-foreground/60 border-white/10 hover:border-white/20 hover:text-white"}`}
           >
             All Signal
           </button>
@@ -71,7 +71,7 @@ export function GlobalCatalogFeed({
             <button
               key={cat}
               onClick={() => setActiveCategory(cat)}
-              className={`px-5 py-2 rounded-xl text-[9px] font-black uppercase tracking-[0.2em] transition-all duration-300 shrink-0 border ${activeCategory === cat ? "bg-white text-black border-white shadow-lg scale-105" : "bg-white/5 text-muted-foreground/60 border-white/10 hover:border-white/20 hover:text-white"}`}
+              className={`px-5 py-2 rounded-xl text-[9px] font-black uppercase tracking-[0.2em] transition-all duration-300 shrink-0 border ${activeCategory === cat ? "bg-white text-black border-white shadow-lg" : "bg-white/5 text-muted-foreground/60 border-white/10 hover:border-white/20 hover:text-white"}`}
             >
               {cat}
             </button>
@@ -80,7 +80,7 @@ export function GlobalCatalogFeed({
       </div>
 
       {/* 2. Hybrid Repository Grid (Mobile Cards / Desktop Table) */}
-      <div className="space-y-4">
+      <div className="space-y-4 w-full">
         {/* Desktop Table Header - Hidden on Mobile */}
         <div className="hidden md:grid md:grid-cols-[2fr_1fr_1fr_1fr_1fr_1fr_0.5fr] gap-4 px-8 py-4 bg-white/[0.03] border border-white/5 rounded-2xl mb-4">
           <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/40 text-left">Entity Description</span>
@@ -104,16 +104,16 @@ export function GlobalCatalogFeed({
             const hasConversion = item.piecesPerBox > 0
             
             return (
-              <div key={item.id} className="relative group">
+              <div key={item.id} className="relative group w-full">
                 {/* Visual Status Indicator (Glow Border) */}
                 <div className={`absolute -inset-[1px] rounded-[1.8rem] opacity-0 group-hover:opacity-100 transition-opacity blur-[2px] -z-10 ${isCritical ? 'bg-red-500/20' : isLow ? 'bg-amber-500/20' : 'bg-primary/20'}`}></div>
                 
                 {/* Main Content Node */}
-                <div className={`glass-panel p-5 lg:p-6 lg:px-8 rounded-[1.8rem] border transition-all duration-300 flex flex-col md:grid md:grid-cols-[2fr_1fr_1fr_1fr_1fr_1fr_0.5fr] items-center gap-4 lg:gap-4 relative overflow-hidden h-auto ${isCritical ? 'border-red-500/30 bg-red-500/[0.03]' : isLow ? 'border-amber-500/30 bg-amber-500/[0.03]' : 'border-white/5 bg-white/[0.02]'}`}>
+                <div className={`glass-panel p-4 lg:p-6 lg:px-8 rounded-[1.8rem] border transition-all duration-300 flex flex-col md:grid md:grid-cols-[2fr_1fr_1fr_1fr_1fr_1fr_0.5fr] items-center gap-4 lg:gap-4 relative overflow-hidden h-auto w-full ${isCritical ? 'border-red-500/30 bg-red-500/[0.03]' : isLow ? 'border-amber-500/30 bg-amber-500/[0.03]' : 'border-white/5 bg-white/[0.02]'}`}>
                   
                   {/* MOBILE HEADER: Name & Ops */}
                   <div className="w-full md:w-auto flex justify-between items-start md:block">
-                    <div className="flex flex-col gap-1.5 min-w-0 pr-4 md:pr-0">
+                    <div className="flex flex-col gap-1.5 min-w-0 pr-2 md:pr-0">
                       <span className={`text-[8px] font-black uppercase tracking-[0.2em] ${isCritical ? 'text-red-500' : isLow ? 'text-amber-500' : 'text-primary'}`}>
                         {item.category || "General"}
                       </span>
@@ -121,11 +121,11 @@ export function GlobalCatalogFeed({
                         {item.name}
                       </h4>
                     </div>
-                    {/* Mobile Ops - Shows only on small screens */}
-                    <div className="md:hidden flex items-center gap-1">
+                    {/* Mobile Ops - Optimized for no clipping */}
+                    <div className="md:hidden flex items-center gap-0.5 shrink-0">
                        <EditItemDialog item={item} existingCategories={categories} />
                        {isOwner && (
-                         <div onClick={() => removeItem(item.id)} className="p-2 border border-transparent text-red-500/30 active:scale-95">
+                         <div onClick={() => removeItem(item.id)} className="p-2 text-red-500/30 hover:text-red-500 transition-colors">
                            <Trash2 className="w-4 h-4" />
                          </div>
                        )}
@@ -133,15 +133,15 @@ export function GlobalCatalogFeed({
                   </div>
 
                   {/* MOBILE GRID: The data fields */}
-                  <div className="w-full md:w-auto grid grid-cols-2 md:contents gap-3 border-t md:border-0 border-white/5 pt-4 md:pt-0">
+                  <div className="w-full md:w-auto grid grid-cols-2 md:contents gap-2.5 border-t md:border-0 border-white/5 pt-3.5 md:pt-0">
                     
                     {/* Parity Status */}
                     <div className="flex items-center gap-2.5 md:justify-center">
-                       <div className={`p-1.5 rounded-lg border ${isCritical ? 'text-red-500 bg-red-500/10 border-red-500/20' : isLow ? 'text-amber-500 bg-amber-500/10 border-amber-500/20 animate-pulse' : 'text-emerald-500 bg-emerald-500/10 border-emerald-500/20'}`}>
+                       <div className={`p-1.5 rounded-lg border ${isCritical ? 'text-red-500 bg-red-500/10 border-red-500/20 shadow-[0_0_10px_rgba(239,68,68,0.2)]' : isLow ? 'text-amber-500 bg-amber-500/10 border-amber-500/20 animate-pulse' : 'text-emerald-500 bg-emerald-500/10 border-emerald-500/20'}`}>
                          {isCritical || isLow ? <AlertTriangle className="w-3.5 h-3.5" /> : <CheckCircle2 className="w-3.5 h-3.5" />}
                        </div>
                        <div className="flex flex-col">
-                          <span className={`text-lg md:text-xl font-black tracking-tighter leading-none ${isCritical ? 'text-red-500' : isLow ? 'text-amber-500' : 'text-white'}`}>
+                          <span className={`text-base md:text-xl font-black tracking-tighter leading-none ${isCritical ? 'text-red-500' : isLow ? 'text-amber-500' : 'text-white'}`}>
                             {item.currentStock}
                           </span>
                           {hasConversion && (
@@ -161,26 +161,26 @@ export function GlobalCatalogFeed({
 
                     {/* Input Credit */}
                     <div className="flex flex-col md:items-end justify-center bg-black/20 p-2 md:p-0 rounded-xl md:bg-transparent border border-white/5 md:border-0">
-                       <span className="md:hidden text-[7px] font-black text-muted-foreground/40 uppercase tracking-widest mb-1.5 flex items-center gap-1"><IndianRupee className="w-2 h-2" /> Input</span>
-                       <span className="text-sm md:text-base font-black text-white/60 tracking-tight">
+                       <span className="md:hidden text-[7px] font-black text-muted-foreground/40 uppercase tracking-widest mb-1 flex items-center gap-1"><IndianRupee className="w-2 h-2 text-white/20" /> Input</span>
+                       <span className="text-xs md:text-base font-black text-white/60 tracking-tight">
                          ₹{item.costPerUnit?.toFixed(2) || "0.00"}
                        </span>
                     </div>
 
                     {/* Output Credit */}
                     <div className="flex flex-col md:items-end justify-center bg-primary/5 p-2 md:p-0 rounded-xl md:bg-transparent border border-primary/10 md:border-0">
-                       <span className="md:hidden text-[7px] font-black text-primary/60 uppercase tracking-widest mb-1.5 flex items-center gap-1"><IndianRupee className="w-2 h-2" /> Output</span>
-                       <span className="text-sm md:text-base font-black text-primary tracking-tight">
+                       <span className="md:hidden text-[7px] font-black text-primary/60 uppercase tracking-widest mb-1 flex items-center gap-1"><IndianRupee className="w-2 h-2 text-primary/40" /> Output</span>
+                       <span className="text-xs md:text-base font-black text-primary tracking-tight">
                          ₹{item.sellPrice?.toFixed(2) || "0.00"}
                        </span>
                     </div>
 
                     {/* Redline Alert Level */}
                     <div className="flex flex-col md:items-center justify-center col-span-2 md:col-auto bg-amber-500/5 p-2 md:p-0 rounded-xl md:bg-transparent border border-amber-500/10 md:border-0">
-                       <span className="md:hidden text-[7px] font-black text-amber-500/60 uppercase tracking-widest mb-1.5 flex items-center gap-1"><ShieldAlert className="w-2 h-2" /> Min Threshold Level</span>
+                       <span className="md:hidden text-[7px] font-black text-amber-500/60 uppercase tracking-widest mb-1 flex items-center gap-1"><ShieldAlert className="w-2 h-2" /> Min Alert Threshold</span>
                        <div className="flex items-center gap-1.5">
-                         <span className={`text-xs md:text-sm font-black ${isLow ? 'text-amber-500' : 'text-white/60'}`}>{item.minStock || 0}</span>
-                         <span className="hidden md:inline text-[7px] font-black text-muted-foreground/30 uppercase tracking-widest">MIN</span>
+                         <span className={`text-[11px] md:text-sm font-black ${isLow ? 'text-amber-500' : 'text-white/60'}`}>{item.minStock || 0}</span>
+                         <span className="hidden md:inline text-[7px] font-black text-muted-foreground/30 uppercase tracking-widest ml-1">Limit</span>
                        </div>
                     </div>
 
