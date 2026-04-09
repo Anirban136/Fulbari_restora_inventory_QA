@@ -168,14 +168,14 @@ export default async function DashboardOverview() {
                 <div className="mt-6">
                   <p className="text-[10px] font-black text-muted-foreground uppercase opacity-60 mb-1">Volume</p>
                   <p className="text-3xl font-black text-foreground mb-4">₹{cafeTotal.toFixed(0)}</p>
-                  <div className="flex justify-between border-t border-white/5 pt-3">
-                    <div className="flex flex-col">
-                      <span className="text-[8px] font-black text-emerald-500 uppercase">Cash</span>
-                      <span className="text-xs font-black">₹{cafeCash.toFixed(0)}</span>
+                  <div className="flex justify-between border-t border-white/5 pt-4">
+                    <div className="flex flex-col bg-emerald-500/5 px-3 py-2 rounded-xl">
+                      <span className="text-[9px] font-black text-emerald-500 uppercase tracking-widest">Cash</span>
+                      <span className="text-lg font-black text-foreground">₹{cafeCash.toFixed(0)}</span>
                     </div>
-                    <div className="flex flex-col items-end">
-                      <span className="text-[8px] font-black text-blue-500 uppercase">UPI</span>
-                      <span className="text-xs font-black">₹{cafeDigital.toFixed(0)}</span>
+                    <div className="flex flex-col items-end bg-blue-500/5 px-3 py-2 rounded-xl">
+                      <span className="text-[9px] font-black text-blue-500 uppercase tracking-widest">UPI</span>
+                      <span className="text-lg font-black text-foreground">₹{cafeDigital.toFixed(0)}</span>
                     </div>
                   </div>
                 </div>
@@ -191,14 +191,14 @@ export default async function DashboardOverview() {
                 <div className="mt-6">
                   <p className="text-[10px] font-black text-muted-foreground uppercase opacity-60 mb-1">Volume</p>
                   <p className="text-3xl font-black text-foreground mb-4">₹{chaiTotal.toFixed(0)}</p>
-                  <div className="flex justify-between border-t border-white/5 pt-3">
-                    <div className="flex flex-col">
-                      <span className="text-[8px] font-black text-emerald-500 uppercase">Cash</span>
-                      <span className="text-xs font-black">₹{chaiCash.toFixed(0)}</span>
+                  <div className="flex justify-between border-t border-white/5 pt-4">
+                    <div className="flex flex-col bg-emerald-500/5 px-3 py-2 rounded-xl">
+                      <span className="text-[9px] font-black text-emerald-500 uppercase tracking-widest">Cash</span>
+                      <span className="text-lg font-black text-foreground">₹{chaiCash.toFixed(0)}</span>
                     </div>
-                    <div className="flex flex-col items-end">
-                      <span className="text-[8px] font-black text-blue-500 uppercase">UPI</span>
-                      <span className="text-xs font-black">₹{chaiDigital.toFixed(0)}</span>
+                    <div className="flex flex-col items-end bg-blue-500/5 px-3 py-2 rounded-xl">
+                      <span className="text-[9px] font-black text-blue-500 uppercase tracking-widest">UPI</span>
+                      <span className="text-lg font-black text-foreground">₹{chaiDigital.toFixed(0)}</span>
                     </div>
                   </div>
                 </div>
