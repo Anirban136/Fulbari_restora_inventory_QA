@@ -23,7 +23,7 @@ export default async function AppLayout({
         <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-10 mix-blend-overlay pointer-events-none z-10"></div>
         <div className="absolute top-1/4 left-1/4 w-[500px] h-[500px] bg-emerald-900/5 rounded-full blur-[150px] pointer-events-none"></div>
         
-        <div className="flex-1 z-20 pt-14 lg:pt-0 overflow-y-auto lg:overflow-visible custom-scrollbar">
+        <div className="flex-1 z-20 pt-16 lg:pt-0 overflow-y-auto lg:overflow-visible custom-scrollbar">
           {children}
         </div>
       </main>

@@ -45,7 +45,6 @@ export function UnifiedSidebar({ user }: { user: any }) {
 
   const navItems: NavItem[] = [
     { name: "Home Dashboard", href: "/dashboard", icon: Home, roles: ["OWNER"] },
-    { name: "Database Reset", href: "/dashboard/wipe", icon: AlertTriangle, roles: ["OWNER"] },
     { name: "Global Catalog", href: "/dashboard/inventory", icon: Package, roles: ["OWNER", "INV_MANAGER"] },
     { name: "Global Menus", href: "/dashboard/menus", icon: ClipboardList, roles: ["OWNER", "INV_MANAGER"] },
     { name: "Stock In", href: "/dashboard/inventory/stock-in", icon: Package, roles: ["OWNER", "INV_MANAGER"] },
@@ -58,6 +57,7 @@ export function UnifiedSidebar({ user }: { user: any }) {
     { name: "Transactions", href: "/dashboard/transactions", icon: Receipt, roles: ["OWNER"] },
     { name: "Waste Tracking", href: "/dashboard/inventory/waste", icon: Trash2, roles: ["OWNER", "INV_MANAGER"] },
     { name: "Passcode Control", href: "/dashboard/settings/passwords", icon: ShieldCheck, roles: ["OWNER"] },
+    { name: "Database Reset", href: "/dashboard/wipe", icon: AlertTriangle, roles: ["OWNER"] },
   ]
 
   const filteredItems = navItems.filter(item => 
@@ -66,63 +66,62 @@ export function UnifiedSidebar({ user }: { user: any }) {
 
   return (
     <>
-      {/* Mobile Top Header (Fixed) */}
-      <div className="lg:hidden fixed top-0 left-0 right-0 h-14 px-4 flex items-center justify-between border-b border-white/5 bg-background/60 backdrop-blur-2xl z-[45] shadow-2xl">
+      {/* Mobile Top Header (Optimized for Visibility) */}
+      <div className="lg:hidden fixed top-0 left-0 right-0 h-16 px-6 flex items-center justify-between border-b border-white/5 bg-background/80 backdrop-blur-3xl z-[45] shadow-2xl">
         <div className="flex flex-col">
-          <h1 className="text-lg font-black text-emerald-500 dark:text-emerald-400 tracking-tighter leading-none">FULBARI</h1>
-          <p className="text-[6px] font-black tracking-[0.2em] uppercase text-muted-foreground mt-0.5 opacity-50">Operations Unit</p>
+          <h1 className="text-xl font-black text-emerald-500 dark:text-emerald-400 tracking-tighter leading-none uppercase">FULBARI</h1>
+          <p className="text-[7px] font-black tracking-[0.3em] uppercase text-muted-foreground mt-1 opacity-60">Operations Unit</p>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-4">
           <Button 
             variant="outline" 
             size="icon" 
             onClick={() => setIsOpen(!isOpen)}
-            className="rounded-xl w-9 h-9 border-emerald-500/20 bg-emerald-500/10 text-emerald-400 shadow-lg active:scale-90 transition-all"
+            className="rounded-[1.2rem] w-12 h-12 border-emerald-500/20 bg-emerald-500/10 text-emerald-400 shadow-xl active:scale-90 transition-all flex items-center justify-center p-0"
           >
-            {isOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
+            {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
           </Button>
         </div>
       </div>
 
-      {/* Desktop Sidebar / Mobile Overaly */}
+      {/* Desktop Sidebar / Mobile Overlay */}
       <div className={cn(
-        "fixed inset-y-0 left-0 z-40 w-72 transform transition-transform duration-500 ease-in-out lg:translate-x-0 lg:sticky lg:top-0 lg:h-screen",
+        "fixed inset-y-0 left-0 z-[100] w-[85vw] md:w-80 lg:w-72 transform transition-transform duration-500 cubic-bezier(0.4, 0, 0.2, 1) lg:translate-x-0 lg:sticky lg:top-0 lg:h-screen",
         isOpen ? "translate-x-0" : "-translate-x-full"
       )}>
-        {/* Backdrop for mobile */}
+        {/* Backdrop for mobile (High-Fidelity Blur) */}
         {isOpen && (
           <div 
-            className="fixed inset-0 bg-black/80 backdrop-blur-sm lg:hidden" 
+            className="fixed inset-0 bg-black/80 lg:hidden backdrop-blur-md transition-opacity duration-500 cursor-pointer -z-10" 
             onClick={() => setIsOpen(false)}
           />
         )}
 
-        <aside className="relative h-full flex flex-col border-r border-border/50 bg-sidebar lg:bg-background/20 backdrop-blur-3xl lg:backdrop-blur-none z-50 overflow-hidden shadow-[20px_0_50px_rgba(0,0,0,0.05)] dark:shadow-[20px_0_50px_rgba(0,0,0,0.5)] lg:shadow-none transition-colors duration-500">
-          {/* Grain Overlay */}
-          <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-5 mix-blend-overlay pointer-events-none"></div>
-
-          <div className="p-8 border-b border-border/50 shrink-0 flex items-center justify-between">
+        <aside className="relative h-full flex flex-col border-r border-white/5 bg-zinc-950 lg:bg-background/20 lg:backdrop-blur-none z-50 overflow-hidden shadow-[30px_0_60px_rgba(0,0,0,0.8)] dark:shadow-[30px_0_60px_rgba(0,0,0,1)] lg:shadow-none transition-all duration-300">
+          {/* Logo Section in Sidebar (Enlarged for Mobile) */}
+          <div className="p-10 border-b border-white/5 shrink-0">
             <div>
-              <h1 className="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-emerald-600 to-teal-800 dark:from-emerald-400 dark:to-teal-200 tracking-tighter text-glow">FULBARI</h1>
-              <p className="text-[10px] font-black tracking-[0.2em] uppercase text-muted-foreground mt-2 opacity-80">Operations Unit</p>
+              <h1 className="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-200 tracking-tighter uppercase leading-none">FULBARI</h1>
+              <p className="text-[10px] font-black tracking-[0.4em] uppercase text-muted-foreground mt-3 opacity-60">Operations Unit</p>
             </div>
           </div>
           
-          <div className="p-6 border-b border-border/50 bg-muted/20 shrink-0">
-             <div className="flex items-center gap-3">
-               <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-500 p-0.5 shadow-lg">
-                 <div className="w-full h-full rounded-[10px] bg-background dark:bg-black flex items-center justify-center font-black text-emerald-500 dark:text-emerald-400 text-lg">
-                   {user.name?.[0].toUpperCase()}
+          {/* User Profile Hook */}
+          <div className="p-8 border-b border-white/5 bg-white/[0.02] shrink-0">
+             <div className="flex items-center gap-4">
+               <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-400 p-0.5 shadow-xl">
+                 <div className="w-full h-full rounded-[14px] bg-black flex items-center justify-center font-black text-emerald-400 text-xl">
+                    {user.name?.[0].toUpperCase()}
                  </div>
                </div>
                 <div className="flex-1 min-w-0">
-                  <p className="font-black text-foreground text-sm truncate">{user.name}</p>
-                  <p className="text-[10px] font-black tracking-widest uppercase text-emerald-600 dark:text-emerald-400 mt-0.5">{user.role.replace('_', ' ')}</p>
+                  <p className="font-black text-white text-base truncate uppercase tracking-tight">{user.name}</p>
+                  <p className="text-[9px] font-black tracking-[0.2em] uppercase text-emerald-400 mt-1 opacity-80">{user.role?.replace('_', ' ')}</p>
                 </div>
              </div>
           </div>
 
-          <nav className="flex-1 overflow-y-auto p-4 space-y-1 custom-scrollbar">
+          <nav className="flex-1 overflow-y-auto p-6 lg:p-4 space-y-2 custom-scrollbar no-scrollbar lg:block">
             {filteredItems.map((item) => {
               const isActive = pathname === item.href
               return (
@@ -130,28 +129,28 @@ export function UnifiedSidebar({ user }: { user: any }) {
                   key={item.href} 
                   href={item.href}
                   className={cn(
-                    "flex items-center gap-3 px-4 py-3.5 rounded-2xl transition-all duration-300 group relative overflow-hidden",
+                    "flex items-center gap-4 px-5 py-5 lg:py-3.5 rounded-[1.5rem] transition-all duration-300 group relative overflow-hidden",
                     isActive 
-                      ? "bg-emerald-500/10 text-foreground border border-emerald-500/20 shadow-[0_0_20px_rgba(16,185,129,0.05)]" 
-                      : "text-muted-foreground hover:text-foreground hover:bg-muted/10 transition-colors"
+                      ? "bg-white/5 text-emerald-400 border border-emerald-500/20 shadow-[0_10px_30px_rgba(16,185,129,0.1)]" 
+                      : "text-muted-foreground hover:text-white hover:bg-white/5 transition-colors"
                   )}
                 >
                   <item.icon className={cn(
-                    "w-5 h-5 transition-transform group-hover:scale-110",
-                    isActive ? "text-emerald-800 dark:text-emerald-400" : "text-foreground group-hover:text-foreground"
+                    "w-6 h-6 lg:w-5 lg:h-5 transition-transform group-hover:scale-110",
+                    isActive ? "text-emerald-400" : "text-white/40 group-hover:text-emerald-400"
                   )} />
-                  <span className="font-black tracking-tight text-sm">{item.name}</span>
+                  <span className="font-black tracking-tight text-base lg:text-sm uppercase">{item.name}</span>
                   {isActive && (
-                    <div className="ml-auto w-1.5 h-1.5 rounded-full bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,1)]" />
+                    <div className="ml-auto w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_15px_rgba(16,185,129,1)]" />
                   )}
                   {/* Subtle hover sweep */}
-                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
+                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-emerald-500/5 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
                 </Link>
               )
             })}
           </nav>
 
-          <div className="p-6 border-t border-border/50 bg-muted/5 shrink-0">
+          <div className="p-8 border-t border-white/5 bg-white/[0.01] shrink-0">
             <UserControls role={user.role} />
           </div>
         </aside>
