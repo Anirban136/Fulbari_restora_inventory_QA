@@ -77,12 +77,12 @@ export default async function DashboardOverview() {
       {/* Background Decorators */}
       <div className="absolute top-0 right-0 w-96 h-96 bg-primary/10 rounded-full blur-[100px] pointer-events-none"></div>
 
-      <header className="relative z-10">
-        <h2 className="text-4xl font-black tracking-tight text-foreground flex items-center gap-3">
+      <header className="relative z-10 pt-4 lg:pt-0">
+        <h2 className="text-3xl lg:text-4xl font-black tracking-tight text-foreground flex items-center gap-3">
           Executive Overview
-          <div className="h-3 w-3 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_15px_#10b981]"></div>
+          <div className="h-2 w-2 lg:h-3 lg:w-3 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_15px_#10b981]"></div>
         </h2>
-        <p className="text-foreground/70 dark:text-muted-foreground mt-2 text-lg font-bold">Real-time performance metrics across all operations.</p>
+        <p className="text-foreground/70 dark:text-muted-foreground mt-2 text-sm lg:text-lg font-bold">Real-time performance metrics across all operations.</p>
       </header>
 
       {/* Low Stock Alerts */}

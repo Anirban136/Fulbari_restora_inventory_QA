@@ -136,8 +136,12 @@
   }
   html {
     @apply font-sans;
-    font-size: 14px;
-    scroll-behavior: auto !important; /* Managed by Lenis */
+    font-size: 16px; /* Base for mobile */
+    @screen lg {
+      font-size: 14px; /* Slightly smaller for dense desktop views */
+    }
+    scroll-behavior: auto !important; /* Managed by Lenis on desktop, native on mobile */
+    -webkit-tap-highlight-color: transparent;
   }
   h1, h2, h3, h4, h5, h6 {
     @apply font-heading tracking-tight;
