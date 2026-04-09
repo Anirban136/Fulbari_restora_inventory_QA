@@ -87,35 +87,31 @@ export default async function GlobalCatalogPage() {
               ) : (
                 items.map((item: any) => (
                   <TableRow key={item.id} className="border-b border-border/5 hover:bg-muted/5 transition-colors group">
-                    <TableCell className="font-medium text-foreground/90 group-hover:text-foreground transition-colors">{item.name}</TableCell>
-                    <TableCell className="text-muted-foreground text-[10px] font-bold uppercase tracking-wider">{item.category}</TableCell>
-                    <TableCell className="text-muted-foreground/80 text-right">{item.piecesPerBox ? 'pcs' : item.unit}</TableCell>
-                    <TableCell className="text-center font-bold text-blue-400">
-                      {item.piecesPerBox ? (
-                        <span className="inline-flex items-center gap-1 bg-blue-500/10 px-2 py-0.5 rounded border border-blue-500/20">
-                          {item.piecesPerBox} <span className="text-[10px] opacity-60">pcs</span>
-                        </span>
-                      ) : '—'}
+                    <TableCell className="font-bold text-foreground text-[11px] lg:text-sm">{item.name}</TableCell>
+                    <TableCell className="text-muted-foreground text-[9px] font-bold uppercase tracking-tight">{item.category}</TableCell>
+                    <TableCell className="text-muted-foreground/80 text-right text-[10px]">{item.piecesPerBox ? 'pcs' : item.unit}</TableCell>
+                    <TableCell className="text-center font-bold text-blue-400 text-[10px]">
+                      {item.piecesPerBox ? item.piecesPerBox : '—'}
                     </TableCell>
                     <TableCell className="text-right">
                       {item.minStock > 0 && item.currentStock <= item.minStock ? (
-                        <span className="inline-flex items-center justify-center px-3 py-1 rounded-lg bg-red-500/20 border border-red-500/30 text-red-400 font-black tracking-widest text-xs shadow-[0_0_15px_-2px_rgba(239,68,68,0.3)] animate-pulse">
-                          {item.currentStock} <span className="text-[9px] ml-1 opacity-80 uppercase font-black">{item.piecesPerBox ? 'pcs' : item.unit}</span>
+                        <span className="inline-flex items-center justify-center px-2 py-0.5 rounded-md bg-red-500/20 border border-red-500/30 text-red-400 font-bold text-[10px]">
+                          {item.currentStock}
                         </span>
                       ) : (
-                        <span className="inline-flex items-center justify-center px-3 py-1 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 font-black tracking-widest text-xs">
-                          {item.currentStock} <span className="text-[9px] ml-1 opacity-80 uppercase font-black">{item.piecesPerBox ? 'pcs' : item.unit}</span>
+                        <span className="inline-flex items-center justify-center px-2 py-0.5 rounded-md bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 font-bold text-[10px]">
+                          {item.currentStock}
                         </span>
                       )}
                     </TableCell>
-                    <TableCell className="text-right text-muted-foreground font-medium">
+                    <TableCell className="text-right text-muted-foreground font-medium text-[10px]">
                       {item.minStock || '—'}
                     </TableCell>
-                    <TableCell className="text-right text-foreground/80 font-bold">
-                      {item.costPerUnit ? `₹${item.costPerUnit.toFixed(2)}` : '—'}
+                    <TableCell className="text-right text-foreground/80 font-bold text-[10px]">
+                      {item.costPerUnit ? `₹${item.costPerUnit.toFixed(0)}` : '—'}
                     </TableCell>
-                    <TableCell className="text-right text-emerald-600 dark:text-emerald-400 font-bold">
-                      {item.sellPrice ? `₹${item.sellPrice.toFixed(2)}` : '—'}
+                    <TableCell className="text-right text-emerald-600 dark:text-emerald-400 font-bold text-[10px]">
+                      {item.sellPrice ? `₹${item.sellPrice.toFixed(0)}` : '—'}
                     </TableCell>
 
                     {(isOwner || session?.user?.role === "INV_MANAGER") && (

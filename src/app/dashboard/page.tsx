@@ -77,12 +77,12 @@ export default async function DashboardOverview() {
       {/* Background Decorators */}
       <div className="absolute top-0 right-0 w-96 h-96 bg-primary/10 rounded-full blur-[100px] pointer-events-none"></div>
 
-      <header className="relative z-10 pt-4 lg:pt-0">
-        <h2 className="text-2xl lg:text-4xl font-black tracking-tight text-foreground flex items-center gap-3">
+      <header className="relative z-10 pt-2 lg:pt-0">
+        <h2 className="text-lg lg:text-4xl font-black tracking-tight text-foreground flex items-center gap-3">
           Executive Overview
           <div className="h-2 w-2 lg:h-3 lg:w-3 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_15px_#10b981]"></div>
         </h2>
-        <p className="text-foreground/70 dark:text-muted-foreground mt-2 text-xs lg:text-lg font-bold">Real-time performance metrics across all operations.</p>
+        <p className="text-foreground/70 dark:text-muted-foreground mt-1 text-[10px] lg:text-lg font-bold">Real-time performance metrics.</p>
       </header>
 
       {/* Low Stock Alerts */}
@@ -118,28 +118,28 @@ export default async function DashboardOverview() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <GrossRevenueModal totalRevenue={totalRevenue} />
 
-        <div className="glass-panel p-4 lg:p-6 rounded-2xl lg:rounded-3xl group hover:-translate-y-1 transition-transform duration-300">
-          <div className="flex justify-between items-start mb-4">
-            <h3 className="text-[10px] lg:text-xs font-bold text-muted-foreground uppercase tracking-widest">Cash Collected</h3>
-            <span className="text-amber-500 text-lg lg:text-xl">💵</span>
+        <div className="glass-panel p-3 lg:p-6 rounded-2xl lg:rounded-3xl group hover:-translate-y-1 transition-transform duration-300">
+          <div className="flex justify-between items-start mb-2 lg:mb-4">
+            <h3 className="text-[8px] lg:text-xs font-bold text-muted-foreground uppercase tracking-widest">Cash Collected</h3>
+            <span className="text-amber-500 text-base lg:text-xl">💵</span>
           </div>
-          <p className="text-2xl lg:text-3xl font-black text-foreground">₹{cashRevenue.toFixed(2)}</p>
+          <p className="text-lg lg:text-3xl font-black text-foreground">₹{cashRevenue.toFixed(0)}</p>
         </div>
 
-        <div className="glass-panel p-4 lg:p-6 rounded-2xl lg:rounded-3xl group hover:-translate-y-1 transition-transform duration-300">
-          <div className="flex justify-between items-start mb-4">
-            <h3 className="text-[10px] lg:text-xs font-bold text-muted-foreground uppercase tracking-widest">Digital (UPI/Card)</h3>
-            <CreditCard className="text-blue-600 dark:text-blue-400 w-4 h-4 lg:w-5 lg:h-5" />
+        <div className="glass-panel p-3 lg:p-6 rounded-2xl lg:rounded-3xl group hover:-translate-y-1 transition-transform duration-300">
+          <div className="flex justify-between items-start mb-2 lg:mb-4">
+            <h3 className="text-[8px] lg:text-xs font-bold text-muted-foreground uppercase tracking-widest">Digital (UPI/Card)</h3>
+            <CreditCard className="text-blue-600 dark:text-blue-400 w-3 h-3 lg:w-5 lg:h-5" />
           </div>
-          <p className="text-2xl lg:text-3xl font-black text-foreground">₹{onlineRevenue.toFixed(2)}</p>
+          <p className="text-lg lg:text-3xl font-black text-foreground">₹{onlineRevenue.toFixed(0)}</p>
         </div>
         
-        <div className="glass-panel p-4 lg:p-6 rounded-2xl lg:rounded-3xl group hover:-translate-y-1 transition-transform duration-300">
-           <div className="flex justify-between items-start mb-4">
-             <h3 className="text-[10px] lg:text-xs font-bold text-muted-foreground uppercase tracking-widest">Split Payments</h3>
-             <Activity className="text-purple-600 dark:text-purple-400 w-4 h-4 lg:w-5 lg:h-5" />
+        <div className="glass-panel p-3 lg:p-6 rounded-2xl lg:rounded-3xl group hover:-translate-y-1 transition-transform duration-300">
+           <div className="flex justify-between items-start mb-2 lg:mb-4">
+             <h3 className="text-[8px] lg:text-xs font-bold text-muted-foreground uppercase tracking-widest">Split Payments</h3>
+             <Activity className="text-purple-600 dark:text-purple-400 w-3 h-3 lg:w-5 lg:h-5" />
            </div>
-           <p className="text-2xl lg:text-3xl font-black text-foreground">₹{splitRevenue.toFixed(2)}</p>
+           <p className="text-lg lg:text-3xl font-black text-foreground">₹{splitRevenue.toFixed(0)}</p>
         </div>
       </div>
 
@@ -280,26 +280,26 @@ export default async function DashboardOverview() {
             {todaysClosedTabs.length === 0 ? (
                <div className="text-center py-10 text-muted-foreground font-medium tracking-widest uppercase">No transactions recorded today.</div>
             ) : (
-               <table className="w-full text-left border-collapse">
-                 <thead className="bg-muted/20 dark:bg-black/60 sticky top-0 z-10 backdrop-blur-xl">
-                   <tr>
-                     <th className="p-5 text-xs font-bold text-muted-foreground uppercase tracking-widest">Time</th>
-                     <th className="p-5 text-xs font-bold text-muted-foreground uppercase tracking-widest">Outlet</th>
-                     <th className="p-5 text-xs font-bold text-muted-foreground uppercase tracking-widest">Customer</th>
-                     <th className="p-5 text-xs font-bold text-muted-foreground uppercase tracking-widest text-right">Amount</th>
-                   </tr>
-                 </thead>
-                 <tbody className="divide-y divide-border/50">
-                   {[...todaysClosedTabs].sort((a,b) => (b.closedAt?.getTime() || 0) - (a.closedAt?.getTime() || 0)).map(tab => (
-                     <tr key={tab.id} className="hover:bg-muted/5 transition-colors group">
-                       <td className="p-5 text-sm text-muted-foreground font-medium group-hover:text-foreground transition-colors">{tab.closedAt ? new Date(tab.closedAt).toLocaleTimeString('en-IN', { timeZone: 'Asia/Kolkata', hour: '2-digit', minute: '2-digit' }) : "N/A"}</td>
-                       <td className="p-5 text-sm font-bold text-emerald-600 dark:text-emerald-400">{tab.Outlet.name}</td>
-                       <td className="p-5 text-sm text-foreground/80 font-medium">{tab.customerName || "Walk-in"}</td>
-                       <td className="p-5 text-lg text-foreground font-black text-right tracking-tight">₹{tab.totalAmount.toFixed(2)}</td>
-                     </tr>
-                   ))}
-                 </tbody>
-               </table>
+                <table className="w-full text-left border-collapse table-dense">
+                  <thead className="bg-muted/20 dark:bg-black/60 sticky top-0 z-10 backdrop-blur-xl">
+                    <tr>
+                      <th className="p-3 lg:p-5 text-[10px] lg:text-xs font-bold text-muted-foreground uppercase tracking-widest">Time</th>
+                      <th className="p-3 lg:p-5 text-[10px] lg:text-xs font-bold text-muted-foreground uppercase tracking-widest">Outlet</th>
+                      <th className="p-3 lg:p-5 text-[10px] lg:text-xs font-bold text-muted-foreground uppercase tracking-widest">Customer</th>
+                      <th className="p-3 lg:p-5 text-[10px] lg:text-xs font-bold text-muted-foreground uppercase tracking-widest text-right">Amount</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-border/50">
+                    {[...todaysClosedTabs].sort((a,b) => (b.closedAt?.getTime() || 0) - (a.closedAt?.getTime() || 0)).map(tab => (
+                      <tr key={tab.id} className="hover:bg-muted/5 transition-colors group">
+                        <td className="p-3 lg:p-5 text-[11px] lg:text-sm text-muted-foreground font-medium group-hover:text-foreground transition-colors">{tab.closedAt ? new Date(tab.closedAt).toLocaleTimeString('en-IN', { timeZone: 'Asia/Kolkata', hour: '2-digit', minute: '2-digit' }) : "N/A"}</td>
+                        <td className="p-3 lg:p-5 text-[11px] lg:text-sm font-bold text-emerald-600 dark:text-emerald-400">{tab.Outlet.name}</td>
+                        <td className="p-3 lg:p-5 text-[11px] lg:text-sm text-foreground/80 font-medium">{tab.customerName || "Walk-in"}</td>
+                        <td className="p-3 lg:p-5 text-sm lg:text-lg text-foreground font-black text-right tracking-tight">₹{tab.totalAmount.toFixed(0)}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
             )}
             </div>
          </div>
