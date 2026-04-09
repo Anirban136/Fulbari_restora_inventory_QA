@@ -173,17 +173,23 @@ export function StockInForm({ items, vendors }: { items: Item[], vendors: Vendor
               onChange={(e) => setUnitType(e.target.value)}
               className="w-full h-12 px-4 py-2 rounded-xl border border-white/10 bg-black/40 text-white focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all shadow-inner font-medium"
             >
-              <option value="pieces" className="bg-slate-900 text-white italic capitalize">Pieces ({selectedItem?.unit || 'pcs'})</option>
-              <option value="box" className="bg-slate-900 text-white font-bold" disabled={!selectedItem?.piecesPerBox}>Boxes (Box)</option>
-              <option value="packet" className="bg-slate-900 text-white font-bold" disabled={!selectedItem?.piecesPerBox}>Packets (Packet)</option>
-              <option value="plate" className="bg-slate-900 text-white font-bold" disabled={!selectedItem?.piecesPerBox}>Plates (Plate)</option>
+              <option value="pieces" className="bg-slate-900 text-white font-bold">
+                {selectedItem ? (selectedItem.unit === 'pcs' ? 'Pieces (pcs)' : selectedItem.unit) : 'Select Unit'}
+              </option>
+              {selectedItem?.piecesPerBox && (
+                <>
+                  <option value="box" className="bg-slate-900 text-white font-bold" disabled={selectedItem.unit === 'box'}>Boxes (Box)</option>
+                  <option value="packet" className="bg-slate-900 text-white font-bold" disabled={selectedItem.unit === 'packet'}>Packets (Packet)</option>
+                  <option value="plate" className="bg-slate-900 text-white font-bold" disabled={selectedItem.unit === 'plate'}>Plates (Plate)</option>
+                </>
+              )}
             </select>
           </div>
         </div>
 
         <div className="space-y-2">
           <Label htmlFor="cost" className="text-xs font-bold text-slate-400 uppercase tracking-widest">
-            Cost per {unitType === 'box' ? 'Box' : unitType === 'packet' ? 'Packet' : unitType === 'plate' ? 'Plate' : 'Piece'} (₹) <span className="opacity-50 font-normal ml-1">Optional</span>
+            Cost per {unitType === 'box' ? 'Box' : unitType === 'packet' ? 'Packet' : unitType === 'plate' ? 'Plate' : (selectedItem?.unit || 'Piece')} (₹) <span className="opacity-50 font-normal ml-1">Optional</span>
           </Label>
           <Input id="cost" name="cost" type="number" step="0.01" min="0" placeholder={`e.g. ${unitType === 'pieces' ? '150' : '2500'}`} className="h-12 bg-black/40 border-white/10 text-white placeholder:text-slate-600 rounded-xl focus-visible:ring-primary/50 shadow-inner" />
         </div>
