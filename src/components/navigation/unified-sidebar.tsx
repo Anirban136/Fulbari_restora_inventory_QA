@@ -97,7 +97,10 @@ export function UnifiedSidebar({ user }: { user: any }) {
           />
         )}
 
-        <aside className="relative h-full flex flex-col border-r border-white/5 bg-zinc-950 lg:bg-background/20 lg:backdrop-blur-none z-50 overflow-hidden shadow-[30px_0_60px_rgba(0,0,0,0.8)] dark:shadow-[30px_0_60px_rgba(0,0,0,1)] lg:shadow-none transition-all duration-300">
+        <aside className={cn(
+          "relative h-full flex flex-col border-r border-white/5 bg-zinc-950 lg:bg-background/20 lg:backdrop-blur-none z-50 overflow-hidden transition-all duration-300",
+          isOpen ? "shadow-[20px_0_60px_rgba(0,0,0,0.9)]" : "shadow-none"
+        )}>
           {/* Logo Section in Sidebar (Enlarged for Mobile) */}
           <div className="p-10 border-b border-white/5 shrink-0">
             <div>
