@@ -1,9 +1,9 @@
 import { prisma } from "@/lib/prisma"
 export const dynamic = 'force-dynamic'
-import { TrendingUp, CreditCard, Activity, BarChart3, Crown, Receipt, AlertTriangle, PackageSearch, Coffee } from "lucide-react"
+import { TrendingUp, CreditCard, Activity, BarChart3, Crown, Receipt, AlertTriangle, Coffee } from "lucide-react"
 import { getISTDateBounds } from "@/lib/utils"
 import { GrossRevenueModal } from "@/components/GrossRevenueModal"
-import { EditTransactionModal } from "@/components/EditTransactionModal"
+import { TransactionsFeed } from "@/components/TransactionsFeed"
 
 export default async function DashboardOverview() {
   const { startUTC: startOfDay, endUTC: endOfDay } = getISTDateBounds();
@@ -341,95 +341,13 @@ export default async function DashboardOverview() {
         </div>
       </div>
 
-      {/* Real-time Activity Stream */}
-      <div className="space-y-8 relative z-10 mt-16">
-        <div className="flex flex-col sm:flex-row justify-between sm:items-center px-4 gap-6">
-          <div className="flex items-center gap-4">
-             <div className="p-4 bg-primary/10 rounded-[1.5rem] border border-primary/20">
-               <Receipt className="text-primary w-6 h-6" />
-             </div>
-             <div>
-               <h3 className="text-3xl font-black text-foreground tracking-tight uppercase">Today's Transactions</h3>
-               <p className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em] opacity-60">Live Transaction Stream</p>
-             </div>
-          </div>
-          <div className="flex gap-3">
-            <a href={`/api/export/transactions?outlet=CAFE`} className="bg-amber-500/10 border border-amber-500/20 px-6 py-2.5 rounded-2xl text-[10px] font-black text-amber-600 hover:bg-amber-500 shadow-lg hover:text-white transition-all uppercase tracking-widest">Cafe Export</a>
-            <a href={`/api/export/transactions?outlet=CHAI_JOINT`} className="bg-blue-500/10 border border-blue-500/20 px-6 py-2.5 rounded-2xl text-[10px] font-black text-blue-600 hover:bg-blue-500 shadow-lg hover:text-white transition-all uppercase tracking-widest">Chai Export</a>
-          </div>
-        </div>
+      {/* Real-time Activity Stream with Outlet Filter */}
+      <TransactionsFeed tabs={todaysClosedTabs} />
 
-        {/* Stream View (Cards on Mobile, Premium Table on Desktop) */}
-        <div className="space-y-4">
-          {/* Card View (Mobile-First) */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:hidden gap-4 px-2">
-            {todaysClosedTabs.length === 0 ? (
-              <div className="text-center py-20 text-muted-foreground font-black uppercase tracking-widest opacity-20 italic col-span-full">No active capture</div>
-            ) : (
-              [...todaysClosedTabs].sort((a,b) => (b.closedAt?.getTime() || 0) - (a.closedAt?.getTime() || 0)).slice(0, 15).map(tab => (
-                <div key={tab.id} className="glass-card p-6 rounded-[2.5rem] border-white/5 flex flex-col justify-between">
-                  <div className="flex justify-between items-start mb-4">
-                    <div className="flex flex-col">
-                      <div className="flex items-center gap-2 mb-1">
-                        <span className="text-[9px] font-black text-primary uppercase tracking-[0.2em]">{tab.Outlet.name.replace('_', ' ')}</span>
-                        <EditTransactionModal tabId={tab.id} currentAmount={tab.totalAmount} currentMode={tab.paymentMode || "CASH"} />
-                      </div>
-                      <span className="text-lg font-black text-foreground truncate">{tab.customerName || "Walk-in Capture"}</span>
-                    </div>
-                    <span className="text-[10px] font-bold text-muted-foreground">{tab.closedAt ? new Date(tab.closedAt).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' }) : "N/A"}</span>
-                  </div>
-                  <div className="flex justify-between items-end border-t border-white/5 pt-4">
-                    <div className="flex items-center gap-2">
-                       <div className={`w-2 h-2 rounded-full ${tab.paymentMode === 'CASH' ? 'bg-emerald-500' : 'bg-blue-500'}`}></div>
-                       <span className="text-[9px] font-black text-muted-foreground uppercase tracking-widest">{tab.paymentMode}</span>
-                    </div>
-                    <p className="text-3xl font-black text-foreground tracking-tighter">₹{tab.totalAmount.toFixed(0)}</p>
-                  </div>
-                </div>
-              ))
-            )}
-          </div>
-
-          {/* Desktop Table */}
-          <div className="hidden lg:block glass-panel rounded-[3rem] overflow-hidden border border-white/5">
-            <table className="w-full text-left border-collapse">
-              <thead>
-                <tr className="bg-muted/10 border-b border-white/5">
-                  <th className="p-8 text-[11px] font-black text-muted-foreground uppercase tracking-[0.3em]">Temporal Point</th>
-                  <th className="p-8 text-[11px] font-black text-muted-foreground uppercase tracking-[0.3em]">Node Location</th>
-                  <th className="p-8 text-[11px] font-black text-muted-foreground uppercase tracking-[0.3em]">Subject Entity</th>
-                  <th className="p-8 text-[11px] font-black text-muted-foreground uppercase tracking-[0.3em] text-right">Credit Resolved</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-white/5">
-                {[...todaysClosedTabs].sort((a,b) => (b.closedAt?.getTime() || 0) - (a.closedAt?.getTime() || 0)).map(tab => (
-                  <tr key={tab.id} className="hover:bg-white/5 transition-all duration-300 group">
-                    <td className="p-8 text-xs font-bold text-muted-foreground group-hover:text-foreground">{tab.closedAt ? new Date(tab.closedAt).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' }) : "N/A"}</td>
-                    <td className="p-8 text-[11px] font-black text-primary uppercase tracking-widest">{tab.Outlet.name.replace('_', ' ')}</td>
-                    <td className="p-8 relative">
-                      <div className="flex items-center gap-4">
-                        <span className="text-lg font-black text-foreground">{tab.customerName || "Direct Walk-in Capture"}</span>
-                        <EditTransactionModal tabId={tab.id} currentAmount={tab.totalAmount} currentMode={tab.paymentMode || "CASH"} />
-                      </div>
-                    </td>
-                    <td className="p-8 text-right">
-                      <div className="flex flex-col items-end">
-                        <span className="text-3xl font-black text-foreground tracking-tighter">₹{tab.totalAmount.toFixed(0)}</span>
-                        <span className="mt-1 px-3 py-1 bg-muted/20 rounded-full text-[8px] font-black text-muted-foreground uppercase tracking-widest group-hover:bg-primary/20 group-hover:text-primary transition-colors">{tab.paymentMode}</span>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
-
-        <div className="text-center pt-10">
-           <a href="/dashboard/transactions" className="inline-flex items-center gap-3 px-10 py-4 bg-muted/10 hover:bg-primary hover:text-primary-foreground border border-white/10 rounded-full text-xs font-black uppercase tracking-[0.2em] transition-all hover:scale-105 active:scale-95 shadow-xl">
-             Explore Full Flow Ledger <Receipt className="w-4 h-4" />
-           </a>
-        </div>
+      <div className="text-center pt-10">
+         <a href="/dashboard/transactions" className="inline-flex items-center gap-3 px-10 py-4 bg-muted/10 hover:bg-primary hover:text-primary-foreground border border-white/10 rounded-full text-xs font-black uppercase tracking-[0.2em] transition-all hover:scale-105 active:scale-95 shadow-xl">
+           Explore Full Flow Ledger <Receipt className="w-4 h-4" />
+         </a>
       </div>
     </div>
   )
