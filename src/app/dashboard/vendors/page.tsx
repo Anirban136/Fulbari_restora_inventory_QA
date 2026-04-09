@@ -3,7 +3,7 @@ export const dynamic = 'force-dynamic'
 import { getServerSession } from "next-auth"
 import { authOptions } from "@/lib/auth"
 import Link from "next/link"
-import { Users, Truck, IndianRupee, Package, Search, Phone, MapPin, FileText, ClipboardList, Activity, History, ArrowRight } from "lucide-react"
+import { Users, Truck, IndianRupee, Package, Search, Phone, MapPin, FileText, ClipboardList, Activity, History, ArrowRight, AlertTriangle, ShieldCheck } from "lucide-react"
 import { getISTMonthBounds, formatDateIST, formatTimeIST } from "@/lib/utils"
 import { AddVendorDialog } from "../inventory/AddVendorDialog"
 import { EditVendorDialog } from "../inventory/EditVendorDialog"
@@ -261,7 +261,6 @@ export default async function VendorsPage() {
                         <span className="text-sm font-black text-amber-500/80">
                           ₹{vendor.monthlyOwed.toLocaleString('en-IN', { minimumFractionDigits: 0 })}
                         </span>
-                        {/* Subtle sparkline decorator if I had more data, but let's keep it clean */}
                       </div>
                     </TableCell>
 
@@ -361,5 +360,3 @@ export default async function VendorsPage() {
     </div>
   )
 }
-
-import { ShieldCheck } from "lucide-react"
