@@ -121,37 +121,37 @@ export default async function VendorsPage() {
         
         <div className="flex flex-col sm:flex-row gap-2 lg:gap-3">
           {/* Total Owed */}
-          <div className="px-4 py-2 rounded-xl lg:rounded-2xl bg-amber-500/10 border border-amber-500/20 flex flex-col items-center sm:items-end">
-             <span className="text-[9px] lg:text-[10px] font-black text-amber-500 dark:text-amber-400 uppercase tracking-widest">Total Owed</span>
-             <span className="text-base lg:text-lg font-black text-foreground">₹{totalOwed.toLocaleString('en-IN', { minimumFractionDigits: 0 })}</span>
+          <div className="px-3 py-1.5 rounded-xl lg:rounded-2xl bg-amber-500/10 border border-amber-500/20 flex flex-row sm:flex-col items-center sm:items-end justify-between sm:justify-center gap-4 sm:gap-0">
+             <span className="text-[8px] lg:text-[10px] font-black text-amber-500 dark:text-amber-400 uppercase tracking-widest">Total Owed</span>
+             <span className="text-sm lg:text-lg font-black text-foreground">₹{totalOwed.toLocaleString('en-IN', { minimumFractionDigits: 0 })}</span>
           </div>
           {/* Total Paid */}
-          <div className="px-4 py-2 rounded-xl lg:rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex flex-col items-center sm:items-end">
-             <span className="text-[9px] lg:text-[10px] font-black text-emerald-500 dark:text-emerald-400 uppercase tracking-widest">Total Paid</span>
-             <span className="text-base lg:text-lg font-black text-foreground">₹{totalPaid.toLocaleString('en-IN', { minimumFractionDigits: 0 })}</span>
+          <div className="px-3 py-1.5 rounded-xl lg:rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex flex-row sm:flex-col items-center sm:items-end justify-between sm:justify-center gap-4 sm:gap-0">
+             <span className="text-[8px] lg:text-[10px] font-black text-emerald-500 dark:text-emerald-400 uppercase tracking-widest">Total Paid</span>
+             <span className="text-sm lg:text-lg font-black text-foreground">₹{totalPaid.toLocaleString('en-IN', { minimumFractionDigits: 0 })}</span>
           </div>
           {/* Balance */}
-          <div className={`px-4 py-2 rounded-xl lg:rounded-2xl flex flex-col items-center sm:items-end ${totalBalance > 0 ? 'bg-red-500/10 border border-red-500/20' : 'bg-emerald-500/10 border border-emerald-500/20'}`}>
-             <span className={`text-[9px] lg:text-[10px] font-black uppercase tracking-widest ${totalBalance > 0 ? 'text-red-500 dark:text-red-400' : 'text-emerald-500 dark:text-emerald-400'}`}>Balance Due</span>
-             <span className="text-base lg:text-lg font-black text-foreground">₹{totalBalance.toLocaleString('en-IN', { minimumFractionDigits: 0 })}</span>
+          <div className={`px-3 py-1.5 rounded-xl lg:rounded-2xl flex flex-row sm:flex-col items-center sm:items-end justify-between sm:justify-center gap-4 sm:gap-0 ${totalBalance > 0 ? 'bg-red-500/10 border border-red-500/20' : 'bg-emerald-500/10 border border-emerald-500/20'}`}>
+             <span className={`text-[8px] lg:text-[10px] font-black uppercase tracking-widest ${totalBalance > 0 ? 'text-red-500 dark:text-red-400' : 'text-emerald-500 dark:text-emerald-400'}`}>Balance Due</span>
+             <span className="text-sm lg:text-lg font-black text-foreground">₹{totalBalance.toLocaleString('en-IN', { minimumFractionDigits: 0 })}</span>
           </div>
           <AddVendorDialog />
         </div>
       </div>
 
-      <div className="glass-panel rounded-3xl overflow-hidden relative z-10 shadow-2xl">
-        <div className="p-0 max-h-[75vh] overflow-auto custom-scrollbar-premium">
+      <div className="glass-panel rounded-2xl overflow-hidden relative z-10 shadow-2xl">
+        <div className="p-0 max-h-[75vh] overflow-auto custom-scrollbar-premium table-dense">
           <Table>
             <TableHeader>
               <TableRow className="border-b border-border/10 hover:bg-transparent">
-                <TableHead className="font-bold text-muted-foreground uppercase tracking-widest text-[10px] h-14 bg-muted/20 dark:bg-black/40 backdrop-blur-md sticky top-0 z-20 px-6">Vendor Details</TableHead>
-                <TableHead className="font-bold text-muted-foreground uppercase tracking-widest text-[10px] h-14 bg-muted/20 dark:bg-black/40 backdrop-blur-md sticky top-0 z-20 px-6">Contact Info</TableHead>
-                <TableHead className="font-bold text-muted-foreground uppercase tracking-widest text-[10px] h-14 bg-muted/20 dark:bg-black/40 backdrop-blur-md sticky top-0 z-20 text-right px-6">Units Received</TableHead>
-                <TableHead className="font-bold text-muted-foreground uppercase tracking-widest text-[10px] h-14 bg-muted/20 dark:bg-black/40 backdrop-blur-md sticky top-0 z-20 text-right px-6">Total Owed</TableHead>
-                <TableHead className="font-bold text-muted-foreground uppercase tracking-widest text-[10px] h-14 bg-muted/20 dark:bg-black/40 backdrop-blur-md sticky top-0 z-20 text-right px-6">Paid</TableHead>
-                <TableHead className="font-bold text-muted-foreground uppercase tracking-widest text-[10px] h-14 bg-muted/20 dark:bg-black/40 backdrop-blur-md sticky top-0 z-20 text-right px-6">Balance Due</TableHead>
+                <TableHead className="font-bold text-muted-foreground uppercase tracking-widest text-[9px] h-10 bg-muted/20 dark:bg-black/40 backdrop-blur-md sticky top-0 z-20 px-3">Vendor</TableHead>
+                <TableHead className="font-bold text-muted-foreground uppercase tracking-widest text-[9px] h-10 bg-muted/20 dark:bg-black/40 backdrop-blur-md sticky top-0 z-20 px-3">Contact</TableHead>
+                <TableHead className="font-bold text-muted-foreground uppercase tracking-widest text-[9px] h-10 bg-muted/20 dark:bg-black/40 backdrop-blur-md sticky top-0 z-20 text-right px-3">Units</TableHead>
+                <TableHead className="font-bold text-muted-foreground uppercase tracking-widest text-[9px] h-10 bg-muted/20 dark:bg-black/40 backdrop-blur-md sticky top-0 z-20 text-right px-3">Owed</TableHead>
+                <TableHead className="font-bold text-muted-foreground uppercase tracking-widest text-[9px] h-10 bg-muted/20 dark:bg-black/40 backdrop-blur-md sticky top-0 z-20 text-right px-3">Paid</TableHead>
+                <TableHead className="font-bold text-muted-foreground uppercase tracking-widest text-[9px] h-10 bg-muted/20 dark:bg-black/40 backdrop-blur-md sticky top-0 z-20 text-right px-3">Due</TableHead>
                 {isOwner && (
-                  <TableHead className="font-bold text-muted-foreground uppercase tracking-widest text-[10px] h-14 bg-muted/20 dark:bg-black/40 backdrop-blur-md sticky top-0 z-20 text-center px-6">Actions</TableHead>
+                  <TableHead className="font-bold text-muted-foreground uppercase tracking-widest text-[9px] h-10 bg-muted/20 dark:bg-black/40 backdrop-blur-md sticky top-0 z-20 text-center px-3">Act</TableHead>
                 )}
               </TableRow>
             </TableHeader>

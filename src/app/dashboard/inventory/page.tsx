@@ -56,21 +56,21 @@ export default async function GlobalCatalogPage() {
         </div>
       </div>
 
-      <div className="glass-panel rounded-3xl overflow-hidden relative z-10 shadow-2xl">
-        <div className="p-0 max-h-[85vh] overflow-auto custom-scrollbar-premium">
+      <div className="glass-panel rounded-2xl overflow-hidden relative z-10 shadow-2xl">
+        <div className="p-0 max-h-[85vh] overflow-auto custom-scrollbar-premium table-dense">
           <Table>
             <TableHeader>
               <TableRow className="border-b border-border/10 hover:bg-transparent">
-                <TableHead className="font-bold text-muted-foreground uppercase tracking-widest text-[10px] h-14 bg-muted/20 dark:bg-black/40 backdrop-blur-md sticky top-0 z-20">Item Name</TableHead>
-                <TableHead className="font-bold text-muted-foreground uppercase tracking-widest text-[10px] h-14 bg-muted/20 dark:bg-black/40 backdrop-blur-md sticky top-0 z-20">Category</TableHead>
-                <TableHead className="font-bold text-muted-foreground uppercase tracking-widest text-[10px] h-14 bg-muted/20 dark:bg-black/40 backdrop-blur-md sticky top-0 z-20 text-right">Unit</TableHead>
-                <TableHead className="font-bold text-muted-foreground uppercase tracking-widest text-[10px] h-14 bg-muted/20 dark:bg-black/40 backdrop-blur-md sticky top-0 z-20 text-center">Box Size</TableHead>
-                <TableHead className="font-bold text-muted-foreground uppercase tracking-widest text-[10px] h-14 bg-muted/20 dark:bg-black/40 backdrop-blur-md sticky top-0 z-20 text-right">Central Stock</TableHead>
-                <TableHead className="font-bold text-muted-foreground uppercase tracking-widest text-[10px] h-14 bg-muted/20 dark:bg-black/40 backdrop-blur-md sticky top-0 z-20 text-right">Min Stock</TableHead>
-                <TableHead className="font-bold text-muted-foreground uppercase tracking-widest text-[10px] h-14 bg-muted/20 dark:bg-black/40 backdrop-blur-md sticky top-0 z-20 text-right">Cost Price</TableHead>
-                <TableHead className="font-bold text-muted-foreground uppercase tracking-widest text-[10px] h-14 bg-muted/20 dark:bg-black/40 backdrop-blur-md sticky top-0 z-20 text-right">Sell Price</TableHead>
+                <TableHead className="font-bold text-muted-foreground uppercase tracking-widest text-[9px] h-10 bg-muted/20 dark:bg-black/40 backdrop-blur-md sticky top-0 z-20">Item Name</TableHead>
+                <TableHead className="font-bold text-muted-foreground uppercase tracking-widest text-[9px] h-10 bg-muted/20 dark:bg-black/40 backdrop-blur-md sticky top-0 z-20">Category</TableHead>
+                <TableHead className="font-bold text-muted-foreground uppercase tracking-widest text-[9px] h-10 bg-muted/20 dark:bg-black/40 backdrop-blur-md sticky top-0 z-20 text-right">Unit</TableHead>
+                <TableHead className="font-bold text-muted-foreground uppercase tracking-widest text-[9px] h-10 bg-muted/20 dark:bg-black/40 backdrop-blur-md sticky top-0 z-20 text-center">Box</TableHead>
+                <TableHead className="font-bold text-muted-foreground uppercase tracking-widest text-[9px] h-10 bg-muted/20 dark:bg-black/40 backdrop-blur-md sticky top-0 z-20 text-right">Stock</TableHead>
+                <TableHead className="font-bold text-muted-foreground uppercase tracking-widest text-[9px] h-10 bg-muted/20 dark:bg-black/40 backdrop-blur-md sticky top-0 z-20 text-right">Min</TableHead>
+                <TableHead className="font-bold text-muted-foreground uppercase tracking-widest text-[9px] h-10 bg-muted/20 dark:bg-black/40 backdrop-blur-md sticky top-0 z-20 text-right">Cost</TableHead>
+                <TableHead className="font-bold text-muted-foreground uppercase tracking-widest text-[9px] h-10 bg-muted/20 dark:bg-black/40 backdrop-blur-md sticky top-0 z-20 text-right">Sell</TableHead>
                 {(isOwner || session?.user?.role === "INV_MANAGER") && (
-                  <TableHead className="font-bold text-muted-foreground uppercase tracking-widest text-[10px] h-14 bg-muted/20 dark:bg-black/40 backdrop-blur-md sticky top-0 z-20 text-center">Actions</TableHead>
+                  <TableHead className="font-bold text-muted-foreground uppercase tracking-widest text-[9px] h-10 bg-muted/20 dark:bg-black/40 backdrop-blur-md sticky top-0 z-20 text-center">Act</TableHead>
                 )}
               </TableRow>
             </TableHeader>

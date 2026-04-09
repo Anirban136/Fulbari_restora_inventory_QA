@@ -136,9 +136,15 @@
   }
   html {
     @apply font-sans;
-    font-size: 14px; /* Crisp for all devices by default */
-    scroll-behavior: auto !important; /* Managed by Lenis on desktop, native on mobile */
+    font-size: 14px; /* Default */
+    scroll-behavior: auto !important;
     -webkit-tap-highlight-color: transparent;
+  }
+  @media (max-width: 480px) {
+    html { font-size: 13px; }
+  }
+  @media (max-width: 360px) {
+    html { font-size: 12.5px; }
   }
   h1, h2, h3, h4, h5, h6 {
     @apply font-heading tracking-tight;
@@ -159,6 +165,17 @@
   
   .dark .text-glow {
     text-shadow: 0 0 20px oklch(0.55 0.16 150 / 0.5);
+  }
+
+  /* Aggressive Mobile Density */
+  @media (max-width: 768px) {
+    .table-dense td, .table-dense th {
+      padding: 0.5rem 0.4rem !important;
+      font-size: 0.85rem;
+    }
+    .glass-panel {
+      border-radius: 1rem !important;
+    }
   }
 
   /* Custom Premium Scrollbar */
