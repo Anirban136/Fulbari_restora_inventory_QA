@@ -41,7 +41,7 @@ export default async function ActiveTabsPage({ searchParams }: { searchParams: P
   const isChai = session.user.role === "CHAI_STAFF" || (session.user.role === "OWNER" && target === "CHAI_JOINT")
 
   return (
-    <AppLayout>
+    <AppLayout user={session?.user}>
       <div className={`${isCafe ? "selection:bg-orange-500/30 selection:text-orange-100" : "selection:bg-sky-500/30 selection:text-sky-100"} relative overflow-hidden flex flex-col items-center p-4 sm:p-8 min-h-full w-full`}>
         
         {/* Background Decorators */}

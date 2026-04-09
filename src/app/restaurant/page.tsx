@@ -8,11 +8,15 @@ import { UserControls } from "@/components/user-controls"
 import { ChefHat, Flame, Search, PackageOpen } from "lucide-react"
 import AppLayout from "@/components/layouts/app-layout"
 import { formatTimeIST, formatDateIST } from "@/lib/utils"
+import { getServerSession } from "next-auth"
+import { authOptions } from "@/lib/auth"
 
 export default async function RestaurantDashboard() {
   const restaurant = await prisma.outlet.findFirst({ where: { type: "RESTAURANT" }})
   
   if (!restaurant) return <div className="min-h-screen bg-background text-white p-10 font-bold">Restaurant outlet not configured.</div>
+
+  const session = await getServerSession(authOptions)
 
   const [localStock, incomingDispatches] = await Promise.all([
     prisma.outletStock.findMany({
@@ -29,7 +33,7 @@ export default async function RestaurantDashboard() {
   ])
 
   return (
-    <AppLayout>
+    <AppLayout user={session?.user}>
       <div className="selection:bg-rose-500/30 relative overflow-hidden flex flex-col items-center w-full min-h-full">
         
         {/* Background Decorators */}

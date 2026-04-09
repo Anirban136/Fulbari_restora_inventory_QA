@@ -67,7 +67,7 @@ export default async function CafeDashboard() {
   };
 
   return (
-    <AppLayout>
+    <AppLayout user={session?.user}>
       <div className="w-full max-w-6xl px-6 py-10 relative z-10 flex flex-col min-h-full">
         <header className="flex items-center justify-between pb-8 mb-8 border-b border-white/10">
           <div className="flex items-center gap-4">
