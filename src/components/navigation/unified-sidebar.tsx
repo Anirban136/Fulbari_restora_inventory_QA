@@ -49,7 +49,7 @@ export function UnifiedSidebar({ user }: { user: any }) {
     { name: "Global Menus", href: "/dashboard/menus", icon: ClipboardList, roles: ["OWNER", "INV_MANAGER"] },
     { name: "Stock In", href: "/dashboard/inventory/stock-in", icon: Package, roles: ["OWNER", "INV_MANAGER"] },
     { name: "Dispatch", href: "/dashboard/inventory/dispatch", icon: ArrowLeftRight, roles: ["OWNER", "INV_MANAGER"] },
-    { name: "Vendors", href: "/dashboard/vendors", icon: Users, roles: ["OWNER"] },
+    { name: "Vendors", href: "/dashboard/vendors", icon: Users, roles: ["OWNER", "INV_MANAGER"] },
     { name: "Outlets Stock", href: "/dashboard/stores", icon: Store, roles: ["OWNER", "INV_MANAGER"] },
     { name: "Chai Hub", href: "/chai", icon: Coffee, roles: ["OWNER", "CHAI_STAFF"] },
     { name: "Cafe Hub", href: "/cafe", icon: Coffee, roles: ["OWNER", "CAFE_STAFF"] },
