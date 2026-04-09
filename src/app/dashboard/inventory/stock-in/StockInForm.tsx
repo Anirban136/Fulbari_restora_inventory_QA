@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { ItemSearchableSelect } from "@/components/inventory/ItemSearchableSelect"
 import { AddVendorDialog } from "../AddVendorDialog"
+import { AddItemDialog } from "../AddItemDialog"
 import { logStockIn } from "./actions"
 
 interface Item {
@@ -113,7 +114,12 @@ export function StockInForm({ items, vendors }: { items: Item[], vendors: Vendor
         </div>
 
         <div className="space-y-4">
-          <Label htmlFor="itemId" className="text-xs font-bold text-slate-400 uppercase tracking-widest">Item Name (Type to search)</Label>
+          <div className="flex items-center justify-between">
+            <Label htmlFor="itemId" className="text-xs font-bold text-slate-400 uppercase tracking-widest">Item Name (Type to search)</Label>
+            <div className="scale-75 origin-right translate-y-2 relative z-10">
+              <AddItemDialog existingCategories={sortedCategories} variant="compact" />
+            </div>
+          </div>
           <ItemSearchableSelect 
             key={selectedCategory}
             items={filteredItems} 

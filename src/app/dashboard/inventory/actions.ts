@@ -126,6 +126,7 @@ export async function addItem(data: FormData) {
   })
 
   revalidatePath("/dashboard/inventory")
+  revalidatePath("/dashboard/inventory/stock-in")
 }
 
 export async function updateItem(data: FormData) {

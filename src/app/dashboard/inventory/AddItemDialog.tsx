@@ -16,7 +16,7 @@ import {
 import { addItem } from "./actions"
 import { CategoryCombobox } from "../menus/CategoryCombobox"
 
-export function AddItemDialog({ existingCategories = [] }: { existingCategories?: string[] }) {
+export function AddItemDialog({ existingCategories = [], variant = "default" }: { existingCategories?: string[], variant?: "default" | "compact" }) {
   const [open, setOpen] = useState(false)
   const [category, setCategory] = useState("")
   const [unit, setUnit] = useState("")
@@ -25,7 +25,6 @@ export function AddItemDialog({ existingCategories = [] }: { existingCategories?
     await addItem(formData)
     setOpen(false)
     setUnit("")
-    setUnit("")
   }
 
   const showPiecesPerBox = unit === "box" || unit === "packet" || unit === "plate"
@@ -33,9 +32,15 @@ export function AddItemDialog({ existingCategories = [] }: { existingCategories?
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger render={
-        <Button className="h-12 px-6 rounded-xl bg-primary hover:bg-emerald-500 text-white font-bold shadow-[0_0_20px_-5px_oklch(0.55_0.16_150_/_0.5)] transition-all active:scale-95 gap-2 w-full">
-          <PlusCircle className="w-5 h-5" /> Add New Item
-        </Button>
+        variant === "compact" ? (
+          <Button variant="outline" className="h-[34px] px-3 rounded-xl border-white/10 bg-white/5 hover:bg-white/10 text-white font-bold text-[10px] transition-all active:scale-95 gap-1.5 uppercase tracking-wider">
+            <PlusCircle className="w-3.5 h-3.5" /> Add New Item
+          </Button>
+        ) : (
+          <Button className="h-12 px-6 rounded-xl bg-primary hover:bg-emerald-500 text-white font-bold shadow-[0_0_20px_-5px_oklch(0.55_0.16_150_/_0.5)] transition-all active:scale-95 gap-2 w-full">
+            <PlusCircle className="w-5 h-5" /> Add New Item
+          </Button>
+        )
       } />
       <DialogContent className="sm:max-w-[450px] bg-black/80 backdrop-blur-2xl border-white/10 rounded-3xl shadow-[0_0_50px_rgba(0,0,0,0.8)]">
         <DialogHeader className="mb-4">
