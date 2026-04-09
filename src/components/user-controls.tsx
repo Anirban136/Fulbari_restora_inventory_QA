@@ -41,49 +41,49 @@ export function UserControls({ role }: { role?: string }) {
     <div className="flex flex-wrap items-center gap-2 sm:gap-3 justify-end">
       {isOwner && (
         <Dialog open={isOpen} onOpenChange={setIsOpen}>
-          <DialogTrigger className="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:opacity-50 disabled:pointer-events-none ring-offset-background border border-input hover:bg-accent hover:text-accent-foreground h-9 px-4 py-2 border-white/10 text-slate-300 hover:bg-white/10 hover:text-white backdrop-blur-md shadow-inner">
+          <DialogTrigger className="inline-flex items-center justify-center rounded-md text-sm font-bold transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:opacity-50 disabled:pointer-events-none ring-offset-background border border-input hover:bg-muted h-9 px-4 py-2 border-border text-foreground/70 hover:text-foreground backdrop-blur-md shadow-sm">
             <KeyRound className="w-4 h-4 mr-2" /> Change PIN
           </DialogTrigger>
-          <DialogContent className="border-white/10 bg-black/95 backdrop-blur-2xl text-white shadow-[0_0_100px_-20px_oklch(0.55_0.16_150)]">
+          <DialogContent className="border-border bg-background backdrop-blur-2xl text-foreground shadow-2xl">
             <DialogHeader>
               <DialogTitle className="text-2xl font-black tracking-tight flex items-center gap-3">
-                <KeyRound className="w-6 h-6 text-emerald-400" />
+                <KeyRound className="w-6 h-6 text-emerald-600 dark:text-emerald-400" />
                 Reset Passcode
               </DialogTitle>
             </DialogHeader>
 
             {success ? (
               <div className="py-10 flex flex-col items-center justify-center text-center animate-in zoom-in-95">
-                <CheckCircle2 className="w-16 h-16 text-emerald-500 mb-4 drop-shadow-[0_0_15px_rgba(16,185,129,0.5)]" />
-                <h3 className="text-xl font-bold text-white mb-2">Success!</h3>
-                <p className="text-slate-400 font-medium">Your PIN has been updated.<br/>Please use it for future logins.</p>
+                <CheckCircle2 className="w-16 h-16 text-emerald-500 mb-4 drop-shadow-[0_0_15px_rgba(16,185,129,0.3)]" />
+                <h3 className="text-xl font-bold text-foreground mb-2">Success!</h3>
+                <p className="text-muted-foreground font-medium">Your PIN has been updated.<br/>Please use it for future logins.</p>
               </div>
             ) : (
               <form onSubmit={handleSubmit} className="space-y-6 py-4">
                 <div className="space-y-2">
-                  <label className="text-xs font-bold text-slate-400 uppercase tracking-widest">Current PIN</label>
+                  <label className="text-xs font-black text-foreground/60 uppercase tracking-widest">Current PIN</label>
                   <Input 
                     type="password" pattern="[0-9]*" inputMode="numeric" maxLength={4}
                     value={currentPin} onChange={e => setCurrentPin(e.target.value)}
-                    className="w-full text-center text-3xl tracking-[0.5em] h-14 bg-white/5 border-white/10 text-white placeholder:text-slate-700 rounded-xl focus-visible:ring-emerald-500/50 shadow-inner"
+                    className="w-full text-center text-3xl tracking-[0.5em] h-14 bg-muted/20 border-border text-foreground placeholder:text-muted-foreground rounded-xl focus-visible:ring-emerald-500/50 shadow-inner font-black"
                     required
                   />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-xs font-bold text-slate-400 uppercase tracking-widest">New PIN</label>
+                  <label className="text-xs font-black text-foreground/60 uppercase tracking-widest">New PIN</label>
                   <Input 
                     type="password" pattern="[0-9]*" inputMode="numeric" maxLength={4}
                     value={newPin} onChange={e => setNewPin(e.target.value)}
-                    className="w-full text-center text-3xl tracking-[0.5em] h-14 bg-white/5 border-white/10 text-white placeholder:text-slate-700 rounded-xl focus-visible:ring-emerald-500/50 shadow-inner"
+                    className="w-full text-center text-3xl tracking-[0.5em] h-14 bg-muted/20 border-border text-foreground placeholder:text-muted-foreground rounded-xl focus-visible:ring-emerald-500/50 shadow-inner font-black"
                     required
                   />
                 </div>
                 {error && (
-                  <div className="text-red-400 text-sm font-bold text-center bg-red-950/40 border border-red-500/20 py-3 rounded-lg animate-in slide-in-from-top-2">
+                  <div className="text-red-600 dark:text-red-400 text-sm font-bold text-center bg-red-500/10 border border-red-500/20 py-3 rounded-lg animate-in slide-in-from-top-2">
                     {error}
                   </div>
                 )}
-                <Button type="submit" disabled={loading || currentPin.length !== 4 || newPin.length !== 4} className="w-full h-12 text-lg font-black tracking-widest uppercase bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-black rounded-xl transition-all shadow-[0_0_30px_-5px_rgba(16,185,129,0.5)] active:scale-95 disabled:opacity-50">
+                <Button type="submit" disabled={loading || currentPin.length !== 4 || newPin.length !== 4} className="w-full h-12 text-lg font-black tracking-widest uppercase bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white rounded-xl transition-all shadow-lg active:scale-95 disabled:opacity-50">
                   {loading ? "Updating..." : "Save New PIN"}
                 </Button>
               </form>

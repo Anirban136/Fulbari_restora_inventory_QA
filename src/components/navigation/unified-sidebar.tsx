@@ -25,7 +25,6 @@ import {
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { UserControls } from "@/components/user-controls"
-import { ThemeToggle } from "./theme-toggle"
 import { cn } from "@/lib/utils"
 
 interface NavItem {
@@ -71,14 +70,13 @@ export function UnifiedSidebar({ user }: { user: any }) {
       <div className="lg:hidden fixed top-0 left-0 right-0 h-20 px-6 flex items-center justify-between border-b border-border/50 bg-background/80 backdrop-blur-xl z-[45]">
         <h1 className="text-xl font-black text-emerald-500 dark:text-emerald-400 tracking-tighter">FULBARI</h1>
         <div className="flex items-center gap-3 pointer-events-auto">
-          <ThemeToggle />
           <Button 
             variant="outline" 
             size="icon" 
             onClick={() => setIsOpen(!isOpen)}
-            className="rounded-full w-12 h-12 border-white/10 bg-emerald-500/10 backdrop-blur-xl shadow-2xl text-emerald-400 border-emerald-500/20"
+            className="rounded-full w-12 h-12 border-black/10 dark:border-white/10 bg-emerald-500/10 backdrop-blur-xl shadow-2xl text-emerald-400 border-emerald-500/20"
           >
-            {isOpen ? <X className="w-6 h-6 text-red-400" /> : <Menu className="w-6 h-6" />}
+            {isOpen ? <X className="w-6 h-6 text-red-400" /> : <Menu className="w-6 h-6 text-emerald-600" />}
           </Button>
         </div>
       </div>
@@ -105,7 +103,6 @@ export function UnifiedSidebar({ user }: { user: any }) {
               <h1 className="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-emerald-600 to-teal-800 dark:from-emerald-400 dark:to-teal-200 tracking-tighter text-glow">FULBARI</h1>
               <p className="text-[10px] font-black tracking-[0.2em] uppercase text-muted-foreground mt-2 opacity-80">Operations Unit</p>
             </div>
-            <ThemeToggle />
           </div>
           
           <div className="p-6 border-b border-border/50 bg-muted/20 shrink-0">
