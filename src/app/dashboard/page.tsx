@@ -4,12 +4,13 @@ import { TrendingUp, CreditCard, Activity, BarChart3, Crown, Receipt, AlertTrian
 import { getISTDateBounds } from "@/lib/utils"
 import { GrossRevenueModal } from "@/components/GrossRevenueModal"
 import { TransactionsFeed } from "@/components/TransactionsFeed"
+import { OutletStockFeed } from "@/components/OutletStockFeed"
 
 export default async function DashboardOverview() {
   const { startUTC: startOfDay, endUTC: endOfDay } = getISTDateBounds();
 
   // 1. Fetch Data
-  const [todaysClosedTabs, lowStockItems] = await Promise.all([
+  const [todaysClosedTabs, lowStockItems, outletStocks] = await Promise.all([
     prisma.tab.findMany({
       where: { status: "CLOSED", closedAt: { gte: startOfDay, lte: endOfDay } },
       include: { 
@@ -24,11 +25,20 @@ export default async function DashboardOverview() {
     prisma.item.findMany({
       where: { minStock: { gt: 0 } },
       orderBy: { name: 'asc' }
+    }),
+    prisma.outletStock.findMany({
+      include: {
+        Item: true,
+        Outlet: true
+      },
+      orderBy: {
+        Item: { name: 'asc' }
+      }
     })
   ])
 
-  // Filter low stock items in JS
-  const alerts = lowStockItems.filter(item => item.currentStock <= item.minStock)
+  // Filter low stock items in JS - strictly check global catalog
+  const criticalAlerts = lowStockItems.filter(item => item.currentStock <= item.minStock)
 
   // 2. Compute the analytics
   let totalRevenue = 0
@@ -121,6 +131,52 @@ export default async function DashboardOverview() {
         </div>
       </header>
 
+      {/* Primary Alerts (Mobile-First / Top Sticky) */}
+      {criticalAlerts.length > 0 && (
+        <div className="relative z-20">
+          <div className="glass-card border-red-500/30 bg-red-500/10 p-6 lg:p-10 rounded-[3rem] flex flex-col lg:flex-row items-center gap-8 overflow-hidden shadow-[0_30px_60px_-15px_rgba(239,68,68,0.2)]">
+            <div className="absolute top-0 right-0 w-64 h-64 bg-red-500/10 blur-[100px] rounded-full -z-10"></div>
+            <div className="absolute -bottom-10 -left-10 w-40 h-40 bg-red-500/5 blur-3xl rounded-full -z-10"></div>
+            
+            <div className="h-24 w-24 lg:h-28 lg:w-28 bg-red-500 text-white rounded-[2.5rem] flex items-center justify-center shrink-0 shadow-[0_25px_50px_-12px_rgba(239,68,68,0.6)] animate-pulse">
+              <AlertTriangle className="w-12 h-12" />
+            </div>
+            
+            <div className="flex-1 text-center lg:text-left">
+              <div className="flex flex-col lg:flex-row lg:items-center gap-2 lg:gap-4 mb-4">
+                <h3 className="text-3xl lg:text-4xl font-black text-white uppercase tracking-tighter">Critical Supply Alert</h3>
+                <span className="px-4 py-1.5 bg-red-500/20 text-red-500 text-[10px] font-black uppercase tracking-widest rounded-full border border-red-500/30 self-center lg:self-auto">Global Catalog Deficiency</span>
+              </div>
+              
+              <div className="flex flex-wrap justify-center lg:justify-start gap-3">
+                {criticalAlerts.slice(0, 10).map(item => (
+                  <div key={item.id} className="group relative px-5 py-3 bg-black/40 border border-red-500/20 rounded-[1.5rem] flex items-center gap-4 hover:border-red-500/50 transition-all duration-300">
+                    <div className={`w-2 h-2 rounded-full ${item.currentStock === 0 ? 'bg-red-500 shadow-[0_0_10px_rgba(239,68,68,1)]' : 'bg-orange-500'}`}></div>
+                    <div className="flex flex-col">
+                      <span className="text-xs font-black text-white uppercase tracking-tight">{item.name}</span>
+                      <span className={`text-[10px] font-bold ${item.currentStock === 0 ? 'text-red-500' : 'text-orange-500'}`}>
+                        {item.currentStock === 0 ? "OUT OF STOCK" : `${item.currentStock} ${item.unit} left`}
+                      </span>
+                    </div>
+                  </div>
+                ))}
+                {criticalAlerts.length > 10 && (
+                  <div className="px-5 py-3 bg-white/5 border border-white/10 rounded-[1.5rem] flex items-center justify-center">
+                    <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">+{criticalAlerts.length - 10} More Items</span>
+                  </div>
+                )}
+              </div>
+            </div>
+            
+            <a href="/dashboard/inventory" className="shrink-0 w-full lg:w-auto">
+              <button className="w-full px-12 py-5 bg-white text-black rounded-2xl font-black uppercase text-xs tracking-[0.2em] hover:scale-105 active:scale-95 transition-all shadow-2xl flex items-center justify-center gap-3">
+                Update Inventory <TrendingUp className="w-4 h-4" />
+              </button>
+            </a>
+          </div>
+        </div>
+      )}
+
       {/* Main Executive Panel (Chai + Cafe) */}
       <div className="space-y-8 relative z-10">
         <div className="grid grid-cols-1 md:grid-cols-12 gap-8">
@@ -208,32 +264,6 @@ export default async function DashboardOverview() {
         </div>
       </div>
 
-      {/* alerts (Low Stock) */}
-      {alerts.length > 0 && (
-        <div className="glass-card border-red-500/30 bg-red-500/5 p-8 rounded-[3rem] flex flex-col lg:flex-row items-center gap-8 relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-32 h-32 bg-red-500/10 blur-3xl rounded-full"></div>
-          <div className="h-20 w-20 bg-red-500 text-white rounded-[2rem] flex items-center justify-center shrink-0 shadow-[0_20px_40px_-10px_rgba(239,68,68,0.5)]">
-            <AlertTriangle className="w-10 h-10 animate-bounce" />
-          </div>
-          <div className="flex-1 text-center lg:text-left">
-            <h3 className="text-2xl font-black text-foreground uppercase tracking-tight">Critical Supply Alert</h3>
-            <div className="mt-4 flex flex-wrap justify-center lg:justify-start gap-3">
-              {alerts.slice(0, 5).map(item => (
-                <div key={item.id} className="px-4 py-2 bg-black/40 border border-red-500/20 rounded-2xl flex items-center gap-3">
-                  <span className="text-xs font-black text-foreground">{item.name}</span>
-                  <span className="text-xs font-black text-red-500">{item.currentStock} {item.unit}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-          <a href="/dashboard/inventory" className="shrink-0 w-full lg:w-auto">
-            <button className="w-full px-10 py-4 bg-primary text-primary-foreground rounded-2xl font-black uppercase tracking-widest hover:scale-105 active:scale-95 transition-all shadow-xl">
-              Restock Global
-            </button>
-          </a>
-        </div>
-      )}
-
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 relative z-10">
         
         {/* Category Performance */}
@@ -315,29 +345,9 @@ export default async function DashboardOverview() {
           </div>
         </div>
 
-        {/* Global Outlet Grid */}
-        <div className="lg:col-span-2 glass-panel rounded-[3rem] overflow-hidden relative">
-          <div className="p-8 border-b border-white/5 bg-muted/5 flex items-center justify-between">
-            <h3 className="text-[11px] font-black tracking-[0.3em] uppercase text-muted-foreground">Comprehensive Flow Matrix</h3>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-white/5">
-            {Object.entries(outletStats).map(([name, stats]) => (
-              <div key={name} className="p-10 flex flex-col items-center hover:bg-white/5 transition-all duration-500 group">
-                <span className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em] mb-6">{name.replace('_', ' ')}</span>
-                <span className="text-5xl font-black text-foreground mb-10 group-hover:scale-110 transition-transform">₹{stats.total.toFixed(0)}</span>
-                <div className="w-full space-y-3">
-                  <div className="flex justify-between px-4 py-3 bg-black/40 rounded-2xl border border-white/5 group-hover:border-emerald-500/20 transition-colors">
-                    <span className="text-[10px] font-black uppercase text-emerald-500">Cash Flow</span>
-                    <span className="text-xs font-black">₹{stats.cash.toFixed(0)}</span>
-                  </div>
-                  <div className="flex justify-between px-4 py-3 bg-black/40 rounded-2xl border border-white/5 group-hover:border-blue-500/20 transition-colors">
-                    <span className="text-[10px] font-black uppercase text-blue-500">Digital Capture</span>
-                    <span className="text-xs font-black">₹{stats.online.toFixed(0)}</span>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
+        {/* Local Outlet Stock View */}
+        <div className="lg:col-span-2">
+           <OutletStockFeed stocks={outletStocks} />
         </div>
       </div>
 
