@@ -76,9 +76,16 @@ export default async function OutletsStockPage() {
                       <TableRow key={stock.id} className="border-b border-border/5 hover:bg-muted/5 transition-colors">
                         <TableCell className="font-medium text-foreground/80 transition-colors">{stock.Item.name}</TableCell>
                         <TableCell className="text-right">
-                           <span className={`inline-flex items-center justify-center px-3 py-1 rounded-lg font-black tracking-widest text-xs shadow-inner ${stock.quantity <= 0 ? 'bg-red-500/20 border border-red-500/30 text-red-600 dark:text-red-400 shadow-[0_0_10px_-2px_rgba(239,68,68,0.4)]' : 'bg-purple-500/20 border border-purple-500/30 text-purple-600 dark:text-purple-300'}`}>
-                             {stock.quantity} <span className="text-[9px] ml-1 opacity-70 uppercase">{stock.Item.piecesPerBox ? 'pcs' : stock.Item.unit}</span>
-                           </span>
+                           <div className={`inline-flex flex-col items-end px-3 py-1.5 rounded-xl font-black tracking-widest text-xs shadow-inner ${stock.quantity <= 0 ? 'bg-red-500/20 border border-red-500/30 text-red-600 dark:text-red-400' : 'bg-purple-500/20 border border-purple-500/30 text-purple-600 dark:text-purple-300'}`}>
+                             <span>
+                               {stock.quantity} <span className="text-[9px] ml-1 opacity-70 uppercase font-black">{stock.Item.piecesPerBox ? 'pcs' : stock.Item.unit}</span>
+                             </span>
+                             {stock.Item.piecesPerBox && (
+                               <span className="text-[9px] opacity-60 font-black uppercase tracking-tighter mt-0.5">
+                                 ({(stock.quantity / stock.Item.piecesPerBox).toFixed(1)} {stock.Item.unit})
+                               </span>
+                             )}
+                           </div>
                         </TableCell>
                       </TableRow>
                     ))

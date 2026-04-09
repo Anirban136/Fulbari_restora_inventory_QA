@@ -94,15 +94,16 @@ export default async function GlobalCatalogPage() {
                       {item.piecesPerBox ? item.piecesPerBox : '—'}
                     </TableCell>
                     <TableCell className="text-right">
-                      {item.minStock > 0 && item.currentStock <= item.minStock ? (
-                        <span className="inline-flex items-center justify-center px-2 py-0.5 rounded-md bg-red-500/20 border border-red-500/30 text-red-400 font-bold text-[10px]">
-                          {item.currentStock}
+                      <div className="inline-flex flex-col items-end">
+                        <span className={`inline-flex items-center justify-center px-2 py-0.5 rounded-md font-bold text-[10px] ${item.minStock > 0 && item.currentStock <= item.minStock ? 'bg-red-500/20 border border-red-500/30 text-red-400' : 'bg-emerald-500/10 border border-emerald-500/20 text-emerald-400'}`}>
+                          {item.currentStock} <span className="text-[8px] ml-1 opacity-60 font-black uppercase">{item.piecesPerBox ? 'pcs' : item.unit}</span>
                         </span>
-                      ) : (
-                        <span className="inline-flex items-center justify-center px-2 py-0.5 rounded-md bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 font-bold text-[10px]">
-                          {item.currentStock}
-                        </span>
-                      )}
+                        {item.piecesPerBox && (
+                          <span className={`${item.minStock > 0 && item.currentStock <= item.minStock ? 'text-red-500/40' : 'text-emerald-500/40'} text-[8px] font-black uppercase tracking-tighter mt-0.5`}>
+                            ({(item.currentStock / item.piecesPerBox).toFixed(1)} {item.unit})
+                          </span>
+                        )}
+                      </div>
                     </TableCell>
                     <TableCell className="text-right text-muted-foreground font-medium text-[10px]">
                       {item.minStock || '—'}
