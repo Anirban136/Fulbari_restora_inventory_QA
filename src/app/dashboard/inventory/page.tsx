@@ -44,7 +44,7 @@ export default async function GlobalCatalogPage() {
 
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 relative z-10 glass-panel p-4 sm:p-6 rounded-3xl">
         <div>
-          <h2 className="text-3xl font-black text-white tracking-tight flex items-center gap-3">
+          <h2 className="text-3xl font-black text-foreground tracking-tight flex items-center gap-3">
             Global Catalog
             <div className="h-2 w-2 rounded-full bg-primary animate-pulse shadow-[0_0_10px_oklch(0.55_0.16_150)]"></div>
           </h2>
@@ -60,18 +60,17 @@ export default async function GlobalCatalogPage() {
         <div className="p-0 max-h-[85vh] overflow-auto custom-scrollbar-premium">
           <Table>
             <TableHeader>
-              <TableRow className="border-b border-white/10 hover:bg-transparent">
-                <TableHead className="font-bold text-slate-400 uppercase tracking-widest text-xs h-14 bg-black/40 backdrop-blur-md sticky top-0 z-20">Item Name</TableHead>
-                <TableHead className="font-bold text-slate-400 uppercase tracking-widest text-xs h-14 bg-black/40 backdrop-blur-md sticky top-0 z-20">Category</TableHead>
-                <TableHead className="font-bold text-slate-400 uppercase tracking-widest text-xs h-14 bg-black/40 backdrop-blur-md sticky top-0 z-20 text-right">Unit</TableHead>
-                <TableHead className="font-bold text-slate-400 uppercase tracking-widest text-xs h-14 bg-black/40 backdrop-blur-md sticky top-0 z-20 text-center">Box Size</TableHead>
-                <TableHead className="font-bold text-slate-400 uppercase tracking-widest text-xs h-14 bg-black/40 backdrop-blur-md sticky top-0 z-20 text-right">Central Stock</TableHead>
-                <TableHead className="font-bold text-slate-400 uppercase tracking-widest text-xs h-14 bg-black/40 backdrop-blur-md sticky top-0 z-20 text-right">Min Stock</TableHead>
-                <TableHead className="font-bold text-slate-400 uppercase tracking-widest text-xs h-14 bg-black/40 backdrop-blur-md sticky top-0 z-20 text-right">Cost Price</TableHead>
-                <TableHead className="font-bold text-slate-400 uppercase tracking-widest text-xs h-14 bg-black/40 backdrop-blur-md sticky top-0 z-20 text-right">Sell Price</TableHead>
-
+              <TableRow className="border-b border-border/10 hover:bg-transparent">
+                <TableHead className="font-bold text-muted-foreground uppercase tracking-widest text-[10px] h-14 bg-muted/20 dark:bg-black/40 backdrop-blur-md sticky top-0 z-20">Item Name</TableHead>
+                <TableHead className="font-bold text-muted-foreground uppercase tracking-widest text-[10px] h-14 bg-muted/20 dark:bg-black/40 backdrop-blur-md sticky top-0 z-20">Category</TableHead>
+                <TableHead className="font-bold text-muted-foreground uppercase tracking-widest text-[10px] h-14 bg-muted/20 dark:bg-black/40 backdrop-blur-md sticky top-0 z-20 text-right">Unit</TableHead>
+                <TableHead className="font-bold text-muted-foreground uppercase tracking-widest text-[10px] h-14 bg-muted/20 dark:bg-black/40 backdrop-blur-md sticky top-0 z-20 text-center">Box Size</TableHead>
+                <TableHead className="font-bold text-muted-foreground uppercase tracking-widest text-[10px] h-14 bg-muted/20 dark:bg-black/40 backdrop-blur-md sticky top-0 z-20 text-right">Central Stock</TableHead>
+                <TableHead className="font-bold text-muted-foreground uppercase tracking-widest text-[10px] h-14 bg-muted/20 dark:bg-black/40 backdrop-blur-md sticky top-0 z-20 text-right">Min Stock</TableHead>
+                <TableHead className="font-bold text-muted-foreground uppercase tracking-widest text-[10px] h-14 bg-muted/20 dark:bg-black/40 backdrop-blur-md sticky top-0 z-20 text-right">Cost Price</TableHead>
+                <TableHead className="font-bold text-muted-foreground uppercase tracking-widest text-[10px] h-14 bg-muted/20 dark:bg-black/40 backdrop-blur-md sticky top-0 z-20 text-right">Sell Price</TableHead>
                 {(isOwner || session?.user?.role === "INV_MANAGER") && (
-                  <TableHead className="font-bold text-slate-400 uppercase tracking-widest text-xs h-14 bg-black/40 backdrop-blur-md sticky top-0 z-20 text-center">Actions</TableHead>
+                  <TableHead className="font-bold text-muted-foreground uppercase tracking-widest text-[10px] h-14 bg-muted/20 dark:bg-black/40 backdrop-blur-md sticky top-0 z-20 text-center">Actions</TableHead>
                 )}
               </TableRow>
             </TableHeader>
@@ -87,10 +86,10 @@ export default async function GlobalCatalogPage() {
                 </TableRow>
               ) : (
                 items.map((item: any) => (
-                  <TableRow key={item.id} className="border-b border-white/5 hover:bg-white/5 transition-colors group">
-                    <TableCell className="font-medium text-slate-200 group-hover:text-white transition-colors">{item.name}</TableCell>
-                    <TableCell className="text-slate-400 text-xs font-bold uppercase tracking-wider">{item.category}</TableCell>
-                    <TableCell className="text-slate-500 text-right">{item.piecesPerBox ? 'pcs' : item.unit}</TableCell>
+                  <TableRow key={item.id} className="border-b border-border/5 hover:bg-muted/5 transition-colors group">
+                    <TableCell className="font-medium text-foreground/90 group-hover:text-foreground transition-colors">{item.name}</TableCell>
+                    <TableCell className="text-muted-foreground text-[10px] font-bold uppercase tracking-wider">{item.category}</TableCell>
+                    <TableCell className="text-muted-foreground/80 text-right">{item.piecesPerBox ? 'pcs' : item.unit}</TableCell>
                     <TableCell className="text-center font-bold text-blue-400">
                       {item.piecesPerBox ? (
                         <span className="inline-flex items-center gap-1 bg-blue-500/10 px-2 py-0.5 rounded border border-blue-500/20">
@@ -109,13 +108,13 @@ export default async function GlobalCatalogPage() {
                         </span>
                       )}
                     </TableCell>
-                    <TableCell className="text-right text-slate-400 font-medium">
+                    <TableCell className="text-right text-muted-foreground font-medium">
                       {item.minStock || '—'}
                     </TableCell>
-                    <TableCell className="text-right text-slate-300 font-bold">
+                    <TableCell className="text-right text-foreground/80 font-bold">
                       {item.costPerUnit ? `₹${item.costPerUnit.toFixed(2)}` : '—'}
                     </TableCell>
-                    <TableCell className="text-right text-emerald-400 font-bold">
+                    <TableCell className="text-right text-emerald-600 dark:text-emerald-400 font-bold">
                       {item.sellPrice ? `₹${item.sellPrice.toFixed(2)}` : '—'}
                     </TableCell>
 
@@ -135,14 +134,14 @@ export default async function GlobalCatalogPage() {
                               }>
                                 <Trash2 className="w-4 h-4" />
                               </DialogTrigger>
-                              <DialogContent className="sm:max-w-[400px] bg-black/90 backdrop-blur-2xl border-red-500/20 rounded-3xl shadow-[0_0_50px_rgba(239,68,68,0.2)]">
+                              <DialogContent className="sm:max-w-[400px] bg-background backdrop-blur-2xl border-border rounded-3xl shadow-[0_0_50px_rgba(239,68,68,0.1)]">
                                 <DialogHeader className="mb-2">
                                   <div className="w-12 h-12 bg-red-500/10 rounded-2xl flex items-center justify-center mb-4 border border-red-500/20">
-                                    <Trash2 className="w-6 h-6 text-red-400" />
+                                    <Trash2 className="w-6 h-6 text-red-500 dark:text-red-400" />
                                   </div>
-                                  <DialogTitle className="text-xl font-black text-white">Remove Item from Catalog?</DialogTitle>
-                                  <DialogDescription className="text-slate-400 leading-relaxed">
-                                    This will permanently remove <span className="text-white font-bold">{item.name}</span> and all its ledger history. This action cannot be undone.
+                                  <DialogTitle className="text-xl font-black text-foreground">Remove Item from Catalog?</DialogTitle>
+                                  <DialogDescription className="text-muted-foreground leading-relaxed">
+                                    This will permanently remove <span className="text-foreground font-bold">{item.name}</span> and all its ledger history. This action cannot be undone.
                                   </DialogDescription>
                                 </DialogHeader>
                                 <form action={removeItem} className="mt-4 flex gap-3">

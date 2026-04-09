@@ -45,7 +45,7 @@ export default async function MenusPage() {
       
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 relative z-10 glass-panel p-6 rounded-3xl">
         <div>
-          <h2 className="text-3xl font-black text-white tracking-tight flex items-center gap-3">
+          <h2 className="text-3xl font-black text-foreground tracking-tight flex items-center gap-3">
             Menu Management
             <div className="h-2 w-2 rounded-full bg-indigo-500 shadow-[0_0_10px_#6366f1]"></div>
           </h2>
@@ -59,9 +59,9 @@ export default async function MenusPage() {
         <div className="glass-panel p-6 sm:p-8 rounded-3xl self-start hover:border-white/20 transition-all">
           <div className="flex items-center gap-4 mb-8">
              <div className="h-12 w-12 bg-indigo-500/20 rounded-2xl flex items-center justify-center border border-indigo-500/30 shadow-[0_0_15px_-3px_rgba(99,102,241,0.3)]">
-               <MenuSquare className="w-6 h-6 text-indigo-400" />
+               <MenuSquare className="w-6 h-6 text-indigo-500" />
              </div>
-             <h3 className="text-xl font-bold text-white">Add Menu Item</h3>
+             <h3 className="text-xl font-bold text-foreground">Add Menu Item</h3>
           </div>
           
           <AddMenuItemForm outlets={outlets} globalItems={globalItems} existingCategories={existingCategories as string[]} />
@@ -72,12 +72,12 @@ export default async function MenusPage() {
           <div className="p-0 flex-1 overflow-auto max-h-[700px]">
             <Table>
               <TableHeader>
-                <TableRow className="border-b border-white/10 hover:bg-transparent">
-                  <TableHead className="font-bold text-slate-400 uppercase tracking-widest text-xs h-14 bg-black/40 backdrop-blur-md sticky top-0 z-20">Outlet</TableHead>
-                  <TableHead className="font-bold text-slate-400 uppercase tracking-widest text-xs h-14 bg-black/40 backdrop-blur-md sticky top-0 z-20">Item Name</TableHead>
-                  <TableHead className="font-bold text-slate-400 uppercase tracking-widest text-xs h-14 bg-black/40 backdrop-blur-md sticky top-0 z-20">Category</TableHead>
-                  <TableHead className="font-bold text-slate-400 uppercase tracking-widest text-xs h-14 bg-black/40 backdrop-blur-md sticky top-0 z-20 text-right">Price</TableHead>
-                  <TableHead className="font-bold text-slate-400 uppercase tracking-widest text-xs h-14 bg-black/40 backdrop-blur-md sticky top-0 z-20 text-center">Actions</TableHead>
+                <TableRow className="border-b border-border/10 hover:bg-transparent">
+                  <TableHead className="font-bold text-muted-foreground uppercase tracking-widest text-[10px] h-14 bg-muted/20 dark:bg-black/40 backdrop-blur-md sticky top-0 z-20">Outlet</TableHead>
+                  <TableHead className="font-bold text-muted-foreground uppercase tracking-widest text-[10px] h-14 bg-muted/20 dark:bg-black/40 backdrop-blur-md sticky top-0 z-20">Item Name</TableHead>
+                  <TableHead className="font-bold text-muted-foreground uppercase tracking-widest text-[10px] h-14 bg-muted/20 dark:bg-black/40 backdrop-blur-md sticky top-0 z-20">Category</TableHead>
+                  <TableHead className="font-bold text-muted-foreground uppercase tracking-widest text-[10px] h-14 bg-muted/20 dark:bg-black/40 backdrop-blur-md sticky top-0 z-20 text-right">Price</TableHead>
+                  <TableHead className="font-bold text-muted-foreground uppercase tracking-widest text-[10px] h-14 bg-muted/20 dark:bg-black/40 backdrop-blur-md sticky top-0 z-20 text-center">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -92,12 +92,12 @@ export default async function MenusPage() {
                   </TableRow>
                  ) : (
                   menuItems.map((menuItem: any) => (
-                    <TableRow key={menuItem.id} className={`border-b border-white/5 hover:bg-white/5 transition-colors group ${!menuItem.isAvailable ? "opacity-40 grayscale" : ""}`}>
-                      <TableCell className="font-medium text-slate-400 tracking-wide uppercase text-xs">{menuItem.Outlet.name}</TableCell>
-                      <TableCell className="font-bold text-slate-200 text-base">{menuItem.name}</TableCell>
-                      <TableCell className="text-slate-500 font-medium text-sm tracking-wide">{menuItem.categoryId}</TableCell>
+                    <TableRow key={menuItem.id} className={`border-b border-border/5 hover:bg-muted/5 transition-colors group ${!menuItem.isAvailable ? "opacity-40 grayscale" : ""}`}>
+                      <TableCell className="font-medium text-muted-foreground tracking-wide uppercase text-[10px]">{menuItem.Outlet.name}</TableCell>
+                      <TableCell className="font-bold text-foreground/90 text-base">{menuItem.name}</TableCell>
+                      <TableCell className="text-muted-foreground font-medium text-sm tracking-wide">{menuItem.categoryId}</TableCell>
                       <TableCell className="text-right">
-                         <span className="inline-flex items-center text-emerald-400 font-black text-lg drop-shadow-[0_0_8px_rgba(52,211,153,0.3)]">
+                        <span className="inline-flex items-center text-emerald-600 dark:text-emerald-400 font-black text-lg">
                            ₹{menuItem.price.toFixed(2)}
                          </span>
                       </TableCell>
@@ -120,14 +120,14 @@ export default async function MenusPage() {
                                  <Trash2 className="h-4 w-4" />
                                </div>
                              </DialogTrigger>
-                             <DialogContent className="sm:max-w-[400px] bg-black/90 backdrop-blur-2xl border-red-500/20 rounded-3xl shadow-[0_0_50px_rgba(239,68,68,0.15)]">
+                             <DialogContent className="sm:max-w-[400px] bg-background backdrop-blur-2xl border-border rounded-3xl shadow-[0_0_50px_rgba(239,68,68,0.1)]">
                                <DialogHeader className="mb-2">
                                  <div className="w-12 h-12 bg-red-500/10 rounded-2xl flex items-center justify-center mb-4 border border-red-500/20">
-                                   <Trash2 className="w-6 h-6 text-red-400" />
+                                   <Trash2 className="w-6 h-6 text-red-500 dark:text-red-400" />
                                  </div>
-                                 <DialogTitle className="text-xl font-black text-white">Delete Menu Item?</DialogTitle>
-                                 <DialogDescription className="text-slate-400 leading-relaxed">
-                                   Are you sure you want to delete <span className="text-white font-bold">{menuItem.name}</span> from the {menuItem.Outlet.name} menu? This action cannot be undone.
+                                 <DialogTitle className="text-xl font-black text-foreground">Delete Menu Item?</DialogTitle>
+                                 <DialogDescription className="text-muted-foreground leading-relaxed">
+                                   Are you sure you want to delete <span className="text-foreground font-bold">{menuItem.name}</span> from the {menuItem.Outlet.name} menu? This action cannot be undone.
                                  </DialogDescription>
                                </DialogHeader>
                                <form action={deleteMenuItem.bind(null, menuItem.id)} className="mt-4">

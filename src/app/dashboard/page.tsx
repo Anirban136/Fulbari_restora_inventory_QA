@@ -77,12 +77,12 @@ export default async function DashboardOverview() {
       {/* Background Decorators */}
       <div className="absolute top-0 right-0 w-96 h-96 bg-primary/10 rounded-full blur-[100px] pointer-events-none"></div>
 
-      <header>
-        <h2 className="text-4xl font-extrabold tracking-tight text-white flex items-center gap-3">
+      <header className="relative z-10">
+        <h2 className="text-4xl font-black tracking-tight text-foreground flex items-center gap-3">
           Executive Overview
           <div className="h-3 w-3 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_15px_#10b981]"></div>
         </h2>
-        <p className="text-muted-foreground mt-2 text-lg">Real-time performance metrics across all operations.</p>
+        <p className="text-foreground/70 dark:text-muted-foreground mt-2 text-lg font-bold">Real-time performance metrics across all operations.</p>
       </header>
 
       {/* Low Stock Alerts */}
@@ -92,16 +92,16 @@ export default async function DashboardOverview() {
             <AlertTriangle className="text-red-500 w-8 h-8 animate-pulse" />
           </div>
           <div className="flex-1 text-center sm:text-left">
-            <h3 className="text-xl font-black text-white flex items-center justify-center sm:justify-start gap-2 uppercase tracking-tight">
+            <h3 className="text-xl font-black text-foreground flex items-center justify-center sm:justify-start gap-2 uppercase tracking-tight">
               Inventory Alerts Needed
               <span className="bg-red-500 text-white text-[10px] px-2 py-0.5 rounded-full ml-2 animate-bounce">{alerts.length}</span>
             </h3>
             <div className="mt-3 flex flex-wrap justify-center sm:justify-start gap-2">
               {alerts.map(item => (
-                <div key={item.id} className="px-3 py-1.5 bg-black/40 border border-red-500/20 rounded-xl flex items-center gap-2 group hover:border-red-500/50 transition-colors">
-                  <span className="text-xs font-bold text-slate-300">{item.name}:</span>
-                  <span className="text-xs font-black text-red-400">{item.currentStock} {item.unit}</span>
-                  <span className="text-[10px] text-slate-500 font-bold uppercase tracking-tighter">(Min: {item.minStock})</span>
+                <div key={item.id} className="px-3 py-1.5 bg-muted/10 dark:bg-black/40 border border-red-500/20 rounded-xl flex items-center gap-2 group hover:border-red-500/50 transition-colors">
+                  <span className="text-xs font-bold text-muted-foreground">{item.name}:</span>
+                  <span className="text-xs font-black text-red-500 dark:text-red-400">{item.currentStock} {item.unit}</span>
+                  <span className="text-[10px] text-muted-foreground/60 font-bold uppercase tracking-tighter">(Min: {item.minStock})</span>
                 </div>
               ))}
             </div>
@@ -121,25 +121,25 @@ export default async function DashboardOverview() {
         <div className="glass-panel p-6 rounded-3xl group hover:-translate-y-1 transition-transform duration-300">
           <div className="flex justify-between items-start mb-4">
             <h3 className="text-xs font-bold text-muted-foreground uppercase tracking-widest">Cash Collected</h3>
-            <span className="text-amber-400 text-xl">💵</span>
+            <span className="text-amber-500 text-xl">💵</span>
           </div>
-          <p className="text-3xl font-bold text-foreground">₹{cashRevenue.toFixed(2)}</p>
+          <p className="text-3xl font-black text-foreground">₹{cashRevenue.toFixed(2)}</p>
         </div>
 
         <div className="glass-panel p-6 rounded-3xl group hover:-translate-y-1 transition-transform duration-300">
           <div className="flex justify-between items-start mb-4">
             <h3 className="text-xs font-bold text-muted-foreground uppercase tracking-widest">Digital (UPI/Card)</h3>
-            <CreditCard className="text-blue-400 w-5 h-5" />
+            <CreditCard className="text-blue-600 dark:text-blue-400 w-5 h-5" />
           </div>
-          <p className="text-3xl font-bold text-foreground">₹{onlineRevenue.toFixed(2)}</p>
+          <p className="text-3xl font-black text-foreground">₹{onlineRevenue.toFixed(2)}</p>
         </div>
         
         <div className="glass-panel p-6 rounded-3xl group hover:-translate-y-1 transition-transform duration-300">
            <div className="flex justify-between items-start mb-4">
              <h3 className="text-xs font-bold text-muted-foreground uppercase tracking-widest">Split Payments</h3>
-             <Activity className="text-purple-400 w-5 h-5" />
+             <Activity className="text-purple-600 dark:text-purple-400 w-5 h-5" />
            </div>
-           <p className="text-3xl font-bold text-foreground">₹{splitRevenue.toFixed(2)}</p>
+           <p className="text-3xl font-black text-foreground">₹{splitRevenue.toFixed(2)}</p>
         </div>
       </div>
 
@@ -148,14 +148,14 @@ export default async function DashboardOverview() {
         {/* Category-Wise Graphical Sales */}
         <div className="lg:col-span-2 glass-panel rounded-3xl overflow-hidden flex flex-col relative group">
           <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-500/10 rounded-full blur-[80px] pointer-events-none group-hover:bg-indigo-500/20 transition-all"></div>
-          <div className="p-6 border-b border-border/50 bg-white/5 flex justify-between items-center backdrop-blur-md relative z-10">
+          <div className="p-6 border-b border-border/50 bg-muted/20 dark:bg-white/5 flex justify-between items-center backdrop-blur-md relative z-10">
             <div className="flex items-center gap-3">
-              <BarChart3 className="text-indigo-400 w-5 h-5" />
-              <h3 className="text-lg font-bold text-white tracking-wide">Category Sales</h3>
+              <BarChart3 className="text-indigo-600 dark:text-indigo-400 w-5 h-5" />
+              <h3 className="text-lg font-black text-foreground tracking-wide">Category Sales</h3>
             </div>
-            <span className="text-[10px] font-black tracking-widest bg-indigo-500/20 border border-indigo-500/30 px-3 py-1 rounded-full text-indigo-300 uppercase">Live Metrics</span>
+            <span className="text-[10px] font-black tracking-widest bg-indigo-500/10 dark:bg-indigo-500/20 border border-indigo-500/30 px-3 py-1 rounded-full text-indigo-700 dark:text-indigo-300 uppercase">Live Metrics</span>
           </div>
-          <div className="p-8 bg-black/20 flex-1 relative z-10">
+          <div className="p-8 bg-muted/10 dark:bg-black/20 flex-1 relative z-10">
             {sortedCategories.length === 0 ? (
                <div className="text-center py-10 text-muted-foreground font-medium">No sales data available today.</div>
             ) : (
@@ -165,8 +165,8 @@ export default async function DashboardOverview() {
                     return (
                       <div key={category} className="space-y-2">
                         <div className="flex justify-between items-end">
-                          <span className="font-bold text-slate-300 uppercase tracking-widest text-xs">{category}</span>
-                          <span className="font-black text-white">₹{amount.toFixed(2)}</span>
+                          <span className="font-bold text-muted-foreground uppercase tracking-widest text-[10px]">{category}</span>
+                          <span className="font-black text-foreground">₹{amount.toFixed(2)}</span>
                         </div>
                         <div className="h-3 w-full bg-white/5 rounded-full overflow-hidden border border-white/5">
                           <div 
@@ -187,29 +187,29 @@ export default async function DashboardOverview() {
           <div className="absolute top-0 right-0 w-48 h-48 bg-amber-500/10 rounded-full blur-[50px] pointer-events-none group-hover:bg-amber-500/20 transition-all"></div>
           <div className="p-6 border-b border-border/50 bg-amber-500/10 flex justify-between items-center backdrop-blur-md relative z-10">
             <div className="flex gap-3 items-center">
-              <Crown className="text-amber-400 w-5 h-5" />
-              <h3 className="text-lg font-bold text-amber-200 tracking-wide">Top Sellers</h3>
+              <Crown className="text-amber-600 dark:text-amber-400 w-5 h-5" />
+              <h3 className="text-lg font-black text-amber-700 dark:text-amber-200 tracking-wide">Top Sellers</h3>
             </div>
           </div>
-          <div className="p-6 bg-black/20 flex-1 relative z-10">
+          <div className="p-6 bg-muted/5 dark:bg-black/20 flex-1 relative z-10">
              {sortedItems.length === 0 ? (
                <div className="p-8 text-muted-foreground text-center font-medium">No items sold today.</div>
              ) : (
                <ul className="space-y-3">
                  {sortedItems.map((item, index) => (
-                   <li key={item.name} className="p-4 flex gap-4 items-center rounded-2xl bg-white/5 border border-white/5 hover:border-amber-500/30 hover:bg-amber-500/5 transition-colors group">
+                   <li key={item.name} className="p-4 flex gap-4 items-center rounded-2xl bg-muted/5 dark:bg-white/5 border border-border/50 hover:border-amber-500/30 hover:bg-amber-500/5 transition-colors group">
                      {/* Rank Badge */}
                      <div className={`w-8 h-8 rounded-full flex items-center justify-center font-black text-sm shadow-inner shrink-0 ${
                        index === 0 ? 'bg-amber-500 text-black shadow-[0_0_15px_#f59e0b]' : 
-                       index === 1 ? 'bg-slate-300 text-slate-800' :
+                       index === 1 ? 'bg-slate-200 dark:bg-slate-300 text-slate-800' :
                        index === 2 ? 'bg-amber-700 text-amber-100' :
-                       'bg-white/10 text-slate-400'
+                       'bg-muted text-muted-foreground dark:bg-white/10 dark:text-slate-400'
                      }`}>
                        #{index + 1}
                      </div>
                      <div className="flex-1 min-w-0">
-                       <p className="font-bold text-slate-200 truncate group-hover:text-amber-300 transition-colors text-sm">{item.name}</p>
-                       <p className="text-xs text-slate-500 font-medium tracking-wide mt-1"><span className="text-emerald-400">{item.qty} sold</span> • ₹{item.rev.toFixed(0)}</p>
+                       <p className="font-bold text-foreground/90 truncate group-hover:text-amber-600 dark:group-hover:text-amber-300 transition-colors text-sm">{item.name}</p>
+                       <p className="text-xs text-muted-foreground font-medium tracking-wide mt-1"><span className="text-emerald-600 dark:text-emerald-400">{item.qty} sold</span> • ₹{item.rev.toFixed(0)}</p>
                      </div>
                    </li>
                  ))}
@@ -219,31 +219,31 @@ export default async function DashboardOverview() {
         </div>
 
         {/* Outlet Breakdown (Compact) */}
-        <div className="lg:col-span-3 glass-panel rounded-3xl overflow-hidden border border-white/10">
-           <div className="p-6 bg-white/5 border-b border-white/10 flex items-center justify-between">
-              <h3 className="text-sm font-bold tracking-widest uppercase text-slate-400">Total Revenue by Outlet</h3>
+        <div className="lg:col-span-3 glass-panel rounded-3xl overflow-hidden border border-border/50">
+           <div className="p-6 bg-muted/5 border-b border-border/50 flex items-center justify-between">
+            <h3 className="text-sm font-black tracking-widest uppercase text-foreground/60">Total Revenue by Outlet</h3>
            </div>
-           <div className="grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-white/10">
+           <div className="grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-border/50">
               {Object.keys(outletStats).length === 0 ? (
-                 <div className="col-span-3 p-6 text-center text-sm text-slate-500">No data</div>
+                 <div className="col-span-3 p-6 text-center text-sm text-foreground/50 italic">No data</div>
               ) : (
                  Object.entries(outletStats).map(([name, stats]) => (
-                   <div key={name} className="p-6 flex flex-col items-center justify-center hover:bg-white/5 transition-colors group">
-                     <span className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-4 group-hover:text-slate-300">{name}</span>
-                     <span className="text-3xl font-black text-white group-hover:text-emerald-400 transition-colors drop-shadow-[0_0_15px_rgba(255,255,255,0.1)] mb-4">₹{stats.total.toFixed(2)}</span>
+                   <div key={name} className="p-6 flex flex-col items-center justify-center hover:bg-muted/5 transition-colors group">
+                     <span className="text-xs font-black text-foreground/60 uppercase tracking-widest mb-4 group-hover:text-foreground">{name}</span>
+                     <span className="text-3xl font-black text-foreground group-hover:text-emerald-700 dark:group-hover:text-emerald-400 transition-colors mb-4">₹{stats.total.toFixed(2)}</span>
                      <div className="w-full space-y-2">
-                       <div className="flex justify-between items-center bg-black/20 px-3 py-2 rounded-lg border border-white/5">
-                         <span className="text-[10px] uppercase tracking-widest font-bold text-emerald-400">💵 Cash</span>
-                         <span className="text-xs font-bold text-slate-300">₹{stats.cash.toFixed(2)}</span>
+                       <div className="flex justify-between items-center bg-muted/20 dark:bg-black/20 px-3 py-2 rounded-lg border border-border/50">
+                         <span className="text-[10px] uppercase tracking-widest font-bold text-emerald-600 dark:text-emerald-400">💵 Cash</span>
+                         <span className="text-xs font-bold text-muted-foreground">₹{stats.cash.toFixed(2)}</span>
                        </div>
-                       <div className="flex justify-between items-center bg-black/20 px-3 py-2 rounded-lg border border-white/5">
-                         <span className="text-[10px] uppercase tracking-widest font-bold text-blue-400">💳 Online</span>
-                         <span className="text-xs font-bold text-slate-300">₹{stats.online.toFixed(2)}</span>
+                       <div className="flex justify-between items-center bg-muted/20 dark:bg-black/20 px-3 py-2 rounded-lg border border-border/50">
+                         <span className="text-[10px] uppercase tracking-widest font-bold text-blue-600 dark:text-blue-400">💳 Online</span>
+                         <span className="text-xs font-bold text-muted-foreground">₹{stats.online.toFixed(2)}</span>
                        </div>
                        {stats.split > 0 && (
-                         <div className="flex justify-between items-center bg-black/20 px-3 py-2 rounded-lg border border-white/5">
-                           <span className="text-[10px] uppercase tracking-widest font-bold text-purple-400">🔄 Split</span>
-                           <span className="text-xs font-bold text-slate-300">₹{stats.split.toFixed(2)}</span>
+                         <div className="flex justify-between items-center bg-muted/20 dark:bg-black/20 px-3 py-2 rounded-lg border border-border/50">
+                           <span className="text-[10px] uppercase tracking-widest font-bold text-purple-600 dark:text-purple-400">🔄 Split</span>
+                           <span className="text-xs font-bold text-muted-foreground">₹{stats.split.toFixed(2)}</span>
                          </div>
                        )}
                      </div>
@@ -257,44 +257,44 @@ export default async function DashboardOverview() {
 
       {/* Today's Transactions & Exports */}
       <div className="glass-panel rounded-3xl overflow-hidden mt-8 border border-emerald-500/10 hover:border-emerald-500/30 transition-colors relative z-10">
-         <div className="p-6 bg-white/5 border-b border-white/10 flex flex-col md:flex-row items-center justify-between backdrop-blur-md gap-4">
-            <h3 className="text-xl font-bold text-white uppercase tracking-widest flex items-center gap-3">
-              <Receipt className="w-5 h-5 text-emerald-400" />
+         <div className="p-6 bg-muted/5 border-b border-border/50 flex flex-col md:flex-row items-center justify-between backdrop-blur-md gap-4">
+            <h3 className="text-xl font-bold text-foreground uppercase tracking-widest flex items-center gap-3">
+              <Receipt className="w-5 h-5 text-emerald-500 dark:text-emerald-400" />
               Today's Completed Tabs
             </h3>
             <div className="flex gap-3">
               <a href={`/api/export/transactions?outlet=CAFE`} download>
-                <button className="px-4 py-2 bg-amber-500/20 hover:bg-amber-500/30 border border-amber-500/40 text-amber-400 rounded-xl text-[10px] sm:text-xs font-black uppercase tracking-widest transition-all hover:scale-105 active:scale-95 shadow-[0_0_15px_-3px_rgba(245,158,11,0.3)]">
+                <button className="px-4 py-2 bg-amber-500/20 hover:bg-amber-500/30 border border-amber-500/40 text-amber-600 dark:text-amber-400 rounded-xl text-[10px] sm:text-xs font-black uppercase tracking-widest transition-all hover:scale-105 active:scale-95 shadow-[0_0_15px_-3px_rgba(245,158,11,0.3)]">
                   Export Cafe (CSV)
                 </button>
               </a>
               <a href={`/api/export/transactions?outlet=CHAI_JOINT`} download>
-                <button className="px-4 py-2 bg-blue-500/20 hover:bg-blue-500/30 border border-blue-500/40 text-blue-400 rounded-xl text-[10px] sm:text-xs font-black uppercase tracking-widest transition-all hover:scale-105 active:scale-95 shadow-[0_0_15px_-3px_rgba(59,130,246,0.3)]">
+                <button className="px-4 py-2 bg-blue-500/20 hover:bg-blue-500/30 border border-blue-500/40 text-blue-600 dark:text-blue-400 rounded-xl text-[10px] sm:text-xs font-black uppercase tracking-widest transition-all hover:scale-105 active:scale-95 shadow-[0_0_15px_-3px_rgba(59,130,246,0.3)]">
                   Export Chai (CSV)
                 </button>
               </a>
             </div>
          </div>
-         <div className="p-0 max-h-[400px] overflow-auto custom-scrollbar bg-black/20">
+         <div className="p-0 max-h-[400px] overflow-auto custom-scrollbar bg-muted/5 dark:bg-black/20">
             {todaysClosedTabs.length === 0 ? (
-               <div className="text-center py-10 text-slate-500 font-medium tracking-widest uppercase">No transactions recorded today.</div>
+               <div className="text-center py-10 text-muted-foreground font-medium tracking-widest uppercase">No transactions recorded today.</div>
             ) : (
                <table className="w-full text-left border-collapse">
-                 <thead className="bg-black/60 sticky top-0 z-10 backdrop-blur-xl">
+                 <thead className="bg-muted/20 dark:bg-black/60 sticky top-0 z-10 backdrop-blur-xl">
                    <tr>
-                     <th className="p-5 text-xs font-bold text-slate-400 uppercase tracking-widest">Time</th>
-                     <th className="p-5 text-xs font-bold text-slate-400 uppercase tracking-widest">Outlet</th>
-                     <th className="p-5 text-xs font-bold text-slate-400 uppercase tracking-widest">Customer</th>
-                     <th className="p-5 text-xs font-bold text-slate-400 uppercase tracking-widest text-right">Amount</th>
+                     <th className="p-5 text-xs font-bold text-muted-foreground uppercase tracking-widest">Time</th>
+                     <th className="p-5 text-xs font-bold text-muted-foreground uppercase tracking-widest">Outlet</th>
+                     <th className="p-5 text-xs font-bold text-muted-foreground uppercase tracking-widest">Customer</th>
+                     <th className="p-5 text-xs font-bold text-muted-foreground uppercase tracking-widest text-right">Amount</th>
                    </tr>
                  </thead>
-                 <tbody className="divide-y divide-white/5">
+                 <tbody className="divide-y divide-border/50">
                    {[...todaysClosedTabs].sort((a,b) => (b.closedAt?.getTime() || 0) - (a.closedAt?.getTime() || 0)).map(tab => (
-                     <tr key={tab.id} className="hover:bg-white/5 transition-colors group">
-                       <td className="p-5 text-sm text-slate-400 font-medium group-hover:text-slate-300 transition-colors">{tab.closedAt ? new Date(tab.closedAt).toLocaleTimeString('en-IN', { timeZone: 'Asia/Kolkata', hour: '2-digit', minute: '2-digit' }) : "N/A"}</td>
-                       <td className="p-5 text-sm font-bold text-emerald-400">{tab.Outlet.name}</td>
-                       <td className="p-5 text-sm text-slate-300 font-medium">{tab.customerName || "Walk-in"}</td>
-                       <td className="p-5 text-lg text-white font-black text-right tracking-tight drop-shadow-md">₹{tab.totalAmount.toFixed(2)}</td>
+                     <tr key={tab.id} className="hover:bg-muted/5 transition-colors group">
+                       <td className="p-5 text-sm text-muted-foreground font-medium group-hover:text-foreground transition-colors">{tab.closedAt ? new Date(tab.closedAt).toLocaleTimeString('en-IN', { timeZone: 'Asia/Kolkata', hour: '2-digit', minute: '2-digit' }) : "N/A"}</td>
+                       <td className="p-5 text-sm font-bold text-emerald-600 dark:text-emerald-400">{tab.Outlet.name}</td>
+                       <td className="p-5 text-sm text-foreground/80 font-medium">{tab.customerName || "Walk-in"}</td>
+                       <td className="p-5 text-lg text-foreground font-black text-right tracking-tight">₹{tab.totalAmount.toFixed(2)}</td>
                      </tr>
                    ))}
                  </tbody>

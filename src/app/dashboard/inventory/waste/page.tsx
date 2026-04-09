@@ -67,7 +67,7 @@ export default async function WasteTrackingPage({ searchParams }: { searchParams
 
       <div className="glass-panel p-6 rounded-3xl relative z-10 flex items-center justify-between">
         <div>
-          <h2 className="text-3xl font-black text-white tracking-tight flex items-center gap-3">
+          <h2 className="text-3xl font-black text-foreground tracking-tight flex items-center gap-3">
             Waste Tracking
             <div className="h-2 w-2 rounded-full bg-red-500 shadow-[0_0_10px_#ef4444]"></div>
           </h2>
@@ -82,8 +82,8 @@ export default async function WasteTrackingPage({ searchParams }: { searchParams
 
         {/* Right Table */}
         <div className="lg:col-span-2 glass-panel rounded-3xl overflow-hidden flex flex-col">
-          <div className="p-6 border-b border-white/10 bg-white/5 backdrop-blur-md flex items-center justify-between">
-            <h3 className="text-lg font-bold text-white tracking-wide">Recent Waste / Spoilage</h3>
+          <div className="p-6 border-b border-border/50 bg-white/5 backdrop-blur-md flex items-center justify-between">
+            <h3 className="text-lg font-bold text-foreground tracking-wide">Recent Waste / Spoilage</h3>
             <div className="flex items-center gap-3">
               <WasteTimeFilter />
               {isOwner && (
@@ -96,14 +96,14 @@ export default async function WasteTrackingPage({ searchParams }: { searchParams
           <div className="flex-1 overflow-auto max-h-[600px] p-0">
             <Table>
               <TableHeader>
-                <TableRow className="border-b border-white/10 hover:bg-transparent">
-                  <TableHead className="font-bold text-slate-400 uppercase tracking-widest text-[10px] h-12 bg-black/40 sticky top-0 z-20">Date / Time</TableHead>
-                  <TableHead className="font-bold text-slate-400 uppercase tracking-widest text-[10px] h-12 bg-black/40 sticky top-0 z-20">Item & Notes</TableHead>
-                  <TableHead className="font-bold text-slate-400 uppercase tracking-widest text-[10px] h-12 bg-black/40 sticky top-0 z-20">Vendor Logged</TableHead>
-                  <TableHead className="font-bold text-slate-400 uppercase tracking-widest text-[10px] h-12 bg-black/40 sticky top-0 z-20 text-right">Lost Qty</TableHead>
-                  <TableHead className="font-bold text-slate-400 uppercase tracking-widest text-[10px] h-12 bg-black/40 sticky top-0 z-20">Discarded By</TableHead>
+                <TableRow className="border-b border-border/10 hover:bg-transparent">
+                  <TableHead className="font-bold text-muted-foreground uppercase tracking-widest text-[10px] h-12 bg-muted/20 dark:bg-black/40 sticky top-0 z-20">Date / Time</TableHead>
+                  <TableHead className="font-bold text-muted-foreground uppercase tracking-widest text-[10px] h-12 bg-muted/20 dark:bg-black/40 sticky top-0 z-20">Item & Notes</TableHead>
+                  <TableHead className="font-bold text-muted-foreground uppercase tracking-widest text-[10px] h-12 bg-muted/20 dark:bg-black/40 sticky top-0 z-20">Vendor Logged</TableHead>
+                  <TableHead className="font-bold text-muted-foreground uppercase tracking-widest text-[10px] h-12 bg-muted/20 dark:bg-black/40 sticky top-0 z-20 text-right">Lost Qty</TableHead>
+                  <TableHead className="font-bold text-muted-foreground uppercase tracking-widest text-[10px] h-12 bg-muted/20 dark:bg-black/40 sticky top-0 z-20">Discarded By</TableHead>
                   {isOwner && (
-                    <TableHead className="font-bold text-slate-400 uppercase tracking-widest text-[10px] h-12 bg-black/40 sticky top-0 z-20 text-center">Revert</TableHead>
+                    <TableHead className="font-bold text-muted-foreground uppercase tracking-widest text-[10px] h-12 bg-muted/20 dark:bg-black/40 sticky top-0 z-20 text-center">Revert</TableHead>
                   )}
                 </TableRow>
               </TableHeader>
@@ -124,8 +124,8 @@ export default async function WasteTrackingPage({ searchParams }: { searchParams
                         <span className="text-slate-300">{formatDateIST(log.createdAt)}</span> <span className="opacity-50">{formatTimeIST(log.createdAt)}</span>
                       </TableCell>
                       <TableCell>
-                        <div className="font-bold text-slate-200 group-hover:text-white transition-colors">{log.Item.name}</div>
-                        <div className="text-[10px] text-slate-500 uppercase tracking-widest font-black mt-1">{log.notes}</div>
+                        <div className="font-bold text-foreground/90 group-hover:text-foreground transition-colors">{log.Item.name}</div>
+                        <div className="text-[10px] text-muted-foreground uppercase tracking-widest font-black mt-1">{log.notes}</div>
                       </TableCell>
                       <TableCell>
                         <div className="text-sm font-bold text-slate-300">{log.Vendor?.name || "None"}</div>
@@ -149,9 +149,9 @@ export default async function WasteTrackingPage({ searchParams }: { searchParams
                                 <div className="w-12 h-12 bg-amber-500/10 rounded-2xl flex items-center justify-center mb-4 border border-amber-500/20">
                                   <Undo2 className="w-6 h-6 text-amber-400" />
                                 </div>
-                                <DialogTitle className="text-xl font-black text-white">Revert Waste Entry?</DialogTitle>
-                                <DialogDescription className="text-slate-400 leading-relaxed">
-                                  This will restore <span className="text-emerald-400 font-bold">+{log.quantity} {log.Item.piecesPerBox ? 'pcs' : log.Item.unit}</span> of <span className="text-white font-bold">{log.Item.name}</span> back into the main stock and remove the vendor penalty.
+                                <DialogTitle className="text-xl font-black text-foreground">Revert Waste Entry?</DialogTitle>
+                                <DialogDescription className="text-muted-foreground leading-relaxed">
+                                  This will restore <span className="text-emerald-500 font-bold">+{log.quantity} {log.Item.piecesPerBox ? 'pcs' : log.Item.unit}</span> of <span className="text-foreground font-bold">{log.Item.name}</span> back into the main stock and remove the vendor penalty.
                                 </DialogDescription>
                               </DialogHeader>
                               <form action={revertWasteEntry} className="mt-4">

@@ -62,13 +62,13 @@ export function GrossRevenueModal({ totalRevenue }: { totalRevenue: number }) {
           <h3 className="text-xs font-bold text-muted-foreground uppercase tracking-widest">
             Gross Revenue
           </h3>
-          <TrendingUp className="text-emerald-400 w-5 h-5" />
+          <TrendingUp className="text-emerald-600 dark:text-emerald-400 w-5 h-5" />
         </div>
-        <p className="text-4xl font-black text-white text-glow">
+        <p className="text-4xl font-black text-foreground">
           ₹{totalRevenue.toFixed(2)}
         </p>
         {/* hint badge */}
-        <div className="mt-3 text-[10px] font-bold text-emerald-300/60 uppercase tracking-widest">
+        <div className="mt-3 text-[10px] font-bold text-emerald-600 dark:text-emerald-300/60 uppercase tracking-widest">
           Click for 7-day report ↗
         </div>
       </div>
@@ -81,18 +81,17 @@ export function GrossRevenueModal({ totalRevenue }: { totalRevenue: number }) {
           style={{ background: "rgba(0,0,0,0.75)", backdropFilter: "blur(8px)" }}
         >
           <div
-            className="relative w-full max-w-2xl rounded-3xl border border-white/10 shadow-2xl overflow-hidden"
-            style={{ background: "linear-gradient(135deg,#0f172a 0%,#1e293b 100%)" }}
+            className="relative w-full max-w-2xl rounded-3xl border border-border bg-background shadow-2xl overflow-hidden"
           >
             {/* Header */}
-            <div className="flex items-center justify-between px-7 py-5 border-b border-white/10 bg-white/5 backdrop-blur-xl">
+            <div className="flex items-center justify-between px-7 py-5 border-b border-border bg-muted/30 backdrop-blur-xl">
               <div className="flex items-center gap-3">
-                <TrendingUp className="text-emerald-400 w-5 h-5" />
+                <TrendingUp className="text-emerald-500 dark:text-emerald-400 w-5 h-5" />
                 <div>
-                  <h2 className="text-base font-black text-white uppercase tracking-widest">
+                  <h2 className="text-base font-black text-foreground uppercase tracking-widest">
                     Gross Revenue Report
                   </h2>
-                  <p className="text-[11px] text-slate-400 font-medium mt-0.5">
+                  <p className="text-[11px] text-muted-foreground font-medium mt-0.5">
                     Last 7 Days · Daily Breakdown
                   </p>
                 </div>
@@ -100,7 +99,7 @@ export function GrossRevenueModal({ totalRevenue }: { totalRevenue: number }) {
               <button
                 id="close-revenue-modal"
                 onClick={() => setOpen(false)}
-                className="p-2 rounded-full hover:bg-white/10 text-slate-400 hover:text-white transition-colors"
+                className="p-2 rounded-full hover:bg-muted text-muted-foreground hover:text-foreground transition-colors"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -114,47 +113,47 @@ export function GrossRevenueModal({ totalRevenue }: { totalRevenue: number }) {
                   <span className="text-sm font-medium">Loading report…</span>
                 </div>
               ) : (
-                <div className="overflow-x-auto rounded-2xl border border-white/10">
+                <div className="overflow-x-auto rounded-2xl border border-border">
                   <table className="w-full text-sm border-collapse">
                     <thead>
-                      <tr className="bg-black/40 text-[11px] font-black uppercase tracking-widest text-slate-400">
+                      <tr className="bg-muted/50 dark:bg-black/40 text-[11px] font-black uppercase tracking-widest text-muted-foreground">
                         <th className="px-5 py-3.5 text-left rounded-tl-2xl">Date</th>
                         <th className="px-5 py-3.5 text-right">
-                          <span className="text-amber-400">💵</span> Cash
+                          <span className="text-amber-500 dark:text-amber-400">💵</span> Cash
                         </th>
                         <th className="px-5 py-3.5 text-right">
-                          <span className="text-blue-400">💳</span> UPI / Card
+                          <span className="text-blue-500 dark:text-blue-400">💳</span> UPI / Card
                         </th>
                         <th className="px-5 py-3.5 text-right rounded-tr-2xl">
                           Total
                         </th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-white/5">
+                    <tbody className="divide-y divide-border/50">
                       {days.map((d, i) => (
                         <tr
                           key={d.date}
-                          className={`hover:bg-white/5 transition-colors ${
+                          className={`hover:bg-muted/5 transition-colors ${
                             i === days.length - 1
                               ? "bg-emerald-500/5 border-t border-emerald-500/20"
                               : ""
                           }`}
                         >
-                          <td className="px-5 py-3.5 font-bold text-slate-300">
+                          <td className="px-5 py-3.5 font-black text-foreground/90">
                             {d.date}
                             {i === days.length - 1 && (
-                              <span className="ml-2 text-[9px] bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 px-2 py-0.5 rounded-full font-black uppercase tracking-widest">
+                              <span className="ml-2 text-[9px] bg-emerald-500/20 text-emerald-700 dark:text-emerald-400 border border-emerald-500/30 px-2 py-0.5 rounded-full font-black uppercase tracking-widest">
                                 Today
                               </span>
                             )}
                           </td>
-                          <td className="px-5 py-3.5 text-right text-amber-300 font-semibold">
+                          <td className="px-5 py-3.5 text-right text-amber-700 dark:text-amber-300 font-bold">
                             ₹{d.cash.toFixed(2)}
                           </td>
-                          <td className="px-5 py-3.5 text-right text-blue-300 font-semibold">
+                          <td className="px-5 py-3.5 text-right text-blue-700 dark:text-blue-300 font-bold">
                             ₹{d.online.toFixed(2)}
                           </td>
-                          <td className="px-5 py-3.5 text-right font-black text-white">
+                          <td className="px-5 py-3.5 text-right font-black text-foreground text-base">
                             ₹{d.total.toFixed(2)}
                           </td>
                         </tr>
@@ -163,17 +162,17 @@ export function GrossRevenueModal({ totalRevenue }: { totalRevenue: number }) {
 
                     {/* Grand-total footer */}
                     <tfoot>
-                      <tr className="bg-black/50 border-t-2 border-white/20 text-[11px] font-black uppercase tracking-widest">
-                        <td className="px-5 py-3.5 text-slate-400 rounded-bl-2xl">
+                      <tr className="bg-muted/50 dark:bg-black/50 border-t-2 border-border/50 text-[11px] font-black uppercase tracking-widest">
+                        <td className="px-5 py-3.5 text-muted-foreground rounded-bl-2xl">
                           7-Day Total
                         </td>
-                        <td className="px-5 py-3.5 text-right text-amber-400">
+                        <td className="px-5 py-3.5 text-right text-amber-600 dark:text-amber-400">
                           ₹{grandCash.toFixed(2)}
                         </td>
-                        <td className="px-5 py-3.5 text-right text-blue-400">
+                        <td className="px-5 py-3.5 text-right text-blue-600 dark:text-blue-400">
                           ₹{grandOnline.toFixed(2)}
                         </td>
-                        <td className="px-5 py-3.5 text-right text-emerald-400 text-sm rounded-br-2xl">
+                        <td className="px-5 py-3.5 text-right text-emerald-600 dark:text-emerald-400 text-sm rounded-br-2xl">
                           ₹{grandTotal.toFixed(2)}
                         </td>
                       </tr>

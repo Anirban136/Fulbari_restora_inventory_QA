@@ -68,8 +68,8 @@ export function UnifiedSidebar({ user }: { user: any }) {
   return (
     <>
       {/* Mobile Top Header (Fixed) */}
-      <div className="lg:hidden fixed top-0 left-0 right-0 h-20 px-6 flex items-center justify-between border-b border-white/10 bg-black/40 dark:bg-black/40 backdrop-blur-xl z-[45] pointer-events-none">
-        <h1 className="text-xl font-black text-emerald-400 tracking-tighter">FULBARI</h1>
+      <div className="lg:hidden fixed top-0 left-0 right-0 h-20 px-6 flex items-center justify-between border-b border-border/50 bg-background/80 backdrop-blur-xl z-[45]">
+        <h1 className="text-xl font-black text-emerald-500 dark:text-emerald-400 tracking-tighter">FULBARI</h1>
         <div className="flex items-center gap-3 pointer-events-auto">
           <ThemeToggle />
           <Button 
@@ -96,29 +96,29 @@ export function UnifiedSidebar({ user }: { user: any }) {
           />
         )}
 
-        <aside className="relative h-full flex flex-col border-r border-white/10 bg-black/95 lg:bg-black/20 backdrop-blur-3xl lg:backdrop-blur-none z-50 overflow-hidden shadow-[20px_0_50px_rgba(0,0,0,0.5)] lg:shadow-none">
+        <aside className="relative h-full flex flex-col border-r border-border/50 bg-sidebar lg:bg-background/20 backdrop-blur-3xl lg:backdrop-blur-none z-50 overflow-hidden shadow-[20px_0_50px_rgba(0,0,0,0.05)] dark:shadow-[20px_0_50px_rgba(0,0,0,0.5)] lg:shadow-none transition-colors duration-500">
           {/* Grain Overlay */}
           <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-5 mix-blend-overlay pointer-events-none"></div>
 
-          <div className="p-8 border-b border-white/10 shrink-0 flex items-center justify-between">
+          <div className="p-8 border-b border-border/50 shrink-0 flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-200 tracking-tighter text-glow">FULBARI</h1>
-              <p className="text-[10px] font-black tracking-[0.2em] uppercase text-muted-foreground mt-2 opacity-60">Operations Unit</p>
+              <h1 className="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-emerald-600 to-teal-800 dark:from-emerald-400 dark:to-teal-200 tracking-tighter text-glow">FULBARI</h1>
+              <p className="text-[10px] font-black tracking-[0.2em] uppercase text-muted-foreground mt-2 opacity-80">Operations Unit</p>
             </div>
             <ThemeToggle />
           </div>
           
-          <div className="p-6 border-b border-white/10 bg-white/5 shrink-0">
+          <div className="p-6 border-b border-border/50 bg-muted/20 shrink-0">
              <div className="flex items-center gap-3">
                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-500 p-0.5 shadow-lg">
-                 <div className="w-full h-full rounded-[10px] bg-black flex items-center justify-center font-black text-emerald-400 text-lg">
+                 <div className="w-full h-full rounded-[10px] bg-background dark:bg-black flex items-center justify-center font-black text-emerald-500 dark:text-emerald-400 text-lg">
                    {user.name?.[0].toUpperCase()}
                  </div>
                </div>
-               <div className="flex-1 min-w-0">
-                 <p className="font-bold text-white text-sm truncate">{user.name}</p>
-                 <p className="text-[10px] font-black tracking-widest uppercase text-emerald-400/80 mt-0.5">{user.role.replace('_', ' ')}</p>
-               </div>
+                <div className="flex-1 min-w-0">
+                  <p className="font-black text-foreground text-sm truncate">{user.name}</p>
+                  <p className="text-[10px] font-black tracking-widest uppercase text-emerald-600 dark:text-emerald-400 mt-0.5">{user.role.replace('_', ' ')}</p>
+                </div>
              </div>
           </div>
 
@@ -132,15 +132,15 @@ export function UnifiedSidebar({ user }: { user: any }) {
                   className={cn(
                     "flex items-center gap-3 px-4 py-3.5 rounded-2xl transition-all duration-300 group relative overflow-hidden",
                     isActive 
-                      ? "bg-emerald-500/10 text-white border border-emerald-500/20 shadow-[0_0_20px_rgba(16,185,129,0.1)]" 
-                      : "text-slate-400 hover:text-white hover:bg-white/5"
+                      ? "bg-emerald-500/10 text-foreground border border-emerald-500/20 shadow-[0_0_20px_rgba(16,185,129,0.05)]" 
+                      : "text-muted-foreground hover:text-foreground hover:bg-muted/10 transition-colors"
                   )}
                 >
                   <item.icon className={cn(
                     "w-5 h-5 transition-transform group-hover:scale-110",
-                    isActive ? "text-emerald-400" : "text-slate-500 group-hover:text-slate-300"
+                    isActive ? "text-emerald-800 dark:text-emerald-400" : "text-foreground group-hover:text-foreground"
                   )} />
-                  <span className="font-bold tracking-tight text-sm">{item.name}</span>
+                  <span className="font-black tracking-tight text-sm">{item.name}</span>
                   {isActive && (
                     <div className="ml-auto w-1.5 h-1.5 rounded-full bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,1)]" />
                   )}
@@ -151,7 +151,7 @@ export function UnifiedSidebar({ user }: { user: any }) {
             })}
           </nav>
 
-          <div className="p-6 border-t border-white/10 bg-black/40 shrink-0">
+          <div className="p-6 border-t border-border/50 bg-muted/5 shrink-0">
             <UserControls role={user.role} />
           </div>
         </aside>

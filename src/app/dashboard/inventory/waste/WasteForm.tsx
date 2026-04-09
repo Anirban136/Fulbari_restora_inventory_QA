@@ -68,12 +68,12 @@ export function WasteForm({ items, vendors }: { items: Item[], vendors: Vendor[]
   }
 
   return (
-    <div className="glass-panel p-6 sm:p-8 rounded-3xl self-start hover:border-white/20 transition-all border border-red-500/10">
+    <div className="glass-panel p-6 sm:p-8 rounded-3xl self-start hover:border-red-500/20 transition-all border border-red-500/10">
       <div className="flex items-center gap-4 mb-8">
         <div className="h-12 w-12 bg-red-500/10 rounded-2xl flex items-center justify-center border border-red-500/20 shadow-[0_0_15px_-3px_rgba(239,68,68,0.3)]">
           <Trash2 className="w-6 h-6 text-red-500" />
         </div>
-        <h3 className="text-xl font-bold text-white tracking-tight">Log Waste / Damage</h3>
+        <h3 className="text-xl font-bold text-foreground tracking-tight">Log Waste / Damage</h3>
       </div>
       
       <form id="waste-form" action={handleSubmit} className="space-y-6">
@@ -92,24 +92,24 @@ export function WasteForm({ items, vendors }: { items: Item[], vendors: Vendor[]
         )}
 
         <div className="space-y-2">
-          <Label htmlFor="categoryFilter" className="text-xs font-bold text-slate-400 uppercase tracking-widest">
+          <Label htmlFor="categoryFilter" className="text-xs font-black text-foreground/70 uppercase tracking-widest">
             Select Category
           </Label>
           <select
             id="categoryFilter"
             value={selectedCategory}
             onChange={(e) => setSelectedCategory(e.target.value)}
-            className="w-full h-12 px-4 py-2 rounded-xl border border-white/10 bg-black/40 text-white placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-red-500/50 transition-all shadow-inner font-medium"
+            className="w-full h-12 px-4 py-2 rounded-xl border border-border bg-background focus:ring-2 focus:ring-red-500/50 transition-all shadow-inner font-medium text-foreground"
           >
-            <option value="All Categories" className="bg-slate-900 text-white font-bold">-- All Categories --</option>
+            <option value="All Categories" className="bg-card text-foreground font-bold">-- All Categories --</option>
             {sortedCategories.map(cat => (
-              <option key={cat} value={cat} className="bg-slate-900 text-white">{cat}</option>
+              <option key={cat} value={cat} className="bg-card text-foreground">{cat}</option>
             ))}
           </select>
         </div>
 
         <div className="space-y-4">
-          <Label htmlFor="itemId" className="text-xs font-bold text-slate-400 uppercase tracking-widest">Item Name (Type to search)</Label>
+          <Label htmlFor="itemId" className="text-xs font-black text-foreground/70 uppercase tracking-widest">Item Name (Type to search)</Label>
           <ItemSearchableSelect 
             key={selectedCategory}
             items={filteredItems} 
@@ -121,10 +121,10 @@ export function WasteForm({ items, vendors }: { items: Item[], vendors: Vendor[]
           {selectedItem && selectedItem.piecesPerBox && (
             <div className="p-4 rounded-2xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-between animate-in fade-in slide-in-from-left-2 transition-all">
                <div className="flex flex-col">
-                <span className="text-[10px] font-black text-blue-400 uppercase tracking-widest whitespace-nowrap">Box Configuration</span>
-                <span className="text-sm font-bold text-white mt-0.5 whitespace-nowrap">Non-updateable catalog data</span>
+                <span className="text-[10px] font-black text-blue-500 uppercase tracking-widest whitespace-nowrap">Box Configuration</span>
+                <span className="text-sm font-bold text-foreground mt-0.5 whitespace-nowrap">Non-updateable catalog data</span>
               </div>
-              <div className="px-4 py-2 rounded-xl bg-blue-500/20 border border-blue-500/30 text-blue-100 font-black tracking-tighter text-lg whitespace-nowrap shadow-[0_0_15px_-5px_rgba(59,130,246,0.4)]">
+              <div className="px-4 py-2 rounded-xl bg-blue-500/10 border border-blue-500/30 text-blue-600 dark:text-blue-100 font-black tracking-tighter text-lg whitespace-nowrap shadow-sm">
                 {selectedItem.piecesPerBox} <span className="text-xs opacity-60 uppercase font-black ml-1">pcs</span> / BOX
               </div>
             </div>
@@ -133,47 +133,47 @@ export function WasteForm({ items, vendors }: { items: Item[], vendors: Vendor[]
 
         <div className="space-y-2">
           <div className="flex items-center justify-between">
-            <Label htmlFor="vendorId" className="text-xs font-bold text-slate-400 uppercase tracking-widest">Select Vendor (To claim deduction)</Label>
+            <Label htmlFor="vendorId" className="text-xs font-black text-foreground/70 uppercase tracking-widest">Select Vendor (To claim deduction)</Label>
           </div>
           <select
             id="vendorId"
             name="vendorId"
             required
-            className="w-full h-12 px-4 py-2 rounded-xl border border-white/10 bg-black/40 text-white placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-red-500/50 transition-all shadow-inner font-medium"
+            className="w-full h-12 px-4 py-2 rounded-xl border border-border bg-background focus:ring-2 focus:ring-red-500/50 transition-all shadow-inner font-medium text-foreground"
           >
-            <option value="" disabled selected className="bg-slate-900 text-slate-500 font-bold">-- Select Vendor For Penalty --</option>
+            <option value="" disabled selected className="bg-card text-muted-foreground font-bold">-- Select Vendor For Penalty --</option>
             {vendors.map(v => (
-              <option key={v.id} value={v.id} className="bg-slate-900 text-white">{v.name}</option>
+              <option key={v.id} value={v.id} className="bg-card text-foreground">{v.name}</option>
             ))}
           </select>
         </div>
         
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div className="space-y-2">
-            <Label htmlFor="quantity" className="text-xs font-bold text-slate-400 uppercase tracking-widest">Discard Quantity</Label>
-            <Input id="quantity" name="quantity" type="number" step="0.01" min="0.01" placeholder="e.g. 5" required className="h-12 bg-black/40 border-white/10 text-white placeholder:text-slate-600 rounded-xl focus-visible:ring-red-500/50 shadow-inner" />
+            <Label htmlFor="quantity" className="text-xs font-black text-foreground/70 uppercase tracking-widest">Discard Quantity</Label>
+            <Input id="quantity" name="quantity" type="number" step="0.01" min="0.01" placeholder="e.g. 5" required className="h-12 bg-background border-border text-foreground rounded-xl focus-visible:ring-red-500/50 shadow-inner" />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="unitType" className="text-xs font-bold text-slate-400 uppercase tracking-widest">Unit Type</Label>
+            <Label htmlFor="unitType" className="text-xs font-black text-foreground/70 uppercase tracking-widest">Unit Type</Label>
             <select
               id="unitType"
               name="unitType"
               required
               value={unitType}
               onChange={(e) => setUnitType(e.target.value)}
-              className="w-full h-12 px-4 py-2 rounded-xl border border-white/10 bg-black/40 text-white focus:outline-none focus:ring-2 focus:ring-red-500/50 transition-all shadow-inner font-medium"
+              className="w-full h-12 px-4 py-2 rounded-xl border border-border bg-background focus:ring-2 focus:ring-red-500/50 transition-all shadow-inner font-medium text-foreground"
             >
-              <option value="pieces" className="bg-slate-900 text-white italic capitalize">Pieces ({selectedItem?.unit || 'pcs'})</option>
-              <option value="box" className="bg-slate-900 text-white font-bold" disabled={!selectedItem?.piecesPerBox}>Boxes (Box)</option>
-              <option value="packet" className="bg-slate-900 text-white font-bold" disabled={!selectedItem?.piecesPerBox}>Packets (Packet)</option>
-              <option value="plate" className="bg-slate-900 text-white font-bold" disabled={!selectedItem?.piecesPerBox}>Plates (Plate)</option>
+              <option value="pieces" className="bg-card text-foreground italic capitalize">Pieces ({selectedItem?.unit || 'pcs'})</option>
+              <option value="box" className="bg-card text-foreground font-bold" disabled={!selectedItem?.piecesPerBox}>Boxes (Box)</option>
+              <option value="packet" className="bg-card text-foreground font-bold" disabled={!selectedItem?.piecesPerBox}>Packets (Packet)</option>
+              <option value="plate" className="bg-card text-foreground font-bold" disabled={!selectedItem?.piecesPerBox}>Plates (Plate)</option>
             </select>
           </div>
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="notes" className="text-xs font-bold text-slate-400 uppercase tracking-widest">Reason for Waste</Label>
-          <Input id="notes" name="notes" placeholder="e.g. Broken packages, expired..." required className="h-12 bg-black/40 border-white/10 text-white placeholder:text-slate-600 rounded-xl focus-visible:ring-red-500/50 shadow-inner block" />
+          <Label htmlFor="notes" className="text-xs font-black text-foreground/70 uppercase tracking-widest">Reason for Waste</Label>
+          <Input id="notes" name="notes" placeholder="e.g. Broken packages, expired..." required className="h-12 bg-background border-border text-foreground rounded-xl focus-visible:ring-red-500/50 shadow-inner block" />
         </div>
 
         <Button 
