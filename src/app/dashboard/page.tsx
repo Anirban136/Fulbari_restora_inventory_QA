@@ -78,11 +78,11 @@ export default async function DashboardOverview() {
       <div className="absolute top-0 right-0 w-96 h-96 bg-primary/10 rounded-full blur-[100px] pointer-events-none"></div>
 
       <header className="relative z-10 pt-4 lg:pt-0">
-        <h2 className="text-3xl lg:text-4xl font-black tracking-tight text-foreground flex items-center gap-3">
+        <h2 className="text-2xl lg:text-4xl font-black tracking-tight text-foreground flex items-center gap-3">
           Executive Overview
           <div className="h-2 w-2 lg:h-3 lg:w-3 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_15px_#10b981]"></div>
         </h2>
-        <p className="text-foreground/70 dark:text-muted-foreground mt-2 text-sm lg:text-lg font-bold">Real-time performance metrics across all operations.</p>
+        <p className="text-foreground/70 dark:text-muted-foreground mt-2 text-xs lg:text-lg font-bold">Real-time performance metrics across all operations.</p>
       </header>
 
       {/* Low Stock Alerts */}
@@ -118,28 +118,28 @@ export default async function DashboardOverview() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <GrossRevenueModal totalRevenue={totalRevenue} />
 
-        <div className="glass-panel p-6 rounded-3xl group hover:-translate-y-1 transition-transform duration-300">
+        <div className="glass-panel p-4 lg:p-6 rounded-2xl lg:rounded-3xl group hover:-translate-y-1 transition-transform duration-300">
           <div className="flex justify-between items-start mb-4">
-            <h3 className="text-xs font-bold text-muted-foreground uppercase tracking-widest">Cash Collected</h3>
-            <span className="text-amber-500 text-xl">💵</span>
+            <h3 className="text-[10px] lg:text-xs font-bold text-muted-foreground uppercase tracking-widest">Cash Collected</h3>
+            <span className="text-amber-500 text-lg lg:text-xl">💵</span>
           </div>
-          <p className="text-3xl font-black text-foreground">₹{cashRevenue.toFixed(2)}</p>
+          <p className="text-2xl lg:text-3xl font-black text-foreground">₹{cashRevenue.toFixed(2)}</p>
         </div>
 
-        <div className="glass-panel p-6 rounded-3xl group hover:-translate-y-1 transition-transform duration-300">
+        <div className="glass-panel p-4 lg:p-6 rounded-2xl lg:rounded-3xl group hover:-translate-y-1 transition-transform duration-300">
           <div className="flex justify-between items-start mb-4">
-            <h3 className="text-xs font-bold text-muted-foreground uppercase tracking-widest">Digital (UPI/Card)</h3>
-            <CreditCard className="text-blue-600 dark:text-blue-400 w-5 h-5" />
+            <h3 className="text-[10px] lg:text-xs font-bold text-muted-foreground uppercase tracking-widest">Digital (UPI/Card)</h3>
+            <CreditCard className="text-blue-600 dark:text-blue-400 w-4 h-4 lg:w-5 lg:h-5" />
           </div>
-          <p className="text-3xl font-black text-foreground">₹{onlineRevenue.toFixed(2)}</p>
+          <p className="text-2xl lg:text-3xl font-black text-foreground">₹{onlineRevenue.toFixed(2)}</p>
         </div>
         
-        <div className="glass-panel p-6 rounded-3xl group hover:-translate-y-1 transition-transform duration-300">
+        <div className="glass-panel p-4 lg:p-6 rounded-2xl lg:rounded-3xl group hover:-translate-y-1 transition-transform duration-300">
            <div className="flex justify-between items-start mb-4">
-             <h3 className="text-xs font-bold text-muted-foreground uppercase tracking-widest">Split Payments</h3>
-             <Activity className="text-purple-600 dark:text-purple-400 w-5 h-5" />
+             <h3 className="text-[10px] lg:text-xs font-bold text-muted-foreground uppercase tracking-widest">Split Payments</h3>
+             <Activity className="text-purple-600 dark:text-purple-400 w-4 h-4 lg:w-5 lg:h-5" />
            </div>
-           <p className="text-3xl font-black text-foreground">₹{splitRevenue.toFixed(2)}</p>
+           <p className="text-2xl lg:text-3xl font-black text-foreground">₹{splitRevenue.toFixed(2)}</p>
         </div>
       </div>
 
@@ -148,14 +148,14 @@ export default async function DashboardOverview() {
         {/* Category-Wise Graphical Sales */}
         <div className="lg:col-span-2 glass-panel rounded-3xl overflow-hidden flex flex-col relative group">
           <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-500/10 rounded-full blur-[80px] pointer-events-none group-hover:bg-indigo-500/20 transition-all"></div>
-          <div className="p-6 border-b border-border/50 bg-muted/20 dark:bg-white/5 flex justify-between items-center backdrop-blur-md relative z-10">
+          <div className="p-4 lg:p-6 border-b border-border/50 bg-muted/20 dark:bg-white/5 flex justify-between items-center backdrop-blur-md relative z-10">
             <div className="flex items-center gap-3">
-              <BarChart3 className="text-indigo-600 dark:text-indigo-400 w-5 h-5" />
-              <h3 className="text-lg font-black text-foreground tracking-wide">Category Sales</h3>
+              <BarChart3 className="text-indigo-600 dark:text-indigo-400 w-4 h-4 lg:w-5 lg:h-5" />
+              <h3 className="text-base lg:text-lg font-black text-foreground tracking-wide">Category Sales</h3>
             </div>
-            <span className="text-[10px] font-black tracking-widest bg-indigo-500/10 dark:bg-indigo-500/20 border border-indigo-500/30 px-3 py-1 rounded-full text-indigo-700 dark:text-indigo-300 uppercase">Live Metrics</span>
+            <span className="text-[8px] lg:text-[10px] font-black tracking-widest bg-indigo-500/10 dark:bg-indigo-500/20 border border-indigo-500/30 px-2 lg:px-3 py-1 rounded-full text-indigo-700 dark:text-indigo-300 uppercase">Live Metrics</span>
           </div>
-          <div className="p-8 bg-muted/10 dark:bg-black/20 flex-1 relative z-10">
+          <div className="p-4 lg:p-8 bg-muted/10 dark:bg-black/20 flex-1 relative z-10">
             {sortedCategories.length === 0 ? (
                <div className="text-center py-10 text-muted-foreground font-medium">No sales data available today.</div>
             ) : (
@@ -163,12 +163,12 @@ export default async function DashboardOverview() {
                   {sortedCategories.map(([category, amount]) => {
                     const percentage = (amount / maxCatSales) * 100
                     return (
-                      <div key={category} className="space-y-2">
+                      <div key={category} className="space-y-1">
                         <div className="flex justify-between items-end">
-                          <span className="font-bold text-muted-foreground uppercase tracking-widest text-[10px]">{category}</span>
-                          <span className="font-black text-foreground">₹{amount.toFixed(2)}</span>
+                          <span className="font-bold text-muted-foreground uppercase tracking-widest text-[9px]">{category}</span>
+                          <span className="font-black text-foreground text-sm">₹{amount.toFixed(2)}</span>
                         </div>
-                        <div className="h-3 w-full bg-white/5 rounded-full overflow-hidden border border-white/5">
+                        <div className="h-2 lg:h-3 w-full bg-white/5 rounded-full overflow-hidden border border-white/5">
                           <div 
                             className="h-full bg-gradient-to-r from-indigo-500 to-sky-400 rounded-full transition-all duration-1000 ease-out" 
                             style={{ width: `${percentage}%` }}
@@ -185,21 +185,21 @@ export default async function DashboardOverview() {
         {/* Top Selling Items */}
         <div className="glass-panel rounded-3xl overflow-hidden flex flex-col relative group">
           <div className="absolute top-0 right-0 w-48 h-48 bg-amber-500/10 rounded-full blur-[50px] pointer-events-none group-hover:bg-amber-500/20 transition-all"></div>
-          <div className="p-6 border-b border-border/50 bg-amber-500/10 flex justify-between items-center backdrop-blur-md relative z-10">
+          <div className="p-4 lg:p-6 border-b border-border/50 bg-amber-500/10 flex justify-between items-center backdrop-blur-md relative z-10">
             <div className="flex gap-3 items-center">
-              <Crown className="text-amber-600 dark:text-amber-400 w-5 h-5" />
-              <h3 className="text-lg font-black text-amber-700 dark:text-amber-200 tracking-wide">Top Sellers</h3>
+              <Crown className="text-amber-600 dark:text-amber-400 w-4 h-4 lg:w-5 lg:h-5" />
+              <h3 className="text-base lg:text-lg font-black text-amber-700 dark:text-amber-200 tracking-wide">Top Sellers</h3>
             </div>
           </div>
-          <div className="p-6 bg-muted/5 dark:bg-black/20 flex-1 relative z-10">
+          <div className="p-4 lg:p-6 bg-muted/5 dark:bg-black/20 flex-1 relative z-10">
              {sortedItems.length === 0 ? (
                <div className="p-8 text-muted-foreground text-center font-medium">No items sold today.</div>
              ) : (
-               <ul className="space-y-3">
+               <ul className="space-y-2">
                  {sortedItems.map((item, index) => (
-                   <li key={item.name} className="p-4 flex gap-4 items-center rounded-2xl bg-muted/5 dark:bg-white/5 border border-border/50 hover:border-amber-500/30 hover:bg-amber-500/5 transition-colors group">
+                   <li key={item.name} className="p-3 lg:p-4 flex gap-3 lg:gap-4 items-center rounded-xl lg:rounded-2xl bg-muted/5 dark:bg-white/5 border border-border/50 hover:border-amber-500/30 hover:bg-amber-500/5 transition-colors group">
                      {/* Rank Badge */}
-                     <div className={`w-8 h-8 rounded-full flex items-center justify-center font-black text-sm shadow-inner shrink-0 ${
+                     <div className={`w-7 h-7 lg:w-8 lg:h-8 rounded-full flex items-center justify-center font-black text-xs lg:text-sm shadow-inner shrink-0 ${
                        index === 0 ? 'bg-amber-500 text-black shadow-[0_0_15px_#f59e0b]' : 
                        index === 1 ? 'bg-slate-200 dark:bg-slate-300 text-slate-800' :
                        index === 2 ? 'bg-amber-700 text-amber-100' :
@@ -208,8 +208,8 @@ export default async function DashboardOverview() {
                        #{index + 1}
                      </div>
                      <div className="flex-1 min-w-0">
-                       <p className="font-bold text-foreground/90 truncate group-hover:text-amber-600 dark:group-hover:text-amber-300 transition-colors text-sm">{item.name}</p>
-                       <p className="text-xs text-muted-foreground font-medium tracking-wide mt-1"><span className="text-emerald-600 dark:text-emerald-400">{item.qty} sold</span> • ₹{item.rev.toFixed(0)}</p>
+                       <p className="font-bold text-foreground/90 truncate group-hover:text-amber-600 dark:group-hover:text-amber-300 transition-colors text-xs lg:text-sm">{item.name}</p>
+                       <p className="text-[10px] lg:text-xs text-muted-foreground font-medium tracking-wide mt-0.5"><span className="text-emerald-600 dark:text-emerald-400">{item.qty} sold</span> • ₹{item.rev.toFixed(0)}</p>
                      </div>
                    </li>
                  ))}
@@ -227,11 +227,11 @@ export default async function DashboardOverview() {
               {Object.keys(outletStats).length === 0 ? (
                  <div className="col-span-3 p-6 text-center text-sm text-foreground/50 italic">No data</div>
               ) : (
-                 Object.entries(outletStats).map(([name, stats]) => (
-                   <div key={name} className="p-6 flex flex-col items-center justify-center hover:bg-muted/5 transition-colors group">
-                     <span className="text-xs font-black text-foreground/60 uppercase tracking-widest mb-4 group-hover:text-foreground">{name}</span>
-                     <span className="text-3xl font-black text-foreground group-hover:text-emerald-700 dark:group-hover:text-emerald-400 transition-colors mb-4">₹{stats.total.toFixed(2)}</span>
-                     <div className="w-full space-y-2">
+                  Object.entries(outletStats).map(([name, stats]) => (
+                    <div key={name} className="p-4 lg:p-6 flex flex-col items-center justify-center hover:bg-muted/5 transition-colors group text-center">
+                      <span className="text-[10px] lg:text-xs font-black text-foreground/60 uppercase tracking-widest mb-3 group-hover:text-foreground">{name}</span>
+                      <span className="text-2xl lg:text-3xl font-black text-foreground group-hover:text-emerald-700 dark:group-hover:text-emerald-400 transition-colors mb-4">₹{stats.total.toFixed(2)}</span>
+                      <div className="w-full space-y-1.5 lg:space-y-2">
                        <div className="flex justify-between items-center bg-muted/20 dark:bg-black/20 px-3 py-2 rounded-lg border border-border/50">
                          <span className="text-[10px] uppercase tracking-widest font-bold text-emerald-600 dark:text-emerald-400">💵 Cash</span>
                          <span className="text-xs font-bold text-muted-foreground">₹{stats.cash.toFixed(2)}</span>

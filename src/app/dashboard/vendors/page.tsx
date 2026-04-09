@@ -110,30 +110,30 @@ export default async function VendorsPage() {
       {/* Background Decorators */}
       <div className="absolute top-[-50px] right-[-50px] w-[400px] h-[400px] bg-emerald-500/10 rounded-full blur-[100px] pointer-events-none"></div>
 
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 relative z-10 glass-panel p-6 rounded-3xl">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 relative z-10 glass-panel p-4 lg:p-6 rounded-2xl lg:rounded-3xl">
         <div>
-          <h2 className="text-3xl font-black text-foreground tracking-tight flex items-center gap-3">
+          <h2 className="text-xl lg:text-3xl font-black text-foreground tracking-tight flex items-center gap-3">
             Vendor Management
             <div className="h-2 w-2 rounded-full bg-emerald-500 animate-bounce shadow-[0_0_10px_#10b981]"></div>
           </h2>
-          <p className="text-muted-foreground mt-1 font-medium text-sm tracking-wide uppercase">Track supplier performance, payments and monthly obligations.</p>
+          <p className="text-muted-foreground mt-1 font-medium text-[10px] lg:text-sm tracking-wide uppercase">Track supplier performance and obligations.</p>
         </div>
         
-        <div className="flex flex-col sm:flex-row gap-3">
+        <div className="flex flex-col sm:flex-row gap-2 lg:gap-3">
           {/* Total Owed */}
-          <div className="px-5 py-3 rounded-2xl bg-amber-500/10 border border-amber-500/20 flex flex-col items-center sm:items-end">
-             <span className="text-[10px] font-black text-amber-500 dark:text-amber-400 uppercase tracking-widest mb-1">Total Owed</span>
-             <span className="text-lg font-black text-foreground">₹{totalOwed.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</span>
+          <div className="px-4 py-2 rounded-xl lg:rounded-2xl bg-amber-500/10 border border-amber-500/20 flex flex-col items-center sm:items-end">
+             <span className="text-[9px] lg:text-[10px] font-black text-amber-500 dark:text-amber-400 uppercase tracking-widest">Total Owed</span>
+             <span className="text-base lg:text-lg font-black text-foreground">₹{totalOwed.toLocaleString('en-IN', { minimumFractionDigits: 0 })}</span>
           </div>
           {/* Total Paid */}
-          <div className="px-5 py-3 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex flex-col items-center sm:items-end">
-             <span className="text-[10px] font-black text-emerald-500 dark:text-emerald-400 uppercase tracking-widest mb-1">Total Paid</span>
-             <span className="text-lg font-black text-foreground">₹{totalPaid.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</span>
+          <div className="px-4 py-2 rounded-xl lg:rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex flex-col items-center sm:items-end">
+             <span className="text-[9px] lg:text-[10px] font-black text-emerald-500 dark:text-emerald-400 uppercase tracking-widest">Total Paid</span>
+             <span className="text-base lg:text-lg font-black text-foreground">₹{totalPaid.toLocaleString('en-IN', { minimumFractionDigits: 0 })}</span>
           </div>
           {/* Balance */}
-          <div className={`px-5 py-3 rounded-2xl flex flex-col items-center sm:items-end ${totalBalance > 0 ? 'bg-red-500/10 border border-red-500/20' : 'bg-emerald-500/10 border border-emerald-500/20'}`}>
-             <span className={`text-[10px] font-black uppercase tracking-widest mb-1 ${totalBalance > 0 ? 'text-red-500 dark:text-red-400' : 'text-emerald-500 dark:text-emerald-400'}`}>Balance Due</span>
-             <span className="text-lg font-black text-foreground">₹{totalBalance.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</span>
+          <div className={`px-4 py-2 rounded-xl lg:rounded-2xl flex flex-col items-center sm:items-end ${totalBalance > 0 ? 'bg-red-500/10 border border-red-500/20' : 'bg-emerald-500/10 border border-emerald-500/20'}`}>
+             <span className={`text-[9px] lg:text-[10px] font-black uppercase tracking-widest ${totalBalance > 0 ? 'text-red-500 dark:text-red-400' : 'text-emerald-500 dark:text-emerald-400'}`}>Balance Due</span>
+             <span className="text-base lg:text-lg font-black text-foreground">₹{totalBalance.toLocaleString('en-IN', { minimumFractionDigits: 0 })}</span>
           </div>
           <AddVendorDialog />
         </div>
@@ -168,9 +168,9 @@ export default async function VendorsPage() {
               ) : (
                 vendorStats.map((vendor: any) => (
                   <TableRow key={vendor.id} className="border-b border-white/5 hover:bg-white/5 transition-colors group">
-                    <TableCell className="px-6 py-5">
+                    <TableCell className="px-4 lg:px-6 py-3 lg:py-5">
                       <Link href={`/dashboard/vendors/${vendor.id}`} className="flex flex-col group/link">
-                        <span className="font-black text-foreground group-hover/link:text-emerald-500 transition-colors text-base underline-offset-4 hover:underline">{vendor.name}</span>
+                        <span className="font-black text-foreground group-hover/link:text-emerald-500 transition-colors text-sm lg:text-base underline-offset-4 hover:underline">{vendor.name}</span>
                         <div className="flex items-center gap-1.5 mt-1 opacity-60">
                            <MapPin className="w-3 h-3" />
                            <span className="text-xs text-muted-foreground truncate max-w-[200px]">{vendor.address || 'No address provided'}</span>

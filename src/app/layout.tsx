@@ -19,7 +19,7 @@ const outfit = Outfit({
 export const metadata: Metadata = {
   title: "Fulbari Management App",
   description: "Internal dashboard and POS for Fulbari outlets",
-  viewport: "width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0",
+  viewport: "width=device-width, initial-scale=1",
   themeColor: "#059669", // Emerald-600
   appleWebApp: {
     capable: true,

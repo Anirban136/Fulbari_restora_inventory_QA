@@ -67,19 +67,19 @@ export function UnifiedSidebar({ user }: { user: any }) {
   return (
     <>
       {/* Mobile Top Header (Fixed) */}
-      <div className="lg:hidden fixed top-0 left-0 right-0 h-24 px-6 flex items-center justify-between border-b border-white/5 bg-background/60 backdrop-blur-2xl z-[45] shadow-2xl">
+      <div className="lg:hidden fixed top-0 left-0 right-0 h-16 px-6 flex items-center justify-between border-b border-white/5 bg-background/60 backdrop-blur-2xl z-[45] shadow-2xl">
         <div className="flex flex-col">
-          <h1 className="text-2xl font-black text-emerald-500 dark:text-emerald-400 tracking-tighter leading-none">FULBARI</h1>
-          <p className="text-[8px] font-black tracking-[0.3em] uppercase text-muted-foreground mt-1 opacity-60">Operations Unit</p>
+          <h1 className="text-xl font-black text-emerald-500 dark:text-emerald-400 tracking-tighter leading-none">FULBARI</h1>
+          <p className="text-[7px] font-black tracking-[0.2em] uppercase text-muted-foreground mt-0.5 opacity-50">Operations Unit</p>
         </div>
         <div className="flex items-center gap-3">
           <Button 
             variant="outline" 
             size="icon" 
             onClick={() => setIsOpen(!isOpen)}
-            className="rounded-2xl w-12 h-12 border-emerald-500/20 bg-emerald-500/10 text-emerald-400 shadow-lg active:scale-90 transition-all"
+            className="rounded-xl w-10 h-10 border-emerald-500/20 bg-emerald-500/10 text-emerald-400 shadow-lg active:scale-90 transition-all"
           >
-            {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+            {isOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
           </Button>
         </div>
       </div>

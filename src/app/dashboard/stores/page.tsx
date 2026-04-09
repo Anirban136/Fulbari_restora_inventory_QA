@@ -24,31 +24,31 @@ export default async function OutletsStockPage() {
     <div className="space-y-10 relative">
       <div className="absolute top-[10%] left-[30%] w-[600px] h-[600px] bg-purple-500/10 rounded-full blur-[150px] pointer-events-none -translate-y-1/2"></div>
       
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 relative z-10 glass-panel p-6 rounded-3xl">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 relative z-10 glass-panel p-4 lg:p-6 rounded-2xl lg:rounded-3xl">
         <div>
-          <h2 className="text-3xl font-black text-foreground tracking-tight flex items-center gap-3">
+          <h2 className="text-xl lg:text-3xl font-black text-foreground tracking-tight flex items-center gap-3">
             Outlets Stock
             <div className="h-2 w-2 rounded-full bg-purple-500 shadow-[0_0_10px_#a855f7]"></div>
           </h2>
-          <p className="text-muted-foreground mt-1 font-medium text-sm tracking-wide uppercase">Live visibility into inventory levels across the Restaurant, Cafe, and Chai Joint.</p>
+          <p className="text-muted-foreground mt-1 font-medium text-[10px] lg:text-sm tracking-wide uppercase">Live visibility into inventory levels.</p>
         </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8 relative z-10">
         {outlets.map(outlet => (
           <div key={outlet.id} className="glass-panel rounded-3xl overflow-hidden flex flex-col group hover:-translate-y-1 transition-all duration-300 hover:shadow-[0_10px_40px_-10px_rgba(168,85,247,0.2)] hover:border-purple-500/30">
-            <div className="bg-muted/20 dark:bg-black/40 px-6 py-5 border-b border-border/50 flex justify-between items-center backdrop-blur-md relative overflow-hidden">
+            <div className="bg-muted/20 dark:bg-black/40 px-4 py-3 border-b border-border/50 flex justify-between items-center backdrop-blur-md relative overflow-hidden">
               <div className="absolute -right-4 -top-4 w-24 h-24 bg-purple-500/20 rounded-full blur-[30px] group-hover:bg-purple-500/30 transition-colors pointer-events-none"></div>
               
               <div className="relative z-10">
-                <h3 className="text-xl font-bold text-foreground flex items-center gap-2">
+                <h3 className="text-lg font-bold text-foreground flex items-center gap-2">
                   <StoreIcon className="w-5 h-5 text-purple-600 dark:text-purple-400" />
                   {outlet.name}
                 </h3>
-                <p className="text-[10px] text-purple-600 dark:text-purple-300/80 font-black tracking-[0.2em] mt-1">{outlet.type}</p>
+                <p className="text-[9px] text-purple-600 dark:text-purple-300/80 font-black tracking-[0.2em] mt-0.5">{outlet.type}</p>
               </div>
               
-              <div className="relative z-10 h-12 w-12 flex items-center justify-center rounded-2xl bg-muted/20 border border-border/50 text-foreground font-bold shadow-inner backdrop-blur-md">
+              <div className="relative z-10 h-10 w-10 flex items-center justify-center rounded-xl bg-muted/20 border border-border/50 text-foreground font-bold shadow-inner backdrop-blur-md">
                  {outlet.Stock.length}
               </div>
             </div>

@@ -42,13 +42,13 @@ export default async function GlobalCatalogPage() {
       {/* Background Decorators */}
       <div className="absolute top-[-100px] left-[-100px] w-[400px] h-[400px] bg-primary/10 rounded-full blur-[120px] pointer-events-none"></div>
 
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 relative z-10 glass-panel p-4 sm:p-6 rounded-3xl">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 relative z-10 glass-panel p-4 lg:p-6 rounded-2xl lg:rounded-3xl">
         <div>
-          <h2 className="text-3xl font-black text-foreground tracking-tight flex items-center gap-3">
+          <h2 className="text-xl lg:text-3xl font-black text-foreground tracking-tight flex items-center gap-3">
             Global Catalog
             <div className="h-2 w-2 rounded-full bg-primary animate-pulse shadow-[0_0_10px_oklch(0.55_0.16_150)]"></div>
           </h2>
-          <p className="text-muted-foreground mt-1 font-medium text-sm tracking-wide uppercase">Manage all items available in central inventory</p>
+          <p className="text-muted-foreground mt-1 font-medium text-[10px] lg:text-sm tracking-wide uppercase">Manage all items in central inventory</p>
         </div>
         
         <div className="flex flex-col gap-3 min-w-[200px] w-full sm:w-auto">
@@ -99,12 +99,12 @@ export default async function GlobalCatalogPage() {
                     </TableCell>
                     <TableCell className="text-right">
                       {item.minStock > 0 && item.currentStock <= item.minStock ? (
-                        <span className="inline-flex items-center justify-center px-4 py-1 rounded-xl bg-red-500/20 border border-red-500/30 text-red-400 font-black tracking-widest text-sm shadow-[0_0_15px_-2px_rgba(239,68,68,0.3)] animate-pulse">
-                          {item.currentStock} <span className="text-[10px] ml-1 opacity-80 uppercase font-black">{item.piecesPerBox ? 'pcs' : item.unit}</span>
+                        <span className="inline-flex items-center justify-center px-3 py-1 rounded-lg bg-red-500/20 border border-red-500/30 text-red-400 font-black tracking-widest text-xs shadow-[0_0_15px_-2px_rgba(239,68,68,0.3)] animate-pulse">
+                          {item.currentStock} <span className="text-[9px] ml-1 opacity-80 uppercase font-black">{item.piecesPerBox ? 'pcs' : item.unit}</span>
                         </span>
                       ) : (
-                        <span className="inline-flex items-center justify-center px-4 py-1 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 font-black tracking-widest text-sm shadow-[0_0_10px_-2px_rgba(16,185,129,0.2)]">
-                          {item.currentStock} <span className="text-[10px] ml-1 opacity-80 uppercase font-black">{item.piecesPerBox ? 'pcs' : item.unit}</span>
+                        <span className="inline-flex items-center justify-center px-3 py-1 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 font-black tracking-widest text-xs">
+                          {item.currentStock} <span className="text-[9px] ml-1 opacity-80 uppercase font-black">{item.piecesPerBox ? 'pcs' : item.unit}</span>
                         </span>
                       )}
                     </TableCell>
