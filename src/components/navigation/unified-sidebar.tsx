@@ -66,20 +66,20 @@ export function UnifiedSidebar({ user }: { user: any }) {
 
   return (
     <>
-      {/* Mobile Top Header (Optimized for Visibility) */}
-      <div className="lg:hidden fixed top-0 left-0 right-0 h-16 px-6 flex items-center justify-between border-b border-white/5 bg-background/80 backdrop-blur-3xl z-[45] shadow-2xl">
-        <div className="flex flex-col">
-          <h1 className="text-xl font-black text-emerald-500 dark:text-emerald-400 tracking-tighter leading-none uppercase">FULBARI</h1>
-          <p className="text-[7px] font-black tracking-[0.3em] uppercase text-muted-foreground mt-1 opacity-60">Operations Unit</p>
-        </div>
+      {/* Mobile Top Header (Enlarged & Clickable Branding) */}
+      <div className="lg:hidden fixed top-0 left-0 right-0 h-20 px-8 flex items-center justify-between border-b border-white/5 bg-background/80 backdrop-blur-3xl z-[45] shadow-2xl">
+        <Link href="/dashboard" className="flex flex-col group active:scale-95 transition-transform">
+          <h1 className="text-3xl font-black text-emerald-500 group-hover:text-emerald-400 tracking-tighter leading-none uppercase transition-colors">FULBARI</h1>
+          <p className="text-[9px] font-black tracking-[0.4em] uppercase text-muted-foreground mt-2 opacity-60">Operations Unit</p>
+        </Link>
         <div className="flex items-center gap-4">
           <Button 
             variant="outline" 
             size="icon" 
             onClick={() => setIsOpen(!isOpen)}
-            className="rounded-[1.2rem] w-12 h-12 border-emerald-500/20 bg-emerald-500/10 text-emerald-400 shadow-xl active:scale-90 transition-all flex items-center justify-center p-0"
+            className="rounded-[1.5rem] w-14 h-14 border-emerald-500/20 bg-emerald-500/10 text-emerald-400 shadow-xl active:scale-90 transition-all flex items-center justify-center p-0"
           >
-            {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+            {isOpen ? <X className="w-7 h-7" /> : <Menu className="w-7 h-7" />}
           </Button>
         </div>
       </div>
@@ -101,12 +101,12 @@ export function UnifiedSidebar({ user }: { user: any }) {
           "relative h-full flex flex-col border-r border-white/5 bg-zinc-950 lg:bg-background/20 lg:backdrop-blur-none z-50 overflow-hidden transition-all duration-300",
           isOpen ? "shadow-[20px_0_60px_rgba(0,0,0,0.9)]" : "shadow-none"
         )}>
-          {/* Logo Section in Sidebar (Enlarged for Mobile) */}
+          {/* Logo Section in Sidebar (Enlarged & Clickable) */}
           <div className="p-10 border-b border-white/5 shrink-0">
-            <div>
-              <h1 className="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-200 tracking-tighter uppercase leading-none">FULBARI</h1>
+            <Link href="/dashboard" className="group block active:scale-95 transition-transform">
+              <h1 className="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-200 tracking-tighter uppercase leading-none group-hover:from-emerald-300 group-hover:to-teal-100 transition-all">FULBARI</h1>
               <p className="text-[10px] font-black tracking-[0.4em] uppercase text-muted-foreground mt-3 opacity-60">Operations Unit</p>
-            </div>
+            </Link>
           </div>
           
           {/* User Profile Hook */}
@@ -146,8 +146,6 @@ export function UnifiedSidebar({ user }: { user: any }) {
                   {isActive && (
                     <div className="ml-auto w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_15px_rgba(16,185,129,1)]" />
                   )}
-                  {/* Subtle hover sweep */}
-                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-emerald-500/5 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
                 </Link>
               )
             })}

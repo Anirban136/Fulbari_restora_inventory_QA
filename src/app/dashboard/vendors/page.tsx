@@ -145,7 +145,7 @@ export default async function VendorsPage() {
            <div className="absolute top-0 right-0 p-6 opacity-10 group-hover:scale-110 transition-transform">
              <IndianRupee className="w-12 h-12 text-amber-500" />
            </div>
-           <p className="text-[10px] font-black text-amber-500 uppercase tracking-[0.3em] mb-4">Current Monthly Debt</p>
+           <p className="text-[10px] font-black text-amber-500 uppercase tracking-[0.3em] mb-4">Total Bill Amount</p>
            <h3 className="text-4xl font-black text-white tracking-tighter drop-shadow-[0_0_15px_rgba(245,158,11,0.2)]">
              ₹{totalOwed.toLocaleString('en-IN', { minimumFractionDigits: 0 })}
            </h3>
@@ -160,7 +160,7 @@ export default async function VendorsPage() {
            <div className="absolute top-0 right-0 p-6 opacity-10 group-hover:scale-110 transition-transform">
              <History className="w-12 h-12 text-emerald-500" />
            </div>
-           <p className="text-[10px] font-black text-emerald-500 uppercase tracking-[0.3em] mb-4">Settled This Month</p>
+           <p className="text-[10px] font-black text-emerald-500 uppercase tracking-[0.3em] mb-4">Paid Already</p>
            <h3 className="text-4xl font-black text-white tracking-tighter drop-shadow-[0_0_15px_rgba(16,185,129,0.2)]">
              ₹{totalPaid.toLocaleString('en-IN', { minimumFractionDigits: 0 })}
            </h3>
@@ -181,7 +181,7 @@ export default async function VendorsPage() {
              <AlertTriangle className={cn("w-12 h-12", totalBalance > 0 ? "text-red-500" : "text-emerald-500")} />
            </div>
            <p className={cn("text-[10px] font-black uppercase tracking-[0.3em] mb-4", totalBalance > 0 ? "text-red-500" : "text-emerald-500")}>
-             {totalBalance > 0 ? "Immediate Obligation" : "Account Master Settled"}
+             {totalBalance > 0 ? "Left to Pay" : "Account Master Settled"}
            </p>
            <h3 className="text-4xl font-black text-white tracking-tighter drop-shadow-[0_0_15px_rgba(239,68,68,0.2)]">
              ₹{totalBalance.toLocaleString('en-IN', { minimumFractionDigits: 0 })}
@@ -189,7 +189,7 @@ export default async function VendorsPage() {
            <div className="mt-4 flex items-center gap-2">
              <span className={cn("w-1.5 h-1.5 rounded-full", totalBalance > 0 ? "bg-red-500 animate-ping shadow-[0_0_5px_#ef4444]" : "bg-emerald-500 shadow-[0_0_5px_#10b981]")}></span>
              <span className={cn("text-[9px] font-black uppercase tracking-widest leading-none", totalBalance > 0 ? "text-red-500/60" : "text-emerald-500/60")}>
-               {totalBalance > 0 ? "ACTION REQUIRED" : "CLEAN LEDGER"}
+               {totalBalance > 0 ? "BALANCE REMAINING" : "CLEAN LEDGER"}
              </span>
            </div>
         </div>
