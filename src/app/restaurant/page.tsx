@@ -78,11 +78,15 @@ export default async function RestaurantDashboard() {
                           <span className="font-bold text-slate-200 group-hover:text-white text-lg transition-colors leading-tight block mb-1">{log.Item.name}</span>
                           <p className="text-[10px] text-slate-500 font-medium leading-none">By: <span className="text-slate-400">{log.User.name}</span></p>
                         </div>
-                        <div className="text-right">
-                          <span className="font-black text-rose-400 bg-rose-500/10 border border-rose-500/20 px-4 py-2 rounded-xl text-xl drop-shadow-[0_0_5px_rgba(244,63,94,0.3)]">
+                        <div className="text-right flex flex-col items-end">
+                          <span className="font-black text-rose-400 bg-rose-500/10 border border-rose-500/20 px-4 py-2 rounded-xl text-lg lg:text-xl drop-shadow-[0_0_5px_rgba(244,63,94,0.3)]">
                             +{log.quantity} <span className="text-[10px] ml-1 opacity-70 uppercase text-rose-300 tracking-widest">{log.Item.piecesPerBox ? 'pcs' : log.Item.unit}</span>
                           </span>
-                          <p className="text-[9px] text-slate-500 font-black uppercase tracking-widest mt-2">{log.notes || "STOCK_IN"}</p>
+                          {log.Item.piecesPerBox && (
+                            <span className="text-[10px] text-rose-500/50 font-black uppercase tracking-tighter mt-1">
+                              ({(log.quantity / log.Item.piecesPerBox).toFixed(1)} {log.Item.unit})
+                            </span>
+                          )}
                         </div>
                       </li>
                     ))}
@@ -144,9 +148,16 @@ export default async function RestaurantDashboard() {
                         <span className="font-bold text-slate-300 group-hover:text-white text-lg transition-colors">{stock.Item.name}</span>
                         <div className="mt-4 flex justify-between items-end">
                           <span className="text-xs font-bold text-slate-500 uppercase tracking-widest">Available</span>
-                          <span className="font-black text-rose-400 bg-rose-500/10 border border-rose-500/20 px-3 py-1 rounded-lg text-lg drop-shadow-[0_0_5px_rgba(244,63,94,0.3)]">
-                            {stock.quantity} <span className="text-[10px] ml-1 opacity-70 uppercase text-rose-300 tracking-widest">{stock.Item.piecesPerBox ? 'pcs' : stock.Item.unit}</span>
-                          </span>
+                          <div className="font-black text-rose-400 bg-rose-500/10 border border-rose-500/20 px-3 py-1.5 rounded-lg text-lg drop-shadow-[0_0_5px_rgba(244,63,94,0.3)] flex flex-col items-end">
+                            <span>
+                              {stock.quantity} <span className="text-[10px] ml-1 opacity-70 uppercase text-rose-300 tracking-widest">{stock.Item.piecesPerBox ? 'pcs' : stock.Item.unit}</span>
+                            </span>
+                            {stock.Item.piecesPerBox && (
+                              <span className="text-[9px] opacity-60 font-black uppercase tracking-tighter">
+                                ({(stock.quantity / stock.Item.piecesPerBox).toFixed(1)} {stock.Item.unit})
+                              </span>
+                            )}
+                          </div>
                         </div>
                       </li>
                     ))

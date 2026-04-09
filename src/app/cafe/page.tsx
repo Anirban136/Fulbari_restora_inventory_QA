@@ -149,9 +149,16 @@ export default async function CafeDashboard() {
                       localStock.map(stock => (
                         <li key={stock.id} className="flex justify-between items-center p-3 rounded-xl border border-white/5 bg-white/5">
                           <span className="font-bold text-slate-300 text-sm">{stock.Item.name}</span>
-                          <span className="font-black text-amber-400 bg-amber-500/10 px-2 py-1 rounded-md text-sm">
-                            {stock.quantity} <span className="text-[9px] ml-0.5 opacity-70 uppercase">{stock.Item.piecesPerBox ? 'pcs' : stock.Item.unit}</span>
-                          </span>
+                          <div className="font-black text-amber-400 bg-amber-500/10 px-2.5 py-1.5 rounded-lg text-sm flex flex-col items-end">
+                            <span>
+                              {stock.quantity} <span className="text-[9px] ml-0.5 opacity-70 uppercase font-black">{stock.Item.piecesPerBox ? 'pcs' : stock.Item.unit}</span>
+                            </span>
+                            {stock.Item.piecesPerBox && (
+                              <span className="text-[8px] opacity-60 uppercase font-black tracking-tighter -mt-0.5">
+                                ({(stock.quantity / stock.Item.piecesPerBox).toFixed(1)} {stock.Item.unit})
+                              </span>
+                            )}
+                          </div>
                         </li>
                       ))
                     )}
@@ -185,9 +192,16 @@ export default async function CafeDashboard() {
                             <p className="text-xs text-slate-500 mt-1 font-medium">Dispatched by: <span className="text-slate-400">{log.User.name}</span></p>
                           </div>
                           <div className="text-right">
-                            <span className="font-black text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-4 py-2 rounded-xl text-xl drop-shadow-[0_0_5px_rgba(52,211,153,0.3)]">
-                              +{log.quantity} <span className="text-[10px] ml-1 opacity-70 uppercase text-emerald-300 tracking-widest">{log.Item.piecesPerBox ? 'pcs' : log.Item.unit}</span>
-                            </span>
+                            <div className="flex flex-col items-end">
+                              <span className="font-black text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-4 py-2 rounded-xl text-lg lg:text-xl drop-shadow-[0_0_5px_rgba(52,211,153,0.3)]">
+                                +{log.quantity} <span className="text-[10px] ml-1 opacity-70 uppercase text-emerald-300 tracking-widest">{log.Item.piecesPerBox ? 'pcs' : log.Item.unit}</span>
+                              </span>
+                              {log.Item.piecesPerBox && (
+                                <span className="text-[10px] text-emerald-500/50 font-black uppercase tracking-tighter mt-1">
+                                  ({(log.quantity / log.Item.piecesPerBox).toFixed(1)} {log.Item.unit})
+                                </span>
+                              )}
+                            </div>
                             <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest mt-2">{log.notes || "Added to Pantry"}</p>
                           </div>
                         </li>
