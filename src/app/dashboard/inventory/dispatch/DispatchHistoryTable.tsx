@@ -54,61 +54,63 @@ export function DispatchHistoryTable({
   return (
     <div className="flex flex-col h-full overflow-hidden">
       {/* FILTER BAR */}
-      <div className="p-6 bg-muted/10 border-b border-border/10 flex flex-col sm:flex-row gap-4 sm:items-center justify-between sticky top-0 z-30 backdrop-blur-3xl">
-        <div className="grid grid-cols-2 sm:flex p-1 bg-black/40 rounded-2xl border border-white/5 w-fit gap-1">
+      {/* FILTER BAR */}
+      <div className="p-4 lg:p-6 bg-muted/10 border-b border-border/10 flex flex-col lg:flex-row gap-4 lg:items-center justify-between sticky top-0 z-30 backdrop-blur-3xl">
+        <div className="flex items-center gap-1 p-1 bg-black/40 rounded-2xl border border-white/5 overflow-x-auto no-scrollbar scroll-smooth w-full lg:w-fit group/filters">
           <Button
             variant="ghost"
             size="sm"
             onClick={() => setOutletFilter('ALL')}
             className={cn(
-              "rounded-xl h-10 px-4 text-[9px] font-black uppercase tracking-widest transition-all gap-2",
-              outletFilter === 'ALL' ? "bg-white text-black hover:bg-white" : "text-muted-foreground hover:text-white"
+              "rounded-xl h-9 px-4 text-[9px] font-black uppercase tracking-widest transition-all gap-2 flex-shrink-0",
+              outletFilter === 'ALL' ? "bg-white text-black hover:bg-white shadow-lg" : "text-muted-foreground hover:text-white"
             )}
           >
-            <LayoutGrid className="w-3.5 h-3.5" /> ALL View
+            <LayoutGrid className="w-3 h-3" /> ALL
           </Button>
+          <div className="w-[1px] h-4 bg-white/10 mx-1 hidden sm:block" />
           <Button
             variant="ghost"
             size="sm"
             onClick={() => setOutletFilter('RESTAURANT')}
             className={cn(
-              "rounded-xl h-10 px-4 text-[9px] font-black uppercase tracking-widest transition-all gap-2",
-              outletFilter === 'RESTAURANT' ? "bg-rose-500 text-white hover:bg-rose-500" : "text-muted-foreground hover:text-white"
+              "rounded-xl h-9 px-4 text-[9px] font-black uppercase tracking-widest transition-all gap-2 flex-shrink-0",
+              outletFilter === 'RESTAURANT' ? "bg-rose-500 text-white hover:bg-rose-510 shadow-lg shadow-rose-500/20" : "text-muted-foreground hover:text-white"
             )}
           >
-            <ChefHat className="w-3.5 h-3.5" /> Restaurant
+            <ChefHat className="w-3 h-3" /> Restaurant
           </Button>
           <Button
             variant="ghost"
             size="sm"
             onClick={() => setOutletFilter('CAFE')}
             className={cn(
-              "rounded-xl h-10 px-4 text-[9px] font-black uppercase tracking-widest transition-all gap-2",
-              outletFilter === 'CAFE' ? "bg-amber-500 text-white hover:bg-amber-500" : "text-muted-foreground hover:text-white"
+              "rounded-xl h-9 px-4 text-[9px] font-black uppercase tracking-widest transition-all gap-2 flex-shrink-0",
+              outletFilter === 'CAFE' ? "bg-amber-500 text-white hover:bg-amber-510 shadow-lg shadow-amber-500/20" : "text-muted-foreground hover:text-white"
             )}
           >
-            <Utensils className="w-3.5 h-3.5" /> Cafe
+            <Utensils className="w-3 h-3" /> Cafe
           </Button>
           <Button
             variant="ghost"
             size="sm"
             onClick={() => setOutletFilter('CHAI_JOINT')}
             className={cn(
-              "rounded-xl h-10 px-4 text-[9px] font-black uppercase tracking-widest transition-all gap-2",
-              outletFilter === 'CHAI_JOINT' ? "bg-blue-500 text-white hover:bg-blue-500" : "text-muted-foreground hover:text-white"
+              "rounded-xl h-9 px-4 text-[9px] font-black uppercase tracking-widest transition-all gap-2 flex-shrink-0",
+              outletFilter === 'CHAI_JOINT' ? "bg-blue-500 text-white hover:bg-blue-510 shadow-lg shadow-blue-500/20" : "text-muted-foreground hover:text-white"
             )}
           >
-            <Coffee className="w-3.5 h-3.5" /> Chai Joint
+            <Coffee className="w-3 h-3" /> Chai Joint
           </Button>
         </div>
 
-        <div className="relative group w-full sm:w-64">
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground group-focus-within:text-blue-400 transition-colors" />
+        <div className="relative group w-full lg:max-w-[280px]">
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground group-focus-within:text-blue-400 transition-colors" />
           <Input 
-            placeholder="Search item..." 
+            placeholder="Search items..." 
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="h-12 pl-11 bg-black/40 border-white/10 rounded-2xl focus-visible:ring-blue-500/50 text-xs font-bold uppercase tracking-widest"
+            className="h-11 pl-11 bg-black/40 border-white/10 rounded-2xl focus-visible:ring-blue-500/50 text-[10px] font-black uppercase tracking-[0.2em] placeholder:tracking-normal placeholder:font-medium shadow-inner"
           />
         </div>
       </div>
