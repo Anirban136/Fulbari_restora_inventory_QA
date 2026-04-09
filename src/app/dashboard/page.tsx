@@ -85,6 +85,35 @@ export default async function DashboardOverview() {
         <p className="text-foreground/70 dark:text-muted-foreground mt-1 text-[10px] lg:text-lg font-bold">Real-time performance metrics.</p>
       </header>
 
+      {/* High-Level Metrics */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 relative z-10">
+        <GrossRevenueModal totalRevenue={totalRevenue} />
+
+        <div className="glass-panel p-3 lg:p-6 rounded-2xl lg:rounded-3xl group hover:-translate-y-1 transition-transform duration-300">
+          <div className="flex justify-between items-start mb-2 lg:mb-4">
+            <h3 className="text-[8px] lg:text-xs font-bold text-muted-foreground uppercase tracking-widest">Cash Collected</h3>
+            <span className="text-amber-500 text-base lg:text-xl">💵</span>
+          </div>
+          <p className="text-lg lg:text-3xl font-black text-foreground">₹{cashRevenue.toFixed(0)}</p>
+        </div>
+
+        <div className="glass-panel p-3 lg:p-6 rounded-2xl lg:rounded-3xl group hover:-translate-y-1 transition-transform duration-300">
+          <div className="flex justify-between items-start mb-2 lg:mb-4">
+            <h3 className="text-[8px] lg:text-xs font-bold text-muted-foreground uppercase tracking-widest">Digital (UPI/Card)</h3>
+            <CreditCard className="text-blue-600 dark:text-blue-400 w-3 h-3 lg:w-5 lg:h-5" />
+          </div>
+          <p className="text-lg lg:text-3xl font-black text-foreground">₹{onlineRevenue.toFixed(0)}</p>
+        </div>
+        
+        <div className="glass-panel p-3 lg:p-6 rounded-2xl lg:rounded-3xl group hover:-translate-y-1 transition-transform duration-300">
+           <div className="flex justify-between items-start mb-2 lg:mb-4">
+             <h3 className="text-[8px] lg:text-xs font-bold text-muted-foreground uppercase tracking-widest">Split Payments</h3>
+             <Activity className="text-purple-600 dark:text-purple-400 w-3 h-3 lg:w-5 lg:h-5" />
+           </div>
+           <p className="text-lg lg:text-3xl font-black text-foreground">₹{splitRevenue.toFixed(0)}</p>
+        </div>
+      </div>
+
       {/* Low Stock Alerts */}
       {alerts.length > 0 && (
         <div className="glass-panel border-red-500/20 bg-red-500/5 p-6 rounded-[2rem] flex flex-col sm:flex-row items-center gap-6 animate-in slide-in-from-top-4 duration-500 shadow-[0_20px_50px_-20px_rgba(239,68,68,0.2)]">
@@ -114,34 +143,7 @@ export default async function DashboardOverview() {
         </div>
       )}
 
-      {/* High-Level Metrics */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <GrossRevenueModal totalRevenue={totalRevenue} />
 
-        <div className="glass-panel p-3 lg:p-6 rounded-2xl lg:rounded-3xl group hover:-translate-y-1 transition-transform duration-300">
-          <div className="flex justify-between items-start mb-2 lg:mb-4">
-            <h3 className="text-[8px] lg:text-xs font-bold text-muted-foreground uppercase tracking-widest">Cash Collected</h3>
-            <span className="text-amber-500 text-base lg:text-xl">💵</span>
-          </div>
-          <p className="text-lg lg:text-3xl font-black text-foreground">₹{cashRevenue.toFixed(0)}</p>
-        </div>
-
-        <div className="glass-panel p-3 lg:p-6 rounded-2xl lg:rounded-3xl group hover:-translate-y-1 transition-transform duration-300">
-          <div className="flex justify-between items-start mb-2 lg:mb-4">
-            <h3 className="text-[8px] lg:text-xs font-bold text-muted-foreground uppercase tracking-widest">Digital (UPI/Card)</h3>
-            <CreditCard className="text-blue-600 dark:text-blue-400 w-3 h-3 lg:w-5 lg:h-5" />
-          </div>
-          <p className="text-lg lg:text-3xl font-black text-foreground">₹{onlineRevenue.toFixed(0)}</p>
-        </div>
-        
-        <div className="glass-panel p-3 lg:p-6 rounded-2xl lg:rounded-3xl group hover:-translate-y-1 transition-transform duration-300">
-           <div className="flex justify-between items-start mb-2 lg:mb-4">
-             <h3 className="text-[8px] lg:text-xs font-bold text-muted-foreground uppercase tracking-widest">Split Payments</h3>
-             <Activity className="text-purple-600 dark:text-purple-400 w-3 h-3 lg:w-5 lg:h-5" />
-           </div>
-           <p className="text-lg lg:text-3xl font-black text-foreground">₹{splitRevenue.toFixed(0)}</p>
-        </div>
-      </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         

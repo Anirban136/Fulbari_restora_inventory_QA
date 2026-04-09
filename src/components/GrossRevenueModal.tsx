@@ -54,13 +54,13 @@ export function GrossRevenueModal({ totalRevenue }: { totalRevenue: number }) {
       <div
         id="gross-revenue-card"
         onClick={handleOpen}
-        className="glass-panel p-6 rounded-3xl relative overflow-hidden group hover:-translate-y-1 transition-transform duration-300 cursor-pointer select-none"
+        className="glass-panel emerald-glow p-6 rounded-3xl relative overflow-hidden group hover:-translate-y-1 transition-transform duration-300 cursor-pointer select-none"
         title="Click to view 7-day revenue report"
       >
         <div className="absolute -right-4 -top-4 w-24 h-24 bg-primary/20 rounded-full blur-xl group-hover:bg-primary/30 transition-colors" />
         <div className="flex justify-between items-start mb-4">
           <h3 className="text-xs font-bold text-muted-foreground uppercase tracking-widest">
-            Gross Revenue
+            Total Sale Today
           </h3>
           <TrendingUp className="text-emerald-600 dark:text-emerald-400 w-5 h-5" />
         </div>
@@ -89,7 +89,7 @@ export function GrossRevenueModal({ totalRevenue }: { totalRevenue: number }) {
                 <TrendingUp className="text-emerald-500 dark:text-emerald-400 w-5 h-5" />
                 <div>
                   <h2 className="text-base font-black text-foreground uppercase tracking-widest">
-                    Gross Revenue Report
+                    Today's Sales Report
                   </h2>
                   <p className="text-[11px] text-muted-foreground font-medium mt-0.5">
                     Last 7 Days · Daily Breakdown
