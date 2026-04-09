@@ -155,7 +155,7 @@ export function MenuManagementTable({
                         </Button>
                       </form>
                       <Dialog>
-                        <DialogTrigger asChild>
+                        <DialogTrigger>
                           <div className="flex h-8 w-8 items-center justify-center text-red-500/70 hover:text-red-400 hover:bg-red-500/10 rounded-lg cursor-pointer">
                             <Trash2 className="h-4 w-4" />
                           </div>
