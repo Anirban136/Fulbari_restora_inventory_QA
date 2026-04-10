@@ -200,7 +200,8 @@ export default async function VendorsPage() {
       <div className="glass-panel overflow-hidden rounded-[2.5rem] border border-white/5 bg-white/[0.01] shadow-2xl relative w-full">
         <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-emerald-500/20 to-transparent"></div>
         
-        <div className="overflow-x-auto custom-scrollbar-premium w-full">
+        {/* Desktop View - Hidden on Mobile */}
+        <div className="hidden lg:block overflow-x-auto custom-scrollbar-premium w-full">
           <table className="w-full text-left border-collapse min-w-[1200px]">
             <thead>
               <tr className="bg-white/[0.03] border-b border-white/5">
@@ -330,34 +331,85 @@ export default async function VendorsPage() {
             </tbody>
           </table>
         </div>
+
+        {/* Mobile Card View - Visible only on small screens */}
+        <div className="lg:hidden divide-y divide-white/[0.05]">
+          {vendorStats.length === 0 ? (
+            <div className="py-20 text-center">
+              <Truck className="w-12 h-12 text-muted-foreground/10 mx-auto mb-4" />
+              <p className="text-muted-foreground/30 font-black uppercase tracking-[0.2em] text-[10px]">NO VENDORS REGISTERED</p>
+            </div>
+          ) : (
+            vendorStats.map(vendor => (
+              <div key={vendor.id} className="p-6 space-y-5 bg-white/[0.01] hover:bg-white/[0.02] transition-colors group">
+                {/* Mobile Card Header */}
+                <div className="flex justify-between items-start">
+                  <Link href={`/dashboard/vendors/${vendor.id}`} className="flex flex-col space-y-1">
+                    <span className="text-lg font-black text-white uppercase tracking-tight group-hover:text-emerald-400 transition-colors">{vendor.name}</span>
+                    <div className="flex items-center gap-1.5 opacity-40">
+                      <MapPin className="w-3 h-3 text-emerald-400" />
+                      <span className="text-[9px] font-black uppercase tracking-widest truncate max-w-[180px]">{vendor.address || 'Location Not Set'}</span>
+                    </div>
+                  </Link>
+                  <div className={cn(
+                    "px-3 py-1.5 rounded-xl text-[10px] font-black tracking-widest uppercase border flex flex-col items-center",
+                    vendor.balanceDue > 0 ? "bg-red-500/10 border-red-500/20 text-red-400 shadow-[0_0_15px_rgba(239,68,68,0.1)]" : "bg-emerald-500/10 border-emerald-500/20 text-emerald-400"
+                  )}>
+                    <span className="text-[8px] opacity-60 mb-0.5">DUE</span>
+                    ₹{vendor.balanceDue.toLocaleString('en-IN')}
+                  </div>
+                </div>
+
+                {/* Mobile Card Stats Row */}
+                <div className="grid grid-cols-2 gap-4 p-4 rounded-2xl bg-white/[0.02] border border-white/5">
+                  <div className="space-y-1 text-center border-r border-white/5">
+                    <span className="text-[8px] font-black text-slate-500 uppercase tracking-widest block">Volume (Units)</span>
+                    <span className="text-xs font-black text-emerald-400">{vendor.netCollection.toFixed(1)}</span>
+                  </div>
+                  <div className="space-y-1 text-center">
+                    <span className="text-[8px] font-black text-slate-500 uppercase tracking-widest block">Total Bill</span>
+                    <span className="text-xs font-black text-amber-500 font-mono">₹{vendor.monthlyOwed.toLocaleString('en-IN')}</span>
+                  </div>
+                </div>
+
+                {/* Mobile Card Actions */}
+                <div className="flex items-center gap-2 pt-1 overflow-x-auto pb-1 no-scrollbar">
+                  <Link href={`/dashboard/vendors/${vendor.id}`} className="flex-1 h-12 min-w-[100px] rounded-xl bg-white/5 border border-white/5 flex items-center justify-center text-blue-400 font-black text-[10px] uppercase tracking-widest group-hover:bg-blue-500/5 transition-colors">
+                    <FileText className="w-3.5 h-3.5 mr-2" />
+                    Ledger
+                  </Link>
+                  <div className="flex items-center gap-2">
+                    <PayVendorDialog vendor={vendor} balanceDue={vendor.balanceDue} />
+                    <EditVendorDialog vendor={vendor} />
+                    {isOwner && (
+                       <Dialog>
+                       <DialogTrigger render={
+                         <button className="h-12 w-12 rounded-xl bg-white/5 border border-white/5 text-red-400/60 flex items-center justify-center hover:bg-red-500/10 transition-all">
+                           <Trash2 className="w-4 h-4" />
+                         </button>
+                       } />
+                       <DialogContent className="sm:max-w-[400px] bg-black border-red-500/20 rounded-3xl">
+                         {/* Reusing existing dialog content structure */}
+                         <DialogHeader>
+                           <DialogTitle>Terminate?</DialogTitle>
+                           <DialogDescription>Full removal of {vendor.name}</DialogDescription>
+                         </DialogHeader>
+                         <form action={deleteVendor} className="mt-4">
+                           <input type="hidden" name="vendorId" value={vendor.id} />
+                           <Button type="submit" variant="destructive" className="w-full">Confirm</Button>
+                         </form>
+                       </DialogContent>
+                     </Dialog>
+                    )}
+                  </div>
+                </div>
+              </div>
+            ))
+          )}
+        </div>
       </div>
 
-      {/* Insights Row - Glassmorphism 2.0 */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-8 relative z-10">
-        <div className="group glass-panel p-8 rounded-[2.5rem] border-white/5 bg-white/[0.02] hover:bg-white/[0.04] transition-all duration-500 flex flex-col items-center text-center shadow-xl">
-           <div className="w-16 h-16 rounded-[1.5rem] bg-amber-500/10 flex items-center justify-center mb-8 border border-amber-500/20 group-hover:rotate-12 transition-transform shadow-inner">
-              <ClipboardList className="w-8 h-8 text-amber-500" />
-           </div>
-           <h4 className="text-sm font-black text-white uppercase tracking-[0.3em] mb-4">Payment Tracking</h4>
-           <p className="text-[10px] font-medium text-muted-foreground/60 leading-relaxed uppercase tracking-widest px-6">Record partial or full settlements. Ledger balances update with sub-second latency.</p>
-        </div>
 
-        <div className="group glass-panel p-8 rounded-[2.5rem] border-white/5 bg-white/[0.02] hover:bg-white/[0.04] transition-all duration-500 flex flex-col items-center text-center shadow-xl">
-           <div className="w-16 h-16 rounded-[1.5rem] bg-blue-500/10 flex items-center justify-center mb-8 border border-blue-500/20 group-hover:-rotate-12 transition-transform shadow-inner">
-              <Activity className="w-8 h-8 text-blue-500" />
-           </div>
-           <h4 className="text-sm font-black text-white uppercase tracking-[0.3em] mb-4">Integrity Monitoring</h4>
-           <p className="text-[10px] font-medium text-muted-foreground/60 leading-relaxed uppercase tracking-widest px-6">Track volume variance across all vendor nodes. Detect supply anomalies instantly.</p>
-        </div>
-
-        <div className="group glass-panel p-8 rounded-[2.5rem] border-white/5 bg-white/[0.02] hover:bg-white/[0.04] transition-all duration-500 flex flex-col items-center text-center shadow-xl">
-           <div className="w-16 h-16 rounded-[1.5rem] bg-purple-500/10 flex items-center justify-center mb-8 border border-purple-500/20 group-hover:scale-110 transition-transform shadow-inner">
-              <History className="w-8 h-8 text-purple-400" />
-           </div>
-           <h4 className="text-sm font-black text-white uppercase tracking-[0.3em] mb-4">Lifecycle: {new Date().toLocaleString('default', { month: 'long' })}</h4>
-           <p className="text-[10px] font-medium text-muted-foreground/60 leading-relaxed uppercase tracking-widest px-6">Current reporting window is active. {new Date().getDate()} days of financial history loaded.</p>
-        </div>
-      </div>
     </div>
   )
 }
