@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useMemo } from "react"
-import { Search, Package, Trash2, AlertTriangle, Layers, Edit2, CheckCircle2, IndianRupee, BarChart2, ShieldAlert } from "lucide-react"
+import { Search, Package, Trash2, AlertTriangle, Layers, Edit2, CheckCircle2, IndianRupee, BarChart2, ShieldAlert, LayoutGrid } from "lucide-react"
 import {
   Dialog,
   DialogContent,
@@ -12,6 +12,17 @@ import {
 } from "@/components/ui/dialog"
 import { EditItemDialog } from "./EditItemDialog"
 import { removeItem } from "./actions"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table"
+import { cn } from "@/lib/utils"
 
 export function GlobalCatalogFeed({ 
   items, 
@@ -29,162 +40,192 @@ export function GlobalCatalogFeed({
 
   const filteredItems = useMemo(() => {
     return items.filter(item => {
-      const matchesSearch = item.name.toLowerCase().includes(searchTerm.toLowerCase())
+      const matchesSearch = 
+        item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (item.category || "").toLowerCase().includes(searchTerm.toLowerCase())
       const matchesCategory = activeCategory === "ALL" || item.category === activeCategory
       return matchesSearch && matchesCategory
     })
   }, [items, searchTerm, activeCategory])
 
   return (
-    <div className="space-y-6 lg:space-y-8 relative z-10 w-full overflow-x-visible">
-      {/* 1. Universal Search & Filter Hub */}
-      <div className="flex flex-col gap-4 glass-panel p-4 lg:p-6 rounded-[2rem] border border-white/5 shadow-2xl relative overflow-hidden backdrop-blur-3xl mx-0">
-        <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-[80px] -z-10"></div>
-        
-        <div className="flex flex-col lg:flex-row gap-4 justify-between items-start lg:items-center">
-          <div className="flex-1 w-full relative group">
-            <Search className={`absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 transition-colors duration-300 ${searchTerm ? 'text-primary' : 'text-muted-foreground/30'}`} />
-            <input 
-              type="text"
-              placeholder="Search products..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full h-12 bg-white/[0.03] border border-white/10 rounded-xl lg:rounded-2xl pl-11 pr-6 text-xs font-black uppercase tracking-widest focus:outline-none focus:border-primary/50 focus:ring-4 focus:ring-primary/5 transition-all outline-none text-white shadow-inner"
-            />
-          </div>
-          
-          <div className="flex items-center gap-3 shrink-0 px-4 py-2.5 bg-white/5 border border-white/10 rounded-xl lg:rounded-2xl w-full lg:w-auto justify-center lg:justify-start">
-             <Layers className="w-3.5 h-3.5 text-primary" />
-             <span className="text-[10px] font-black text-white uppercase tracking-widest">{filteredItems.length} ACTIVE PRODUCTS</span>
-          </div>
-        </div>
-
-        {/* Global Category Scroller */}
-        <div className="flex items-center gap-2 overflow-x-auto pb-2 -mx-2 px-2 no-scrollbar">
-          <button
+    <div className="flex flex-col h-full bg-black/20 rounded-[2.5rem] border border-white/5 overflow-hidden backdrop-blur-xl">
+      {/* 1. STICKY FILTER BAR (Shared Design Pattern) */}
+      <div className="p-4 lg:p-6 bg-white/[0.02] border-b border-white/5 flex flex-col lg:flex-row gap-6 lg:items-center justify-between sticky top-0 z-30 backdrop-blur-3xl">
+        <div className="flex items-center gap-1 p-1 bg-black/40 rounded-2xl border border-white/5 overflow-x-auto no-scrollbar scroll-smooth w-full lg:w-fit group/filters">
+          <Button
+            variant="ghost"
+            size="sm"
             onClick={() => setActiveCategory("ALL")}
-            className={`px-5 py-2 rounded-xl text-[9px] font-black uppercase tracking-[0.2em] transition-all duration-300 shrink-0 border ${activeCategory === "ALL" ? "bg-primary text-primary-foreground border-primary shadow-lg" : "bg-white/5 text-muted-foreground/60 border-white/10 hover:border-white/20 hover:text-white"}`}
+            className={cn(
+              "rounded-xl h-9 px-4 text-[9px] font-black uppercase tracking-widest transition-all gap-2 flex-shrink-0",
+              activeCategory === 'ALL' ? "bg-white text-black hover:bg-white shadow-lg" : "text-muted-foreground hover:text-white"
+            )}
           >
-            All Signal
-          </button>
+            <LayoutGrid className="w-3.5 h-3.5" /> All Products
+          </Button>
+          <div className="w-[1px] h-4 bg-white/10 mx-1 hidden sm:block" />
           {categories.map(cat => (
-            <button
+            <Button
               key={cat}
+              variant="ghost"
+              size="sm"
               onClick={() => setActiveCategory(cat)}
-              className={`px-5 py-2 rounded-xl text-[9px] font-black uppercase tracking-[0.2em] transition-all duration-300 shrink-0 border ${activeCategory === cat ? "bg-white text-black border-white shadow-lg" : "bg-white/5 text-muted-foreground/60 border-white/10 hover:border-white/20 hover:text-white"}`}
+              className={cn(
+                "rounded-xl h-9 px-4 text-[9px] font-black uppercase tracking-widest transition-all gap-2 flex-shrink-0",
+                activeCategory === cat ? "bg-primary text-primary-foreground hover:bg-primary shadow-lg" : "text-muted-foreground hover:text-white"
+              )}
             >
               {cat}
-            </button>
+            </Button>
           ))}
+        </div>
+
+        <div className="flex items-center gap-4 w-full lg:w-auto">
+          <div className="relative group w-full lg:max-w-[320px]">
+            <Search className={cn("absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 transition-colors", searchTerm ? "text-primary" : "text-muted-foreground/30")} />
+            <Input 
+              placeholder="Search products or categories..." 
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="h-12 pl-12 bg-black/40 border-white/10 rounded-2xl focus-visible:ring-primary/50 text-[10px] font-black uppercase tracking-[0.2em] placeholder:tracking-normal placeholder:font-medium shadow-inner transition-all"
+            />
+          </div>
+          <div className="hidden lg:flex items-center gap-3 px-5 py-2.5 bg-primary/10 border border-primary/20 rounded-2xl">
+             <Layers className="w-4 h-4 text-primary" />
+             <span className="text-[10px] font-black text-primary uppercase tracking-widest">{filteredItems.length} Products</span>
+          </div>
         </div>
       </div>
 
-      {/* 2. Global Product Table (Responsive Horizontal Scroll) */}
-      <div className="glass-panel overflow-hidden rounded-[2rem] border border-white/5 bg-white/[0.02] shadow-2xl relative w-full">
-        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-primary/20 to-transparent"></div>
-        
-        {/* Horizontal Scroll Wrapper - Ensures fit to screen while keeping table format */}
-        <div className="overflow-x-auto custom-scrollbar-premium w-full">
-          <table className="w-full text-left border-collapse min-w-[1200px]">
-            <thead>
-              <tr className="bg-white/[0.03] border-b border-white/5">
-                <th className="px-8 py-6 text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground/40">ITEM NAME</th>
-                <th className="px-8 py-6 text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground/40">CATEGORY</th>
-                <th className="px-8 py-6 text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground/40 text-center">CURRENT STOCK</th>
-                <th className="px-8 py-6 text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground/40 text-center">UNIT</th>
-                <th className="px-8 py-6 text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground/40 text-right">BUY PRICE</th>
-                <th className="px-8 py-6 text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground/40 text-right">SELL PRICE</th>
-                <th className="px-8 py-6 text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground/40 text-center">LOW STOCK ALERT</th>
-                <th className="px-8 py-6 text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground/40 text-center">OPS</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-white/[0.03]">
-              {filteredItems.length === 0 ? (
-                <tr>
-                  <td colSpan={8} className="py-32 text-center">
-                    <Package className="w-16 h-16 text-muted-foreground/10 mx-auto mb-4 animate-pulse" />
-                    <p className="text-muted-foreground/30 font-black uppercase tracking-[0.5em] text-xs">NO PRODUCTS FOUND</p>
-                  </td>
-                </tr>
-              ) : (
-                filteredItems.map(item => {
-                  const isCritical = item.minStock > 0 && item.currentStock <= 0
-                  const isLow = item.minStock > 0 && item.currentStock <= item.minStock
-                  const hasConversion = item.piecesPerBox > 0
-                  
-                  return (
-                    <tr 
-                      key={item.id} 
-                      className={`group hover:bg-white/[0.04] transition-all duration-300 ${isCritical ? 'bg-red-500/[0.03]' : isLow ? 'bg-amber-500/[0.03]' : ''}`}
-                    >
-                      <td className="px-8 py-6">
+      {/* 2. MAIN DATA TABLE */}
+      <div className="flex-1 overflow-auto custom-scrollbar-premium p-0 max-h-[800px]">
+        <Table>
+          <TableHeader>
+            <TableRow className="border-b border-white/5 hover:bg-transparent">
+              <TableHead className="px-8 font-black text-muted-foreground/40 uppercase tracking-[0.3em] text-[10px] h-14 bg-white/[0.02] sticky top-0 z-20 border-r border-white/5">Product Detail</TableHead>
+              <TableHead className="px-8 font-black text-muted-foreground/40 uppercase tracking-[0.3em] text-[10px] h-14 bg-white/[0.02] sticky top-0 z-20 border-r border-white/5">Category</TableHead>
+              <TableHead className="px-8 font-black text-muted-foreground/40 uppercase tracking-[0.3em] text-[10px] h-14 bg-white/[0.02] sticky top-0 z-20 text-center border-r border-white/5">Inventory Status</TableHead>
+              <TableHead className="px-8 font-black text-muted-foreground/40 uppercase tracking-[0.3em] text-[10px] h-14 bg-white/[0.02] sticky top-0 z-20 text-center border-r border-white/5">Base Unit</TableHead>
+              <TableHead className="px-8 font-black text-muted-foreground/40 uppercase tracking-[0.3em] text-[10px] h-14 bg-white/[0.02] sticky top-0 z-20 text-right border-r border-white/5">Buy Rate</TableHead>
+              <TableHead className="px-8 font-black text-muted-foreground/40 uppercase tracking-[0.3em] text-[10px] h-14 bg-white/[0.02] sticky top-0 z-20 text-right border-r border-white/5">Sell Rate</TableHead>
+              <TableHead className="px-8 font-black text-muted-foreground/40 uppercase tracking-[0.3em] text-[10px] h-14 bg-white/[0.02] sticky top-0 z-20 text-center">Actions</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {filteredItems.length === 0 ? (
+              <TableRow className="border-b border-white/5 hover:bg-transparent">
+                <TableCell colSpan={7} className="h-64 text-center">
+                  <div className="flex flex-col items-center justify-center space-y-4 opacity-20">
+                    <Package className="w-16 h-16" />
+                    <p className="font-black uppercase tracking-[0.5em] text-xs">Repository Empty</p>
+                  </div>
+                </TableCell>
+              </TableRow>
+            ) : (
+              filteredItems.map(item => {
+                const isCritical = item.minStock > 0 && item.currentStock <= 0
+                const isLow = item.minStock > 0 && item.currentStock <= item.minStock
+                const hasConversion = item.piecesPerBox > 0
+
+                return (
+                  <TableRow 
+                    key={item.id} 
+                    className={cn(
+                      "border-b border-white/5 hover:bg-white/[0.03] transition-all group",
+                      isCritical ? "bg-red-500/[0.02]" : isLow ? "bg-amber-500/[0.02]" : ""
+                    )}
+                  >
+                    <TableCell className="px-8 py-6 border-r border-white/5">
+                      <div className="flex flex-col">
                         <span className="text-sm font-black text-white uppercase tracking-tight group-hover:text-primary transition-colors">
                           {item.name}
                         </span>
-                      </td>
-                      <td className="px-8 py-6">
-                        <span className={`text-[10px] font-black uppercase tracking-widest ${isCritical ? 'text-red-500' : isLow ? 'text-amber-500' : 'text-primary'}`}>
-                          {item.category || "GENERAL"}
-                        </span>
-                      </td>
-                      <td className="px-8 py-6">
-                        <div className="flex items-center justify-center gap-3">
-                          <div className={`p-2 rounded-xl border ${isCritical ? 'bg-red-500/10 border-red-500/30 text-red-500 shadow-[0_0_15px_rgba(239,68,68,0.2)]' : isLow ? 'bg-amber-500/10 border-amber-500/30 text-amber-500 animate-pulse' : 'bg-emerald-500/10 border-emerald-500/30 text-emerald-500'}`}>
-                            {isCritical || isLow ? <AlertTriangle className="w-4 h-4" /> : <CheckCircle2 className="w-4 h-4" />}
+                        {isLow && (
+                          <div className="flex items-center gap-1.5 mt-1.5">
+                             <AlertTriangle className={cn("w-3 h-3", isCritical ? "text-red-500" : "text-amber-500")} />
+                             <span className={cn("text-[8px] font-black uppercase tracking-widest", isCritical ? "text-red-500" : "text-amber-500")}>
+                               {isCritical ? "Stock Exhausted" : "Low Stock Alert"}
+                             </span>
                           </div>
-                          <div className="flex flex-col items-center">
-                            <span className={`text-xl font-black tracking-tighter ${isCritical ? 'text-red-500' : isLow ? 'text-amber-500' : 'text-white'}`}>
-                              {item.currentStock}
-                            </span>
-                            {hasConversion && (
-                              <span className="text-[9px] font-black text-muted-foreground/30 uppercase tracking-widest -mt-1">
-                                {(item.currentStock / item.piecesPerBox).toFixed(1)} {item.unit}
-                              </span>
-                            )}
-                          </div>
-                        </div>
-                      </td>
-                      <td className="px-8 py-6 text-center">
-                        <span className="px-3 py-1 bg-white/5 border border-white/10 rounded-lg text-[10px] font-black text-muted-foreground uppercase tracking-widest">
-                          {hasConversion ? 'PCS' : item.unit}
+                        )}
+                      </div>
+                    </TableCell>
+                    
+                    <TableCell className="px-8 py-6 border-r border-white/5">
+                      <span className={cn(
+                        "text-[10px] font-black px-3 py-1 rounded-lg uppercase tracking-widest",
+                        isCritical ? "bg-red-500/10 text-red-500" : 
+                        isLow ? "bg-amber-500/10 text-amber-500" : 
+                        "bg-primary/10 text-primary"
+                      )}>
+                        {item.category || "GENERAL"}
+                      </span>
+                    </TableCell>
+
+                    <TableCell className="px-8 py-6 text-center border-r border-white/5">
+                       <div className="inline-flex flex-col items-center">
+                         <div className="flex items-center gap-3">
+                           <span className={cn(
+                             "text-xl font-black tracking-tighter drop-shadow-sm",
+                             isCritical ? "text-red-500" : isLow ? "text-amber-500" : "text-white"
+                           )}>
+                             {item.currentStock}
+                           </span>
+                           <span className="text-[10px] font-black text-muted-foreground/30 uppercase tracking-widest">PCS</span>
+                         </div>
+                         {hasConversion && (
+                           <span className="text-[9px] font-black text-muted-foreground/20 uppercase tracking-tighter mt-1">
+                             ({(item.currentStock / item.piecesPerBox).toFixed(1)} {item.unit})
+                           </span>
+                         )}
+                       </div>
+                    </TableCell>
+
+                    <TableCell className="px-8 py-6 text-center border-r border-white/5">
+                      <span className="text-[10px] font-black text-muted-foreground/60 uppercase tracking-[0.2em] px-3 py-1 bg-white/5 rounded-lg border border-white/5">
+                        {hasConversion ? 'PACK' : item.unit}
+                      </span>
+                    </TableCell>
+
+                    <TableCell className="px-8 py-6 text-right border-r border-white/5">
+                      <div className="flex flex-col items-end">
+                        <span className="text-sm font-black text-white/60">
+                          ₹{item.costPerUnit?.toFixed(2)}
                         </span>
-                      </td>
-                      <td className="px-8 py-6 text-right font-black text-white/60">
-                        <span className="text-muted-foreground/30 font-bold mr-1 text-[10px]">₹</span>
-                        {item.costPerUnit?.toFixed(2) || "0.00"}
-                      </td>
-                      <td className="px-8 py-6 text-right font-black text-primary drop-shadow-[0_0_10px_rgba(16,185,129,0.3)]">
-                        <span className="text-primary/30 font-bold mr-1 text-[10px]">₹</span>
-                        {item.sellPrice?.toFixed(2) || "0.00"}
-                      </td>
-                      <td className="px-8 py-6 text-center">
-                        <div className="flex flex-col items-center">
-                          <span className={`text-sm font-black ${isLow ? 'text-amber-500' : 'text-muted-foreground/60'}`}>{item.minStock || 0}</span>
-                          <span className="text-[7px] font-black text-muted-foreground/30 uppercase tracking-widest leading-none">LIMIT</span>
-                        </div>
-                      </td>
-                      <td className="px-8 py-6">
-                        <div className="flex items-center justify-center gap-2">
-                          <EditItemDialog item={item} existingCategories={categories} />
-                          
-                          {isOwner && (
-                            <button 
-                              onClick={() => removeItem(item.id)}
-                              className="p-2 rounded-xl text-red-500/50 hover:text-red-500 hover:bg-red-500/10 transition-all border border-white/5 hover:border-red-500/20 active:scale-95 shadow-lg shadow-red-500/5" 
-                              title={`Delete ${item.name}`}
-                            >
-                              <Trash2 className="w-4 h-4" />
-                            </button>
-                          )}
-                        </div>
-                      </td>
-                    </tr>
-                  )
-                })
-              )}
-            </tbody>
-          </table>
-        </div>
+                        <span className="text-[8px] font-black text-muted-foreground/20 uppercase tracking-widest">PER {hasConversion ? 'PC' : item.unit}</span>
+                      </div>
+                    </TableCell>
+
+                    <TableCell className="px-8 py-6 text-right border-r border-white/5">
+                       <div className="flex flex-col items-end">
+                        <span className="text-sm font-black text-primary drop-shadow-[0_0_10px_rgba(16,185,129,0.3)]">
+                          ₹{item.sellPrice?.toFixed(2)}
+                        </span>
+                        <span className="text-[8px] font-black text-primary/40 uppercase tracking-widest">EST. VALUE</span>
+                      </div>
+                    </TableCell>
+
+                    <TableCell className="px-8 py-6">
+                      <div className="flex items-center justify-center gap-3">
+                        <EditItemDialog item={item} existingCategories={categories} />
+                        {isOwner && (
+                          <button 
+                            onClick={() => removeItem(item.id)}
+                            className="p-2.5 rounded-xl bg-red-500/5 text-red-500/40 hover:text-red-500 hover:bg-red-500/10 transition-all border border-transparent hover:border-red-500/20 active:scale-90" 
+                            title={`Delete ${item.name}`}
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        )}
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                )
+              })
+            )}
+          </TableBody>
+        </Table>
       </div>
     </div>
   )
