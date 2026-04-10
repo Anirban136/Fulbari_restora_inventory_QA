@@ -48,11 +48,13 @@ export default async function VendorDetailPage({ params }: { params: Promise<{ v
     description: string
     itemName?: string
     quantity?: number
-    unit?: string
-    rate?: number
-    debit: number  // money we owe (purchase)
-    credit: number // money we paid
-    user: string
+    unit?: string,
+    isPieceBased?: boolean,
+    piecesPerBox?: number,
+    rate?: number,
+    debit: number,  // money we owe (purchase)
+    credit: number, // money we paid
+    user: string,
     notes?: string
   }
 
@@ -68,15 +70,26 @@ export default async function VendorDetailPage({ params }: { params: Promise<{ v
     }
     const amount = entry.quantity * rate
 
+    const piecesPerBox = (entry.Item as any).piecesPerBox || 1
+    const isPieceBased = piecesPerBox > 1
+    
+    let displayQty = `${entry.quantity} ${entry.Item.unit}`
+    if (isPieceBased) {
+      const boxCount = entry.quantity / piecesPerBox
+      displayQty = `${entry.quantity} pieces (${boxCount} ${entry.Item.unit})`
+    }
+
     if (entry.type === "STOCK_IN") {
       timeline.push({
         id: entry.id,
         date: entry.createdAt,
         type: 'PURCHASE',
-        description: `${entry.quantity} ${entry.Item.unit} ${entry.Item.name}`,
+        description: `${displayQty} ${entry.Item.name}`,
         itemName: entry.Item.name,
         quantity: entry.quantity,
         unit: entry.Item.unit,
+        isPieceBased,
+        piecesPerBox,
         rate,
         debit: amount,
         credit: 0,
@@ -88,10 +101,12 @@ export default async function VendorDetailPage({ params }: { params: Promise<{ v
         id: entry.id,
         date: entry.createdAt,
         type: 'WASTE',
-        description: `Waste/Damage: ${entry.quantity} ${entry.Item.unit} ${entry.Item.name}`,
+        description: `Waste/Damage: ${displayQty} ${entry.Item.name}`,
         itemName: entry.Item.name,
         quantity: entry.quantity,
         unit: entry.Item.unit,
+        isPieceBased,
+        piecesPerBox,
         rate,
         debit: 0,
         credit: amount,
@@ -353,7 +368,14 @@ export default async function VendorDetailPage({ params }: { params: Promise<{ v
                             <div className="text-sm text-slate-200 font-medium">{entry.description}</div>
                             {entry.type === 'PURCHASE' && entry.rate !== undefined && entry.rate > 0 && (
                               <div className="text-[10px] text-slate-500 mt-0.5">
-                                @ ₹{entry.rate.toFixed(2)}/{entry.unit}
+                                {entry.isPieceBased ? (
+                                    <>
+                                        @ ₹{entry.rate.toFixed(2)} /piece 
+                                        <span className="ml-1 opacity-60">(@ ₹{(entry.rate * (entry.piecesPerBox || 1)).toFixed(2)} /{entry.unit})</span>
+                                    </>
+                                ) : (
+                                    `@ ₹${entry.rate.toFixed(2)} /${entry.unit}`
+                                )}
                               </div>
                             )}
                           </TableCell>
