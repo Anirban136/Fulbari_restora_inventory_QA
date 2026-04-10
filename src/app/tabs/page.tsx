@@ -3,13 +3,12 @@ export const dynamic = 'force-dynamic'
 import { getServerSession } from "next-auth"
 import { authOptions } from "@/lib/auth"
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
 import { createTab } from "./actions"
 import Link from "next/link"
 import { UserControls } from "@/components/user-controls"
-import { Utensils, Coffee } from "lucide-react"
-import { TabItem } from "@/components/tab-item"
+import { Utensils, Coffee, LayoutGrid } from "lucide-react"
 import AppLayout from "@/components/layouts/app-layout"
+import { TableGrid } from "@/components/pos/table-grid"
 
 export default async function ActiveTabsPage({ searchParams }: { searchParams: Promise<{ target?: string }> }) {
   const { target } = await searchParams || {}
@@ -79,35 +78,40 @@ export default async function ActiveTabsPage({ searchParams }: { searchParams: P
         <div className={`flex flex-col md:flex-row justify-between items-center glass-panel p-6 rounded-3xl border border-white/10 ${isCafe ? "shadow-[0_20px_60px_-15px_rgba(245,158,11,0.1)]" : "shadow-[0_20px_60px_-15px_rgba(14,165,233,0.1)]"} gap-6`}>
            <div className="flex items-center gap-4">
              <div className={`w-14 h-14 rounded-2xl ${isCafe ? "bg-orange-500/20 border-orange-500/30" : "bg-sky-500/20 border-sky-500/30"} border flex items-center justify-center shadow-inner`}>
-               <span className={`text-2xl font-black ${isCafe ? "text-orange-400" : "text-sky-400"}`}>{activeTabs.length}</span>
+               <LayoutGrid className={`${isCafe ? "text-orange-400" : "text-sky-400"} w-7 h-7`} />
              </div>
              <div>
-               <h2 className="text-xl font-bold text-white tracking-tight">Running Tabs</h2>
-               <p className="text-slate-400 text-sm font-medium tracking-wide uppercase mt-1">Currently serving orders.</p>
+               <h2 className="text-xl font-bold text-white tracking-tight">Table Layout</h2>
+               <p className="text-slate-400 text-sm font-medium tracking-wide uppercase mt-1">Select a table to start billing.</p>
              </div>
            </div>
            
-           <form action={createTab} className="flex flex-col sm:flex-row gap-3 w-full lg:w-auto mt-4 md:mt-0">
-             {outlet && <input type="hidden" name="outletId" value={outlet.id} />}
-             {isCafe && (
-               <Input name="tableName" placeholder="Table No." required className={`w-full sm:w-32 h-14 bg-black/40 border-white/10 text-white placeholder:text-slate-600 rounded-xl ${isCafe ? "focus-visible:ring-orange-500/50" : "focus-visible:ring-sky-500/50"} shadow-inner font-bold text-center`} />
-             )}
-             <Input name="customerName" placeholder={isCafe ? "Customer Name (Opt)" : "Customer Name"} required={!isCafe} className={`w-full sm:w-48 xl:w-64 h-14 bg-black/40 border-white/10 text-white placeholder:text-slate-600 rounded-xl ${isCafe ? "focus-visible:ring-orange-500/50" : "focus-visible:ring-sky-500/50"} shadow-inner font-medium pl-4`} />
-             
-             <Button type="submit" className={`w-full sm:w-auto h-14 px-8 text-lg font-black tracking-widest uppercase bg-gradient-to-r ${isCafe ? "from-orange-500 to-amber-500 hover:from-orange-400 hover:to-amber-400 shadow-[0_0_30px_-5px_rgba(245,158,11,0.5)]" : "from-sky-500 to-blue-500 hover:from-sky-400 hover:to-blue-400 shadow-[0_0_30px_-5px_rgba(14,165,233,0.5)]"} text-black rounded-xl transition-all active:scale-95`}>
-                + Open Tab
-             </Button>
-           </form>
+           <div className="flex items-center gap-6 px-6 py-3 bg-black/40 rounded-2xl border border-white/5">
+                <div className="flex items-center gap-2">
+                    <div className="w-3 h-3 rounded-full bg-emerald-500"></div>
+                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Vacant</span>
+                </div>
+                <div className="flex items-center gap-2">
+                    <div className="w-3 h-3 rounded-full bg-red-500 animate-pulse"></div>
+                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Occupied</span>
+                </div>
+           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 flex-1 content-start pb-20">
-           {activeTabs.map(tab => {
-             const itemsCount = tab.Items.reduce((acc: number, item: any) => acc + item.quantity, 0)
-             return <TabItem key={tab.id} tab={tab} itemsCount={itemsCount} />
-           })}
+        <div className="w-full flex-1 pt-4">
+            {outlet ? (
+                <TableGrid activeTabs={activeTabs} outletId={outlet.id} isCafe={isCafe} />
+            ) : (
+                <div className="flex flex-col items-center justify-center py-20 bg-black/20 rounded-[3rem] border-2 border-dashed border-white/5">
+                    <LayoutGrid className="w-16 h-16 text-slate-700 mb-4" />
+                    <p className="text-slate-500 font-bold uppercase tracking-widest">No Outlet Assigned</p>
+                </div>
+            )}
         </div>
+        
         </div>
       </div>
     </AppLayout>
   )
 }
+
