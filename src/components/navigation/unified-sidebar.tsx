@@ -124,7 +124,7 @@ export function UnifiedSidebar({ user }: { user: any }) {
              </div>
           </div>
 
-          <nav className="flex-1 overflow-y-auto p-6 lg:p-4 space-y-2 custom-scrollbar-premium lg:block">
+          <nav data-lenis-prevent className="flex-1 overflow-y-auto p-6 lg:p-4 space-y-2 custom-scrollbar-premium lg:block">
             {filteredItems.map((item) => {
               const isActive = pathname === item.href
               return (
