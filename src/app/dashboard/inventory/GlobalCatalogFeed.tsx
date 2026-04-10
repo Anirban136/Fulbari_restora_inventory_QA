@@ -107,6 +107,7 @@ export function GlobalCatalogFeed({
               <TableHead className="px-8 font-black text-muted-foreground/40 uppercase tracking-[0.3em] text-[10px] h-14 bg-white/[0.02] sticky top-0 z-20 border-r border-white/5">Category</TableHead>
               <TableHead className="px-8 font-black text-muted-foreground/40 uppercase tracking-[0.3em] text-[10px] h-14 bg-white/[0.02] sticky top-0 z-20 text-center border-r border-white/5">Inventory Status</TableHead>
               <TableHead className="px-8 font-black text-muted-foreground/40 uppercase tracking-[0.3em] text-[10px] h-14 bg-white/[0.02] sticky top-0 z-20 text-center border-r border-white/5">Base Unit</TableHead>
+              <TableHead className="px-8 font-black text-muted-foreground/40 uppercase tracking-[0.3em] text-[10px] h-14 bg-white/[0.02] sticky top-0 z-20 text-center border-r border-white/5">Multiplier (PCS/Box)</TableHead>
               <TableHead className="px-8 font-black text-muted-foreground/40 uppercase tracking-[0.3em] text-[10px] h-14 bg-white/[0.02] sticky top-0 z-20 text-right border-r border-white/5">Buy Rate</TableHead>
               <TableHead className="px-8 font-black text-muted-foreground/40 uppercase tracking-[0.3em] text-[10px] h-14 bg-white/[0.02] sticky top-0 z-20 text-right border-r border-white/5">Sell Rate</TableHead>
               <TableHead className="px-8 font-black text-muted-foreground/40 uppercase tracking-[0.3em] text-[10px] h-14 bg-white/[0.02] sticky top-0 z-20 text-center">Actions</TableHead>
@@ -115,7 +116,7 @@ export function GlobalCatalogFeed({
           <TableBody>
             {filteredItems.length === 0 ? (
               <TableRow className="border-b border-white/5 hover:bg-transparent">
-                <TableCell colSpan={7} className="h-64 text-center">
+                <TableCell colSpan={8} className="h-64 text-center">
                   <div className="flex flex-col items-center justify-center space-y-4 opacity-20">
                     <Package className="w-16 h-16" />
                     <p className="font-black uppercase tracking-[0.5em] text-xs">Repository Empty</p>
@@ -172,7 +173,7 @@ export function GlobalCatalogFeed({
                            )}>
                              {item.currentStock}
                            </span>
-                           <span className="text-[10px] font-black text-muted-foreground/30 uppercase tracking-widest">PCS</span>
+                           <span className="text-[10px] font-black text-muted-foreground/30 uppercase tracking-widest">{hasConversion ? 'PCS' : item.unit}</span>
                          </div>
                          {hasConversion && (
                            <span className="text-[9px] font-black text-muted-foreground/20 uppercase tracking-tighter mt-1">
@@ -184,8 +185,19 @@ export function GlobalCatalogFeed({
 
                     <TableCell className="px-8 py-6 text-center border-r border-white/5">
                       <span className="text-[10px] font-black text-muted-foreground/60 uppercase tracking-[0.2em] px-3 py-1 bg-white/5 rounded-lg border border-white/5">
-                        {hasConversion ? 'PACK' : item.unit}
+                        {hasConversion ? 'PCS' : item.unit}
                       </span>
+                    </TableCell>
+
+                    <TableCell className="px-8 py-6 text-center border-r border-white/5">
+                      {hasConversion ? (
+                        <div className="flex flex-col items-center">
+                           <span className="text-sm font-black text-white">{item.piecesPerBox}</span>
+                           <span className="text-[8px] font-black text-muted-foreground/30 uppercase tracking-widest">PCS / {item.unit}</span>
+                        </div>
+                      ) : (
+                        <span className="text-[10px] font-black text-muted-foreground/20 italic tracking-widest">N/A</span>
+                      )}
                     </TableCell>
 
                     <TableCell className="px-8 py-6 text-right border-r border-white/5">
