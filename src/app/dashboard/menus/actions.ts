@@ -15,7 +15,18 @@ export async function addMenuItem(data: FormData) {
   const name = data.get("name") as string
   const price = parseFloat(data.get("price") as string)
   const categoryId = (data.get("category") as string)?.toUpperCase().trim() || "GENERAL"
-  const itemId = data.get("itemId") as string
+  const itemId = data.get("itemId") as string // Keep for legacy
+  const ingredientsRaw = data.get("ingredients") as string
+  
+  // Parse ingredients if provided
+  let ingredients: { itemId: string, quantity: number }[] = []
+  if (ingredientsRaw) {
+    try {
+      ingredients = JSON.parse(ingredientsRaw)
+    } catch (e) {
+      console.error("Failed to parse ingredients", e)
+    }
+  }
 
   if (!outletId || !name || isNaN(price)) return
 
@@ -24,9 +35,10 @@ export async function addMenuItem(data: FormData) {
     const outlets = await prisma.outlet.findMany({
       where: { type: { in: ["CAFE", "CHAI_JOINT"] } }
     })
-    await prisma.$transaction(
-      outlets.map(o =>
-        prisma.menuItem.create({
+    
+    await prisma.$transaction(async (tx) => {
+      for (const o of outlets) {
+        const menuItem = await tx.menuItem.create({
           data: {
             outletId: o.id,
             name,
@@ -35,10 +47,20 @@ export async function addMenuItem(data: FormData) {
             itemId: itemId || null,
           }
         })
-      )
-    )
+        
+        if (ingredients.length > 0) {
+          await tx.menuItemIngredient.createMany({
+            data: ingredients.map(ing => ({
+              menuItemId: menuItem.id,
+              itemId: ing.itemId,
+              quantity: ing.quantity,
+            }))
+          })
+        }
+      }
+    })
   } else {
-    await prisma.menuItem.create({
+    const menuItem = await prisma.menuItem.create({
       data: {
         outletId,
         name,
@@ -47,6 +69,16 @@ export async function addMenuItem(data: FormData) {
         itemId: itemId || null,
       }
     })
+    
+    if (ingredients.length > 0) {
+      await prisma.menuItemIngredient.createMany({
+        data: ingredients.map(ing => ({
+          menuItemId: menuItem.id,
+          itemId: ing.itemId,
+          quantity: ing.quantity,
+        }))
+      })
+    }
   }
 
   revalidatePath("/dashboard/menus")
@@ -74,17 +106,43 @@ export async function updateMenuItem(data: FormData) {
   const price = parseFloat(data.get("price") as string)
   const categoryId = (data.get("category") as string)?.toUpperCase().trim() || "GENERAL"
   const itemId = data.get("itemId") as string
+  const ingredientsRaw = data.get("ingredients") as string
+
+  let ingredients: { itemId: string, quantity: number }[] = []
+  if (ingredientsRaw) {
+    try {
+      ingredients = JSON.parse(ingredientsRaw)
+    } catch (e) {
+      console.error("Failed to parse ingredients", e)
+    }
+  }
 
   if (!id || !outletId || !name || isNaN(price)) return
 
-  await prisma.menuItem.update({
-    where: { id },
-    data: {
-      outletId,
-      name,
-      price,
-      categoryId,
-      itemId: itemId || null,
+  await prisma.$transaction(async (tx) => {
+    // Update main item
+    await tx.menuItem.update({
+      where: { id },
+      data: {
+        outletId,
+        name,
+        price,
+        categoryId,
+        itemId: itemId || null,
+      }
+    })
+
+    // Sync ingredients (delete and recreate)
+    await tx.menuItemIngredient.deleteMany({ where: { menuItemId: id } })
+    
+    if (ingredients.length > 0) {
+      await tx.menuItemIngredient.createMany({
+        data: ingredients.map(ing => ({
+          menuItemId: id,
+          itemId: ing.itemId,
+          quantity: ing.quantity,
+        }))
+      })
     }
   })
 

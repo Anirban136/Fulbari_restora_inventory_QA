@@ -71,31 +71,73 @@ export async function closeTab(data: FormData) {
   const tabId = data.get("tabId") as string
   const paymentMode = data.get("paymentMode") as string
   
-  const tab = await prisma.tab.findUnique({ where: { id: tabId }, include: { Outlet: true, Items: { include: { MenuItem: true } } }})
+  const tab = await prisma.tab.findUnique({ 
+    where: { id: tabId }, 
+    include: { 
+      Outlet: true, 
+      Items: { 
+        include: { 
+          MenuItem: { 
+            include: { 
+              ingredients: true 
+            } 
+          } 
+        } 
+      } 
+    }
+  })
   if (!tab) return
 
-  // Deduct inventory if items are linked to Central Catalog
-  for (const item of tab.Items) {
-     if (item.MenuItem.itemId) {
-       // Attempt to consume outlet stock
+  // Deduct inventory for all items on the tab
+  for (const tabItem of tab.Items) {
+     const { MenuItem: menuItem, quantity: orderQty } = tabItem
+
+     // 1. Handle Legacy Single-Item link (1:1)
+     if (menuItem.itemId) {
        try {
          await prisma.outletStock.update({
-           where: { outletId_itemId: { outletId: tab.outletId, itemId: item.MenuItem.itemId } },
-           data: { quantity: { decrement: item.quantity } }
+           where: { outletId_itemId: { outletId: tab.outletId, itemId: menuItem.itemId } },
+           data: { quantity: { decrement: orderQty } }
          })
          
          await prisma.inventoryLedger.create({
            data: {
              type: "CONSUMPTION",
-             itemId: item.MenuItem.itemId,
+             itemId: menuItem.itemId,
              outletId: tab.outletId,
-             quantity: item.quantity,
+             quantity: orderQty,
              userId: tab.userId,
-             notes: `POS Sales Consumption (Tab ${tab.id})`
+             notes: `POS Direct Link Deduction (Tab ${tab.id})`
            }
          })
        } catch (e) {
-         console.error("Failed to decrement inventory for", item.MenuItem.name, e)
+         console.error("Failed to decrement direct-link inventory for", menuItem.name, e)
+       }
+     }
+
+     // 2. Handle Multi-Ingredient Recipes
+     if (menuItem.ingredients && menuItem.ingredients.length > 0) {
+       for (const ingredient of menuItem.ingredients) {
+         const totalDuction = ingredient.quantity * orderQty
+         try {
+           await prisma.outletStock.update({
+             where: { outletId_itemId: { outletId: tab.outletId, itemId: ingredient.itemId } },
+             data: { quantity: { decrement: totalDuction } }
+           })
+
+           await prisma.inventoryLedger.create({
+             data: {
+               type: "CONSUMPTION",
+               itemId: ingredient.itemId,
+               outletId: tab.outletId,
+               quantity: totalDuction,
+               userId: tab.userId,
+               notes: `POS Recipe Deduction for ${menuItem.name} (Tab ${tab.id})`
+             }
+           })
+         } catch (e) {
+           console.error(`Failed to deduct recipe ingredient (${ingredient.itemId}) for ${menuItem.name}`, e)
+         }
        }
      }
   }
@@ -135,30 +177,73 @@ export async function closeTab(data: FormData) {
 }
 
 export async function reopenTab(tabId: string) {
-  const tab = await prisma.tab.findUnique({ where: { id: tabId }, include: { Outlet: true, Items: { include: { MenuItem: true } } }})
+  const tab = await prisma.tab.findUnique({ 
+    where: { id: tabId }, 
+    include: { 
+      Outlet: true, 
+      Items: { 
+        include: { 
+          MenuItem: { 
+            include: { 
+              ingredients: true 
+            } 
+          } 
+        } 
+      } 
+    }
+  })
   if (!tab || tab.status !== "CLOSED") return
 
-  // Reverse inventory deductions
-  for (const item of tab.Items) {
-     if (item.MenuItem.itemId) {
+  // Reverse inventory deductions (Both Legacy and Recipes)
+  for (const tabItem of tab.Items) {
+     const { MenuItem: menuItem, quantity: orderQty } = tabItem
+
+     // 1. Revert Legacy Single-Item link
+     if (menuItem.itemId) {
        try {
          await prisma.outletStock.update({
-           where: { outletId_itemId: { outletId: tab.outletId, itemId: item.MenuItem.itemId } },
-           data: { quantity: { increment: item.quantity } }
+           where: { outletId_itemId: { outletId: tab.outletId, itemId: menuItem.itemId } },
+           data: { quantity: { increment: orderQty } }
          })
          
          await prisma.inventoryLedger.create({
            data: {
              type: "REVERSAL",
-             itemId: item.MenuItem.itemId,
+             itemId: menuItem.itemId,
              outletId: tab.outletId,
-             quantity: item.quantity,
+             quantity: orderQty,
              userId: tab.userId,
              notes: `Tab Re-opened Reversal (Tab ${tab.id})`
            }
          })
        } catch (e) {
-         console.error("Failed to increment inventory for reversal", item.MenuItem.name, e)
+         console.error("Failed to increment inventory for reversal", menuItem.name, e)
+       }
+     }
+
+     // 2. Revert Multi-Ingredient Recipes
+     if (menuItem.ingredients && menuItem.ingredients.length > 0) {
+       for (const ingredient of menuItem.ingredients) {
+         const totalReversal = ingredient.quantity * orderQty
+         try {
+           await prisma.outletStock.update({
+             where: { outletId_itemId: { outletId: tab.outletId, itemId: ingredient.itemId } },
+             data: { quantity: { increment: totalReversal } }
+           })
+
+           await prisma.inventoryLedger.create({
+             data: {
+               type: "REVERSAL",
+               itemId: ingredient.itemId,
+               outletId: tab.outletId,
+               quantity: totalReversal,
+               userId: tab.userId,
+               notes: `Recipe Reversal for ${menuItem.name} (Tab ${tab.id})`
+             }
+           })
+         } catch (e) {
+           console.error(`Failed to revert recipe ingredient (${ingredient.itemId}) for ${menuItem.name}`, e)
+         }
        }
      }
   }
@@ -167,11 +252,11 @@ export async function reopenTab(tabId: string) {
     where: { id: tabId },
     data: {
       status: "OPEN",
-      // Keep paymentMode for UI continuity
       closedAt: null
     }
   })
 
+  // We are already in server action, next/navigation redirect works here
   redirect(`/tabs/${tabId}`)
 }
 

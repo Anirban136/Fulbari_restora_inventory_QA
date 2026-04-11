@@ -12,7 +12,7 @@ export default async function MenusPage() {
   })
   
   const menuItems = await prisma.menuItem.findMany({
-    include: { Outlet: true },
+    include: { Outlet: true, ingredients: true },
     orderBy: [ { Outlet: { name: 'asc' } }, { categoryId: 'asc' }, { name: 'asc' } ]
   })
 

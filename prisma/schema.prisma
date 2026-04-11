@@ -74,6 +74,7 @@ model Item {
   Ledger        InventoryLedger[]
   OutletStock   OutletStock[]
   MenuItems     MenuItem[] // If this item maps to a menu item directly (e.g., Samosa)
+  ingredients   MenuItemIngredient[]
 }
 
 model InventoryLedger {
@@ -120,6 +121,17 @@ model MenuItem {
   Outlet      Outlet   @relation(fields: [outletId], references: [id])
   Item        Item?    @relation(fields: [itemId], references: [id])
   TabItems    TabItem[]
+  ingredients MenuItemIngredient[]
+}
+
+model MenuItemIngredient {
+  id         String   @id @default(cuid())
+  menuItemId String
+  itemId     String
+  quantity   Float    // e.g. 2 slices or 1 patty
+
+  MenuItem   MenuItem @relation(fields: [menuItemId], references: [id], onDelete: Cascade)
+  Item       Item     @relation(fields: [itemId], references: [id])
 }
 
 model Tab {
