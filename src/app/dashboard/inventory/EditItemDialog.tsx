@@ -105,14 +105,10 @@ export function EditItemDialog({ item, existingCategories = [] }: { item: any; e
               </div>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 gap-4">
               <div className="space-y-2">
-                <Label className="text-[10px] font-black text-amber-500 uppercase tracking-[0.3em] ml-1">LOW STOCK BORDER</Label>
+                <Label className="text-[10px] font-black text-amber-500/80 uppercase tracking-[0.3em] ml-1">LOW STOCK BORDER</Label>
                 <Input name="minStock" type="number" step="0.01" defaultValue={item.minStock} required className="h-14 bg-white/[0.03] border-amber-500/20 text-amber-500 rounded-2xl focus-visible:ring-amber-500/40 font-black text-lg" />
-              </div>
-              <div className="space-y-2">
-                <Label className="text-[10px] font-black text-sky-400 uppercase tracking-[0.3em] ml-1">MANUAL STOCK ADJUST</Label>
-                <Input name="currentStock" type="number" step="0.5" defaultValue={item.currentStock} required className="h-14 bg-white/[0.03] border-sky-400/20 text-sky-400 rounded-2xl focus-visible:ring-sky-400/40 font-black text-lg font-mono" />
               </div>
             </div>
 

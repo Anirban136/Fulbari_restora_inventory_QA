@@ -157,15 +157,15 @@ export function GlobalCatalogFeed({
                          )}>
                            {item.currentStock}
                          </span>
-                         <span className="text-[9px] font-black text-muted-foreground/30 mb-0.5">{hasConversion ? 'PCS' : item.unit}</span>
+                         <span className="text-[9px] font-black text-white/50 mb-0.5">{hasConversion ? 'PCS' : item.unit}</span>
                       </div>
                     </div>
 
                     <div className="bg-black/40 rounded-2xl p-4 border border-white/5 flex flex-col justify-center">
-                       <p className="text-[8px] font-black text-muted-foreground uppercase tracking-widest mb-1">Price Point</p>
+                       <p className="text-[8px] font-black text-muted-foreground/60 uppercase tracking-widest mb-1">Price Point</p>
                        <div className="flex flex-col">
                           <span className="text-sm font-black text-primary leading-tight">₹{item.sellPrice?.toFixed(0)}</span>
-                          <span className="text-[8px] font-black text-white/20 uppercase tracking-widest mt-0.5">EST. SELL</span>
+                          <span className="text-[8px] font-black text-white/40 uppercase tracking-widest mt-0.5">EST. SELL</span>
                        </div>
                     </div>
                   </div>
@@ -191,8 +191,8 @@ export function GlobalCatalogFeed({
                         )}
                      </div>
                      {hasConversion && (
-                       <span className="text-[8px] font-bold text-muted-foreground/30 uppercase italic">
-                         ≈ {(item.currentStock / item.piecesPerBox).toFixed(1)} {item.unit}
+                       <span className="text-[9px] font-black text-white/40 uppercase tracking-wider italic">
+                         {item.piecesPerBox} PIECES PER {item.unit}
                        </span>
                      )}
                   </div>
@@ -277,11 +277,11 @@ export function GlobalCatalogFeed({
                              )}>
                                {item.currentStock}
                              </span>
-                             <span className="text-[10px] font-black text-muted-foreground/30 uppercase tracking-widest">{hasConversion ? 'PCS' : item.unit}</span>
+                             <span className="text-[10px] font-black text-white/60 uppercase tracking-widest">{hasConversion ? 'PCS' : item.unit}</span>
                            </div>
                            {hasConversion && (
-                             <span className="text-[9px] font-black text-muted-foreground/20 uppercase tracking-tighter mt-1">
-                               ({(item.currentStock / item.piecesPerBox).toFixed(1)} {item.unit})
+                             <span className="text-[9px] font-black text-white/60 uppercase tracking-widest mt-1">
+                               {item.piecesPerBox} PIECES PER {item.unit}
                              </span>
                            )}
                          </div>
@@ -318,7 +318,7 @@ export function GlobalCatalogFeed({
                           <span className="text-sm font-black text-primary drop-shadow-[0_0_10px_rgba(16,185,129,0.3)]">
                             ₹{item.sellPrice?.toFixed(2)}
                           </span>
-                          <span className="text-[8px] font-black text-primary/40 uppercase tracking-widest">EST. VALUE</span>
+                          <span className="text-[9px] font-black text-white/40 uppercase tracking-widest mt-0.5">EST. VALUE</span>
                         </div>
                       </TableCell>
 
