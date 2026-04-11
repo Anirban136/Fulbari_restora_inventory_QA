@@ -1,8 +1,12 @@
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 
-// Helper to draw a pie chart on a canvas and return a data URL
-function drawPieToDataUrl(data: { label: string, value: number, color: string }[], size: number = 200) {
+// Helper to draw a high-fidelity "Elite" pie chart on a canvas
+function drawPieToDataUrl(
+  data: { label: string, value: number, color: string }[], 
+  centerLabel: string = "TOTAL",
+  size: number = 400
+) {
   const canvas = document.createElement('canvas');
   canvas.width = size;
   canvas.height = size;
@@ -13,29 +17,69 @@ function drawPieToDataUrl(data: { label: string, value: number, color: string }[
   let startAngle = -Math.PI / 2;
   const centerX = size / 2;
   const centerY = size / 2;
-  const radius = size * 0.4;
+  const radius = size * 0.35;
+  const donutRadius = radius * 0.65;
+
+  // Clear background (Zinc-950 matched)
+  ctx.fillStyle = '#09090b';
+  ctx.fillRect(0, 0, size, size);
 
   data.forEach(item => {
+    if (item.value === 0) return;
     const sliceAngle = (item.value / total) * 2 * Math.PI;
+    
+    // Draw slice with glow
+    ctx.save();
+    ctx.shadowBlur = 15;
+    ctx.shadowColor = item.color;
     ctx.beginPath();
     ctx.moveTo(centerX, centerY);
     ctx.arc(centerX, centerY, radius, startAngle, startAngle + sliceAngle);
     ctx.fillStyle = item.color;
     ctx.fill();
+    ctx.restore();
+
+    // Draw Pie Text Labels (Intuitive Data)
+    const midAngle = startAngle + sliceAngle / 2;
+    const labelRadius = radius * 1.25;
+    const lx = centerX + Math.cos(midAngle) * labelRadius;
+    const ly = centerY + Math.sin(midAngle) * labelRadius;
+
+    ctx.fillStyle = '#ffffff';
+    ctx.font = 'bold 14px Inter, system-ui, sans-serif';
+    ctx.textAlign = midAngle > Math.PI / 2 || midAngle < -Math.PI / 2 ? 'right' : 'left';
+    ctx.fillText(`${item.label}`, lx, ly - 5);
     
-    // Subtle border
-    ctx.strokeStyle = '#FFFFFF';
-    ctx.lineWidth = 1;
+    ctx.fillStyle = item.color;
+    ctx.font = 'black 16px Inter, system-ui, sans-serif';
+    ctx.fillText(`${((item.value / total) * 100).toFixed(0)}%`, lx, ly + 15);
+
+    // Draw connector line
+    ctx.beginPath();
+    ctx.moveTo(centerX + Math.cos(midAngle) * radius, centerY + Math.sin(midAngle) * radius);
+    ctx.lineTo(lx, ly);
+    ctx.strokeStyle = 'rgba(255,255,255,0.1)';
     ctx.stroke();
-    
+
     startAngle += sliceAngle;
   });
 
-  // White center circle for "Donut" style (more lucrative/modern)
+  // Donut Hole
   ctx.beginPath();
-  ctx.arc(centerX, centerY, radius * 0.6, 0, 2 * Math.PI);
-  ctx.fillStyle = '#f8fafc'; // Matches summary box color
+  ctx.arc(centerX, centerY, donutRadius, 0, 2 * Math.PI);
+  ctx.fillStyle = '#18181b'; // Zinc-900
   ctx.fill();
+  
+  // Center Label
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillStyle = '#71717a'; // Zinc-400
+  ctx.font = 'bold 12px Inter, system-ui, sans-serif';
+  ctx.fillText(centerLabel, centerX, centerY - 10);
+  
+  ctx.fillStyle = '#ffffff';
+  ctx.font = 'black 22px Inter, system-ui, sans-serif';
+  ctx.fillText(`₹${total > 1000 ? (total/1000).toFixed(1) + 'K' : total}`, centerX, centerY + 12);
 
   return canvas.toDataURL('image/png');
 }
@@ -43,81 +87,59 @@ function drawPieToDataUrl(data: { label: string, value: number, color: string }[
 export async function generateTransactionPDF(data: any, fromDate: string, toDate: string) {
   const doc = new jsPDF();
   const pageWidth = doc.internal.pageSize.width;
+  const pageHeight = doc.internal.pageSize.height;
 
-  // --- 1. PREMIUM BRANDED HEADER ---
-  doc.setFillColor(5, 150, 105); // Emerald 600
-  doc.rect(0, 0, pageWidth, 55, 'F');
-  
-  doc.setFontSize(28);
+  // --- 1. DARK ELITE BACKGROUND ---
+  doc.setFillColor(9, 9, 11); // Zinc-950
+  doc.rect(0, 0, pageWidth, pageHeight, 'F');
+
+  // --- 2. HEADER: WEB-STYLE ACCENT ---
+  doc.setFillColor(16, 185, 129); // Emerald-500
+  doc.rect(0, 0, pageWidth, 5, 'F'); // Top accent bar
+
+  doc.setFontSize(32);
   doc.setTextColor(255, 255, 255);
-  doc.text("FULBARI RESTORA", pageWidth / 2, 25, { align: "center" });
-
-  doc.setFontSize(10);
-  doc.setTextColor(200, 253, 222); 
-  doc.text("EXECUTIVE OPERATIONS AUDIT & PERFORMANCE SETTLEMENT", pageWidth / 2, 35, { align: "center" });
+  doc.setFont("helvetica", "bold");
+  doc.text("FULBARI", pageWidth / 2, 30, { align: "center" });
   
-  doc.setDrawColor(255, 255, 255);
-  doc.setLineWidth(1);
-  doc.line(70, 42, pageWidth - 70, 42);
+  doc.setFontSize(10);
+  doc.setTextColor(16, 185, 129); // Emerald
+  doc.text("OPERATIONS REPOSITORY • PERFORMANCE AUDIT", pageWidth / 2, 40, { align: "center", charSpace: 2 });
 
-  // --- 2. GRAPHICAL PERFORMANCE SUMMARY ---
+  // --- 3. ANALYTICS GRID ---
   const grandTotal = data.transactions.reduce((sum: number, t: any) => sum + t.totalAmount, 0);
   const totalCash = data.transactions.filter((t:any) => t.paymentMode === "CASH").reduce((s:number, t:any) => s+t.totalAmount, 0);
   const totalUPI = data.transactions.filter((t:any) => t.paymentMode === "ONLINE" || t.paymentMode === "UPI").reduce((s:number, t:any) => s+t.totalAmount, 0);
   const cafeTotal = data.transactions.filter((t:any) => t.Outlet.name.toUpperCase().includes("CAFE")).reduce((s:number, t:any) => s+t.totalAmount, 0);
   const chaiTotal = data.transactions.filter((t:any) => t.Outlet.name.toUpperCase().includes("CHAI")).reduce((s:number, t:any) => s+t.totalAmount, 0);
 
-  // Summary box container
-  doc.setFillColor(248, 250, 252);
-  doc.roundedRect(15, 60, pageWidth - 30, 95, 4, 4, 'F');
+  // Summary Container (Semi-transparent feel)
+  doc.setDrawColor(39, 39, 42); // Zinc-800
+  doc.setFillColor(24, 24, 27); // Zinc-900
+  doc.roundedRect(10, 50, pageWidth - 20, 115, 6, 6, 'FD');
 
-  doc.setTextColor(31, 41, 55);
-  doc.setFontSize(10);
-  doc.text("EXECUTIVE PERFORMANCE ANALYTICS", pageWidth / 2, 75, { align: 'center' });
-
-  // Generate Pie Charts
   const paymentMixImg = drawPieToDataUrl([
     { label: 'CASH', value: totalCash, color: '#10b981' },
-    { label: 'UPI', value: totalUPI, color: '#3b82f6' }
-  ]);
+    { label: 'ONLINE', value: totalUPI, color: '#3b82f6' }
+  ], "PAYMENTS");
+
   const outletMixImg = drawPieToDataUrl([
-    { label: 'CAFE', value: cafeTotal, color: '#6366f1' },
+    { label: 'CAFE', value: cafeTotal, color: '#8b5cf6' },
     { label: 'CHAI', value: chaiTotal, color: '#f59e0b' }
-  ]);
+  ], "OUTLETS");
 
-  // Insert Charts
-  doc.addImage(paymentMixImg, 'PNG', 25, 80, 50, 50);
-  doc.addImage(outletMixImg, 'PNG', pageWidth - 75, 80, 50, 50);
+  // Charts Position
+  doc.addImage(paymentMixImg, 'PNG', 15, 65, 85, 85);
+  doc.addImage(outletMixImg, 'PNG', pageWidth - 100, 65, 85, 85);
 
-  // Chart Labels
-  doc.setFontSize(8);
-  doc.setTextColor(71, 85, 105);
-  doc.text("PAYMENT METHOD MIX", 50, 135, { align: 'center' });
-  doc.text("OUTLET CONTRIBUTION", pageWidth - 50, 135, { align: 'center' });
+  // Big Callout
+  doc.setFillColor(16, 185, 129, 0.1);
+  doc.roundedRect(pageWidth/2 - 40, 150, 80, 10, 2, 2, 'F');
+  doc.setTextColor(16, 185, 129);
+  doc.setFontSize(10);
+  doc.text(`TOTAL REVENUE: ₹${grandTotal.toLocaleString()}`, pageWidth / 2, 157, { align: 'center' });
 
-  // Detailed Legend (Middle of Charts)
-  const legendX = pageWidth / 2 - 20;
-  doc.setFontSize(7);
-  doc.text(`[ ] CASH: ${((totalCash/grandTotal)*100).toFixed(0)}%`, legendX, 90);
-  doc.text(`[ ] UPI: ${((totalUPI/grandTotal)*100).toFixed(0)}%`, legendX, 98);
-  doc.text(`[ ] CAFE: ${((cafeTotal/grandTotal)*100).toFixed(0)}%`, legendX, 108);
-  doc.text(`[ ] CHAI: ${((chaiTotal/grandTotal)*100).toFixed(0)}%`, legendX, 116);
-
-  // Large Total Section
-  doc.setFillColor(15, 23, 42); // Navy Dark
-  doc.roundedRect(25, 140, pageWidth - 50, 15, 2, 2, 'F');
-  doc.setTextColor(255, 255, 255);
-  doc.setFontSize(14);
-  doc.text(`NET INCOME AUDIT: Rs. ${grandTotal.toLocaleString()}`, pageWidth / 2, 150, { align: 'center' });
-
-  // Meta Info
-  doc.setTextColor(148, 163, 184);
-  doc.setFontSize(7);
-  doc.text(`RANGE: ${fromDate} - ${toDate}`, 15, 165);
-  doc.text(`ID: FR-${Math.random().toString(36).substr(2, 9).toUpperCase()}`, pageWidth / 2, 165, { align: 'center' });
-  doc.text(`GENERATED: ${new Date().toLocaleString('en-IN')}`, pageWidth - 15, 165, { align: 'right' });
-
-  // --- 3. BUSINESS DAY GROUPING (4 AM LOGIC) ---
+  // --- 4. DATA AUDIT TABLE (WEB-STYLE DARK) ---
   const dailyData: Record<string, any> = {};
   data.transactions.forEach((tab: any) => {
     const timestamp = new Date(tab.closedAt || tab.openedAt).getTime();
@@ -155,54 +177,54 @@ export async function generateTransactionPDF(data: any, fromDate: string, toDate
 
   const tableRows = Object.entries(dailyData).map(([date, stats]: [string, any]) => [
     date,
-    `Rs. ${stats.cafeCash.toFixed(0)}`,
-    `Rs. ${stats.cafeUPI.toFixed(0)}`,
-    `Rs. ${stats.chaiCash.toFixed(0)}`,
-    `Rs. ${stats.chaiUPI.toFixed(0)}`,
-    `Rs. ${stats.totalCash.toFixed(0)}`,
-    `Rs. ${stats.totalUPI.toFixed(0)}`,
-    `Rs. ${stats.total.toFixed(0)}`
+    `₹${stats.cafeCash.toFixed(0)}`,
+    `₹${stats.cafeUPI.toFixed(0)}`,
+    `₹${stats.chaiCash.toFixed(0)}`,
+    `₹${stats.chaiUPI.toFixed(0)}`,
+    `₹${stats.totalCash.toFixed(0)}`,
+    `₹${stats.totalUPI.toFixed(0)}`,
+    `₹${stats.total.toFixed(0)}`
   ]);
 
-  // --- 4. LUCRATIVE DATA TABLE ---
   autoTable(doc, {
     startY: 175,
-    head: [
-      ["DATE", "CAFE CASH", "CAFE UPI", "CHAI CASH", "CHAI UPI", "TOT. CASH", "TOT. UPI", "NET DAY"]
-    ],
+    head: [["DATE", "CAFE C", "CAFE U", "CHAI C", "CHAI U", "TOT CASH", "TOT UPI", "NET DAY"]],
     body: tableRows,
+    theme: 'plain',
     headStyles: { 
-      fillColor: [15, 23, 42], 
-      textColor: [255, 255, 255],
-      fontSize: 7, fontStyle: 'bold', halign: 'center'
+      fillColor: [16, 185, 129], 
+      textColor: [0, 0, 0],
+      fontSize: 8, fontStyle: 'bold', halign: 'center'
     },
     styles: { 
-      fontSize: 7, cellPadding: 4, valign: 'middle'
+      fontSize: 8, cellPadding: 5, textColor: [255, 255, 255], 
+      lineColor: [39, 39, 42], lineWidth: 0.1 
     },
     alternateRowStyles: { 
-      fillColor: [248, 250, 252] 
+      fillColor: [24, 24, 27] 
     },
     columnStyles: {
-      0: { fontStyle: 'bold', cellWidth: 25 },
-      5: { fontStyle: 'bold', textColor: [5, 150, 105] }, // Emerald Total Cash
-      6: { fontStyle: 'bold', textColor: [37, 99, 235] }, // Blue Total UPI
-      7: { fontStyle: 'bold', halign: 'right', fillColor: [241, 245, 249], textColor: [15, 23, 42] } // Shaded Net Day
+      0: { fontStyle: 'bold', cellWidth: 30 },
+      5: { textColor: [16, 185, 129], fontStyle: 'bold' }, // Emerald Cash
+      6: { textColor: [59, 130, 246], fontStyle: 'bold' }, // Blue UPI
+      7: { halign: 'right', fontStyle: 'bold', fontSize: 9 }
     }
   });
 
-  // --- 5. AUTHORIZATION ---
+  // --- 5. ELITE FOOTER ---
   const finalY = (doc as any).lastAutoTable.finalY + 30;
-  doc.setDrawColor(226, 232, 240);
-  doc.line(25, finalY, 75, finalY);
-  doc.line(pageWidth - 75, finalY, pageWidth - 25, finalY);
+  doc.setDrawColor(63, 63, 70); // Zinc-700
+  doc.line(20, finalY, 80, finalY);
+  doc.line(pageWidth - 80, finalY, pageWidth - 20, finalY);
   
-  doc.setFontSize(7);
-  doc.setTextColor(100);
-  doc.text("MANAGER AUDIT SIGNATURE", 50, finalY + 5, { align: "center" });
-  doc.text("EXECUTIVE OWNER SIGN-OFF", pageWidth - 50, finalY + 5, { align: "center" });
+  doc.setFontSize(8);
+  doc.setTextColor(113, 113, 122); // Zinc-400
+  doc.text("MANAGER AUDIT", 50, finalY + 8, { align: "center" });
+  doc.text("EXECUTIVE SIGN-OFF", pageWidth - 50, finalY + 8, { align: "center" });
 
   doc.setFontSize(6);
-  doc.text("CONFIDENTIAL | FULBARI RESTORA OPERATIONS SYSTEM", pageWidth / 2, doc.internal.pageSize.height - 10, { align: "center" });
+  doc.text("SECURE REPORT ID: " + Math.random().toString(36).substr(2, 12).toUpperCase(), pageWidth/2, pageHeight - 15, { align: 'center' });
+  doc.text("FULBARI ECOSYSTEM • CONFIDENTIAL DATA", pageWidth/2, pageHeight - 10, { align: 'center' });
 
-  doc.save(`FR_Premium_Audit_${fromDate}.pdf`);
+  doc.save(`FR_Elite_Audit_${fromDate}.pdf`);
 }
