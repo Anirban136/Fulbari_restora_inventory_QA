@@ -12,7 +12,7 @@ import { generateTransactionPDF } from "@/lib/report-generator"
 export function TransactionsFeed({ initialTransactions }: { initialTransactions: any[] }) {
   const [selectedDate, setSelectedDate] = useState<string>(new Date().toISOString().split('T')[0])
   const [paymentFilter, setPaymentFilter] = useState<"ALL" | "CASH" | "ONLINE">("ALL")
-  const [activeOutlet, setActiveOutlet] = useState<"ALL" | "CAFE" | "CHAI">("ALL")
+  const [activeOutlet, setActiveOutlet] = useState<"CAFE" | "CHAI">("CAFE")
   const [searchTerm, setSearchTerm] = useState("")
 
   const filteredTransactions = useMemo(() => {
@@ -28,9 +28,8 @@ export function TransactionsFeed({ initialTransactions }: { initialTransactions:
         (paymentFilter === "CASH" && t.paymentMode === "CASH") ||
         (paymentFilter === "ONLINE" && (t.paymentMode === "ONLINE" || t.paymentMode === "UPI"));
       
-      const matchesOutlet = activeOutlet === "ALL" || 
-        (activeOutlet === "CAFE" && t.Outlet.name.toUpperCase().includes("CAFE")) ||
-        (activeOutlet === "CHAI" && t.Outlet.name.toUpperCase().includes("CHAI"));
+      const matchesOutlet = (activeOutlet === "CAFE" && t.Outlet.name.toUpperCase().includes("CAFE")) ||
+                            (activeOutlet === "CHAI" && t.Outlet.name.toUpperCase().includes("CHAI"));
 
       const matchesSearch = t.customerName?.toLowerCase().includes(searchTerm.toLowerCase()) || false;
       
@@ -181,26 +180,25 @@ export function TransactionsFeed({ initialTransactions }: { initialTransactions:
             </Button>
           </div>
 
-          {/* Row 2: Hub Specific Quick-Filters */}
+          {/* Row 2: Hub Specific Tab Switcher */}
           <div className="flex items-center gap-4 pt-4 border-t border-white/5">
-            <p className="text-[10px] font-black text-white/30 uppercase tracking-[0.3em] mr-2">Filter By Hub:</p>
-            <div className="flex gap-3">
-              {(['ALL', 'CAFE', 'CHAI'] as const).map(hub => (
+            <p className="text-[10px] font-black text-white/30 uppercase tracking-[0.3em] mr-2">Audit Hub:</p>
+            <div className="flex p-1 bg-black/40 rounded-2xl border border-white/5 items-center">
+              {(['CAFE', 'CHAI'] as const).map(hub => (
                 <button
                   key={hub}
                   onClick={() => setActiveOutlet(hub)}
                   className={cn(
-                    "px-6 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest border transition-all flex items-center gap-2",
+                    "px-10 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all flex items-center gap-2",
                     activeOutlet === hub 
-                      ? hub === 'CAFE' ? "bg-amber-500/10 border-amber-500/50 text-amber-500" 
-                      : hub === 'CHAI' ? "bg-teal-500/10 border-teal-500/50 text-teal-400"
-                      : "bg-white/10 border-white/20 text-white"
-                      : "bg-white/5 border-white/5 text-white/30 hover:bg-white/10 hover:text-white"
+                      ? hub === 'CAFE' ? "bg-amber-500 text-black shadow-lg" 
+                      : "bg-teal-500 text-black shadow-lg"
+                      : "text-white/40 hover:text-white"
                   )}
                 >
                   {hub === 'CAFE' && <Coffee className="w-3 h-3" />}
                   {hub === 'CHAI' && <CupSoda className="w-3 h-3" />}
-                  {hub} Transactions
+                  {hub === 'CAFE' ? 'Cafe Hub' : 'Tea Joint'}
                 </button>
               ))}
             </div>
@@ -233,7 +231,7 @@ export function TransactionsFeed({ initialTransactions }: { initialTransactions:
       </div>
 
       <div className="grid grid-cols-1 gap-12">
-        {(activeOutlet === 'ALL' || activeOutlet === 'CAFE') && renderSection(
+        {activeOutlet === 'CAFE' && renderSection(
             "Cafe Operations", 
             <Coffee className="w-6 h-6 text-amber-400" />, 
             "bg-amber-500/20 border-amber-500/30 text-amber-400", 
@@ -241,7 +239,7 @@ export function TransactionsFeed({ initialTransactions }: { initialTransactions:
             "bg-amber-500/5"
         )}
 
-        {(activeOutlet === 'ALL' || activeOutlet === 'CHAI') && renderSection(
+        {activeOutlet === 'CHAI' && renderSection(
             "Tea Joint Hub", 
             <CupSoda className="w-6 h-6 text-teal-400" />, 
             "bg-teal-500/20 border-teal-500/30 text-teal-400", 
