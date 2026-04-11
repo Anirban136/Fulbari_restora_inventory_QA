@@ -117,21 +117,25 @@ export async function generateTransactionPDF(data: any, fromDate: string, toDate
     headStyles: { 
       fillColor: [16, 185, 129], 
       textColor: [0, 0, 0],
-      fontSize: 10, fontStyle: 'bold', halign: 'center', cellPadding: 6
+      fontSize: 8.5, fontStyle: 'bold', halign: 'center', cellPadding: 4
     },
     styles: { 
-      fontSize: 11, cellPadding: 8, textColor: [255, 255, 255], 
-      lineColor: [39, 39, 42], lineWidth: 0.2, font: "helvetica",
+      fontSize: 8.5, cellPadding: 5, textColor: [255, 255, 255], 
+      lineColor: [39, 39, 42], lineWidth: 0.1, font: "helvetica",
       valign: 'middle'
     },
     alternateRowStyles: { 
       fillColor: [18, 18, 20] 
     },
     columnStyles: {
-      0: { fontStyle: 'bold', cellWidth: 35 },
-      5: { textColor: [16, 185, 129], fontStyle: 'bold', fontSize: 12 }, // Emerald Cash - BIGGER
-      6: { textColor: [59, 130, 246], fontStyle: 'bold', fontSize: 12 }, // Blue UPI - BIGGER
-      7: { halign: 'right', fontStyle: 'bold', fontSize: 14, textColor: [255, 255, 255] } // NET DAY - EXTREMELY BIG
+      0: { fontStyle: 'bold', cellWidth: 32 }, // Date
+      1: { cellWidth: 18 }, // Cafe C
+      2: { cellWidth: 18 }, // Cafe U
+      3: { cellWidth: 18 }, // Chai C
+      4: { cellWidth: 18 }, // Chai U
+      5: { textColor: [16, 185, 129], fontStyle: 'bold', fontSize: 10, cellWidth: 25 }, // Tot Cash
+      6: { textColor: [59, 130, 246], fontStyle: 'bold', fontSize: 10, cellWidth: 25 }, // Tot Online
+      7: { halign: 'right', fontStyle: 'bold', fontSize: 11, textColor: [255, 255, 255], cellWidth: 32 } // Net Day
     }
   });
 

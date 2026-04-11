@@ -12,14 +12,13 @@ import { generateTransactionPDF } from "@/lib/report-generator"
 export function TransactionsFeed({ initialTransactions }: { initialTransactions: any[] }) {
   const [selectedDate, setSelectedDate] = useState<string>(new Date().toISOString().split('T')[0])
   const [paymentFilter, setPaymentFilter] = useState<"ALL" | "CASH" | "ONLINE">("ALL")
+  const [activeOutlet, setActiveOutlet] = useState<"ALL" | "CAFE" | "CHAI">("ALL")
   const [searchTerm, setSearchTerm] = useState("")
 
   const filteredTransactions = useMemo(() => {
     return initialTransactions.filter(t => {
       const tDate = new Date(t.closedAt || t.openedAt);
       
-      // 4 AM IST Logic for filtering specific date
-      // Shift to IST wall clock
       const istDate = new Date(tDate.getTime() + 5.5 * 3600000);
       if (istDate.getUTCHours() < 4) istDate.setUTCDate(istDate.getUTCDate() - 1);
       const bizDay = istDate.toISOString().split('T')[0];
@@ -28,11 +27,16 @@ export function TransactionsFeed({ initialTransactions }: { initialTransactions:
       const matchesPayment = paymentFilter === "ALL" || 
         (paymentFilter === "CASH" && t.paymentMode === "CASH") ||
         (paymentFilter === "ONLINE" && (t.paymentMode === "ONLINE" || t.paymentMode === "UPI"));
+      
+      const matchesOutlet = activeOutlet === "ALL" || 
+        (activeOutlet === "CAFE" && t.Outlet.name.toUpperCase().includes("CAFE")) ||
+        (activeOutlet === "CHAI" && t.Outlet.name.toUpperCase().includes("CHAI"));
+
       const matchesSearch = t.customerName?.toLowerCase().includes(searchTerm.toLowerCase()) || false;
       
-      return matchesDate && matchesPayment && (searchTerm === "" || matchesSearch);
+      return matchesDate && matchesPayment && matchesOutlet && (searchTerm === "" || matchesSearch);
     });
-  }, [initialTransactions, selectedDate, paymentFilter, searchTerm]);
+  }, [initialTransactions, selectedDate, paymentFilter, activeOutlet, searchTerm]);
 
   const cafeTransactions = filteredTransactions.filter(t => t.Outlet.name.toUpperCase().includes("CAFE"));
   const chaiTransactions = filteredTransactions.filter(t => t.Outlet.name.toUpperCase().includes("CHAI"));
@@ -125,83 +129,111 @@ export function TransactionsFeed({ initialTransactions }: { initialTransactions:
 
   return (
     <div className="space-y-8 pb-32">
-      {/* ELITE CONTROL CENTER */}
-      <div className="glass-panel p-6 rounded-[2.5rem] border border-white/10 relative overflow-hidden">
-        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-primary/50 to-transparent"></div>
+      {/* GLOBAL CONTROL CENTER - TOP MOUNTED */}
+      <div className="glass-panel p-8 rounded-[2.5rem] border border-white/10 relative overflow-hidden shadow-2xl">
+        <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-emerald-500 to-transparent"></div>
         
-        <div className="flex flex-col lg:flex-row gap-6 items-center justify-between relative z-10">
-          <div className="flex flex-wrap items-center gap-3">
-             <div className="relative group">
-                <Calendar className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-primary" />
+        <div className="flex flex-col gap-8 relative z-10">
+          {/* Row 1: Primary Global Filters */}
+          <div className="flex flex-col lg:flex-row gap-6 items-center justify-between">
+            <div className="flex flex-wrap items-center gap-4">
+              <div className="relative group">
+                <Calendar className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-emerald-500" />
                 <input 
                   type="date" 
                   value={selectedDate}
                   onChange={(e) => setSelectedDate(e.target.value)}
-                  className="h-12 pl-12 pr-6 bg-black/40 border border-white/10 rounded-2xl text-[10px] font-black text-white uppercase tracking-widest focus:ring-2 focus:ring-primary/40 focus:border-primary/50 transition-all outline-none"
+                  className="h-14 pl-12 pr-6 bg-black/60 border border-white/10 rounded-2xl text-xs font-black text-white uppercase tracking-widest focus:ring-2 focus:ring-emerald-500/40 focus:border-emerald-500/50 transition-all outline-none"
                 />
-             </div>
+              </div>
 
-             <div className="flex p-1 bg-black/40 rounded-2xl border border-white/5 items-center">
+              <div className="flex p-1.5 bg-black/60 rounded-2xl border border-white/5 items-center">
                 {(['ALL', 'CASH', 'ONLINE'] as const).map(mode => (
                   <button
                     key={mode}
                     onClick={() => setPaymentFilter(mode)}
                     className={cn(
-                      "px-4 py-2 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all",
-                      paymentFilter === mode ? "bg-primary text-primary-foreground shadow-lg" : "text-white/40 hover:text-white"
+                      "px-6 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-[0.2em] transition-all",
+                      paymentFilter === mode ? "bg-emerald-500 text-black shadow-[0_0_20px_rgba(16,185,129,0.4)]" : "text-white/40 hover:text-white"
                     )}
                   >
                     {mode}
                   </button>
                 ))}
-             </div>
+              </div>
 
-             <div className="relative group">
-                <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/20 group-focus-within:text-primary transition-colors" />
+              <div className="relative group">
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/20 group-focus-within:text-emerald-500 transition-colors" />
                 <Input 
                   placeholder="Search Customers..."
                   value={searchTerm}
                   onChange={e => setSearchTerm(e.target.value)}
-                  className="h-12 pl-12 bg-black/40 border border-white/10 rounded-2xl text-[10px] font-black uppercase tracking-widest w-[200px] lg:w-[240px]"
+                  className="h-14 pl-12 bg-black/60 border border-white/10 rounded-2xl text-[10px] font-black uppercase tracking-widest w-[200px] lg:w-[280px]"
                 />
-             </div>
+              </div>
+            </div>
+
+            <Button 
+              onClick={handleDownloadReport}
+              className="h-14 px-10 rounded-2xl bg-white text-black hover:bg-emerald-50 font-black uppercase tracking-[0.2em] text-[10px] transition-all active:scale-95 gap-3 shadow-xl"
+            >
+              <FileDown className="w-5 h-5" /> Export Report
+            </Button>
           </div>
 
-          <Button 
-            onClick={handleDownloadReport}
-            className="h-12 px-8 rounded-2xl bg-emerald-500 hover:bg-emerald-600 text-black font-black uppercase tracking-widest transition-all active:scale-95 gap-3 shadow-[0_10px_20px_-10px_rgba(16,185,129,0.5)]"
-          >
-            <FileDown className="w-4 h-4" /> Download Performance Report
-          </Button>
+          {/* Row 2: Hub Specific Quick-Filters */}
+          <div className="flex items-center gap-4 pt-4 border-t border-white/5">
+            <p className="text-[10px] font-black text-white/30 uppercase tracking-[0.3em] mr-2">Filter By Hub:</p>
+            <div className="flex gap-3">
+              {(['ALL', 'CAFE', 'CHAI'] as const).map(hub => (
+                <button
+                  key={hub}
+                  onClick={() => setActiveOutlet(hub)}
+                  className={cn(
+                    "px-6 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest border transition-all flex items-center gap-2",
+                    activeOutlet === hub 
+                      ? hub === 'CAFE' ? "bg-amber-500/10 border-amber-500/50 text-amber-500" 
+                      : hub === 'CHAI' ? "bg-teal-500/10 border-teal-500/50 text-teal-400"
+                      : "bg-white/10 border-white/20 text-white"
+                      : "bg-white/5 border-white/5 text-white/30 hover:bg-white/10 hover:text-white"
+                  )}
+                >
+                  {hub === 'CAFE' && <Coffee className="w-3 h-3" />}
+                  {hub === 'CHAI' && <CupSoda className="w-3 h-3" />}
+                  {hub} Transactions
+                </button>
+              ))}
+            </div>
+          </div>
         </div>
 
-        {/* Real-time Stats Strip */}
-        <div className="flex flex-wrap gap-8 mt-8 pt-6 border-t border-white/5">
-           <div>
-              <p className="text-[9px] font-black text-white/30 uppercase tracking-widest mb-1.5 flex items-center gap-2">
-                 <Layers className="w-3 h-3" /> Total Volume
+        {/* Dynamic Analytics Strip */}
+        <div className="flex flex-wrap gap-12 mt-8 pt-8 border-t border-white/5">
+           <div className="group transition-transform hover:translate-y-[-2px]">
+              <p className="text-[9px] font-black text-white/30 uppercase tracking-[0.3em] mb-2 flex items-center gap-2">
+                 <Layers className="w-3 h-3 text-white/20" /> Filtered Volume
               </p>
-              <p className="text-xl font-black text-white tabular-nums">₹{totals.total.toLocaleString()}</p>
+              <p className="text-3xl font-black text-white tabular-nums tracking-tighter">₹{totals.total.toLocaleString()}</p>
            </div>
-           <div className="w-[1px] h-10 bg-white/5" />
-           <div>
-              <p className="text-[9px] font-black text-emerald-500/50 uppercase tracking-widest mb-1.5 flex items-center gap-2">
+           
+           <div className="group transition-transform hover:translate-y-[-2px]">
+              <p className="text-[9px] font-black text-emerald-500/50 uppercase tracking-[0.3em] mb-2 flex items-center gap-2">
                  <Banknote className="w-3 h-3" /> Cash Collection
               </p>
-              <p className="text-xl font-black text-emerald-400 tabular-nums">₹{totals.cash.toLocaleString()}</p>
+              <p className="text-3xl font-black text-emerald-400 tabular-nums tracking-tighter">₹{totals.cash.toLocaleString()}</p>
            </div>
-           <div className="w-[1px] h-10 bg-white/5" />
-           <div>
-              <p className="text-[9px] font-black text-blue-500/50 uppercase tracking-widest mb-1.5 flex items-center gap-2">
+           
+           <div className="group transition-transform hover:translate-y-[-2px]">
+              <p className="text-[9px] font-black text-blue-500/50 uppercase tracking-[0.3em] mb-2 flex items-center gap-2">
                  <CreditCard className="w-3 h-3" /> UPI / Online
               </p>
-              <p className="text-xl font-black text-blue-400 tabular-nums">₹{totals.online.toLocaleString()}</p>
+              <p className="text-3xl font-black text-blue-400 tabular-nums tracking-tighter">₹{totals.online.toLocaleString()}</p>
            </div>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 gap-10">
-        {renderSection(
+      <div className="grid grid-cols-1 gap-12">
+        {(activeOutlet === 'ALL' || activeOutlet === 'CAFE') && renderSection(
             "Cafe Operations", 
             <Coffee className="w-6 h-6 text-amber-400" />, 
             "bg-amber-500/20 border-amber-500/30 text-amber-400", 
@@ -209,7 +241,7 @@ export function TransactionsFeed({ initialTransactions }: { initialTransactions:
             "bg-amber-500/5"
         )}
 
-        {renderSection(
+        {(activeOutlet === 'ALL' || activeOutlet === 'CHAI') && renderSection(
             "Tea Joint Hub", 
             <CupSoda className="w-6 h-6 text-teal-400" />, 
             "bg-teal-500/20 border-teal-500/30 text-teal-400", 
