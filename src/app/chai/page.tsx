@@ -85,49 +85,57 @@ export default async function ChaiDashboard() {
 
         <div className="space-y-12">
           {/* 1. TOP PRIORITY: TODAY'S REPORT */}
-          <section className="animate-in fade-in slide-in-from-top-4 duration-700">
-             <div className="flex items-center gap-3 mb-6 px-2">
-                <Receipt className="w-6 h-6 text-blue-500" />
-                <h2 className="text-2xl font-black text-white uppercase tracking-tighter italic">Today's Revenue</h2>
-                <div className="h-px flex-1 bg-gradient-to-r from-blue-500/20 to-transparent ml-4"></div>
-             </div>
-
-             <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-                <div className="glass-panel p-6 rounded-3xl border border-white/5 bg-white/[0.02] flex flex-col justify-between group hover:bg-white/[0.04] transition-all">
-                  <span className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] mb-4">Cash Sales</span>
-                  <div className="flex items-baseline gap-1">
-                    <span className="text-xs font-bold text-slate-500">₹</span>
-                    <span className="text-3xl font-black text-white tracking-tighter">{dailyReport.CASH.toFixed(2)}</span>
+          <section className="animate-in fade-in slide-in-from-top-4 duration-700 max-w-2xl">
+             <div className="glass-panel p-8 rounded-[2.5rem] group transition-all border border-blue-500/10 hover:border-blue-500/20 bg-white/[0.01]">
+                <h2 className="text-xl font-black text-white uppercase tracking-widest mb-8 flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <Receipt className="w-6 h-6 text-blue-500" />
+                    <span>Today's Report</span>
                   </div>
-                </div>
+                  {isOwner && (
+                    <a href="/api/export/transactions?outlet=CHAI_JOINT" download>
+                      <Button variant="ghost" size="sm" className="h-9 px-3 text-[10px] font-black text-blue-400 hover:bg-blue-500/10 border border-blue-500/20 rounded-xl">
+                        Download CSV
+                      </Button>
+                    </a>
+                  )}
+                </h2>
+               
+               <div className="space-y-4">
+                 <div className="flex justify-between items-center bg-white/[0.03] p-5 rounded-2xl border border-white/5">
+                   <div className="flex items-center gap-3">
+                      <span className="text-xl">💵</span>
+                      <span className="text-xs font-black text-slate-400 uppercase tracking-widest">Cash Revenue</span>
+                   </div>
+                   <span className="text-xl font-black text-white">₹{dailyReport.CASH.toFixed(2)}</span>
+                 </div>
+                 
+                 <div className="flex justify-between items-center bg-white/[0.03] p-5 rounded-2xl border border-white/5">
+                   <div className="flex items-center gap-3">
+                      <span className="text-xl">💳</span>
+                      <span className="text-xs font-black text-slate-400 uppercase tracking-widest">Online Revenue</span>
+                   </div>
+                   <span className="text-xl font-black text-white">₹{dailyReport.ONLINE.toFixed(2)}</span>
+                 </div>
 
-                <div className="glass-panel p-6 rounded-3xl border border-white/5 bg-white/[0.02] flex flex-col justify-between group hover:bg-white/[0.04] transition-all">
-                  <span className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] mb-4">Online Sales</span>
-                  <div className="flex items-baseline gap-1">
-                    <span className="text-xs font-bold text-slate-500">₹</span>
-                    <span className="text-3xl font-black text-white tracking-tighter">{dailyReport.ONLINE.toFixed(2)}</span>
-                  </div>
-                </div>
+                 {dailyReport.SPLIT > 0 && (
+                   <div className="flex justify-between items-center bg-white/[0.03] p-5 rounded-2xl border border-white/5">
+                     <div className="flex items-center gap-3">
+                        <span className="text-xl">🔄</span>
+                        <span className="text-xs font-black text-slate-400 uppercase tracking-widest">Split/Other</span>
+                     </div>
+                     <span className="text-xl font-black text-white">₹{dailyReport.SPLIT.toFixed(2)}</span>
+                   </div>
+                 )}
 
-                <div className="glass-panel p-6 rounded-3xl border border-white/5 bg-white/[0.02] flex flex-col justify-between group hover:bg-white/[0.04] transition-all">
-                  <span className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] mb-4">Split/Other</span>
-                  <div className="flex items-baseline gap-1">
-                    <span className="text-xs font-bold text-slate-500">₹</span>
-                    <span className="text-3xl font-black text-white tracking-tighter">{dailyReport.SPLIT.toFixed(2)}</span>
-                  </div>
-                </div>
-
-                <div className="glass-panel p-6 rounded-[2rem] border border-blue-500/20 bg-blue-500/[0.03] flex flex-col justify-between relative overflow-hidden group hover:bg-blue-500/[0.06] transition-all shadow-[0_20px_50px_-15px_rgba(59,130,246,0.15)]">
-                  <div className="absolute top-0 right-0 w-24 h-24 bg-blue-500/10 rounded-full blur-3xl -mr-10 -mt-10 group-hover:bg-blue-500/20 transition-all"></div>
-                  <span className="text-[10px] font-black text-blue-500 uppercase tracking-[0.2em] mb-4 relative z-10">Total Gross</span>
-                  <div className="flex items-baseline gap-1 relative z-10">
-                    <span className="text-sm font-black text-blue-500">₹</span>
-                    <span className="text-4xl font-black text-blue-400 tracking-tighter text-glow drop-shadow-[0_0_15px_rgba(59,130,246,0.5)]">
-                      {dailyReport.TOTAL.toFixed(2)}
-                    </span>
-                  </div>
-                </div>
-             </div>
+                 <div className="flex justify-between items-center bg-blue-500/[0.08] p-6 rounded-[2rem] border border-blue-500/20 mt-6 shadow-[0_10px_30px_-10px_rgba(59,130,246,0.2)]">
+                   <span className="text-sm font-black text-blue-500 uppercase tracking-[0.2em]">Total Gross</span>
+                   <span className="text-3xl font-black text-blue-400 drop-shadow-[0_0_15px_rgba(59,130,246,0.4)] text-glow">
+                     ₹{dailyReport.TOTAL.toFixed(2)}
+                   </span>
+                 </div>
+               </div>
+            </div>
           </section>
 
           {/* 2. MAIN HUB ACTIONS & TRANSACTIONS */}
