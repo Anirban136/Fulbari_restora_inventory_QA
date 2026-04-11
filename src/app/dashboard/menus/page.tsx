@@ -12,13 +12,23 @@ export default async function MenusPage() {
   })
   
   const menuItems = await prisma.menuItem.findMany({
-    include: { Outlet: true, ingredients: true },
+    include: { 
+      Outlet: true, 
+      ingredients: {
+        include: {
+          Item: true
+        }
+      } 
+    },
     orderBy: [ { Outlet: { name: 'asc' } }, { categoryId: 'asc' }, { name: 'asc' } ]
   })
 
+  // Filter out any data with missing required relations to prevent crashes
+  const validMenuItems = menuItems.filter(item => item.Outlet)
+
   const globalItems = await prisma.item.findMany({ orderBy: { name: 'asc' } })
 
-  const existingCategories = Array.from(new Set(menuItems.map((item: any) => item.categoryId).filter(Boolean))) as string[]
+  const existingCategories = Array.from(new Set(validMenuItems.map((item: any) => item.categoryId).filter(Boolean))) as string[]
 
   return (
     <div className="space-y-8 relative">
@@ -51,7 +61,7 @@ export default async function MenusPage() {
         {/* MENU LIST (Filterable Client Table) */}
         <div className="xl:col-span-2 glass-panel rounded-3xl overflow-hidden flex flex-col">
           <MenuManagementTable 
-            menuItems={menuItems} 
+            menuItems={validMenuItems} 
             outlets={outlets} 
             globalItems={globalItems} 
             existingCategories={existingCategories} 
