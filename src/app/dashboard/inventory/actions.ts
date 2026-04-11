@@ -313,38 +313,60 @@ export async function adjustOutletStock(data: FormData) {
   const outletId = data.get("outletId") as string
   const itemId = data.get("itemId") as string
   const quantityRaw = data.get("quantity") as string
+  const mode = data.get("mode") as "ADD" | "REMOVE" || "REMOVE"
   const quantity = parseFloat(quantityRaw)
 
   if (!outletId || !itemId || isNaN(quantity) || quantity <= 0) {
     throw new Error("Invalid adjustment data")
   }
 
-  // Find the stock record first to ensure it's not going below zero (optional but safe)
+  // Find the stock record first
   const stock = await prisma.outletStock.findUnique({
     where: { outletId_itemId: { outletId, itemId } }
   })
 
-  if (!stock || stock.quantity < quantity) {
-    throw new Error(`Insufficient stock in outlet. Available: ${stock?.quantity || 0}`)
-  }
+  if (mode === "REMOVE") {
+    if (!stock || stock.quantity < quantity) {
+      throw new Error(`Insufficient stock in outlet. Available: ${stock?.quantity || 0}`)
+    }
 
-  // Update outlet stock and log consumption
-  await prisma.$transaction([
-    prisma.outletStock.update({
-      where: { outletId_itemId: { outletId, itemId } },
-      data: { quantity: { decrement: quantity } },
-    }),
-    prisma.inventoryLedger.create({
-      data: {
-        type: "CONSUMPTION",
-        itemId,
-        quantity,
-        outletId,
-        userId: session.user.id,
-        notes: `Manual adjustment (Used in kitchen/waste)`,
-      },
-    }),
-  ])
+    // Update outlet stock and log consumption
+    await prisma.$transaction([
+      prisma.outletStock.update({
+        where: { outletId_itemId: { outletId, itemId } },
+        data: { quantity: { decrement: quantity } },
+      }),
+      prisma.inventoryLedger.create({
+        data: {
+          type: "CONSUMPTION",
+          itemId,
+          quantity,
+          outletId,
+          userId: session.user.id,
+          notes: `Manual adjustment (Removed from stock)`,
+        },
+      }),
+    ])
+  } else {
+    // mode === "ADD"
+    await prisma.$transaction([
+      prisma.outletStock.upsert({
+        where: { outletId_itemId: { outletId, itemId } },
+        update: { quantity: { increment: quantity } },
+        create: { outletId, itemId, quantity },
+      }),
+      prisma.inventoryLedger.create({
+        data: {
+          type: "ADJUSTMENT",
+          itemId,
+          quantity,
+          outletId,
+          userId: session.user.id,
+          notes: `Manual adjustment (Added to stock)`,
+        },
+      }),
+    ])
+  }
 
   revalidatePath("/dashboard/stores")
   revalidatePath("/dashboard/inventory/dispatch")

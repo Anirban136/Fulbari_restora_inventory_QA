@@ -1,14 +1,15 @@
 "use client"
 
 import { useState, useMemo } from "react"
-import { Store, Layers, Package, ArrowDownCircle, AlertCircle, ChevronRight, CheckCircle2 } from "lucide-react"
+import { Store, Layers, Package, ArrowDownCircle, AlertCircle, ChevronRight, CheckCircle2, Plus, Minus, Info } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { adjustOutletStock } from "../inventory/actions"
 import { cn } from "@/lib/utils"
 
-export function AdjustStockForm({ outlets }: { outlets: any[] }) {
+export function AdjustStockForm({ outlets, onSuccess }: { outlets: any[], onSuccess?: () => void }) {
+  const [mode, setMode] = useState<'ADD' | 'REMOVE'>('REMOVE')
   const [selectedOutletId, setSelectedOutletId] = useState("")
   const [selectedCategory, setSelectedCategory] = useState("")
   const [selectedItemId, setSelectedItemId] = useState("")
@@ -54,11 +55,18 @@ export function AdjustStockForm({ outlets }: { outlets: any[] }) {
       formData.append("outletId", selectedOutletId)
       formData.append("itemId", selectedItemId)
       formData.append("quantity", quantity)
+      formData.append("mode", mode)
 
       await adjustOutletStock(formData)
-      setMessage({ type: 'success', text: "Stock adjusted successfully" })
+      setMessage({ type: 'success', text: `Stock ${mode === 'ADD' ? 'added' : 'removed'} successfully` })
       setQuantity("")
       setSelectedItemId("")
+      
+      // Notify parent of success (e.g., to close dialog)
+      if (onSuccess) {
+        setTimeout(() => onSuccess(), 1000)
+      }
+
       // Clear message after 3 seconds
       setTimeout(() => setMessage(null), 3000)
     } catch (error: any) {
@@ -69,17 +77,67 @@ export function AdjustStockForm({ outlets }: { outlets: any[] }) {
   }
 
   return (
-    <div className="glass-panel p-6 lg:p-8 rounded-[2rem] border border-white/5 bg-white/[0.02] shadow-2xl relative overflow-hidden backdrop-blur-3xl lg:sticky lg:top-8">
-      <div className="absolute top-0 right-0 w-64 h-64 bg-purple-500/5 rounded-full blur-[80px] -z-10"></div>
+    <div className={cn(
+      "glass-panel p-6 lg:p-8 rounded-[2rem] border transition-all duration-700 bg-white/[0.02] shadow-2xl relative overflow-hidden backdrop-blur-3xl lg:sticky lg:top-8",
+      mode === 'ADD' ? "border-emerald-500/20" : "border-white/5"
+    )}>
+      {/* Background Decor */}
+      <div className={cn(
+        "absolute top-0 right-0 w-64 h-64 rounded-full blur-[80px] -z-10 transition-colors duration-700",
+        mode === 'ADD' ? "bg-emerald-500/10" : "bg-purple-500/5"
+      )}></div>
       
-      <div className="flex items-center gap-4 mb-8">
-        <div className="p-3 bg-purple-500/10 rounded-2xl border border-purple-500/20 shadow-[0_0_20px_rgba(168,85,247,0.1)]">
-          <ArrowDownCircle className="w-6 h-6 text-purple-400" />
+      <div className="flex items-center justify-between mb-8">
+        <div className="flex items-center gap-4">
+          <div className={cn(
+            "p-3 rounded-2xl border shadow-[0_0_20px_rgba(0,0,0,0.1)] transition-all duration-500",
+            mode === 'ADD' 
+              ? "bg-emerald-500/10 border-emerald-500/20 shadow-[0_0_20px_rgba(16,185,129,0.1)]" 
+              : "bg-purple-500/10 border-purple-500/20 shadow-[0_0_20px_rgba(168,85,247,0.1)]"
+          )}>
+            {mode === 'ADD' ? (
+              <Plus className="w-6 h-6 text-emerald-400" />
+            ) : (
+              <Minus className="w-6 h-6 text-purple-400" />
+            )}
+          </div>
+          <div>
+            <h3 className="text-xl font-black text-white tracking-tight uppercase">
+              {mode === 'ADD' ? 'Add Stock' : 'Remove Stock'}
+            </h3>
+            <p className="text-[10px] text-muted-foreground font-black tracking-widest uppercase opacity-60">
+              {mode === 'ADD' ? 'Replenish Inventory' : 'Log Consumption / Waste'}
+            </p>
+          </div>
         </div>
-        <div>
-          <h3 className="text-xl font-black text-white tracking-tight uppercase">Adjust Outlet Stock</h3>
-          <p className="text-[10px] text-muted-foreground font-black tracking-widest uppercase opacity-60">Log Consumption / Kitchen Use</p>
-        </div>
+      </div>
+
+      {/* Mode Toggle Selection */}
+      <div className="grid grid-cols-2 gap-2 mb-8 p-1.5 bg-black/40 rounded-2xl border border-white/5">
+        <button
+          onClick={() => setMode('REMOVE')}
+          type="button"
+          className={cn(
+            "flex items-center justify-center gap-2 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all",
+            mode === 'REMOVE' 
+              ? "bg-purple-600 text-white shadow-lg" 
+              : "text-muted-foreground hover:text-white"
+          )}
+        >
+          <Minus className="w-3 h-3" /> Remove
+        </button>
+        <button
+          onClick={() => setMode('ADD')}
+          type="button"
+          className={cn(
+            "flex items-center justify-center gap-2 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all",
+            mode === 'ADD' 
+              ? "bg-emerald-600 text-white shadow-lg" 
+              : "text-muted-foreground hover:text-white"
+          )}
+        >
+          <Plus className="w-3 h-3" /> Add
+        </button>
       </div>
 
       {message && (
@@ -111,7 +169,7 @@ export function AdjustStockForm({ outlets }: { outlets: any[] }) {
                 className={cn(
                   "px-4 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest border transition-all active:scale-95",
                   selectedOutletId === o.id 
-                    ? "bg-purple-600 border-purple-400 text-white shadow-[0_0_15px_rgba(168,85,247,0.3)]" 
+                    ? (mode === 'ADD' ? "bg-emerald-600 border-emerald-400 text-white" : "bg-purple-600 border-purple-400 text-white shadow-[0_0_15px_rgba(168,85,247,0.3)]")
                     : "bg-white/5 border-white/10 text-muted-foreground hover:bg-white/10"
                 )}
               >
@@ -159,13 +217,22 @@ export function AdjustStockForm({ outlets }: { outlets: any[] }) {
         </div>
 
         {/* Step 4: Adjustment Quantity */}
-        <div className={cn("group p-5 rounded-2xl bg-black/40 border border-white/5 transition-all", !selectedItemId && "opacity-20 pointer-events-none grayscale")}>
+        <div className={cn(
+          "group p-5 rounded-2xl bg-black/40 border transition-all duration-500",
+          !selectedItemId && "opacity-20 pointer-events-none grayscale",
+          mode === 'ADD' ? "border-emerald-500/20" : "border-white/5"
+        )}>
           <div className="flex justify-between items-end mb-4">
-            <Label className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em]">Quantity to Remove</Label>
+            <Label className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em]">
+              Quantity to {mode === 'ADD' ? 'Add' : 'Remove'}
+            </Label>
             {selectedStock && (
               <div className="flex flex-col items-end">
                 <span className="text-[10px] font-black text-white/40 uppercase tracking-widest leading-none">In Stock</span>
-                <span className="text-xl font-black text-purple-400 tracking-tighter">
+                <span className={cn(
+                  "text-xl font-black tracking-tighter transition-colors",
+                  mode === 'ADD' ? "text-emerald-400" : "text-purple-400"
+                )}>
                   {selectedStock.quantity} <span className="text-[10px] opacity-60 uppercase">{selectedStock.Item.piecesPerBox ? 'pcs' : selectedStock.Item.unit}</span>
                 </span>
               </div>
@@ -179,7 +246,10 @@ export function AdjustStockForm({ outlets }: { outlets: any[] }) {
               value={quantity}
               onChange={(e) => setQuantity(e.target.value)}
               placeholder="0.00"
-              className="h-14 bg-white/5 border-white/10 text-xl font-black tracking-tight text-white rounded-xl focus-visible:ring-purple-500/50 shadow-inner placeholder:text-white/10"
+              className={cn(
+                "h-14 bg-white/5 border-white/10 text-xl font-black tracking-tight text-white rounded-xl shadow-inner placeholder:text-white/10 transition-all",
+                mode === 'ADD' ? "focus-visible:ring-emerald-500/50" : "focus-visible:ring-purple-500/50"
+              )}
               required
             />
             {selectedStock && (
@@ -192,10 +262,15 @@ export function AdjustStockForm({ outlets }: { outlets: any[] }) {
           {selectedStock && quantity && parseFloat(quantity) > 0 && (
             <div className="mt-4 pt-4 border-t border-white/5 flex items-center justify-between">
               <span className="text-[9px] font-black text-muted-foreground uppercase tracking-widest">Post-Adjustment</span>
-              <div className="flex items-center gap-2 text-emerald-400">
+              <div className={cn(
+                "flex items-center gap-2 transition-colors",
+                mode === 'ADD' ? "text-emerald-400" : "text-amber-400"
+              )}>
                 <ChevronRight className="w-3 h-3" />
                 <span className="text-sm font-black tracking-tighter">
-                  {Math.max(0, selectedStock.quantity - parseFloat(quantity))} {selectedStock.Item.unit}
+                  {mode === 'ADD' 
+                    ? (selectedStock.quantity + parseFloat(quantity)) 
+                    : Math.max(0, selectedStock.quantity - parseFloat(quantity))} {selectedStock.Item.unit}
                 </span>
               </div>
             </div>
@@ -205,18 +280,32 @@ export function AdjustStockForm({ outlets }: { outlets: any[] }) {
         <Button
           type="submit"
           disabled={isSubmitting || !selectedItemId || !quantity || parseFloat(quantity) <= 0}
-          className="w-full h-14 bg-purple-600 hover:bg-purple-500 text-white font-black uppercase tracking-[0.2em] rounded-2xl shadow-[0_10px_30px_-10px_rgba(168,85,247,0.5)] active:scale-95 transition-all disabled:opacity-50"
+          className={cn(
+            "w-full h-14 text-white font-black uppercase tracking-[0.2em] rounded-2xl active:scale-95 transition-all disabled:opacity-50 shadow-2xl",
+            mode === 'ADD' 
+              ? "bg-emerald-600 hover:bg-emerald-500 shadow-emerald-500/20" 
+              : "bg-purple-600 hover:bg-purple-500 shadow-purple-500/20"
+          )}
         >
-          {isSubmitting ? "Updating..." : "Confirm Adjustment"}
+          {isSubmitting ? "Updating..." : `Confirm ${mode === 'ADD' ? 'Addition' : 'Removal'}`}
         </Button>
       </form>
 
-      <div className="mt-6 flex items-start gap-4 p-4 bg-amber-500/5 border border-amber-500/10 rounded-2xl">
-        <AlertCircle className="w-5 h-5 text-amber-500/50 shrink-0 mt-0.5" />
-        <p className="text-[10px] text-amber-500/60 font-medium leading-relaxed">
-          Log kitchen use or waste here. This will immediately reduce the outlet's live stock and record an entry in the system ledger.
+      <div className={cn(
+        "mt-6 flex items-start gap-4 p-4 rounded-2xl border transition-all duration-500",
+        mode === 'ADD' ? "bg-emerald-500/5 border-emerald-500/10" : "bg-amber-500/5 border-amber-500/10"
+      )}>
+        <Info className={cn("w-5 h-5 shrink-0 mt-0.5 opacity-50", mode === 'ADD' ? "text-emerald-500" : "text-amber-500")} />
+        <p className={cn(
+          "text-[10px] font-medium leading-relaxed opacity-60",
+          mode === 'ADD' ? "text-emerald-500" : "text-amber-500"
+        )}>
+          {mode === 'ADD' 
+            ? "Replenish stock levels directly for this outlet. This is usually for corrected entry or local returns."
+            : "Log kitchen use or waste here. This will immediately reduce the outlet's live stock and record an entry."}
         </p>
       </div>
     </div>
   )
 }
+
