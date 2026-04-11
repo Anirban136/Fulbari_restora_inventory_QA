@@ -12,7 +12,8 @@ export async function getAggregatedCategories() {
   const categoryMap: Record<string, { name: string, inventoryCount: number, menuCount: number }> = {}
 
   items.forEach(item => {
-    const name = item.category || "Uncategorized"
+    // Normalize to UpperCase and Trim
+    const name = item.category?.trim().toUpperCase() || "UNCATEGORIZED"
     if (!categoryMap[name]) {
       categoryMap[name] = { name, inventoryCount: 0, menuCount: 0 }
     }
@@ -20,7 +21,8 @@ export async function getAggregatedCategories() {
   })
 
   menuItems.forEach(mi => {
-    const name = mi.categoryId || "Uncategorized"
+    // Normalize to UpperCase and Trim
+    const name = mi.categoryId?.trim().toUpperCase() || "UNCATEGORIZED"
     if (!categoryMap[name]) {
       categoryMap[name] = { name, inventoryCount: 0, menuCount: 0 }
     }
@@ -33,32 +35,41 @@ export async function getAggregatedCategories() {
 }
 
 export async function updateCategoryLabel(oldLabel: string, newLabel: string) {
+  // Always standardize to UPPERCASE
+  const standardizedNew = newLabel.trim().toUpperCase()
+  const standardizedOld = oldLabel.trim().toUpperCase()
+
   await prisma.$transaction([
     prisma.item.updateMany({
-      where: { category: oldLabel },
-      data: { category: newLabel }
+      where: { category: { equals: standardizedOld, mode: 'insensitive' } },
+      data: { category: standardizedNew }
     }),
     prisma.menuItem.updateMany({
-      where: { categoryId: oldLabel },
-      data: { categoryId: newLabel }
+      where: { categoryId: { equals: standardizedOld, mode: 'insensitive' } },
+      data: { categoryId: standardizedNew }
     })
   ])
+  
   revalidatePath("/dashboard/categories")
   revalidatePath("/dashboard/inventory")
   revalidatePath("/dashboard/menus")
+  revalidatePath("/dashboard/inventory/stock-in")
 }
 
 export async function deleteCategory(label: string) {
+  const standardizedLabel = label.trim().toUpperCase()
+
   await prisma.$transaction([
     prisma.item.updateMany({
-      where: { category: label },
-      data: { category: "Uncategorized" }
+      where: { category: { equals: standardizedLabel, mode: 'insensitive' } },
+      data: { category: "UNCATEGORIZED" }
     }),
     prisma.menuItem.updateMany({
-      where: { categoryId: label },
-      data: { categoryId: "Uncategorized" }
+      where: { categoryId: { equals: standardizedLabel, mode: 'insensitive' } },
+      data: { categoryId: "UNCATEGORIZED" }
     })
   ])
+  
   revalidatePath("/dashboard/categories")
   revalidatePath("/dashboard/inventory")
   revalidatePath("/dashboard/menus")
