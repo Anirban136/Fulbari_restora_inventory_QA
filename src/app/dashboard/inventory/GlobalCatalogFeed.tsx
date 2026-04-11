@@ -221,7 +221,7 @@ export function GlobalCatalogFeed({
                     <TableCell className="px-8 py-6">
                       <div className="flex items-center justify-center gap-3">
                         <EditItemDialog item={item} existingCategories={categories} />
-                        {isOwner && (
+                        {(isOwner || isManager) && (
                           <button 
                             onClick={() => removeItem(item.id)}
                             className="p-2.5 rounded-xl bg-red-500/5 text-red-500/40 hover:text-red-500 hover:bg-red-500/10 transition-all border border-transparent hover:border-red-500/20 active:scale-90" 

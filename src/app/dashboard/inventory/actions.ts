@@ -170,8 +170,8 @@ export async function updateItem(data: FormData) {
 
 export async function removeItem(data: FormData) {
   const session = await getServerSession(authOptions)
-  if (!session || session.user.role !== "OWNER") {
-    throw new Error("Unauthorized — only Admin Owner can remove catalog items")
+  if (!session || (session.user.role !== "OWNER" && session.user.role !== "INV_MANAGER")) {
+    throw new Error("Unauthorized — only Admin Owner or Inventory Manager can remove catalog items")
   }
 
   const itemId = data.get("itemId") as string
