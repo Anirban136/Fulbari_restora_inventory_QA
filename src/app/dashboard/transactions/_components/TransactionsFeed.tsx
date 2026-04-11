@@ -3,7 +3,7 @@
 import { useState, useMemo } from "react"
 import { Coffee, CupSoda, Calendar, Filter, FileDown, Search, ArrowRight, CreditCard, Banknote, Layers } from "lucide-react"
 import { formatTimeIST, formatDateIST } from "@/lib/utils"
-import { EditTransactionDialog } from "./edit-transaction-dialog"
+import { EditTransactionModal } from "@/components/EditTransactionModal"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { cn } from "@/lib/utils"
@@ -110,13 +110,11 @@ export function TransactionsFeed({ initialTransactions }: { initialTransactions:
                 </div>
                 
                 <div className="pl-4 border-l border-white/10 shrink-0">
-                  <EditTransactionDialog tab={{
-                    id: tab.id,
-                    totalAmount: tab.totalAmount,
-                    paymentMode: tab.paymentMode,
-                    status: tab.status,
-                    customerName: tab.customerName
-                  }} />
+                  <EditTransactionModal 
+                    tabId={tab.id} 
+                    currentAmount={tab.totalAmount} 
+                    currentMode={tab.paymentMode || "CASH"} 
+                  />
                 </div>
               </div>
             </div>
