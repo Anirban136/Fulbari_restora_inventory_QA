@@ -120,23 +120,23 @@ export function FinancialReports() {
           </div>
         </div>
 
-        <DialogFooter className="px-8 py-6 bg-muted/30 border-t border-border/10 flex flex-col sm:flex-row gap-3">
+        <DialogFooter className="px-8 py-8 bg-muted/30 border-t border-border/10">
           <Button 
             onClick={handleExport}
             disabled={loading || !from || !to}
             className={cn(
-               "flex-1 h-14 rounded-2xl font-black uppercase tracking-widest text-xs transition-all active:scale-95 shadow-[0_20px_40px_-10px_rgba(16,185,129,0.3)]",
+               "w-full h-16 rounded-full font-black uppercase tracking-[0.2em] text-sm transition-all active:scale-95 shadow-[0_20px_40px_-10px_rgba(16,185,129,0.4)]",
                loading ? "bg-muted cursor-not-allowed" : "bg-emerald-500 text-white hover:bg-emerald-600 hover:scale-[1.02]"
             )}
           >
             {loading ? (
               <>
-                <Loader2 className="w-5 h-5 animate-spin mr-2" />
-                Generating...
+                <Loader2 className="w-6 h-6 animate-spin mr-3" />
+                Generating Analysis...
               </>
             ) : (
               <>
-                <Download className="w-5 h-5 mr-3" />
+                <FileText className="w-6 h-6 mr-3" />
                 Download PDF Report
               </>
             )}
