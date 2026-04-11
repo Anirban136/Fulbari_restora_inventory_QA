@@ -130,10 +130,6 @@ export default async function DashboardOverview() {
           </div>
           <div className="flex flex-col sm:flex-row items-center gap-4">
             <FinancialReports />
-            <div className="flex items-center gap-3 bg-emerald-500/10 border border-emerald-500/20 px-6 py-3 rounded-full backdrop-blur-xl">
-              <Activity className="w-5 h-5 text-emerald-500 animate-pulse" />
-              <span className="text-xs font-black text-emerald-600 dark:text-emerald-400 uppercase tracking-[0.2em]">System Optimal</span>
-            </div>
           </div>
         </div>
       </header>

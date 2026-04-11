@@ -13,6 +13,8 @@ import {
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
+import { generateTransactionPDF } from "@/lib/report-generator";
+
 export function FinancialReports() {
   const [from, setFrom] = useState("");
   const [to, setTo] = useState("");
@@ -27,14 +29,18 @@ export function FinancialReports() {
 
     setLoading(true);
     try {
-      const url = `/api/export/transactions?from=${from}&to=${to}`;
-      window.location.assign(url);
-      setOpen(false); // Close modal on success
+      const response = await fetch(`/api/export/transactions/data?from=${from}&to=${to}`);
+      if (!response.ok) throw new Error("Failed to fetch report data");
+      
+      const data = await response.json();
+      await generateTransactionPDF(data, from, to);
+      
+      setOpen(false); 
     } catch (error) {
       console.error("Export failed", error);
-      alert("Failed to generate report. Please try again.");
+      alert("Failed to generate PDF report. Please try again.");
     } finally {
-      setTimeout(() => setLoading(false), 2000);
+      setLoading(false);
     }
   };
 
@@ -42,30 +48,39 @@ export function FinancialReports() {
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger 
         render={
-          <button className="flex items-center gap-3 px-8 py-4 bg-foreground text-background rounded-3xl text-xs font-black uppercase tracking-[0.2em] hover:scale-105 transition-all active:scale-95 shadow-[0_20px_40px_-10px_rgba(0,0,0,0.3)] group overflow-hidden relative" />
+          <button className="flex items-center gap-3 bg-emerald-500/10 border border-emerald-500/20 px-8 py-4 rounded-full backdrop-blur-xl group hover:bg-emerald-500/20 transition-all active:scale-95 shadow-[0_10px_30px_-5px_rgba(16,185,129,0.1)]" />
         }
       >
-        <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/20 to-blue-500/20 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
-        <Download className="w-4 h-4" />
-        Download Report
+        <Download className="w-5 h-5 text-emerald-500 group-hover:scale-110 transition-transform" />
+        <span className="text-xs font-black text-emerald-600 dark:text-emerald-400 uppercase tracking-[0.2em]">Download Report</span>
       </DialogTrigger>
       
-      <DialogContent className="sm:max-w-md bg-background border-border/40 p-0 overflow-hidden rounded-[2.5rem] shadow-2xl">
-        <div className="absolute -top-24 -right-24 w-48 h-48 bg-primary/10 rounded-full blur-[80px] pointer-events-none"></div>
+      <DialogContent showCloseButton={false} className="sm:max-w-md bg-background border-border/40 p-0 overflow-hidden rounded-[2.5rem] shadow-2xl">
+        <div className="absolute -top-24 -right-24 w-48 h-48 bg-emerald-500/10 rounded-full blur-[80px] pointer-events-none"></div>
         
         <DialogHeader className="px-8 pt-8 pb-4 relative z-10">
-          <div className="flex items-center gap-4 mb-2">
-            <div className="p-3 bg-primary/10 rounded-2xl">
-              <FileSpreadsheet className="w-6 h-6 text-primary" />
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <div className="p-3 bg-emerald-500/10 rounded-2xl">
+                <FileSpreadsheet className="w-6 h-6 text-emerald-500" />
+              </div>
+              <div>
+                <DialogTitle className="text-2xl font-black text-foreground tracking-tight uppercase leading-none">
+                  Export Reports
+                </DialogTitle>
+                <p className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em] mt-1 opacity-60">
+                  Financial Transaction Analysis
+                </p>
+              </div>
             </div>
-            <div>
-              <DialogTitle className="text-2xl font-black text-foreground tracking-tight uppercase leading-none">
-                Export Reports
-              </DialogTitle>
-              <p className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em] mt-1 opacity-60">
-                Financial Transaction Analysis
-              </p>
-            </div>
+            
+            {/* Larger Custom Close Button */}
+            <button 
+              onClick={() => setOpen(false)}
+              className="p-3 bg-muted/50 hover:bg-muted rounded-2xl text-muted-foreground hover:text-foreground transition-all active:scale-90"
+            >
+              <X className="w-6 h-6" />
+            </button>
           </div>
         </DialogHeader>
 
@@ -79,7 +94,7 @@ export function FinancialReports() {
                   type="date" 
                   value={from}
                   onChange={(e) => setFrom(e.target.value)}
-                  className="w-full bg-muted/30 border border-border/40 rounded-2xl px-10 py-3 text-xs font-bold text-foreground focus:ring-2 focus:ring-primary/50 outline-none transition-all hover:bg-muted/50"
+                  className="w-full bg-muted/30 border border-border/40 rounded-2xl px-10 py-3 text-xs font-bold text-foreground focus:ring-2 focus:ring-emerald-500/50 outline-none transition-all hover:bg-muted/50"
                 />
               </div>
             </div>
@@ -92,15 +107,15 @@ export function FinancialReports() {
                   type="date" 
                   value={to}
                   onChange={(e) => setTo(e.target.value)}
-                  className="w-full bg-muted/30 border border-border/40 rounded-2xl px-10 py-3 text-xs font-bold text-foreground focus:ring-2 focus:ring-primary/50 outline-none transition-all hover:bg-muted/50"
+                  className="w-full bg-muted/30 border border-border/40 rounded-2xl px-10 py-3 text-xs font-bold text-foreground focus:ring-2 focus:ring-emerald-500/50 outline-none transition-all hover:bg-muted/50"
                 />
               </div>
             </div>
           </div>
 
-          <div className="p-4 bg-muted/20 border border-border/20 rounded-2xl">
+          <div className="p-4 bg-emerald-500/5 border border-emerald-500/10 rounded-2xl">
              <p className="text-[10px] text-muted-foreground font-medium leading-relaxed italic opacity-80">
-               Your CSV includes daily summaries, multi-mode sub-totals, and a full item breakdown for the selected range.
+               Your PDF includes branded daily summaries, outlet-specific breakdown (Cafe & Chai), and high-visibility financial analysis.
              </p>
           </div>
         </div>
@@ -110,8 +125,8 @@ export function FinancialReports() {
             onClick={handleExport}
             disabled={loading || !from || !to}
             className={cn(
-               "flex-1 h-14 rounded-2xl font-black uppercase tracking-widest text-xs transition-all active:scale-95 shadow-xl",
-               loading ? "bg-muted cursor-not-allowed" : "bg-primary text-primary-foreground hover:scale-[1.02]"
+               "flex-1 h-14 rounded-2xl font-black uppercase tracking-widest text-xs transition-all active:scale-95 shadow-[0_20px_40px_-10px_rgba(16,185,129,0.3)]",
+               loading ? "bg-muted cursor-not-allowed" : "bg-emerald-500 text-white hover:bg-emerald-600 hover:scale-[1.02]"
             )}
           >
             {loading ? (
@@ -122,7 +137,7 @@ export function FinancialReports() {
             ) : (
               <>
                 <Download className="w-5 h-5 mr-3" />
-                Download CSV Report
+                Download PDF Report
               </>
             )}
           </Button>
