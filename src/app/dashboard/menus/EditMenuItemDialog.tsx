@@ -58,11 +58,11 @@ export function EditMenuItemDialog({
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
+      <DialogTrigger render={
         <button className="p-2 rounded-xl text-slate-400 hover:text-white hover:bg-white/10 transition-all border border-transparent hover:border-white/10 flex items-center justify-center">
           <Edit className="w-4 h-4" />
         </button>
-      </DialogTrigger>
+      } />
       <DialogContent className="sm:max-w-[450px] bg-black/90 backdrop-blur-3xl border-white/10 rounded-[2rem] overflow-hidden">
         <DialogHeader className="p-6 pb-0">
           <div className="h-12 w-12 bg-indigo-500/20 rounded-2xl flex items-center justify-center border border-indigo-500/30 shadow-[0_0_15px_-3px_rgba(99,102,241,0.3)] mb-4">
