@@ -44,7 +44,7 @@ export function EditTransactionDialog({ tab }: { tab: TabData }) {
       router.refresh()
     } catch (e) {
       console.error(e)
-      alert("Failed to update transaction. Ensure you have proper permissions.")
+      alert("Failed to update transaction.")
     } finally {
       setLoading(false)
     }
@@ -52,70 +52,69 @@ export function EditTransactionDialog({ tab }: { tab: TabData }) {
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger 
-        className="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 border border-white/10 bg-white/5 shadow-sm hover:bg-white/10 hover:text-white h-8 px-3"
-      >
-        <Pencil className="w-3 h-3 mr-2" />
-        Edit
-      </DialogTrigger>
-      <DialogContent className="bg-slate-900 border-white/10 text-white sm:max-w-[425px]">
-        <DialogHeader>
-          <DialogTitle className="text-xl font-bold tracking-tight">Edit Transaction</DialogTitle>
+      <DialogTrigger
+        render={
+          <Button variant="outline" className="h-10 px-5 rounded-xl border-white/10 bg-white/5 hover:bg-white/10 text-white/60 hover:text-white font-black text-[10px] uppercase tracking-widest gap-2 group/edit transition-all active:scale-95 shadow-sm">
+            <Pencil className="w-3 h-3 text-emerald-500/50 group-hover/edit:text-emerald-500 transition-colors" />
+            Rectify
+          </Button>
+        }
+      />
+      <DialogContent className="bg-zinc-950/95 backdrop-blur-3xl border-white/10 text-white sm:max-w-[425px] rounded-[2.5rem] p-8 shadow-2xl">
+        <DialogHeader className="mb-6">
+          <DialogTitle className="text-2xl font-black tracking-tighter uppercase">Transaction Audit</DialogTitle>
+          <p className="text-[10px] font-black text-white/30 uppercase tracking-[0.2em] mt-1">Rectify records for <span className="text-emerald-500">{tab.customerName || "WALK-IN"}</span></p>
         </DialogHeader>
-        <div className="grid gap-6 py-4">
-          <div className="grid gap-2">
-            <Label className="text-slate-400 font-bold uppercase tracking-widest text-[10px]">Customer Name</Label>
-            <Input disabled value={tab.customerName || "Walk-in"} className="bg-white/5 border-white/10 text-white opacity-50" />
-          </div>
-          
-          <div className="grid gap-2">
-            <Label htmlFor="amount" className="text-slate-400 font-bold uppercase tracking-widest text-[10px]">Total Amount (₹)</Label>
+        
+        <div className="grid gap-6 py-2">
+          <div className="grid gap-2.5">
+            <Label className="text-[10px] font-black text-white/30 uppercase tracking-[0.3em] ml-1">TOTAL PAYABLE (₹)</Label>
             <Input 
               id="amount" 
               type="number" 
               value={amount} 
               onChange={e => setAmount(e.target.value)}
-              className="bg-white/5 border-white/10 focus-visible:ring-emerald-500 text-white font-bold text-lg" 
+              className="h-14 bg-white/[0.03] border-white/10 focus-visible:ring-emerald-500/40 text-white font-black text-xl rounded-2xl pl-5" 
             />
           </div>
 
-          <div className="grid gap-2">
-            <Label className="text-slate-400 font-bold uppercase tracking-widest text-[10px]">Payment Mode</Label>
+          <div className="grid gap-2.5">
+            <Label className="text-[10px] font-black text-white/30 uppercase tracking-[0.3em] ml-1">PAYMENT CHANNEL</Label>
             <Select value={paymentMode} onValueChange={(val) => setPaymentMode(val || "CASH")}>
-              <SelectTrigger className="bg-white/5 border-white/10 text-white font-medium">
-                <SelectValue placeholder="Select mode" />
+              <SelectTrigger className="h-14 bg-white/[0.03] border-white/10 text-white font-black rounded-2xl px-5 uppercase tracking-widest text-xs">
+                <SelectValue placeholder="Select channel" />
               </SelectTrigger>
-              <SelectContent className="bg-slate-900 border-white/10 text-white">
-                <SelectItem value="CASH">Cash</SelectItem>
-                <SelectItem value="ONLINE">Online/UPI</SelectItem>
-                <SelectItem value="SPLIT">Split</SelectItem>
+              <SelectContent className="bg-zinc-900 border-white/10 text-white rounded-xl">
+                <SelectItem value="CASH">Liquid Cash</SelectItem>
+                <SelectItem value="ONLINE">Online / UPI</SelectItem>
+                <SelectItem value="SPLIT">Split Payment</SelectItem>
               </SelectContent>
             </Select>
           </div>
 
-          <div className="grid gap-2">
-            <Label className="text-slate-400 font-bold uppercase tracking-widest text-[10px]">Status</Label>
+          <div className="grid gap-2.5">
+            <Label className="text-[10px] font-black text-white/30 uppercase tracking-[0.3em] ml-1">SETTLEMENT STATUS</Label>
             <Select value={status} onValueChange={(val) => setStatus(val || "OPEN")}>
-              <SelectTrigger className="bg-white/5 border-white/10 text-white font-medium">
+              <SelectTrigger className="h-14 bg-white/[0.03] border-white/10 text-white font-black rounded-2xl px-5 uppercase tracking-widest text-xs">
                 <SelectValue placeholder="Select status" />
               </SelectTrigger>
-              <SelectContent className="bg-slate-900 border-white/10 text-white">
-                <SelectItem value="OPEN">Open</SelectItem>
-                <SelectItem value="CLOSED">Closed</SelectItem>
-                <SelectItem value="CANCELLED">Cancelled</SelectItem>
+              <SelectContent className="bg-zinc-900 border-white/10 text-white rounded-xl">
+                <SelectItem value="OPEN">Draft / Open</SelectItem>
+                <SelectItem value="CLOSED">Finalized / Closed</SelectItem>
+                <SelectItem value="CANCELLED">Void / Cancelled</SelectItem>
               </SelectContent>
             </Select>
           </div>
         </div>
         
-        <div className="flex justify-end gap-3 mt-4">
-          <Button variant="ghost" onClick={() => setOpen(false)} disabled={loading} className="text-slate-400 hover:text-white hover:bg-white/5">Cancel</Button>
+        <div className="flex justify-end gap-3 mt-8">
+          <Button variant="ghost" onClick={() => setOpen(false)} disabled={loading} className="rounded-2xl text-white/40 hover:text-white hover:bg-white/5 font-bold uppercase tracking-widest text-[10px]">Abandon</Button>
           <Button 
             onClick={handleSave} 
             disabled={loading}
-            className="bg-emerald-500 hover:bg-emerald-600 text-black font-black uppercase tracking-widest shadow-[0_0_15px_rgba(16,185,129,0.3)] transition-all"
+            className="h-14 px-8 rounded-2xl bg-white text-black hover:bg-slate-100 font-black uppercase tracking-[0.2em] text-[10px] transition-all active:scale-95 shadow-xl"
           >
-            {loading ? "Saving..." : "Save Changes"}
+            {loading ? "Syncing..." : "Apply Rectification"}
           </Button>
         </div>
       </DialogContent>
