@@ -100,9 +100,9 @@ export async function closeTab(data: FormData) {
      }
   }
 
-  // Generate token number for CAFE (daily auto-increment)
-  let tokenNumber: number | null = null
-  if (tab.Outlet.type === "CAFE") {
+  // Generate token number for CAFE (daily auto-increment) if none exists
+  let tokenNumber: number | null = tab.tokenNumber
+  if (!tokenNumber && tab.Outlet.type === "CAFE") {
     const { startUTC: todayStart } = getISTDateBounds()
     
     const lastToken = await prisma.tab.findFirst({

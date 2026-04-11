@@ -178,75 +178,78 @@ export default async function ChaiDashboard() {
                     ) : (
                       <div className="grid grid-cols-1 gap-4">
                         {recentTabs.map(tab => (
-                          <div key={tab.id} className="glass-panel p-6 rounded-3xl border border-white/5 bg-white/[0.02] hover:bg-white/[0.04] hover:border-white/10 transition-all flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 group">
-                            <div className="flex gap-5 items-center flex-1 min-w-0">
-                               <div className={cn(
-                                 "w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 border transition-transform group-hover:scale-110",
-                                 tab.status === "CANCELLED" 
-                                   ? "bg-red-500/10 border-red-500/20 text-red-400" 
-                                   : "bg-blue-500/10 border-blue-500/20 text-blue-400"
-                               )}>
-                                 <Receipt className="w-6 h-6" />
-                               </div>
-                               <div className="min-w-0">
-                                  <div className="flex items-center gap-2 mb-0.5">
-                                     <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{formatTimeIST(tab.closedAt || tab.openedAt)}</span>
-                                     {tab.tokenNumber && <span className="text-[9px] font-black bg-white/5 text-slate-300 px-2 py-0.5 rounded-md border border-white/5">TOKEN #{tab.tokenNumber}</span>}
-                                  </div>
-                                  <h3 className="text-lg font-black text-white/90 truncate group-hover:text-blue-400 transition-colors uppercase tracking-tight">
-                                    {tab.customerName || "Walk-in Customer"}
-                                  </h3>
-                                  <div className="flex items-center gap-2 mt-1 opacity-60">
-                                     <span className="text-[10px] font-bold text-slate-500 uppercase">Staff: {tab.User.name}</span>
-                                     <div className="w-1 h-1 rounded-full bg-slate-700"></div>
-                                     <span className="text-[10px] font-bold text-blue-500/80 uppercase">{tab.paymentMode}</span>
-                                  </div>
-                               </div>
-                            </div>
-
-                            <div className="flex flex-row sm:flex-col items-center sm:items-end justify-between sm:justify-center gap-4 w-full sm:w-auto mt-4 sm:mt-0 pt-4 sm:pt-0 border-t sm:border-t-0 border-white/5">
-                               <div className="flex flex-col items-end leading-none">
-                                  <span className={cn(
-                                    "text-2xl font-black tracking-tighter drop-shadow-sm",
-                                    tab.status === "CANCELLED" ? "text-slate-500 line-through" : "text-white group-hover:text-blue-400 transition-colors"
-                                  )}>
-                                    ₹{tab.totalAmount.toFixed(2)}
-                                  </span>
-                                  {tab.status === "CANCELLED" && <span className="text-[8px] font-black text-red-500 uppercase tracking-[0.2em] mt-1">Order Cancelled</span>}
+                          <div key={tab.id} className="glass-card p-6 rounded-[2.5rem] border-white/5 flex flex-col justify-between hover:border-blue-500/20 transition-all group relative overflow-hidden">
+                             <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/5 rounded-full blur-3xl pointer-events-none group-hover:bg-blue-500/10 transition-colors"></div>
+                             
+                             <div className="flex justify-between items-start mb-6 relative z-10">
+                               <div className="flex flex-col">
+                                 <div className="flex items-center gap-2 mb-1.5">
+                                   <div className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse"></div>
+                                   <span className="text-[9px] font-black text-blue-400 uppercase tracking-[0.2em]">{tab.paymentMode} Resolution</span>
+                                 </div>
+                                 <h3 className="text-xl font-black text-white tracking-tight truncate max-w-[200px] leading-tight">
+                                   {tab.customerName || "Walk-In Capture"}
+                                 </h3>
+                                 <span className="text-[9px] font-bold text-slate-500 uppercase tracking-widest mt-1">Staff: {tab.User.name}</span>
                                </div>
 
-                               <div className="flex items-center gap-2">
-                                  <TabReceiptModal
-                                    tabId={tab.id}
-                                    customerName={tab.customerName}
-                                    totalAmount={tab.totalAmount}
-                                    paymentMode={tab.paymentMode}
-                                    closedAt={tab.closedAt}
-                                    items={tab.Items}
-                                    accentColor="blue"
-                                  />
-                                  {tab.status === "CLOSED" && tab.tokenNumber && (
-                                    <PrintReceiptButton
-                                      outletName={chaiJoint.name}
-                                      tokenNumber={tab.tokenNumber}
-                                      customerName={tab.customerName}
-                                      tabId={tab.id}
-                                      items={tab.Items}
-                                      totalAmount={tab.totalAmount}
-                                      paymentMode={tab.paymentMode}
-                                      closedAt={tab.closedAt}
-                                      accentColor="blue"
-                                    />
-                                  )}
-                                  {(tab.status === "CLOSED" || tab.status === "CANCELLED") && (
+                               <div className="flex flex-col items-end gap-1.5">
+                                 {tab.tokenNumber ? (
+                                   <div className="px-4 py-2 bg-blue-500/10 border border-blue-500/20 rounded-2xl shadow-[0_4px_15px_-3px_rgba(59,130,246,0.2)]">
+                                     <span className="text-sm font-black text-blue-400 tracking-tight">TOKEN #{tab.tokenNumber}</span>
+                                   </div>
+                                 ) : (
+                                   <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest bg-white/5 px-3 py-1.5 rounded-xl border border-white/5">N/A</span>
+                                 )}
+                                 <span className="text-[9px] font-black text-slate-500 uppercase tracking-[0.1em] opacity-40">
+                                   {formatTimeIST(tab.closedAt || tab.openedAt)}
+                                 </span>
+                               </div>
+                             </div>
+
+                             <div className="flex flex-col sm:flex-row justify-between items-end sm:items-center pt-5 border-t border-white/5 relative z-10 group/bottom">
+                                <div className="flex flex-col mb-4 sm:mb-0">
+                                   <p className={cn(
+                                     "text-3xl font-black tracking-tighter transition-colors leading-none",
+                                     tab.status === "CANCELLED" ? "text-slate-600 line-through" : "text-white group-hover:text-blue-400"
+                                   )}>
+                                     ₹{tab.totalAmount.toFixed(0)}
+                                   </p>
+                                   {tab.status === "CANCELLED" && <span className="text-[8px] font-black text-red-500 uppercase tracking-widest mt-1">Order Revoked</span>}
+                                </div>
+
+                                <div className="flex items-center gap-2">
+                                   <TabReceiptModal
+                                     tabId={tab.id}
+                                     customerName={tab.customerName}
+                                     totalAmount={tab.totalAmount}
+                                     paymentMode={tab.paymentMode}
+                                     closedAt={tab.closedAt}
+                                     items={tab.Items}
+                                     accentColor="blue"
+                                   />
+                                   {tab.status === "CLOSED" && (
+                                     <PrintReceiptButton
+                                       outletName={chaiJoint.name}
+                                       tokenNumber={tab.tokenNumber}
+                                       customerName={tab.customerName}
+                                       tabId={tab.id}
+                                       items={tab.Items}
+                                       totalAmount={tab.totalAmount}
+                                       paymentMode={tab.paymentMode}
+                                       closedAt={tab.closedAt}
+                                       accentColor="blue"
+                                     />
+                                   )}
+                                   {(tab.status === "CLOSED" || tab.status === "CANCELLED") && (
                                     <form action={reopenTab.bind(null, tab.id)}>
-                                      <Button type="submit" variant="ghost" size="icon" className="h-9 w-9 rounded-xl text-slate-400 hover:text-blue-400 hover:bg-blue-500/10 border border-transparent hover:border-blue-500/20">
+                                      <Button type="submit" variant="ghost" size="icon" className="h-10 w-10 rounded-xl text-slate-400 hover:text-blue-400 hover:bg-blue-500/10 border border-white/5 hover:border-blue-500/20 transition-all">
                                         <Edit className="w-4 h-4" />
                                       </Button>
                                     </form>
                                   )}
-                               </div>
-                            </div>
+                                </div>
+                             </div>
                           </div>
                         ))}
                       </div>
