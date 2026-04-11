@@ -10,6 +10,7 @@ type Transaction = {
   paymentMode: string | null
   customerName: string | null
   closedAt: Date | null
+  tokenNumber: number | null
   Outlet: {
     name: string
   }
@@ -100,9 +101,16 @@ export function TransactionsFeed({ tabs }: { tabs: any[] }) {
                     </div>
                     <span className="text-lg font-black text-foreground truncate max-w-[150px]">{tab.customerName || "Walk-in Capture"}</span>
                   </div>
-                  <span className="text-[10px] font-bold text-muted-foreground opacity-60 bg-white/5 px-2 py-1 rounded-lg">
-                    {tab.closedAt ? new Date(tab.closedAt).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' }) : "N/A"}
-                  </span>
+                  <div className="flex flex-col items-end gap-1">
+                    <span className="text-[10px] font-bold text-muted-foreground opacity-60 bg-white/5 px-2 py-1 rounded-lg">
+                      {tab.tokenNumber ? `TOKEN #${tab.tokenNumber}` : tab.closedAt ? new Date(tab.closedAt).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' }) : "N/A"}
+                    </span>
+                    {tab.tokenNumber && tab.closedAt && (
+                      <span className="text-[8px] font-bold text-muted-foreground/40 uppercase tracking-widest">
+                        {new Date(tab.closedAt).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' })}
+                      </span>
+                    )}
+                  </div>
                 </div>
                 <div className="flex justify-between items-end border-t border-white/5 pt-4">
                   <div className="flex items-center gap-2">
@@ -123,6 +131,7 @@ export function TransactionsFeed({ tabs }: { tabs: any[] }) {
               <tr className="bg-white/5 border-b border-white/5">
                 <th className="p-8 text-[11px] font-black text-muted-foreground uppercase tracking-[0.3em]">Temporal Point</th>
                 <th className="p-8 text-[11px] font-black text-muted-foreground uppercase tracking-[0.3em]">Node Location</th>
+                <th className="p-8 text-[11px] font-black text-muted-foreground uppercase tracking-[0.3em]">Token</th>
                 <th className="p-8 text-[11px] font-black text-muted-foreground uppercase tracking-[0.3em]">Subject Entity</th>
                 <th className="p-8 text-[11px] font-black text-muted-foreground uppercase tracking-[0.3em] text-right">Credit Resolved</th>
               </tr>
@@ -154,6 +163,15 @@ export function TransactionsFeed({ tabs }: { tabs: any[] }) {
                        }`}>
                          {tab.Outlet.name.replace('_', ' ')}
                        </span>
+                    </td>
+                    <td className="p-8">
+                       {tab.tokenNumber ? (
+                         <span className="px-3 py-1 bg-primary/10 border border-primary/20 rounded-lg text-[10px] font-black text-primary tracking-widest">
+                           #{tab.tokenNumber}
+                         </span>
+                       ) : (
+                         <span className="text-[10px] font-bold text-muted-foreground/30">---</span>
+                       )}
                     </td>
                     <td className="p-8 relative">
                       <div className="flex items-center gap-4">

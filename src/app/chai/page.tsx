@@ -151,7 +151,7 @@ export default async function ChaiDashboard() {
                   <h2 className="text-3xl font-black text-white mb-2 leading-none uppercase tracking-tighter italic">POS Register</h2>
                   <p className="text-slate-500 font-medium text-xs mb-8 uppercase tracking-widest opacity-80">Take new orders & manage inventory</p>
                   <Link href="/tabs?target=CHAI_JOINT" className="w-full flex">
-                    <Button className="flex-1 w-full h-16 text-sm font-black tracking-[0.2em] uppercase bg-white text-black hover:bg-blue-400 transition-all rounded-2xl active:scale-95 shadow-[0_10px_30px_-10px_rgba(255,255,255,0.2)]">
+                    <Button className="flex-1 w-full h-16 text-sm font-black tracking-[0.2em] uppercase bg-blue-600 text-white hover:bg-blue-700 transition-all rounded-2xl active:scale-95 shadow-[0_10px_30px_-10px_rgba(37,99,235,0.4)]">
                       Open Registers
                     </Button>
                   </Link>
