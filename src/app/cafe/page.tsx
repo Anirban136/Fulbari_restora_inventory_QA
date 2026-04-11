@@ -168,6 +168,25 @@ export default async function CafeDashboard() {
                   </div>
                </div>
 
+               {/* Redesigned History Log (Quick Archives) */}
+               {isOwner && (
+                 <div className="flex gap-2 overflow-x-auto pb-2 px-2 no-scrollbar custom-scrollbar-premium">
+                    {last7Days.map((day) => (
+                      <a key={day.dateStr} href={`/api/export/transactions?outlet=CAFE&date=${day.dateStr}`} download className="shrink-0">
+                        <div className={cn(
+                          "px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all border flex items-center gap-2",
+                          day.isToday 
+                            ? "bg-amber-500/20 border-amber-500/30 text-amber-400" 
+                            : "bg-white/5 border-white/5 text-slate-500 hover:text-white hover:bg-white/10"
+                        )}>
+                          <History className="w-3 h-3 opacity-50" />
+                          {day.isToday ? "Today's Export" : day.displayDate}
+                        </div>
+                      </a>
+                    ))}
+                 </div>
+               )}
+
                <div className="glass-panel rounded-[2.5rem] overflow-hidden border border-white/5 bg-white/[0.01]">
                  <div className="flex-1 overflow-auto max-h-[700px] p-6 lg:p-8 space-y-4 custom-scrollbar-premium">
                     {recentTabs.length === 0 ? (
@@ -311,28 +330,6 @@ export default async function CafeDashboard() {
                </div>
             </div>
 
-            {/* D. Export Reports (Priority 4) */}
-            {isOwner && (
-              <div className="lg:col-span-4 order-4">
-                <div className="glass-panel p-8 rounded-[3rem] border border-blue-500/10 bg-blue-500/[0.02] hover:bg-blue-500/[0.04] transition-all group">
-                   <div className="flex items-center gap-3 mb-6">
-                      <div className="p-2 bg-blue-500/10 rounded-lg">
-                        <History className="w-4 h-4 text-blue-500" />
-                      </div>
-                      <h2 className="text-xs font-black text-blue-400 uppercase tracking-[0.3em]">History Log</h2>
-                   </div>
-                   <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-2 gap-2">
-                      {last7Days.map((day) => (
-                        <a key={day.dateStr} href={`/api/export/transactions?outlet=CAFE&date=${day.dateStr}`} download className="group/btn">
-                          <div className="px-4 py-3 bg-white/5 border border-white/5 rounded-2xl text-[10px] font-black text-slate-500 hover:text-white hover:bg-blue-500/20 hover:border-blue-500/30 transition-all uppercase tracking-widest text-center">
-                            {day.isToday ? "Today" : day.displayDate}
-                          </div>
-                        </a>
-                      ))}
-                   </div>
-                </div>
-              </div>
-            )}
 
           </div>
 
