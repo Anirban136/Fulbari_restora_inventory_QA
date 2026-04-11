@@ -138,11 +138,28 @@ export default async function ChaiDashboard() {
             </div>
           </section>
 
-          {/* 2. MAIN HUB ACTIONS & TRANSACTIONS */}
+                 {/* 2. MAIN HUB ACTIONS & TRANSACTIONS (FLATTENED GRID FOR ORDERING) */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
             
-            {/* Transactions Feed (Priority 2) */}
-            <div className="lg:col-span-8 space-y-6 order-2 lg:order-1">
+            {/* A. POS Register (Priority 1) */}
+            <div className="lg:col-span-4 order-1">
+               <div className="glass-panel p-8 rounded-[2.5rem] group hover:border-blue-500/30 transition-all border border-white/5 bg-white/[0.01] relative overflow-hidden shadow-2xl">
+                  <div className="absolute -right-4 -top-4 w-32 h-32 bg-blue-500/5 rounded-full blur-[40px] group-hover:bg-blue-500/10 transition-all pointer-events-none"></div>
+                  <div className="w-14 h-14 bg-blue-500/10 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                    <LayoutGrid className="w-7 h-7 text-blue-500 drop-shadow-[0_0_15px_rgba(59,130,246,0.5)]" />
+                  </div>
+                  <h2 className="text-3xl font-black text-white mb-2 leading-none uppercase tracking-tighter italic">POS Register</h2>
+                  <p className="text-slate-500 font-medium text-xs mb-8 uppercase tracking-widest opacity-80">Take new orders & manage inventory</p>
+                  <Link href="/tabs?target=CHAI_JOINT" className="w-full flex">
+                    <Button className="flex-1 w-full h-16 text-sm font-black tracking-[0.2em] uppercase bg-white text-black hover:bg-blue-400 transition-all rounded-2xl active:scale-95 shadow-[0_10px_30px_-10px_rgba(255,255,255,0.2)]">
+                      Open Registers
+                    </Button>
+                  </Link>
+               </div>
+            </div>
+
+            {/* B. Transactions Feed (Priority 2) */}
+            <div className="lg:col-span-8 space-y-6 order-2 lg:row-span-2">
                <div className="flex items-center justify-between px-2">
                   <div className="flex items-center gap-3">
                     <History className="w-5 h-5 text-slate-400" />
@@ -152,7 +169,7 @@ export default async function ChaiDashboard() {
                </div>
 
                <div className="glass-panel rounded-[2.5rem] overflow-hidden border border-white/5 bg-white/[0.01]">
-                 <div className="flex-1 overflow-auto max-h-[600px] p-6 lg:p-8 space-y-4 custom-scrollbar-premium">
+                 <div className="flex-1 overflow-auto max-h-[700px] p-6 lg:p-8 space-y-4 custom-scrollbar-premium">
                     {recentTabs.length === 0 ? (
                       <div className="flex flex-col items-center justify-center text-slate-500 py-32 opacity-20">
                         <Receipt className="w-16 h-16 mb-4" />
@@ -238,62 +255,82 @@ export default async function ChaiDashboard() {
                </div>
             </div>
 
-            {/* Sidebar Controls (Priority 3) */}
-            <div className="lg:col-span-4 space-y-8 order-1 lg:order-2">
-               {/* Launch POS */}
-               <div className="glass-panel p-8 rounded-[2.5rem] group hover:border-blue-500/30 transition-all border border-white/5 bg-white/[0.01] relative overflow-hidden shadow-2xl">
-                  <div className="absolute -right-4 -top-4 w-32 h-32 bg-blue-500/5 rounded-full blur-[40px] group-hover:bg-blue-500/10 transition-all pointer-events-none"></div>
-                  <div className="w-14 h-14 bg-blue-500/10 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-                    <LayoutGrid className="w-7 h-7 text-blue-500 drop-shadow-[0_0_15px_rgba(59,130,246,0.5)]" />
+            {/* C. Live Stock (Priority 3) */}
+            <div className="lg:col-span-4 order-3">
+               <div className="glass-panel p-8 rounded-[2.5rem] border border-white/5 bg-white/[0.01] flex flex-col h-full shadow-xl">
+                  <div className="flex items-center justify-between mb-8 px-1">
+                    <h2 className="text-sm font-black text-white uppercase tracking-[0.3em] flex items-center gap-3">
+                      <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div> Live Stock
+                    </h2>
+                    <span className="text-[10px] font-black text-slate-500 uppercase tracking-tighter italic opacity-50">Real-time update</span>
                   </div>
-                  <h2 className="text-3xl font-black text-white mb-2 leading-none uppercase tracking-tighter italic">POS Register</h2>
-                  <p className="text-slate-500 font-medium text-xs mb-8 uppercase tracking-widest opacity-80">Take new orders & manage inventory</p>
-                  <Link href="/tabs?target=CHAI_JOINT" className="w-full flex">
-                    <Button className="flex-1 w-full h-16 text-sm font-black tracking-[0.2em] uppercase bg-white text-black hover:bg-blue-400 transition-all rounded-2xl active:scale-95 shadow-[0_10px_30px_-10px_rgba(255,255,255,0.2)]">
-                      Open Registers
-                    </Button>
-                  </Link>
-               </div>
 
-               {/* Live Pantry */}
-               <div className="glass-panel p-8 rounded-[2.5rem] border border-white/5 bg-white/[0.01] flex flex-col">
-                  <h2 className="text-sm font-black text-white uppercase tracking-[0.3em] mb-8 flex items-center gap-3">
-                    <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div> Live Stock
-                  </h2>
-                  <div className="space-y-3 max-h-[400px] overflow-auto pr-2 custom-scrollbar-premium">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-3 overflow-auto custom-scrollbar-premium max-h-[600px] pr-2">
                      {localStock.length === 0 ? (
-                       <p className="text-slate-600 text-xs font-black uppercase tracking-widest py-4">Pantry Empty</p>
+                       <div className="flex flex-col items-center justify-center py-10 opacity-30 gap-4">
+                          <PackageOpen className="w-10 h-10" />
+                          <p className="text-slate-600 text-[10px] font-black uppercase tracking-widest text-center">Pantry Empty</p>
+                       </div>
                      ) : (
                        localStock.map(stock => (
-                         <div key={stock.id} className="flex justify-between items-center p-4 rounded-2xl border border-white/5 bg-white/[0.02] hover:bg-white/[0.04] transition-colors">
-                           <span className="font-bold text-slate-300 text-xs uppercase tracking-tight">{stock.Item.name}</span>
-                           <div className="flex flex-col items-end">
-                              <span className="font-black text-white text-sm">
-                                {stock.quantity} <span className="text-[8px] opacity-40 uppercase">{stock.Item.piecesPerBox ? 'pcs' : stock.Item.unit}</span>
-                              </span>
-                           </div>
+                         <div key={stock.id} className="relative group">
+                            <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-transparent rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
+                            <div className="relative glass-panel p-4 rounded-2xl border border-white/5 bg-white/[0.02] hover:bg-white/[0.05] hover:border-blue-500/20 transition-all flex items-center justify-between gap-4">
+                               <div className="min-w-0">
+                                  <p className="font-black text-slate-300 text-[11px] uppercase truncate tracking-tight mb-1 group-hover:text-blue-400 transition-colors">
+                                    {stock.Item.name}
+                                  </p>
+                                  <div className="flex items-center gap-1.5">
+                                     <div className="w-1.5 h-1.5 rounded-full bg-emerald-500/40 group-hover:bg-emerald-500 transition-colors"></div>
+                                     <span className="text-[8px] font-bold text-slate-500 uppercase tracking-widest">Available</span>
+                                  </div>
+                               </div>
+                               <div className="flex flex-col items-end">
+                                  <div className="flex items-baseline gap-1">
+                                     <span className="font-black text-white text-lg tracking-tighter">
+                                       {stock.quantity}
+                                     </span>
+                                     <span className="text-[9px] font-black text-blue-500/60 uppercase tracking-tight">
+                                       {stock.Item.piecesPerBox ? 'pcs' : stock.Item.unit}
+                                     </span>
+                                  </div>
+                                  {stock.Item.piecesPerBox && (
+                                     <span className="text-[8px] font-black text-slate-600 uppercase tracking-tighter">
+                                       {(stock.quantity / stock.Item.piecesPerBox).toFixed(1)} {stock.Item.unit}
+                                     </span>
+                                  )}
+                               </div>
+                            </div>
                          </div>
                        ))
                      )}
                   </div>
                </div>
-
-               {/* Export Reports */}
-               {isOwner && (
-                 <div className="glass-panel p-8 rounded-[2.5rem] border border-sky-500/10 bg-sky-500/[0.02] hover:bg-sky-500/[0.04] transition-all group">
-                    <h2 className="text-xs font-black text-sky-400 uppercase tracking-[0.3em] mb-6">History Log</h2>
-                    <div className="flex flex-wrap gap-2">
-                       {last7Days.map((day) => (
-                         <a key={day.dateStr} href={`/api/export/transactions?outlet=CHAI_JOINT&date=${day.dateStr}`} download className="group/btn">
-                           <div className="px-3 py-2 bg-white/5 border border-white/5 rounded-xl text-[9px] font-black text-slate-400 hover:text-white hover:bg-sky-500/20 hover:border-sky-500/30 transition-all uppercase tracking-widest">
-                             {day.isToday ? "Today" : day.displayDate}
-                           </div>
-                         </a>
-                       ))}
-                    </div>
-                 </div>
-               )}
             </div>
+
+            {/* D. Export Reports (Priority 4) */}
+            {isOwner && (
+              <div className="lg:col-span-4 order-4">
+                <div className="glass-panel p-8 rounded-[3rem] border border-blue-500/10 bg-blue-500/[0.02] hover:bg-blue-500/[0.04] transition-all group">
+                   <div className="flex items-center gap-3 mb-6">
+                      <div className="p-2 bg-blue-500/10 rounded-lg">
+                        <History className="w-4 h-4 text-blue-500" />
+                      </div>
+                      <h2 className="text-xs font-black text-blue-400 uppercase tracking-[0.3em]">History Log</h2>
+                   </div>
+                   <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-2 gap-2">
+                      {last7Days.map((day) => (
+                        <a key={day.dateStr} href={`/api/export/transactions?outlet=CHAI_JOINT&date=${day.dateStr}`} download className="group/btn">
+                          <div className="px-4 py-3 bg-white/5 border border-white/5 rounded-2xl text-[10px] font-black text-slate-500 hover:text-white hover:bg-blue-500/20 hover:border-blue-500/30 transition-all uppercase tracking-widest text-center">
+                            {day.isToday ? "Today" : day.displayDate}
+                          </div>
+                        </a>
+                      ))}
+                   </div>
+                </div>
+              </div>
+            )}
+
           </div>
 
           {/* Incoming Dispatches */}
