@@ -303,3 +303,49 @@ export async function editDispatchQuantity(data: FormData) {
   revalidatePath("/dashboard/inventory/dispatch")
   revalidatePath("/dashboard/stores")
 }
+
+export async function adjustOutletStock(data: FormData) {
+  const session = await getServerSession(authOptions)
+  if (!session || (session.user.role !== "OWNER" && session.user.role !== "INV_MANAGER")) {
+    throw new Error("Unauthorized")
+  }
+
+  const outletId = data.get("outletId") as string
+  const itemId = data.get("itemId") as string
+  const quantityRaw = data.get("quantity") as string
+  const quantity = parseFloat(quantityRaw)
+
+  if (!outletId || !itemId || isNaN(quantity) || quantity <= 0) {
+    throw new Error("Invalid adjustment data")
+  }
+
+  // Find the stock record first to ensure it's not going below zero (optional but safe)
+  const stock = await prisma.outletStock.findUnique({
+    where: { outletId_itemId: { outletId, itemId } }
+  })
+
+  if (!stock || stock.quantity < quantity) {
+    throw new Error(`Insufficient stock in outlet. Available: ${stock?.quantity || 0}`)
+  }
+
+  // Update outlet stock and log consumption
+  await prisma.$transaction([
+    prisma.outletStock.update({
+      where: { outletId_itemId: { outletId, itemId } },
+      data: { quantity: { decrement: quantity } },
+    }),
+    prisma.inventoryLedger.create({
+      data: {
+        type: "CONSUMPTION",
+        itemId,
+        quantity,
+        outletId,
+        userId: session.user.id,
+        notes: `Manual adjustment (Used in kitchen/waste)`,
+      },
+    }),
+  ])
+
+  revalidatePath("/dashboard/stores")
+  revalidatePath("/dashboard/inventory/dispatch")
+}

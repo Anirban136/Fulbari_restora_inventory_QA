@@ -30,6 +30,7 @@ model Outlet {
   Stock     OutletStock[]
   Tabs      Tab[]
   Menus     MenuItem[]
+  Ledger    InventoryLedger[]
 }
 
 model Vendor {
@@ -89,6 +90,7 @@ model InventoryLedger {
   Item        Item     @relation(fields: [itemId], references: [id])
   User        User     @relation(fields: [userId], references: [id])
   Vendor      Vendor?  @relation(fields: [vendorId], references: [id])
+  Outlet      Outlet?  @relation(fields: [outletId], references: [id])
 }
 
 model OutletStock {
