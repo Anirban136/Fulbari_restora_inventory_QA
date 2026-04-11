@@ -14,6 +14,8 @@ export async function GET(req: Request) {
 
   const { searchParams } = new URL(req.url)
   const targetDateStr = searchParams.get("date") // expected format YYYY-MM-DD
+  const fromDateStr = searchParams.get("from") // new range support
+  const toDateStr = searchParams.get("to")
   const outletType = searchParams.get("outlet")
 
   // Authentication logic based on role
@@ -24,11 +26,29 @@ export async function GET(req: Request) {
     if (!outletType) return new NextResponse("Forbidden", { status: 403 }) // Only owner can fetch without specifying outlet
   }
 
-  // Determine the date bounds using the standard utility
-  const { startUTC, endUTC } = getISTDateBounds(targetDateStr ? new Date(targetDateStr) : undefined);
+  // Determine the date bounds
+  let startUTC: Date;
+  let endUTC: Date;
+
+  if (fromDateStr && toDateStr) {
+    // Range logic: From 4 AM of 'from' to 3:59 AM after 'to'
+    const fromDate = new Date(fromDateStr);
+    const toDate = new Date(toDateStr);
+    
+    // Use the utility to get boundaries for the start and end of the range
+    const fromBounds = getISTDateBounds(fromDate);
+    const toBounds = getISTDateBounds(toDate);
+    
+    startUTC = fromBounds.startUTC;
+    endUTC = toBounds.endUTC;
+  } else {
+    // Legacy single date logic
+    const bounds = getISTDateBounds(targetDateStr ? new Date(targetDateStr) : undefined);
+    startUTC = bounds.startUTC;
+    endUTC = bounds.endUTC;
+  }
 
   // Validate the query constraint - Match Dashboard Logic
-  // Dashboard shows tabs CLOSED today
   const whereClause: any = {
     status: { in: ["CLOSED", "CANCELLED"] },
     closedAt: { gte: startUTC, lte: endUTC }
@@ -103,6 +123,21 @@ export async function GET(req: Request) {
     }).join(",") + "\n"
   })
 
+  // Daily Summary for Ranges
+  if (fromDateStr && toDateStr) {
+    const dailyMap: Record<string, number> = {};
+    tabs.forEach(tab => {
+        const dateStr = new Date(tab.closedAt || tab.openedAt).toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' });
+        dailyMap[dateStr] = (dailyMap[dateStr] || 0) + tab.totalAmount;
+    });
+
+    csvContent += "\nSUMMARY BY DATE,,\n";
+    csvContent += "Date,,Total Collected\n";
+    Object.entries(dailyMap).forEach(([date, total]) => {
+        csvContent += `${date},,${total.toFixed(2)}\n`;
+    });
+  }
+
   // Calculate Subtotals
   const totalCash = tabs.filter(t => t.paymentMode === "CASH").reduce((sum, t) => sum + t.totalAmount, 0);
   const totalOnline = tabs.filter(t => t.paymentMode === "ONLINE" || t.paymentMode === "UPI").reduce((sum, t) => sum + t.totalAmount, 0);
@@ -110,7 +145,7 @@ export async function GET(req: Request) {
   const grandTotal = tabs.reduce((sum, t) => sum + t.totalAmount, 0);
 
   // Append Summary Rows
-  csvContent += "\n";
+  csvContent += "\nOVERALL RANGE TOTALS,,\n";
   csvContent += `,,,,,,,TOTAL CASH,${totalCash.toFixed(2)},\n`;
   csvContent += `,,,,,,,TOTAL ONLINE (UPI/CARD),${totalOnline.toFixed(2)},\n`;
   if (totalSplit > 0) {
@@ -120,8 +155,13 @@ export async function GET(req: Request) {
 
   // Format filename
   const prefix = outletType ? outletType.toLowerCase() : "all_outlets";
-  const dateStr = targetDateStr || new Date().toISOString().split('T')[0];
-  const filename = `${prefix}_transactions_${dateStr}.csv`;
+  let filenameSuffix = targetDateStr || new Date().toISOString().split('T')[0];
+  
+  if (fromDateStr && toDateStr) {
+    filenameSuffix = `range_${fromDateStr}_to_${toDateStr}`;
+  }
+  
+  const filename = `${prefix}_transactions_${filenameSuffix}.csv`;
 
   return new NextResponse(csvContent, {
     status: 200,

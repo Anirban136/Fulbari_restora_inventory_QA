@@ -7,8 +7,11 @@ import { TransactionsFeed } from "@/components/TransactionsFeed"
 import { OutletStockFeed } from "@/components/OutletStockFeed"
 import { CriticalSupplyAlert } from "./CriticalSupplyAlert"
 
+import { FinancialReports } from "@/components/FinancialReports"
+
 export default async function DashboardOverview() {
   const { startUTC: startOfDay, endUTC: endOfDay } = getISTDateBounds();
+  
 
   // 1. Fetch Data
   const [todaysClosedTabs, lowStockItems, outletStocks] = await Promise.all([
@@ -134,6 +137,9 @@ export default async function DashboardOverview() {
 
       {/* Primary Alerts (Mobile-First / Top Sticky) */}
       <CriticalSupplyAlert criticalAlerts={criticalAlerts} />
+
+      {/* Financial Intelligence & Reports */}
+      <FinancialReports />
 
       {/* Main Executive Panel (Chai + Cafe) */}
       <div className="space-y-8 relative z-10">
