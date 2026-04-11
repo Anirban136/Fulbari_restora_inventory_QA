@@ -1,13 +1,13 @@
 "use client"
 
 import { useState } from "react"
-import { Pencil, Loader2 } from "lucide-react"
+import { Pencil, Loader2, LayoutGrid, ChevronRight } from "lucide-react"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { updateTab } from "@/app/tabs/[tabId]/actions"
+import { updateTab, reopenTab } from "@/app/tabs/[tabId]/actions"
 import { useRouter } from "next/navigation"
 
 export function EditTransactionModal({ tabId, currentAmount, currentMode }: { tabId: string, currentAmount: number, currentMode: string }) {
@@ -15,6 +15,7 @@ export function EditTransactionModal({ tabId, currentAmount, currentMode }: { ta
   const [amount, setAmount] = useState(currentAmount.toString())
   const [mode, setMode] = useState(currentMode)
   const [loading, setLoading] = useState(false)
+  const [reopenLoading, setReopenLoading] = useState(false)
   const router = useRouter()
 
   const handleSubmit = async () => {
@@ -30,6 +31,16 @@ export function EditTransactionModal({ tabId, currentAmount, currentMode }: { ta
     }
   }
 
+  const handleReopen = async () => {
+    setReopenLoading(true)
+    try {
+      await reopenTab(tabId)
+    } catch (error) {
+      console.error(error)
+      setReopenLoading(false)
+    }
+  }
+
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger render={
@@ -37,46 +48,75 @@ export function EditTransactionModal({ tabId, currentAmount, currentMode }: { ta
           <Pencil className="h-4 w-4" />
         </Button>
       } />
-      <DialogContent className="sm:max-w-[425px] bg-black/95 border-white/10 backdrop-blur-2xl text-white">
-        <DialogHeader>
-          <DialogTitle className="text-2xl font-black uppercase tracking-tighter">Edit Transaction</DialogTitle>
+      <DialogContent className="sm:max-w-[425px] bg-black/95 border-white/10 backdrop-blur-2xl text-white rounded-[2rem] overflow-hidden">
+        <DialogHeader className="pt-6 px-6">
+          <DialogTitle className="text-2xl font-black uppercase tracking-tighter">Modify Bill</DialogTitle>
         </DialogHeader>
-        <div className="grid gap-6 py-6">
-          <div className="grid gap-2">
-            <Label htmlFor="amount" className="text-[10px] font-black uppercase text-muted-foreground tracking-widest">Total Amount (₹)</Label>
-            <Input
-              id="amount"
-              type="number"
-              value={amount}
-              onChange={(e) => setAmount(e.target.value)}
-              className="bg-white/5 border-white/10 h-12 text-lg font-bold focus:border-primary/50 text-white"
-            />
-          </div>
-          <div className="grid gap-2">
-            <Label htmlFor="mode" className="text-[10px] font-black uppercase text-muted-foreground tracking-widest">Payment Mode</Label>
-            <Select 
-              value={mode} 
-              onValueChange={(val) => {
-                if (val !== null) setMode(val)
-              }}
+
+        <div className="p-6 space-y-8">
+          {/* Action 1: Full Edit (Preferred) */}
+          <div className="space-y-4">
+            <h3 className="text-[10px] font-black uppercase text-primary tracking-[0.2em] px-1 italic">Option A: Detailed Correction</h3>
+            <Button 
+               onClick={handleReopen} 
+               disabled={reopenLoading}
+               className="w-full h-20 bg-primary/10 hover:bg-primary/20 border-2 border-primary/20 hover:border-primary/40 text-primary rounded-2xl flex items-center justify-between px-6 group transition-all"
             >
-              <SelectTrigger className="bg-white/5 border-white/10 h-12 text-lg font-bold text-white">
-                <SelectValue placeholder="Select mode" />
-              </SelectTrigger>
-              <SelectContent className="bg-zinc-950 border-white/10 text-white">
-                <SelectItem value="CASH">CASH</SelectItem>
-                <SelectItem value="ONLINE">ONLINE (UPI/CARD)</SelectItem>
-                <SelectItem value="SPLIT">SPLIT</SelectItem>
-              </SelectContent>
-            </Select>
+              <div className="flex items-center gap-4">
+                <div className="p-3 bg-primary/20 rounded-xl group-hover:scale-110 transition-transform">
+                  <LayoutGrid className="w-6 h-6" />
+                </div>
+                <div className="text-left">
+                  <p className="font-black uppercase text-xs tracking-wider">Open in Register</p>
+                  <p className="text-[9px] font-bold opacity-60 uppercase tracking-tight">Edit items, quantity & payment</p>
+                </div>
+              </div>
+              {reopenLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : <ChevronRight className="w-5 h-5 opacity-40 group-hover:opacity-100 transition-opacity" />}
+            </Button>
+          </div>
+
+          <div className="relative">
+             <div className="absolute inset-x-0 top-1/2 h-px bg-white/5"></div>
+             <span className="relative bg-black px-4 text-[8px] font-black uppercase tracking-[0.3em] text-muted-foreground/30 left-1/2 -translate-x-1/2 italic">OR</span>
+          </div>
+
+          {/* Action 2: Quick Adjustment */}
+          <div className="space-y-6">
+            <h3 className="text-[10px] font-black uppercase text-muted-foreground tracking-[0.2em] px-1 italic">Option B: Quick Fix</h3>
+            <div className="space-y-4 bg-white/5 p-5 rounded-2xl border border-white/5">
+              <div className="grid gap-2">
+                <Label htmlFor="amount" className="text-[9px] font-black uppercase text-muted-foreground tracking-widest opacity-40">Adjust Amount (₹)</Label>
+                <Input
+                  id="amount"
+                  type="number"
+                  value={amount}
+                  onChange={(e) => setAmount(e.target.value)}
+                  className="bg-black/40 border-white/5 h-11 text-base font-bold focus:border-primary/50 text-white"
+                />
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="mode" className="text-[9px] font-black uppercase text-muted-foreground tracking-widest opacity-40">Update Mode</Label>
+                <Select value={mode} onValueChange={(val) => val && setMode(val)}>
+                  <SelectTrigger className="bg-black/40 border-white/5 h-11 text-sm font-bold text-white">
+                    <SelectValue placeholder="Select mode" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-zinc-950 border-white/10 text-white">
+                    <SelectItem value="CASH">CASH</SelectItem>
+                    <SelectItem value="ONLINE">ONLINE (UPI/CARD)</SelectItem>
+                    <SelectItem value="SPLIT">SPLIT</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <Button onClick={handleSubmit} disabled={loading} className="w-full h-11 bg-white/5 hover:bg-white/10 border border-white/10 text-white font-black uppercase text-[10px] tracking-widest">
+                {loading ? <Loader2 className="w-3 h-3 animate-spin mr-2" /> : null}
+                Update Metadata Only
+              </Button>
+            </div>
           </div>
         </div>
-        <div className="flex justify-end gap-3 pt-4">
-          <Button variant="ghost" onClick={() => setOpen(false)} className="font-bold border border-white/5 hover:bg-white/5 uppercase text-xs tracking-widest">Cancel</Button>
-          <Button onClick={handleSubmit} disabled={loading} className="bg-primary text-primary-foreground font-black uppercase text-xs tracking-widest h-11 px-8">
-            {loading ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
-            Sync Changes
-          </Button>
+        
+        <div className="bg-white/5 p-4 flex justify-center">
+           <button onClick={() => setOpen(false)} className="text-[10px] font-black text-muted-foreground hover:text-white uppercase tracking-widest transition-colors">Close Window</button>
         </div>
       </DialogContent>
     </Dialog>

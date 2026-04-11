@@ -167,7 +167,7 @@ export async function reopenTab(tabId: string) {
     where: { id: tabId },
     data: {
       status: "OPEN",
-      paymentMode: null,
+      // Keep paymentMode for UI continuity
       closedAt: null
     }
   })

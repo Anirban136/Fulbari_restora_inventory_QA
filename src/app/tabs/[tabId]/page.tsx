@@ -213,21 +213,21 @@ export default async function TabTerminal({ params }: { params: Promise<{ tabId:
               <label className="text-[10px] sm:text-xs font-bold text-slate-500 uppercase tracking-widest">Select Payment Method</label>
               <div className="grid grid-cols-3 gap-3">
                 <label className="cursor-pointer group">
-                  <input type="radio" name="paymentMode" value="CASH" className="peer sr-only" required />
+                  <input type="radio" name="paymentMode" value="CASH" className="peer sr-only" defaultChecked={tab.paymentMode === "CASH"} required />
                   <div className={`flex flex-col items-center justify-center gap-2 py-2 sm:py-4 rounded-xl border-2 border-white/10 bg-white/5 font-bold text-slate-400 ${isCafe ? "peer-checked:border-orange-500 peer-checked:bg-orange-500/10 peer-checked:text-orange-400 peer-checked:shadow-[0_0_20px_-5px_#f97316]" : "peer-checked:border-sky-500 peer-checked:bg-sky-500/10 peer-checked:text-sky-400 peer-checked:shadow-[0_0_20px_-5px_#0ea5e9]"} group-hover:bg-white/10 transition-all text-[10px] sm:text-xs`}>
                     <Banknote className="w-4 h-4 sm:w-5 sm:h-5 mb-1" />
                     CASH
                   </div>
                 </label>
                 <label className="cursor-pointer group">
-                  <input type="radio" name="paymentMode" value="ONLINE" className="peer sr-only" required />
+                  <input type="radio" name="paymentMode" value="ONLINE" className="peer sr-only" defaultChecked={tab.paymentMode === "ONLINE"} required />
                   <div className={`flex flex-col items-center justify-center gap-2 py-2 sm:py-4 rounded-xl border-2 border-white/10 bg-white/5 font-bold text-slate-400 ${isCafe ? "peer-checked:border-orange-500 peer-checked:bg-orange-500/10 peer-checked:text-orange-400 peer-checked:shadow-[0_0_20px_-5px_#f97316]" : "peer-checked:border-sky-500 peer-checked:bg-sky-500/10 peer-checked:text-sky-400 peer-checked:shadow-[0_0_20px_-5px_#0ea5e9]"} group-hover:bg-white/10 transition-all text-[10px] sm:text-xs text-center leading-tight`}>
                     <CreditCard className="w-4 h-4 sm:w-5 sm:h-5 mb-1" />
                     UPI/CARD
                   </div>
                 </label>
                 <label className="cursor-pointer group">
-                  <input type="radio" name="paymentMode" value="SPLIT" className="peer sr-only" required />
+                  <input type="radio" name="paymentMode" value="SPLIT" className="peer sr-only" defaultChecked={tab.paymentMode === "SPLIT"} required />
                   <div className={`flex flex-col items-center justify-center gap-2 py-2 sm:py-4 rounded-xl border-2 border-white/10 bg-white/5 font-bold text-slate-400 ${isCafe ? "peer-checked:border-orange-500 peer-checked:bg-orange-500/10 peer-checked:text-orange-400 peer-checked:shadow-[0_0_20px_-5px_#f97316]" : "peer-checked:border-sky-500 peer-checked:bg-sky-500/10 peer-checked:text-sky-400 peer-checked:shadow-[0_0_20px_-5px_#0ea5e9]"} group-hover:bg-white/10 transition-all text-[10px] sm:text-xs`}>
                     <SplitSquareHorizontal className="w-4 h-4 sm:w-5 sm:h-5 mb-1" />
                     SPLIT
