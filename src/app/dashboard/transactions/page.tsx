@@ -1,8 +1,11 @@
 import { prisma } from "@/lib/prisma"
 export const dynamic = 'force-dynamic'
 import { TransactionsFeed } from "./_components/TransactionsFeed"
+import { getServerSession } from "next-auth"
+import { authOptions } from "@/lib/auth"
 
 export default async function AdminTransactionsPage() {
+  const session = await getServerSession(authOptions)
   const thirtyDaysAgo = new Date()
   thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30)
 
@@ -35,7 +38,10 @@ export default async function AdminTransactionsPage() {
       </div>
 
       <div className="relative z-10">
-        <TransactionsFeed initialTransactions={transactions} />
+        <TransactionsFeed 
+          initialTransactions={transactions} 
+          userRole={session?.user?.role} 
+        />
       </div>
     </div>
   )

@@ -1,8 +1,9 @@
 "use client"
 
 import { useState, useMemo } from "react"
-import { Receipt, Coffee, Activity, ChevronRight } from "lucide-react"
+import { Receipt, Coffee, Activity, ChevronRight, Trash2 } from "lucide-react"
 import { EditTransactionModal } from "./EditTransactionModal"
+import { deleteClosedTab } from "@/app/dashboard/transactions/actions"
 
 type Transaction = {
   id: string
@@ -16,8 +17,22 @@ type Transaction = {
   }
 }
 
-export function TransactionsFeed({ tabs }: { tabs: any[] }) {
+export function TransactionsFeed({ tabs, userRole }: { tabs: any[], userRole?: string }) {
   const [filter, setFilter] = useState<"ALL" | "CAFE" | "CHAI">("ALL")
+  const [isDeleting, setIsDeleting] = useState<string | null>(null)
+
+  const handleDelete = async (tabId: string) => {
+    if (!window.confirm("ARE YOU SURE? This will permanently delete the bill and REVERT inventory. This cannot be undone.")) return
+    
+    setIsDeleting(tabId)
+    try {
+      await deleteClosedTab(tabId)
+    } catch (e) {
+      alert("Failed to delete transaction")
+    } finally {
+      setIsDeleting(null)
+    }
+  }
 
   const filteredTabs = useMemo(() => {
     let list = [...tabs].sort((a, b) => (new Date(b.closedAt).getTime() || 0) - (new Date(a.closedAt).getTime() || 0))
@@ -117,7 +132,17 @@ export function TransactionsFeed({ tabs }: { tabs: any[] }) {
                      <div className={`w-2 h-2 rounded-full ${tab.paymentMode === 'CASH' ? 'bg-emerald-500 shadow-[0_0_10px_#10b981]' : 'bg-blue-500 shadow-[0_0_10px_#3b82f6]'}`}></div>
                      <span className="text-[9px] font-black text-muted-foreground uppercase tracking-widest">{tab.paymentMode}</span>
                   </div>
-                  <p className="text-3xl font-black text-foreground tracking-tighter group-hover:text-primary transition-colors">₹{tab.totalAmount.toFixed(0)}</p>
+                   <p className="text-3xl font-black text-foreground tracking-tighter group-hover:text-primary transition-colors">₹{tab.totalAmount.toFixed(0)}</p>
+                  
+                  {userRole === "OWNER" && (
+                    <button 
+                      onClick={() => handleDelete(tab.id)}
+                      disabled={isDeleting === tab.id}
+                      className="ml-4 p-2 text-red-500/40 hover:text-red-500 hover:bg-red-500/10 rounded-xl transition-all disabled:opacity-20"
+                    >
+                      <Trash2 className="w-5 h-5" />
+                    </button>
+                  )}
                 </div>
               </div>
             ))
@@ -179,9 +204,20 @@ export function TransactionsFeed({ tabs }: { tabs: any[] }) {
                         <EditTransactionModal tabId={tab.id} currentAmount={tab.totalAmount} currentMode={tab.paymentMode || "CASH"} />
                       </div>
                     </td>
-                    <td className="p-8 text-right">
+                     <td className="p-8 text-right">
                       <div className="flex flex-col items-end">
-                        <span className="text-3xl font-black text-foreground tracking-tighter group-hover:text-primary transition-colors">₹{tab.totalAmount.toFixed(0)}</span>
+                        <div className="flex items-center gap-4">
+                          {userRole === "OWNER" && (
+                            <button 
+                              onClick={() => handleDelete(tab.id)}
+                              disabled={isDeleting === tab.id}
+                              className="p-2 text-red-500/30 hover:text-red-500 hover:bg-red-500/10 rounded-xl transition-all disabled:opacity-10"
+                            >
+                              <Trash2 className="w-5 h-5" />
+                            </button>
+                          )}
+                          <span className="text-3xl font-black text-foreground tracking-tighter group-hover:text-primary transition-colors">₹{tab.totalAmount.toFixed(0)}</span>
+                        </div>
                         <span className="mt-1 px-3 py-1 bg-muted/20 rounded-full text-[8px] font-black text-muted-foreground uppercase tracking-widest group-hover:bg-primary/20 group-hover:text-primary transition-colors focus:ring-2 ring-primary/40 outline-none">
                           {tab.paymentMode}
                         </span>

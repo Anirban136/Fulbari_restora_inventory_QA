@@ -1,19 +1,34 @@
 "use client"
 
 import { useState, useMemo } from "react"
-import { Coffee, CupSoda, Calendar, Filter, FileDown, Search, ArrowRight, CreditCard, Banknote, Layers } from "lucide-react"
+import { Coffee, CupSoda, Calendar, Filter, FileDown, Search, ArrowRight, CreditCard, Banknote, Layers, Trash2 } from "lucide-react"
 import { formatTimeIST, formatDateIST } from "@/lib/utils"
 import { EditTransactionModal } from "@/components/EditTransactionModal"
+import { deleteClosedTab } from "../actions"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { cn } from "@/lib/utils"
 import { generateTransactionPDF } from "@/lib/report-generator"
 
-export function TransactionsFeed({ initialTransactions }: { initialTransactions: any[] }) {
+export function TransactionsFeed({ initialTransactions, userRole }: { initialTransactions: any[], userRole?: string }) {
   const [selectedDate, setSelectedDate] = useState<string>(new Date().toISOString().split('T')[0])
   const [paymentFilter, setPaymentFilter] = useState<"ALL" | "CASH" | "ONLINE">("ALL")
   const [activeOutlet, setActiveOutlet] = useState<"CAFE" | "CHAI">("CAFE")
   const [searchTerm, setSearchTerm] = useState("")
+  const [isDeleting, setIsDeleting] = useState<string | null>(null)
+
+  const handleDelete = async (tabId: string) => {
+    if (!window.confirm("ARE YOU SURE? This will permanently delete the bill and REVERT inventory. This cannot be undone.")) return
+    
+    setIsDeleting(tabId)
+    try {
+      await deleteClosedTab(tabId)
+    } catch (e) {
+      alert("Failed to delete transaction")
+    } finally {
+      setIsDeleting(null)
+    }
+  }
 
   const filteredTransactions = useMemo(() => {
     return initialTransactions.filter(t => {
@@ -107,6 +122,16 @@ export function TransactionsFeed({ initialTransactions }: { initialTransactions:
                      {tab.paymentMode === 'CASH' ? <Banknote className="w-3 h-3 text-emerald-500/50" /> : <CreditCard className="w-3 h-3 text-blue-500/50" />}
                      <p className="text-[9px] text-white/40 font-black uppercase tracking-widest">{tab.paymentMode || "UNKNOWN"}</p>
                   </div>
+                  {userRole === "OWNER" && (
+                    <button 
+                      onClick={() => handleDelete(tab.id)}
+                      disabled={isDeleting === tab.id}
+                      className="mt-2 w-full flex items-center justify-center gap-2 p-2 text-red-500/40 hover:text-red-500 hover:bg-red-500/10 rounded-xl transition-all disabled:opacity-20 border border-transparent hover:border-red-500/20"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                      <span className="text-[9px] font-black uppercase tracking-widest">Delete Bill</span>
+                    </button>
+                  )}
                 </div>
                 
                 <div className="pl-4 border-l border-white/10 shrink-0">

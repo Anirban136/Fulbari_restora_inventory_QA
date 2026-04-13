@@ -7,9 +7,12 @@ import { TransactionsFeed } from "@/components/TransactionsFeed"
 import { OutletStockFeed } from "@/components/OutletStockFeed"
 import { CriticalSupplyAlert } from "./CriticalSupplyAlert"
 
+import { getServerSession } from "next-auth"
+import { authOptions } from "@/lib/auth"
 import { FinancialReports } from "@/components/FinancialReports"
 
 export default async function DashboardOverview() {
+  const session = await getServerSession(authOptions)
   const { startUTC: startOfDay, endUTC: endOfDay } = getISTDateBounds();
   
 
@@ -313,7 +316,7 @@ export default async function DashboardOverview() {
       </div>
 
       {/* Real-time Activity Stream with Outlet Filter */}
-      <TransactionsFeed tabs={todaysClosedTabs} />
+      <TransactionsFeed tabs={todaysClosedTabs} userRole={session?.user?.role} />
 
       <div className="text-center pt-10">
          <a href="/dashboard/transactions" className="inline-flex items-center gap-3 px-10 py-4 bg-muted/10 hover:bg-primary hover:text-primary-foreground border border-white/10 rounded-full text-xs font-black uppercase tracking-[0.2em] transition-all hover:scale-105 active:scale-95 shadow-xl">
