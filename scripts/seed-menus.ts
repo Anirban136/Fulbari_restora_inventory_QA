@@ -1,4 +1,7 @@
 import { PrismaClient } from '@prisma/client'
+import * as dotenv from 'dotenv'
+dotenv.config()
+
 const prisma = new PrismaClient()
 
 async function main() {
@@ -225,11 +228,24 @@ async function main() {
     { outletId: chaiJoint.id, name: "Cigarettes", price: 20, categoryId: "TOBACCO", itemId: getItemId("Cigarettes") }
   ]
 
+  let count = 0;
   for (const m of menus) {
     await prisma.menuItem.create({ data: m })
+    count++;
+    if (count % 5 === 0) {
+      console.log(`Created ${count}/${menus.length} menu items...`)
+    }
   }
 
   console.log("Successfully seeded menus and inventory!")
 }
 
-main().catch(console.error)
+main()
+  .catch((e) => {
+    console.error(e)
+    process.exit(1)
+  })
+  .finally(async () => {
+    await prisma.$disconnect()
+  })
+
