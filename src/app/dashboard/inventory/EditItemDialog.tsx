@@ -82,14 +82,14 @@ export function EditItemDialog({ item, existingCategories = [] }: { item: any; e
                   onChange={(e) => setUnit(e.target.value)}
                   className="w-full h-14 px-6 py-2 rounded-2xl border border-white/10 bg-white/[0.03] text-white focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary/50 transition-all font-black uppercase tracking-widest text-xs appearance-none cursor-pointer shadow-inner"
                 >
-                  <option value="kg">Kilogram (kg)</option>
-                  <option value="gm">Gram (gm)</option>
-                  <option value="lit">Litre (lit)</option>
-                  <option value="ml">Millilitre (ml)</option>
-                  <option value="packet">Packet</option>
-                  <option value="box">Box</option>
-                  <option value="plate">Plate</option>
-                  <option value="pcs">Pieces (pcs)</option>
+                  <option value="kg" className="bg-zinc-900 text-white">Kilogram (kg)</option>
+                  <option value="gm" className="bg-zinc-900 text-white">Gram (gm)</option>
+                  <option value="lit" className="bg-zinc-900 text-white">Litre (lit)</option>
+                  <option value="ml" className="bg-zinc-900 text-white">Millilitre (ml)</option>
+                  <option value="packet" className="bg-zinc-900 text-white">Packet</option>
+                  <option value="box" className="bg-zinc-900 text-white">Box</option>
+                  <option value="plate" className="bg-zinc-900 text-white">Plate</option>
+                  <option value="pcs" className="bg-zinc-900 text-white">Pieces (pcs)</option>
                 </select>
               </div>
             </div>

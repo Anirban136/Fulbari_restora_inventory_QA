@@ -141,12 +141,10 @@ export async function updateItem(data: FormData) {
   const unit = data.get("unit") as string
   const costPerUnitRaw = data.get("costPerUnit") as string
   const sellPriceRaw = data.get("sellPrice") as string
-  const currentStockRaw = data.get("currentStock") as string
   const minStockRaw = data.get("minStock") as string
   
   const costPerUnit = costPerUnitRaw ? parseFloat(costPerUnitRaw) : null
   const sellPrice = sellPriceRaw ? parseFloat(sellPriceRaw) : null
-  const currentStock = currentStockRaw ? parseFloat(currentStockRaw) : 0
   const minStock = minStockRaw ? parseFloat(minStockRaw) : 0
   const piecesPerBoxRaw = data.get("piecesPerBox") as string
   const piecesPerBox = piecesPerBoxRaw ? parseInt(piecesPerBoxRaw) : null
@@ -159,7 +157,6 @@ export async function updateItem(data: FormData) {
       unit, 
       costPerUnit,
       sellPrice,
-      currentStock,
       minStock,
       piecesPerBox
     },
@@ -168,13 +165,12 @@ export async function updateItem(data: FormData) {
   revalidatePath("/dashboard/inventory")
 }
 
-export async function removeItem(data: FormData) {
+export async function removeItem(itemId: string) {
   const session = await getServerSession(authOptions)
   if (!session || (session.user.role !== "OWNER" && session.user.role !== "INV_MANAGER")) {
     throw new Error("Unauthorized — only Admin Owner or Inventory Manager can remove catalog items")
   }
 
-  const itemId = data.get("itemId") as string
   if (!itemId) return
 
   // Delete related records first to avoid FK constraint errors
