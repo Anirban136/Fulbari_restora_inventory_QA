@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button"
 import { ArrowLeft, ShoppingCart, CreditCard, Banknote, SplitSquareHorizontal, CheckCircle2, Printer, Plus, Minus } from "lucide-react"
 import { PosMenuGrid } from "./PosMenuGrid"
 import { PrintReceiptButton } from "@/components/PrintReceiptButton"
+import { CheckoutSidebar } from "./CheckoutSidebar"
 import { cn } from "@/lib/utils"
 
 export default async function TabTerminal({ params }: { params: Promise<{ tabId: string }> }) {
@@ -200,51 +201,15 @@ export default async function TabTerminal({ params }: { params: Promise<{ tabId:
           )}
         </div>
 
-        <div className="p-3 sm:p-8 bg-black/60 border-t border-white/10 z-10 backdrop-blur-xl shrink-0">
-          <div className="flex justify-between items-center mb-2 sm:mb-8">
-            <span className="text-slate-400 text-xs sm:text-sm font-bold tracking-widest uppercase">Total Due</span>
-            <span className="text-2xl sm:text-5xl font-black text-white text-glow">₹{tab.totalAmount.toFixed(2)}</span>
-          </div>
-
-          <form action={closeTab} className="space-y-3 sm:space-y-6">
-            <input type="hidden" name="tabId" value={tab.id} />
-            
-            <div className="space-y-1 sm:space-y-3">
-              <label className="text-[10px] sm:text-xs font-bold text-slate-500 uppercase tracking-widest">Select Payment Method</label>
-              <div className="grid grid-cols-3 gap-3">
-                <label className="cursor-pointer group">
-                  <input type="radio" name="paymentMode" value="CASH" className="peer sr-only" defaultChecked={tab.paymentMode === "CASH"} required />
-                  <div className={`flex flex-col items-center justify-center gap-2 py-2 sm:py-4 rounded-xl border-2 border-white/10 bg-white/5 font-bold text-slate-400 ${isCafe ? "peer-checked:border-orange-500 peer-checked:bg-orange-500/10 peer-checked:text-orange-400 peer-checked:shadow-[0_0_20px_-5px_#f97316]" : "peer-checked:border-sky-500 peer-checked:bg-sky-500/10 peer-checked:text-sky-400 peer-checked:shadow-[0_0_20px_-5px_#0ea5e9]"} group-hover:bg-white/10 transition-all text-[10px] sm:text-xs`}>
-                    <Banknote className="w-4 h-4 sm:w-5 sm:h-5 mb-1" />
-                    CASH
-                  </div>
-                </label>
-                <label className="cursor-pointer group">
-                  <input type="radio" name="paymentMode" value="ONLINE" className="peer sr-only" defaultChecked={tab.paymentMode === "ONLINE"} required />
-                  <div className={`flex flex-col items-center justify-center gap-2 py-2 sm:py-4 rounded-xl border-2 border-white/10 bg-white/5 font-bold text-slate-400 ${isCafe ? "peer-checked:border-orange-500 peer-checked:bg-orange-500/10 peer-checked:text-orange-400 peer-checked:shadow-[0_0_20px_-5px_#f97316]" : "peer-checked:border-sky-500 peer-checked:bg-sky-500/10 peer-checked:text-sky-400 peer-checked:shadow-[0_0_20px_-5px_#0ea5e9]"} group-hover:bg-white/10 transition-all text-[10px] sm:text-xs text-center leading-tight`}>
-                    <CreditCard className="w-4 h-4 sm:w-5 sm:h-5 mb-1" />
-                    UPI/CARD
-                  </div>
-                </label>
-                <label className="cursor-pointer group">
-                  <input type="radio" name="paymentMode" value="SPLIT" className="peer sr-only" defaultChecked={tab.paymentMode === "SPLIT"} required />
-                  <div className={`flex flex-col items-center justify-center gap-2 py-2 sm:py-4 rounded-xl border-2 border-white/10 bg-white/5 font-bold text-slate-400 ${isCafe ? "peer-checked:border-orange-500 peer-checked:bg-orange-500/10 peer-checked:text-orange-400 peer-checked:shadow-[0_0_20px_-5px_#f97316]" : "peer-checked:border-sky-500 peer-checked:bg-sky-500/10 peer-checked:text-sky-400 peer-checked:shadow-[0_0_20px_-5px_#0ea5e9]"} group-hover:bg-white/10 transition-all text-[10px] sm:text-xs`}>
-                    <SplitSquareHorizontal className="w-4 h-4 sm:w-5 sm:h-5 mb-1" />
-                    SPLIT
-                  </div>
-                </label>
-              </div>
-            </div>
-            
-             <Button 
-                type="submit" 
-                disabled={tab.Items.length === 0}
-                className={`w-full h-12 sm:h-16 text-sm sm:text-xl font-black tracking-widest uppercase ${isCafe ? "bg-orange-600 hover:bg-orange-500 shadow-[0_0_40px_-5px_rgba(249,115,22,0.5)]" : "bg-sky-600 hover:bg-sky-500 shadow-[0_0_40px_-5px_rgba(14,165,233,0.5)]"} text-white rounded-xl sm:rounded-2xl transition-all disabled:opacity-20 disabled:cursor-not-allowed disabled:shadow-none active:scale-[0.98]`}
-             >
-              Checkout & Close Tab
-            </Button>
-          </form>
-        </div>
+        <CheckoutSidebar
+          tabId={tab.id}
+          totalAmount={tab.totalAmount}
+          isCafe={isCafe}
+          outletName={tab.Outlet.name}
+          tokenNumber={tab.tokenNumber}
+          customerName={tab.customerName || "Walk-in"}
+          items={tab.Items}
+        />
       </div>
 
     </div>

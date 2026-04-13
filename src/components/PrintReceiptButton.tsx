@@ -27,6 +27,7 @@ interface PrintReceiptButtonProps {
   paymentMode: string | null
   closedAt: Date | string | null
   accentColor?: string
+  isSidebar?: boolean
 }
 
 // Generate PLAIN TEXT receipt bytes (no ESC/POS commands - maximum compatibility)
@@ -129,7 +130,7 @@ function generateReceiptBytes(data: {
     r += center('TOTAL: Rs.' + data.totalAmount.toFixed(0) + '/-') + LF
     r += LF
     r += DSEP + LF
-    r += pad(' Paid via:', data.paymentMode + ' ') + LF
+    r += pad(' Paid via:', (data.paymentMode === "UNPAID" ? "PENDING / UNPAID" : data.paymentMode) + ' ') + LF
     r += LF
     r += STAR + LF
     r += center('Thank You!') + LF
@@ -149,7 +150,7 @@ function generateReceiptBytes(data: {
 export function PrintReceiptButton({
   outletName, tokenNumber, customerName, tabId,
   items, totalAmount, paymentMode, closedAt,
-  accentColor = "amber"
+  accentColor = "amber", isSidebar = false
 }: PrintReceiptButtonProps) {
   const [btStatus, setBtStatus] = useState<"disconnected" | "connecting" | "connected" | "error">("disconnected")
   const [printStatus, setPrintStatus] = useState<"idle" | "printing_customer" | "printing_kitchen" | "success" | "error">("idle")
@@ -371,7 +372,7 @@ export function PrintReceiptButton({
       <button
         onClick={() => handlePrint('CUSTOMER')}
         disabled={printStatus.startsWith("printing") || (!isAndroid && btStatus !== "connected")}
-        className={`w-full flex items-center justify-center gap-2 px-4 py-3.5 rounded-xl border text-sm font-black uppercase tracking-widest transition-all active:scale-[0.98] disabled:opacity-30 disabled:cursor-not-allowed ${
+        className={`w-full flex items-center justify-center gap-2 ${isSidebar ? "px-3 py-2 text-xs" : "px-4 py-3.5 text-sm"} rounded-xl border font-black uppercase tracking-widest transition-all active:scale-[0.98] disabled:opacity-30 disabled:cursor-not-allowed ${
           printStatus === "success"
             ? "bg-emerald-500/20 border-emerald-500/30 text-emerald-400"
             : printStatus === "error"
@@ -382,9 +383,9 @@ export function PrintReceiptButton({
         }`}
       >
         {printStatus === "printing_customer" ? (
-          <><Loader2 className="w-4 h-4 animate-spin" /> Printing Customer...</>
+          <><Loader2 className="w-3 h-3 animate-spin" /> Printing...</>
         ) : (
-          <><Printer className="w-4 h-4" /> Print Customer Copy</>
+          <><Printer className="w-4 h-4" /> Customer Copy</>
         )}
       </button>
 
@@ -392,7 +393,7 @@ export function PrintReceiptButton({
       <button
         onClick={() => handlePrint('KITCHEN')}
         disabled={printStatus.startsWith("printing") || (!isAndroid && btStatus !== "connected")}
-        className={`w-full flex items-center justify-center gap-2 px-4 py-3.5 rounded-xl border text-sm font-black uppercase tracking-widest transition-all active:scale-[0.98] disabled:opacity-30 disabled:cursor-not-allowed ${
+        className={`w-full flex items-center justify-center gap-2 ${isSidebar ? "px-3 py-2 text-xs" : "px-4 py-3.5 text-sm"} rounded-xl border font-black uppercase tracking-widest transition-all active:scale-[0.98] disabled:opacity-30 disabled:cursor-not-allowed ${
           printStatus === "success"
             ? "bg-emerald-500/20 border-emerald-500/30 text-emerald-400"
             : printStatus === "error"
@@ -401,9 +402,9 @@ export function PrintReceiptButton({
         }`}
       >
         {printStatus === "printing_kitchen" ? (
-          <><Loader2 className="w-4 h-4 animate-spin" /> Printing Kitchen...</>
+          <><Loader2 className="w-3 h-3 animate-spin" /> Printing...</>
         ) : (
-          <><Printer className="w-4 h-4" /> Print Kitchen Copy</>
+          <><Printer className="w-4 h-4" /> Kitchen Copy</>
         )}
       </button>
 
