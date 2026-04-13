@@ -1,36 +1,102 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Fulbari Restora — Inventory & POS System
 
-## Getting Started
+A Next.js-based inventory and point-of-sale system for Fulbari Restora, supporting multiple outlets (Restaurant, Cafe, Chai Joint).
 
-First, run the development server:
+---
+
+## Environments
+
+| Environment | Repo | Vercel URL | Database |
+|---|---|---|---|
+| **Production** | `Fulbari_restora_Inventory` | `fulbari-restora-inventory.vercel.app` | Supabase (Production) |
+| **QA / Staging** | `Fulbari_restora_inventory_QA` | *(your QA vercel URL)* | Supabase (QA — isolated) |
+
+> ⚠️ **Production and QA databases are completely separate.** Changes in QA never affect live production data.
+
+---
+
+## Local Development
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Environment Variables
 
-## Learn More
+Copy the template to set up your local or QA environment:
 
-To learn more about Next.js, take a look at the following resources:
+```bash
+cp .env.qa.example .env.qa
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Then fill in the actual Supabase QA credentials from the [Supabase Dashboard](https://app.supabase.com).
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### Required Variables
 
-## Deploy on Vercel
+| Variable | Description |
+|---|---|
+| `DATABASE_URL` | Supabase Transaction mode URL (port 6543) |
+| `DIRECT_URL` | Supabase Session mode URL (port 5432) |
+| `NEXTAUTH_SECRET` | Random secret string for session signing |
+| `NEXTAUTH_URL` | Full URL of the deployment (e.g. `https://xyz.vercel.app`) |
+| `NEXT_PUBLIC_SUPABASE_URL` | Supabase project URL |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Supabase public anon key |
+| `SUPABASE_SERVICE_ROLE_KEY` | Supabase service role key (server-side only) |
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+---
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Setting Up the QA Environment
+
+### 1. Create a new Supabase project
+- Go to [app.supabase.com](https://app.supabase.com) → **New Project**
+- Name: `fulbari-restora-qa`
+- Region: `ap-northeast-1`
+- After creation, get your connection strings from **Settings → Database**
+
+### 2. Add env vars to Vercel QA project
+In your QA Vercel project → **Settings → Environment Variables**, add all 7 variables with your QA Supabase credentials.
+
+### 3. Initialize the QA database
+After the first QA deploy, run migrations and seed users:
+
+```bash
+# Option A: via Vercel CLI (with QA env vars)
+vercel env pull .env.qa --environment=production
+DATABASE_URL="<qa-db-url>" npx prisma migrate deploy
+
+# Option B: via the seed API endpoint
+curl https://<YOUR-QA-VERCEL-URL>.vercel.app/api/seed
+```
+
+---
+
+## Database & ORM
+
+- **ORM**: Prisma v5
+- **Database**: PostgreSQL via Supabase
+- **Schema**: `prisma/schema.prisma`
+
+To apply schema changes locally:
+```bash
+npx prisma migrate dev
+```
+
+To apply to QA/Production:
+```bash
+npx prisma migrate deploy
+```
+
+---
+
+## Tech Stack
+
+- **Framework**: Next.js 16 (App Router)
+- **Database**: Supabase (PostgreSQL) + Prisma ORM
+- **Auth**: NextAuth.js (PIN-based login)
+- **Styling**: Tailwind CSS
+- **Deployment**: Vercel
