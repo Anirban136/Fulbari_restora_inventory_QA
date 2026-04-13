@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Banknote, CreditCard, SplitSquareHorizontal, Receipt, Printer, CheckCircle2 } from "lucide-react"
 import { PrintReceiptButton } from "@/components/PrintReceiptButton"
@@ -16,11 +16,32 @@ interface CheckoutSidebarProps {
   items: any[]
 }
 
+const BILL_KEY = (tabId: string) => `bill_generated_${tabId}`
+
 export function CheckoutSidebar({
   tabId, totalAmount, isCafe,
   outletName, tokenNumber, customerName, items
 }: CheckoutSidebarProps) {
-  const [billGenerated, setBillGenerated] = useState(false)
+  // Initialise from localStorage so state survives back-navigation
+  const [billGenerated, setBillGenerated] = useState<boolean>(() => {
+    if (typeof window === "undefined") return false
+    return localStorage.getItem(BILL_KEY(tabId)) === "true"
+  })
+
+  // Keep localStorage in sync whenever the state changes
+  useEffect(() => {
+    if (billGenerated) {
+      localStorage.setItem(BILL_KEY(tabId), "true")
+    } else {
+      localStorage.removeItem(BILL_KEY(tabId))
+    }
+  }, [billGenerated, tabId])
+
+  // Helper that also clears storage (used for "Edit Order" button)
+  const clearBill = () => {
+    localStorage.removeItem(BILL_KEY(tabId))
+    setBillGenerated(false)
+  }
 
   return (
     <div className="p-3 sm:p-8 bg-black/60 border-t lg:border-t-0 border-white/10 z-10 backdrop-blur-xl shrink-0">
@@ -71,7 +92,7 @@ export function CheckoutSidebar({
                 </label>
                 <button 
                   type="button" 
-                  onClick={() => setBillGenerated(false)}
+                  onClick={() => clearBill()}
                   className="text-[10px] text-slate-500 hover:text-slate-300 underline"
                 >
                   Edit Order
