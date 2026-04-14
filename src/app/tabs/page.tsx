@@ -41,7 +41,7 @@ export default async function ActiveTabsPage({ searchParams }: { searchParams: P
 
   return (
     <AppLayout user={session?.user}>
-      <div className={`${isCafe ? "selection:bg-orange-500/30 selection:text-orange-100" : "selection:bg-sky-500/30 selection:text-sky-100"} relative overflow-hidden flex flex-col items-center p-4 sm:p-8 min-h-full w-full`}>
+      <div className={`${isCafe ? "selection:bg-orange-500/30 selection:text-orange-100" : "selection:bg-sky-500/30 selection:text-sky-100"} relative overflow-hidden flex flex-col items-center p-4 sm:p-8 min-h-full w-full bg-background`}>
         
         {/* Background Decorators */}
         <div className={`absolute top-[10%] left-[-10%] w-[500px] h-[500px] ${isCafe ? "bg-orange-600/10" : "bg-sky-600/10"} rounded-full blur-[150px] pointer-events-none z-0`}></div>
@@ -57,19 +57,19 @@ export default async function ActiveTabsPage({ searchParams }: { searchParams: P
                </div>
              </div>
             <div>
-              <h1 className="text-4xl font-black text-white tracking-tight">POS Terminal</h1>
-              <p className={`${isCafe ? "text-orange-400" : "text-sky-400"} font-bold mt-1 tracking-widest uppercase text-xs`}>{outlet?.name || "Global"} Registers</p>
+              <h1 className="text-4xl font-black text-foreground tracking-tight">POS Terminal</h1>
+              <p className={`${isCafe ? "text-orange-500" : "text-sky-500"} font-black mt-1 tracking-widest uppercase text-xs`}>{outlet?.name || "Global"} Registers</p>
             </div>
           </div>
           <div className="flex flex-wrap justify-end gap-2 sm:gap-4 items-center mt-4 sm:mt-0">
             {session.user.role === "OWNER" && (
-               <Link href="/dashboard"><Button variant="outline" className="border-white/10 text-slate-300 hover:bg-white/10 hover:text-white backdrop-blur-md">Back to Dashboard</Button></Link>
+               <Link href="/dashboard"><Button variant="outline" className="border-border text-slate-600 dark:text-slate-300 hover:bg-foreground/5 hover:text-foreground backdrop-blur-md font-black uppercase text-[10px] tracking-widest px-6 h-12 rounded-xl">Back to Dashboard</Button></Link>
             )}
             {session.user.role === "CAFE_STAFF" && (
-               <Link href="/cafe"><Button variant="outline" className="border-white/10 text-slate-300 hover:bg-white/10 hover:text-white backdrop-blur-md">Back to Cafe Hub</Button></Link>
+               <Link href="/cafe"><Button variant="outline" className="border-border text-slate-600 dark:text-slate-300 hover:bg-foreground/5 hover:text-foreground backdrop-blur-md font-black uppercase text-[10px] tracking-widest px-6 h-12 rounded-xl">Back to Cafe Hub</Button></Link>
             )}
             {session.user.role === "CHAI_STAFF" && (
-               <Link href="/chai"><Button variant="outline" className="border-white/10 text-slate-300 hover:bg-white/10 hover:text-white backdrop-blur-md">Back to Chai Hub</Button></Link>
+               <Link href="/chai"><Button variant="outline" className="border-border text-slate-600 dark:text-slate-300 hover:bg-foreground/5 hover:text-foreground backdrop-blur-md font-black uppercase text-[10px] tracking-widest px-6 h-12 rounded-xl">Back to Chai Hub</Button></Link>
             )}
             <UserControls />
           </div>
@@ -81,19 +81,19 @@ export default async function ActiveTabsPage({ searchParams }: { searchParams: P
                <LayoutGrid className={`${isCafe ? "text-orange-400" : "text-sky-400"} w-7 h-7`} />
              </div>
              <div>
-               <h2 className="text-xl font-bold text-white tracking-tight">Table Layout</h2>
-               <p className="text-slate-400 text-sm font-medium tracking-wide uppercase mt-1">Select a table to start billing.</p>
+               <h2 className="text-xl font-bold text-foreground tracking-tight">Table Layout</h2>
+               <p className="text-muted-foreground text-sm font-black tracking-wide uppercase mt-1">Select a table to start billing.</p>
              </div>
            </div>
            
-           <div className="flex items-center gap-6 px-6 py-3 bg-black/40 rounded-2xl border border-white/5">
+           <div className="flex items-center gap-6 px-6 py-3 bg-foreground/5 rounded-2xl border border-border">
                 <div className="flex items-center gap-2">
                     <div className="w-3 h-3 rounded-full bg-emerald-500"></div>
-                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Vacant</span>
+                    <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">Vacant</span>
                 </div>
                 <div className="flex items-center gap-2">
                     <div className="w-3 h-3 rounded-full bg-red-500 animate-pulse"></div>
-                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Occupied</span>
+                    <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">Occupied</span>
                 </div>
            </div>
         </div>

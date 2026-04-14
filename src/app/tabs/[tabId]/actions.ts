@@ -70,7 +70,17 @@ export async function adjustTabItemQuantity(tabItemId: string, tabId: string, de
 export async function closeTab(data: FormData) {
   const tabId = data.get("tabId") as string
   const paymentMode = data.get("paymentMode") as string
+  const splitCashAmountRaw = data.get("splitCashAmount") as string
+  const splitOnlineAmountRaw = data.get("splitOnlineAmount") as string
   
+  const splitCashAmount = splitCashAmountRaw ? parseFloat(splitCashAmountRaw) : null
+  const splitOnlineAmount = splitOnlineAmountRaw ? parseFloat(splitOnlineAmountRaw) : null
+  
+  // Validate NaN (parseFloat can return NaN if input is trash)
+  if (paymentMode === "SPLIT" && (isNaN(splitCashAmount || 0) || isNaN(splitOnlineAmount || 0))) {
+    throw new Error("Invalid split amounts")
+  }
+
   const tab = await prisma.tab.findUnique({ 
     where: { id: tabId }, 
     include: { 
@@ -95,9 +105,15 @@ export async function closeTab(data: FormData) {
      // 1. Handle Legacy Single-Item link (1:1)
      if (menuItem.itemId) {
        try {
-         await prisma.outletStock.update({
+         // USE UPSERT instead of UPDATE to prevent "Record not found" errors
+         await prisma.outletStock.upsert({
            where: { outletId_itemId: { outletId: tab.outletId, itemId: menuItem.itemId } },
-           data: { quantity: { decrement: orderQty } }
+           create: { 
+             outletId: tab.outletId, 
+             itemId: menuItem.itemId, 
+             quantity: -orderQty 
+           },
+           update: { quantity: { decrement: orderQty } }
          })
          
          await prisma.inventoryLedger.create({
@@ -120,9 +136,14 @@ export async function closeTab(data: FormData) {
        for (const ingredient of menuItem.ingredients) {
          const totalDuction = ingredient.quantity * orderQty
          try {
-           await prisma.outletStock.update({
+           await prisma.outletStock.upsert({
              where: { outletId_itemId: { outletId: tab.outletId, itemId: ingredient.itemId } },
-             data: { quantity: { decrement: totalDuction } }
+             create: { 
+               outletId: tab.outletId, 
+               itemId: ingredient.itemId, 
+               quantity: -totalDuction 
+             },
+             update: { quantity: { decrement: totalDuction } }
            })
 
            await prisma.inventoryLedger.create({
@@ -165,7 +186,9 @@ export async function closeTab(data: FormData) {
       status: "CLOSED",
       paymentMode,
       tokenNumber,
-      closedAt: new Date()
+      closedAt: new Date(),
+      splitCashAmount: paymentMode === "SPLIT" ? splitCashAmount : null,
+      splitOnlineAmount: paymentMode === "SPLIT" ? splitOnlineAmount : null
     }
   })
 

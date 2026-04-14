@@ -32,7 +32,7 @@ export default async function GlobalCatalogPage() {
                <Layers className="text-primary w-6 h-6 lg:w-8 lg:h-8" />
              </div>
              <div className="flex flex-col">
-               <h2 className="text-3xl lg:text-7xl font-black tracking-tighter text-white leading-tight uppercase">
+               <h2 className="text-3xl lg:text-7xl font-black tracking-tighter text-foreground leading-tight uppercase">
                  GLOBAL <span className="text-primary">CATALOG</span>
                </h2>
                <p className="text-muted-foreground mt-2 font-black text-[9px] lg:text-xs tracking-[0.3em] uppercase opacity-60 flex items-center gap-2">

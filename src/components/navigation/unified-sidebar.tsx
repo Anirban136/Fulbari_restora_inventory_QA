@@ -69,7 +69,7 @@ export function UnifiedSidebar({ user }: { user: any }) {
   return (
     <>
       {/* Mobile Top Header (Enlarged & Clickable Branding) */}
-      <div className="lg:hidden fixed top-0 left-0 right-0 h-20 px-8 flex items-center justify-between border-b border-white/5 bg-background/80 backdrop-blur-3xl z-[45] shadow-2xl">
+      <div className="lg:hidden fixed top-0 left-0 right-0 h-20 px-8 flex items-center justify-between border-b border-border bg-background/80 backdrop-blur-3xl z-[45] shadow-2xl">
         <Link href="/dashboard" className="flex flex-col group active:scale-95 transition-transform">
           <h1 className="text-3xl font-black text-emerald-500 group-hover:text-emerald-400 tracking-tighter leading-none uppercase transition-colors">FULBARI</h1>
           <p className="text-[9px] font-black tracking-[0.4em] uppercase text-muted-foreground mt-2 opacity-60">Operations Unit</p>
@@ -94,34 +94,34 @@ export function UnifiedSidebar({ user }: { user: any }) {
         {/* Backdrop for mobile (High-Fidelity Blur) */}
         {isOpen && (
           <div 
-            className="fixed inset-0 bg-black/80 lg:hidden backdrop-blur-md transition-opacity duration-500 cursor-pointer -z-10" 
+            className="fixed inset-0 bg-foreground/30 lg:hidden backdrop-blur-md transition-opacity duration-500 cursor-pointer -z-10" 
             onClick={() => setIsOpen(false)}
           />
         )}
 
         <aside className={cn(
-          "relative h-full flex flex-col border-r border-white/5 bg-zinc-950 lg:bg-background/20 lg:backdrop-blur-none z-50 overflow-hidden transition-all duration-300",
-          isOpen ? "shadow-[20px_0_60px_rgba(0,0,0,0.9)]" : "shadow-none"
+          "relative h-full flex flex-col border-r border-border bg-background/95 lg:bg-background/20 lg:backdrop-blur-none z-50 overflow-hidden transition-all duration-300 shadow-2xl",
+          isOpen ? "shadow-[20px_0_60px_rgba(0,0,0,0.2)] dark:shadow-[20px_0_60px_rgba(0,0,0,0.9)]" : "shadow-none"
         )}>
           {/* Logo Section in Sidebar (Enlarged & Clickable) */}
-          <div className="p-10 border-b border-white/5 shrink-0">
+          <div className="p-10 border-b border-border shrink-0">
             <Link href="/dashboard" className="group block active:scale-95 transition-transform">
-              <h1 className="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-200 tracking-tighter uppercase leading-none group-hover:from-emerald-300 group-hover:to-teal-100 transition-all">FULBARI</h1>
+              <h1 className="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-emerald-600 to-teal-400 dark:from-emerald-400 dark:to-teal-200 tracking-tighter uppercase leading-none group-hover:from-emerald-500 group-hover:to-teal-300 transition-all">FULBARI</h1>
               <p className="text-[10px] font-black tracking-[0.4em] uppercase text-muted-foreground mt-3 opacity-60">Operations Unit</p>
             </Link>
           </div>
           
           {/* User Profile Hook */}
-          <div className="p-8 border-b border-white/5 bg-white/[0.02] shrink-0">
+          <div className="p-8 border-b border-border bg-foreground/[0.02] shrink-0">
              <div className="flex items-center gap-4">
                <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-400 p-0.5 shadow-xl">
-                 <div className="w-full h-full rounded-[14px] bg-black flex items-center justify-center font-black text-emerald-400 text-xl">
+                 <div className="w-full h-full rounded-[14px] bg-background flex items-center justify-center font-black text-emerald-600 dark:text-emerald-400 text-xl">
                     {user.name?.[0].toUpperCase()}
                  </div>
                </div>
                 <div className="flex-1 min-w-0">
-                  <p className="font-black text-white text-base truncate uppercase tracking-tight">{user.name}</p>
-                  <p className="text-[9px] font-black tracking-[0.2em] uppercase text-emerald-400 mt-1 opacity-80">{user.role?.replace('_', ' ')}</p>
+                  <p className="font-black text-foreground text-base truncate uppercase tracking-tight">{user.name}</p>
+                  <p className="text-[9px] font-black tracking-[0.2em] uppercase text-emerald-500 mt-1 opacity-80">{user.role?.replace('_', ' ')}</p>
                 </div>
              </div>
           </div>
@@ -136,13 +136,13 @@ export function UnifiedSidebar({ user }: { user: any }) {
                   className={cn(
                     "flex items-center gap-4 px-5 py-5 lg:py-3.5 rounded-[1.5rem] transition-all duration-300 group relative overflow-hidden",
                     isActive 
-                      ? "bg-white/5 text-emerald-400 border border-emerald-500/20 shadow-[0_10px_30px_rgba(16,185,129,0.1)]" 
-                      : "text-muted-foreground hover:text-white hover:bg-white/5 transition-colors"
+                      ? "bg-primary/10 text-primary border border-primary/20 shadow-[0_10px_30px_rgba(16,185,129,0.1)]" 
+                      : "text-muted-foreground hover:text-foreground hover:bg-foreground/5 transition-colors"
                   )}
                 >
                   <item.icon className={cn(
                     "w-6 h-6 lg:w-5 lg:h-5 transition-transform group-hover:scale-110",
-                    isActive ? "text-emerald-400" : "text-white/40 group-hover:text-emerald-400"
+                    isActive ? "text-primary" : "text-muted-foreground/60 group-hover:text-primary"
                   )} />
                   <span className="font-black tracking-tight text-base lg:text-sm uppercase">{item.name}</span>
                   {isActive && (
@@ -153,7 +153,7 @@ export function UnifiedSidebar({ user }: { user: any }) {
             })}
           </nav>
 
-          <div className="p-8 border-t border-white/5 bg-white/[0.01] shrink-0">
+          <div className="p-8 border-t border-border bg-foreground/[0.01] shrink-0">
             <UserControls role={user.role} />
           </div>
         </aside>

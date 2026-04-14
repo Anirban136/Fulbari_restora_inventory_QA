@@ -55,14 +55,14 @@ export function MenuManagementTable({
     <div className="flex flex-col h-full overflow-hidden">
       {/* FILTER BAR */}
       <div className="p-6 bg-muted/10 border-b border-border/10 flex flex-col sm:flex-row gap-4 sm:items-center justify-between sticky top-0 z-30 backdrop-blur-3xl">
-        <div className="flex p-1 bg-black/40 rounded-2xl border border-white/5 w-fit">
+        <div className="flex p-1 bg-foreground/5 rounded-2xl border border-border w-fit">
           <Button
             variant="ghost"
             size="sm"
             onClick={() => setOutletFilter('ALL')}
             className={cn(
               "rounded-xl h-10 px-5 text-[10px] font-black uppercase tracking-widest transition-all gap-2",
-              outletFilter === 'ALL' ? "bg-white text-black hover:bg-white" : "text-muted-foreground hover:text-white"
+              outletFilter === 'ALL' ? "bg-primary text-primary-foreground hover:bg-primary" : "text-muted-foreground hover:text-foreground"
             )}
           >
             <LayoutGrid className="w-3.5 h-3.5" /> ALL View
@@ -73,7 +73,7 @@ export function MenuManagementTable({
             onClick={() => setOutletFilter('CAFE')}
             className={cn(
               "rounded-xl h-10 px-5 text-[10px] font-black uppercase tracking-widest transition-all gap-2",
-              outletFilter === 'CAFE' ? "bg-amber-500 text-white hover:bg-amber-500" : "text-muted-foreground hover:text-white"
+              outletFilter === 'CAFE' ? "bg-amber-600 text-white hover:bg-amber-500" : "text-muted-foreground hover:text-foreground"
             )}
           >
             <Utensils className="w-3.5 h-3.5" /> Cafe Menu
@@ -84,7 +84,7 @@ export function MenuManagementTable({
             onClick={() => setOutletFilter('CHAI_JOINT')}
             className={cn(
               "rounded-xl h-10 px-5 text-[10px] font-black uppercase tracking-widest transition-all gap-2",
-              outletFilter === 'CHAI_JOINT' ? "bg-blue-500 text-white hover:bg-blue-500" : "text-muted-foreground hover:text-white"
+              outletFilter === 'CHAI_JOINT' ? "bg-blue-600 text-white hover:bg-blue-500" : "text-muted-foreground hover:text-foreground"
             )}
           >
             <Coffee className="w-3.5 h-3.5" /> Chai Joint
@@ -97,7 +97,7 @@ export function MenuManagementTable({
             placeholder="Search item or category..." 
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="h-12 pl-11 bg-black/40 border-white/10 rounded-2xl focus-visible:ring-indigo-500/50 text-xs font-bold uppercase tracking-widest"
+            className="h-12 pl-11 bg-foreground/5 border-border rounded-2xl focus-visible:ring-primary/50 text-xs font-bold uppercase tracking-widest"
           />
         </div>
       </div>
@@ -105,18 +105,18 @@ export function MenuManagementTable({
       <div className="flex-1 overflow-auto max-h-[700px]">
         <Table>
           <TableHeader>
-            <TableRow className="border-b border-border/10 hover:bg-transparent">
-              <TableHead className="font-bold text-muted-foreground uppercase tracking-widest text-[10px] h-14 bg-muted/20 dark:bg-black/40 backdrop-blur-md sticky top-0 z-20">Outlet</TableHead>
-              <TableHead className="font-bold text-muted-foreground uppercase tracking-widest text-[10px] h-14 bg-muted/20 dark:bg-black/40 backdrop-blur-md sticky top-0 z-20">Item Name</TableHead>
-              <TableHead className="font-bold text-muted-foreground uppercase tracking-widest text-[10px] h-14 bg-muted/20 dark:bg-black/40 backdrop-blur-md sticky top-0 z-20">Category</TableHead>
-              <TableHead className="font-bold text-muted-foreground uppercase tracking-widest text-[10px] h-14 bg-muted/20 dark:bg-black/40 backdrop-blur-md sticky top-0 z-20 text-right">Price</TableHead>
-              <TableHead className="font-bold text-muted-foreground uppercase tracking-widest text-[10px] h-14 bg-muted/20 dark:bg-black/40 backdrop-blur-md sticky top-0 z-20 text-center">Actions</TableHead>
+            <TableRow className="border-b border-border hover:bg-transparent">
+              <TableHead className="font-bold text-muted-foreground uppercase tracking-widest text-[10px] h-14 bg-muted/20 backdrop-blur-md sticky top-0 z-20">Outlet</TableHead>
+              <TableHead className="font-bold text-muted-foreground uppercase tracking-widest text-[10px] h-14 bg-muted/20 backdrop-blur-md sticky top-0 z-20">Item Name</TableHead>
+              <TableHead className="font-bold text-muted-foreground uppercase tracking-widest text-[10px] h-14 bg-muted/20 backdrop-blur-md sticky top-0 z-20">Category</TableHead>
+              <TableHead className="font-bold text-muted-foreground uppercase tracking-widest text-[10px] h-14 bg-muted/20 backdrop-blur-md sticky top-0 z-20 text-right">Price</TableHead>
+              <TableHead className="font-bold text-muted-foreground uppercase tracking-widest text-[10px] h-14 bg-muted/20 backdrop-blur-md sticky top-0 z-20 text-center">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {filteredMenuItems.length === 0 ? (
-              <TableRow className="border-b border-white/10 hover:bg-transparent">
-                <TableCell colSpan={5} className="h-40 text-center text-slate-500">
+              <TableRow className="border-b border-border hover:bg-transparent">
+                <TableCell colSpan={5} className="h-40 text-center text-muted-foreground">
                   <span className="flex flex-col items-center justify-center">
                     <Search className="w-8 h-8 opacity-20 mb-2" />
                     No matching menu items found.
@@ -125,7 +125,7 @@ export function MenuManagementTable({
               </TableRow>
             ) : (
               filteredMenuItems.map((menuItem: any) => (
-                <TableRow key={menuItem.id} className={`border-b border-border/5 hover:bg-muted/5 transition-colors group ${!menuItem.isAvailable ? "opacity-40 grayscale" : ""}`}>
+                <TableRow key={menuItem.id} className={`border-b border-border hover:bg-muted/5 transition-colors group ${!menuItem.isAvailable ? "opacity-40 grayscale" : ""}`}>
                   <TableCell className="font-medium text-muted-foreground tracking-wide uppercase text-[10px]">
                     <span className={cn(
                       "px-2 py-0.5 rounded-md font-black tracking-tighter",
@@ -149,7 +149,7 @@ export function MenuManagementTable({
                           type="submit" 
                           variant="outline" 
                           size="sm" 
-                          className={`h-8 px-4 text-xs font-bold tracking-widest uppercase rounded-lg transition-all ${menuItem.isAvailable ? "border-indigo-500/30 bg-indigo-500/10 text-indigo-400 hover:bg-indigo-500/20" : "border-white/10 text-slate-500 hover:bg-white/10 hover:text-white"}`}
+                          className={`h-8 px-4 text-xs font-bold tracking-widest uppercase rounded-lg transition-all ${menuItem.isAvailable ? "border-primary/30 bg-primary/10 text-primary hover:bg-primary/20" : "border-border text-muted-foreground hover:bg-foreground/10 hover:text-foreground"}`}
                         >
                           {menuItem.isAvailable ? "Active" : "OOS"}
                         </Button>

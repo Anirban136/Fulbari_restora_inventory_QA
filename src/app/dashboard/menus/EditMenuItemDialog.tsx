@@ -59,16 +59,16 @@ export function EditMenuItemDialog({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger render={
-        <button className="p-2 rounded-xl text-slate-400 hover:text-white hover:bg-white/10 transition-all border border-transparent hover:border-white/10 flex items-center justify-center">
+        <button className="p-2 rounded-xl text-muted-foreground hover:text-foreground hover:bg-foreground/10 transition-all border border-transparent hover:border-border flex items-center justify-center">
           <Edit className="w-4 h-4" />
         </button>
       } />
-      <DialogContent className="sm:max-w-[450px] bg-black/90 backdrop-blur-3xl border-white/10 rounded-[2rem] overflow-hidden">
+      <DialogContent className="sm:max-w-[450px] bg-background border-border rounded-[2rem] overflow-hidden">
         <DialogHeader className="p-6 pb-0">
-          <div className="h-12 w-12 bg-indigo-500/20 rounded-2xl flex items-center justify-center border border-indigo-500/30 shadow-[0_0_15px_-3px_rgba(99,102,241,0.3)] mb-4">
-            <Edit className="w-6 h-6 text-indigo-400" />
+          <div className="h-12 w-12 bg-primary/20 rounded-2xl flex items-center justify-center border border-primary/30 shadow-[0_0_15px_-3px_rgba(99,102,241,0.3)] mb-4">
+            <Edit className="w-6 h-6 text-primary" />
           </div>
-          <DialogTitle className="text-2xl font-black text-white tracking-tight uppercase">Update Menu Entry</DialogTitle>
+          <DialogTitle className="text-2xl font-black text-foreground tracking-tight uppercase">Update Menu Entry</DialogTitle>
         </DialogHeader>
 
         <form action={async (formData) => {
@@ -80,35 +80,35 @@ export function EditMenuItemDialog({
 
           {/* OUTLET */}
           <div className="space-y-2">
-            <Label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Target POS Outlet</Label>
+            <Label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">Target POS Outlet</Label>
             <select
               name="outletId"
               required
               value={selectedOutletId}
               onChange={(e) => setSelectedOutletId(e.target.value)}
-              className="w-full h-12 px-4 py-2 rounded-xl border border-white/10 bg-black/60 text-white focus:ring-2 focus:ring-indigo-500/50 transition-all font-medium"
+              className="w-full h-12 px-4 py-2 rounded-xl border border-border bg-foreground/5 text-foreground focus:ring-2 focus:ring-primary/50 transition-all font-medium"
             >
-              <option value="" disabled className="bg-slate-900">Select Hub...</option>
-              {outlets.map(o => <option key={o.id} value={o.id} className="bg-slate-900">{o.name}</option>)}
+              <option value="" disabled className="bg-background text-muted-foreground">Select Hub...</option>
+              {outlets.map(o => <option key={o.id} value={o.id} className="bg-background text-foreground">{o.name}</option>)}
             </select>
           </div>
 
           {/* DISPLAY NAME */}
           <div className="space-y-2">
-            <Label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Display Name</Label>
+            <Label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">Display Name</Label>
             <Input
               name="name"
               defaultValue={menuItem.name}
               placeholder="e.g. Masala Chai"
               required
-              className="h-12 bg-black/60 border-white/10 text-white rounded-xl focus:ring-2 focus:ring-indigo-500/50"
+              className="h-12 bg-foreground/5 border-border text-foreground rounded-xl focus:ring-2 focus:ring-primary/50"
             />
           </div>
 
           {/* PRICE + CATEGORY */}
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Price (₹)</Label>
+              <Label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">Price (₹)</Label>
               <Input
                 name="price"
                 type="number"
@@ -116,19 +116,19 @@ export function EditMenuItemDialog({
                 min="0"
                 defaultValue={menuItem.price}
                 required
-                className="h-12 bg-black/60 border-white/10 text-white rounded-xl focus:ring-2 focus:ring-indigo-500/50 font-bold text-lg"
+                className="h-12 bg-foreground/5 border-border text-foreground rounded-xl focus:ring-2 focus:ring-primary/50 font-bold text-lg"
               />
             </div>
             <div className="space-y-2">
-              <Label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Global category</Label>
+              <Label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">Global category</Label>
               <CategoryCombobox name="category" defaultValue={defaultCategory} suggestions={suggestions} />
             </div>
           </div>
 
           {/* RECIPE BUILDER */}
-          <div className="space-y-4 pt-4 border-t border-white/5">
+          <div className="space-y-4 pt-4 border-t border-border">
             <div className="flex items-center justify-between">
-              <Label className="text-[10px] font-black text-indigo-400 uppercase tracking-[0.2em] flex items-center gap-2">
+              <Label className="text-[10px] font-black text-primary uppercase tracking-[0.2em] flex items-center gap-2">
                 <UtensilsCrossed className="w-4 h-4" /> Edit Recipe
               </Label>
               <Button 
@@ -136,7 +136,7 @@ export function EditMenuItemDialog({
                 variant="ghost" 
                 size="sm" 
                 onClick={addIngredient}
-                className="h-8 text-[10px] font-black uppercase tracking-widest text-indigo-400 hover:text-white hover:bg-indigo-500/20 rounded-lg gap-2"
+                className="h-8 text-[10px] font-black uppercase tracking-widest text-primary hover:text-foreground hover:bg-primary/20 rounded-lg gap-2"
               >
                 <Plus className="w-3 h-3" /> Add Item
               </Button>
@@ -150,11 +150,11 @@ export function EditMenuItemDialog({
                       value={ing.itemId}
                       onChange={(e) => updateIngredient(index, "itemId", e.target.value)}
                       required
-                      className="w-full h-11 px-3 rounded-xl border border-white/10 bg-black/60 text-xs text-white focus:ring-1 focus:ring-indigo-500/50"
+                      className="w-full h-11 px-3 rounded-xl border border-border bg-foreground/10 text-xs text-foreground focus:ring-1 focus:ring-primary/50"
                     >
-                      <option value="" disabled>Pick Product...</option>
+                      <option value="" disabled className="bg-background text-muted-foreground">Pick Product...</option>
                       {globalItems.map(item => (
-                        <option key={item.id} value={item.id} className="bg-slate-900">{item.name}</option>
+                        <option key={item.id} value={item.id} className="bg-background text-foreground">{item.name}</option>
                       ))}
                     </select>
                   </div>
@@ -166,7 +166,7 @@ export function EditMenuItemDialog({
                       value={ing.quantity}
                       onChange={(e) => updateIngredient(index, "quantity", parseFloat(e.target.value))}
                       required
-                      className="h-11 bg-black/60 border-white/10 text-xs text-center font-black"
+                      className="h-11 bg-foreground/10 border-border text-xs text-center font-black"
                     />
                   </div>
                   <div className="col-span-2">
@@ -175,7 +175,7 @@ export function EditMenuItemDialog({
                       variant="ghost" 
                       size="icon" 
                       onClick={() => removeIngredient(index)}
-                      className="h-11 w-full rounded-xl hover:bg-red-500/10 text-slate-600 hover:text-red-500 transition-colors"
+                      className="h-11 w-full rounded-xl hover:bg-red-500/10 text-muted-foreground hover:text-red-500 transition-colors"
                     >
                       <Trash2 className="w-4 h-4" />
                     </Button>
@@ -183,26 +183,26 @@ export function EditMenuItemDialog({
                 </div>
               ))}
               {ingredients.length === 0 && (
-                <p className="text-[10px] text-slate-600 uppercase font-black tracking-widest text-center py-4 bg-white/2 rounded-2xl border border-dashed border-white/5">
+                <p className="text-[10px] text-muted-foreground uppercase font-black tracking-widest text-center py-4 bg-foreground/[0.02] rounded-2xl border border-dashed border-border text-opacity-40">
                   No Auto-Deduction active
                 </p>
               )}
             </div>
             
             <div className="space-y-2">
-              <Label className="text-[10px] font-black text-slate-500 uppercase tracking-widest opacity-50">Legacy Link (Optional)</Label>
+              <Label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest opacity-50">Legacy Link (Optional)</Label>
               <select
                 name="itemId"
                 defaultValue={menuItem.itemId || ""}
-                className="w-full h-10 px-4 py-1 text-xs rounded-lg border border-white/5 bg-black/40 text-slate-400"
+                className="w-full h-10 px-4 py-1 text-xs rounded-lg border border-border bg-foreground/5 text-muted-foreground"
               >
-                <option value="">None</option>
-                {globalItems.map(item => <option key={item.id} value={item.id}>{item.name}</option>)}
+                <option value="" className="bg-background">None</option>
+                {globalItems.map(item => <option key={item.id} value={item.id} className="bg-background">{item.name}</option>)}
               </select>
             </div>
           </div>
 
-          <Button type="submit" className="w-full h-14 bg-indigo-600 hover:bg-indigo-500 text-white font-black uppercase tracking-widest rounded-2xl shadow-xl shadow-indigo-500/20 active:scale-95 transition-all">
+          <Button type="submit" className="w-full h-14 bg-primary hover:bg-primary/90 text-primary-foreground font-black uppercase tracking-widest rounded-2xl shadow-xl shadow-primary/20 active:scale-95 transition-all">
             Commit Changes
           </Button>
         </form>

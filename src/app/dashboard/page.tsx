@@ -73,8 +73,8 @@ export default async function DashboardOverview() {
       if (tab.paymentMode === "CASH") chaiCafeCash += tab.totalAmount
       if (tab.paymentMode === "ONLINE") chaiCafeDigital += tab.totalAmount
       if (tab.paymentMode === "SPLIT") {
-        chaiCafeCash += tab.totalAmount / 2
-        chaiCafeDigital += tab.totalAmount / 2
+        chaiCafeCash += tab.splitCashAmount ?? (tab.totalAmount / 2)
+        chaiCafeDigital += tab.splitOnlineAmount ?? (tab.totalAmount / 2)
       }
     }
     
@@ -84,7 +84,11 @@ export default async function DashboardOverview() {
     outletStats[tab.Outlet.name].total += tab.totalAmount
     if (tab.paymentMode === "CASH") outletStats[tab.Outlet.name].cash += tab.totalAmount
     if (tab.paymentMode === "ONLINE") outletStats[tab.Outlet.name].online += tab.totalAmount
-    if (tab.paymentMode === "SPLIT") outletStats[tab.Outlet.name].split += tab.totalAmount
+    if (tab.paymentMode === "SPLIT") {
+      outletStats[tab.Outlet.name].split += tab.totalAmount
+      outletStats[tab.Outlet.name].cash += tab.splitCashAmount ?? (tab.totalAmount / 2)
+      outletStats[tab.Outlet.name].online += tab.splitOnlineAmount ?? (tab.totalAmount / 2)
+    }
 
     tab.Items.forEach(item => {
       const cat = item.MenuItem.categoryId || "Misc"
@@ -189,7 +193,7 @@ export default async function DashboardOverview() {
                 <div className="mt-6">
                   <p className="text-[10px] font-black text-muted-foreground uppercase opacity-60 mb-1">Volume</p>
                   <p className="text-3xl font-black text-foreground mb-4">₹{cafeTotal.toFixed(0)}</p>
-                  <div className="flex justify-between border-t border-white/5 pt-4">
+                  <div className="flex justify-between border-t border-border pt-4">
                     <div className="flex flex-col bg-emerald-500/5 px-3 py-2 rounded-xl">
                       <span className="text-[9px] font-black text-emerald-500 uppercase tracking-widest">Cash</span>
                       <span className="text-lg font-black text-foreground">₹{cafeCash.toFixed(0)}</span>
@@ -212,7 +216,7 @@ export default async function DashboardOverview() {
                 <div className="mt-6">
                   <p className="text-[10px] font-black text-muted-foreground uppercase opacity-60 mb-1">Volume</p>
                   <p className="text-3xl font-black text-foreground mb-4">₹{chaiTotal.toFixed(0)}</p>
-                  <div className="flex justify-between border-t border-white/5 pt-4">
+                  <div className="flex justify-between border-t border-border pt-4">
                     <div className="flex flex-col bg-emerald-500/5 px-3 py-2 rounded-xl">
                       <span className="text-[9px] font-black text-emerald-500 uppercase tracking-widest">Cash</span>
                       <span className="text-lg font-black text-foreground">₹{chaiCash.toFixed(0)}</span>
@@ -254,7 +258,7 @@ export default async function DashboardOverview() {
                       <span className="text-xs font-black text-foreground uppercase tracking-tight">{cat}</span>
                       <span className="text-lg font-black text-primary">₹{amount.toFixed(0)}</span>
                     </div>
-                    <div className="h-3 bg-muted/20 dark:bg-white/5 rounded-full overflow-hidden border border-white/5">
+                    <div className="h-3 bg-muted/20 dark:bg-white/5 rounded-full overflow-hidden border border-border">
                       <div 
                         className="h-full rounded-full transition-all duration-1000 ease-out shadow-[0_0_15px_rgba(16,185,129,0.3)]"
                         style={{ 
@@ -287,8 +291,8 @@ export default async function DashboardOverview() {
               <div className="text-center py-20 text-muted-foreground font-black uppercase tracking-widest opacity-20 italic">Awaiting performers</div>
             ) : (
               sortedItems.slice(0, 5).map(([id, stats], idx) => (
-                <div key={id} className={`flex items-center gap-5 p-5 rounded-[2rem] transition-all border ${idx === 0 ? 'bg-amber-500/10 border-amber-500/30 glow-border' : 'bg-muted/5 border-transparent hover:border-white/10'}`}>
-                  <div className={`h-14 w-14 rounded-2xl flex items-center justify-center font-black text-xl shadow-inner ${idx === 0 ? 'bg-amber-500 text-white shadow-[0_20px_30px_-10px_rgba(245,158,11,0.5)]' : 'bg-muted/20 text-muted-foreground'}`}>
+                <div key={id} className={`flex items-center gap-5 p-5 rounded-[2rem] transition-all border ${idx === 0 ? 'bg-amber-500/10 border-amber-500/30' : 'bg-muted/5 border-transparent hover:border-border'}`}>
+                  <div className={`h-14 w-14 rounded-2xl flex items-center justify-center font-black text-xl shadow-inner ${idx === 0 ? 'bg-amber-500 text-primary-foreground shadow-[0_20px_30px_-10px_rgba(245,158,11,0.5)]' : 'bg-muted/20 text-muted-foreground'}`}>
                     {idx + 1}
                   </div>
                   <div className="flex-1 min-w-0">
@@ -319,7 +323,7 @@ export default async function DashboardOverview() {
       <TransactionsFeed tabs={todaysClosedTabs} userRole={session?.user?.role} />
 
       <div className="text-center pt-10">
-         <a href="/dashboard/transactions" className="inline-flex items-center gap-3 px-10 py-4 bg-muted/10 hover:bg-primary hover:text-primary-foreground border border-white/10 rounded-full text-xs font-black uppercase tracking-[0.2em] transition-all hover:scale-105 active:scale-95 shadow-xl">
+         <a href="/dashboard/transactions" className="inline-flex items-center gap-3 px-10 py-4 bg-muted/10 hover:bg-primary hover:text-primary-foreground border border-border rounded-full text-xs font-black uppercase tracking-[0.2em] transition-all hover:scale-105 active:scale-95 shadow-xl">
            Explore Full Flow Ledger <Receipt className="w-4 h-4" />
          </a>
       </div>

@@ -14,7 +14,7 @@ export function CriticalSupplyAlert({ criticalAlerts }: { criticalAlerts: any[] 
         {/* Close Button */}
         <button 
           onClick={() => setIsDismissed(true)}
-          className="absolute top-6 right-6 p-3 rounded-2xl bg-white/10 border border-white/10 text-white/40 hover:text-white hover:bg-white/20 transition-all active:scale-90 z-30"
+          className="absolute top-6 right-6 p-3 rounded-2xl bg-foreground/10 border border-foreground/10 text-muted-foreground hover:text-foreground hover:bg-foreground/20 transition-all active:scale-90 z-30"
           title="Dismiss Alert"
         >
           <X className="w-5 h-5" />
@@ -29,16 +29,16 @@ export function CriticalSupplyAlert({ criticalAlerts }: { criticalAlerts: any[] 
         
         <div className="flex-1 text-center lg:text-left">
           <div className="flex flex-col lg:flex-row lg:items-center gap-2 lg:gap-4 mb-4">
-            <h3 className="text-3xl lg:text-4xl font-black text-white uppercase tracking-tighter">Critical Supply Alert</h3>
-            <span className="px-4 py-1.5 bg-red-500/20 text-red-500 text-[10px] font-black uppercase tracking-widest rounded-full border border-red-500/30 self-center lg:self-auto">Global Catalog Deficiency</span>
+            <h3 className="text-3xl lg:text-4xl font-black text-foreground uppercase tracking-tighter">Critical Supply Alert</h3>
+            <span className="px-4 py-1.5 bg-red-500/20 text-red-600 dark:text-red-500 text-[10px] font-black uppercase tracking-widest rounded-full border border-red-500/30 self-center lg:self-auto">Global Catalog Deficiency</span>
           </div>
           
           <div className="flex flex-wrap justify-center lg:justify-start gap-3">
             {criticalAlerts.slice(0, 10).map(item => (
-              <div key={item.id} className="group relative px-5 py-3 bg-black/40 border border-red-500/20 rounded-[1.5rem] flex items-center gap-4 hover:border-red-500/50 transition-all duration-300">
+              <div key={item.id} className="group relative px-5 py-3 bg-background/40 border border-red-500/20 rounded-[1.5rem] flex items-center gap-4 hover:border-red-500/50 transition-all duration-300">
                 <div className={`w-2 h-2 rounded-full ${item.currentStock === 0 ? 'bg-red-500 shadow-[0_0_10px_rgba(239,68,68,1)]' : 'bg-orange-500'}`}></div>
                 <div className="flex flex-col">
-                  <span className="text-xs font-black text-white uppercase tracking-tight">{item.name}</span>
+                  <span className="text-xs font-black text-foreground uppercase tracking-tight">{item.name}</span>
                   <span className={`text-[10px] font-bold ${item.currentStock === 0 ? 'text-red-500' : 'text-orange-500'}`}>
                     {item.currentStock === 0 ? "OUT OF STOCK" : `${item.currentStock} ${item.unit} left`}
                   </span>
@@ -46,7 +46,7 @@ export function CriticalSupplyAlert({ criticalAlerts }: { criticalAlerts: any[] 
               </div>
             ))}
             {criticalAlerts.length > 10 && (
-              <div className="px-5 py-3 bg-white/5 border border-white/10 rounded-[1.5rem] flex items-center justify-center">
+              <div className="px-5 py-3 bg-foreground/5 border border-border rounded-[1.5rem] flex items-center justify-center">
                 <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">+{criticalAlerts.length - 10} More Items</span>
               </div>
             )}
@@ -54,7 +54,7 @@ export function CriticalSupplyAlert({ criticalAlerts }: { criticalAlerts: any[] 
         </div>
         
         <a href="/dashboard/inventory" className="shrink-0 w-full lg:w-auto">
-          <button className="w-full px-12 py-5 bg-white text-black rounded-2xl font-black uppercase text-xs tracking-[0.2em] hover:scale-105 active:scale-95 transition-all shadow-2xl flex items-center justify-center gap-3">
+          <button className="w-full px-12 py-5 bg-foreground text-background rounded-2xl font-black uppercase text-xs tracking-[0.2em] hover:scale-105 active:scale-95 transition-all shadow-2xl flex items-center justify-center gap-3">
             Update Inventory <TrendingUp className="w-4 h-4" />
           </button>
         </a>

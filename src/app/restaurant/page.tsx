@@ -14,7 +14,7 @@ import { authOptions } from "@/lib/auth"
 export default async function RestaurantDashboard() {
   const restaurant = await prisma.outlet.findFirst({ where: { type: "RESTAURANT" }})
   
-  if (!restaurant) return <div className="min-h-screen bg-background text-white p-10 font-bold">Restaurant outlet not configured.</div>
+  if (!restaurant) return <div className="min-h-screen bg-background text-foreground p-10 font-bold">Restaurant outlet not configured.</div>
 
   const session = await getServerSession(authOptions)
 
@@ -43,16 +43,16 @@ export default async function RestaurantDashboard() {
 
         <div className="w-full max-w-6xl px-4 sm:px-6 py-10 relative z-10 flex flex-col min-h-full">
           
-          <header className="flex flex-col sm:flex-row items-start sm:items-center justify-between pb-8 mb-8 border-b border-white/10 gap-4 text-glow">
+          <header className="flex flex-col sm:flex-row items-start sm:items-center justify-between pb-8 mb-8 border-b border-border gap-4 text-glow">
             <div className="flex items-center gap-4">
-             <div className="h-14 w-14 bg-gradient-to-br from-rose-500 to-orange-600 rounded-2xl flex items-center justify-center border border-white/10 shadow-[0_0_30px_-5px_oklch(0.65_0.22_25_/_0.5)] p-1">
+             <div className="h-14 w-14 bg-gradient-to-br from-rose-500 to-orange-600 rounded-2xl flex items-center justify-center border border-border shadow-[0_0_30px_-5px_oklch(0.65_0.22_25_/_0.5)] p-1">
                <div className="h-full w-full bg-background/50 rounded-xl flex items-center justify-center backdrop-blur-md">
-                 <ChefHat className="text-rose-400 w-6 h-6" />
+                 <ChefHat className="text-rose-600 dark:text-rose-400 w-6 h-6" />
                </div>
              </div>
             <div>
-              <h1 className="text-4xl font-black text-white tracking-tight">Restaurant Hub</h1>
-              <p className="text-rose-400 font-bold mt-1 tracking-widest uppercase text-xs">Kitchen Operations Interface</p>
+              <h1 className="text-4xl font-black text-foreground tracking-tight">Restaurant Hub</h1>
+              <p className="text-rose-600 dark:text-rose-400 font-bold mt-1 tracking-widest uppercase text-xs">Kitchen Operations Interface</p>
             </div>
           </div>
           <UserControls />
@@ -62,28 +62,28 @@ export default async function RestaurantDashboard() {
           
           {/* Incoming Dispatches */}
           <div className="lg:col-span-12 glass-panel rounded-3xl overflow-hidden flex flex-col min-h-[300px] border border-rose-500/20 shadow-[0_20px_60px_-15px_rgba(244,63,94,0.05)]">
-             <div className="p-8 border-b border-white/10 bg-white/5 backdrop-blur-md flex items-center gap-4 shrink-0">
-               <PackageOpen className="w-6 h-6 text-rose-400" />
-               <h2 className="text-xl font-bold text-white uppercase tracking-widest">Incoming Deliveries from Warehouse</h2>
+             <div className="p-8 border-b border-border bg-foreground/5 backdrop-blur-md flex items-center gap-4 shrink-0">
+               <PackageOpen className="w-6 h-6 text-rose-500" />
+               <h2 className="text-xl font-bold text-foreground uppercase tracking-widest">Incoming Deliveries from Warehouse</h2>
              </div>
              
              <div className="flex-1 overflow-auto p-8 max-h-[400px] custom-scrollbar">
                 {incomingDispatches.length === 0 ? (
-                  <div className="flex flex-col items-center justify-center text-slate-500 py-10 animate-pulse h-full">
+                  <div className="flex flex-col items-center justify-center text-muted-foreground py-10 animate-pulse h-full text-opacity-40">
                     <Search className="w-12 h-12 mb-4 opacity-20" />
                     <p className="font-bold tracking-widest uppercase text-sm">No dispatches received yet.</p>
                   </div>
                 ) : (
                   <ul className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {incomingDispatches.map(log => (
-                      <li key={log.id} className="flex items-center justify-between p-5 rounded-2xl border border-white/5 bg-white/5 hover:bg-white/10 hover:border-white/20 transition-all group shadow-sm">
+                      <li key={log.id} className="flex items-center justify-between p-5 rounded-2xl border border-border bg-foreground/5 hover:bg-foreground/10 transition-all group shadow-sm">
                         <div>
-                          <p className="text-[10px] font-bold text-slate-500 mb-1 leading-none">{formatDateIST(log.createdAt)} at {formatTimeIST(log.createdAt)}</p>
-                          <span className="font-bold text-slate-200 group-hover:text-white text-lg transition-colors leading-tight block mb-1">{log.Item.name}</span>
-                          <p className="text-[10px] text-slate-500 font-medium leading-none">By: <span className="text-slate-400">{log.User.name}</span></p>
+                          <p className="text-[10px] font-bold text-muted-foreground mb-1 leading-none">{formatDateIST(log.createdAt)} at {formatTimeIST(log.createdAt)}</p>
+                          <span className="font-bold text-foreground/80 group-hover:text-foreground text-lg transition-colors leading-tight block mb-1">{log.Item.name}</span>
+                          <p className="text-[10px] text-muted-foreground font-medium leading-none">By: <span className="text-muted-foreground/60">{log.User.name}</span></p>
                         </div>
                         <div className="text-right flex flex-col items-end">
-                          <span className="font-black text-rose-400 bg-rose-500/10 border border-rose-500/20 px-4 py-2 rounded-xl text-lg lg:text-xl drop-shadow-[0_0_5px_rgba(244,63,94,0.3)]">
+                          <span className="font-black text-rose-600 dark:text-rose-400 bg-rose-500/10 border border-rose-500/20 px-4 py-2 rounded-xl text-lg lg:text-xl drop-shadow-[0_0_5px_rgba(244,63,94,0.3)]">
                             +{log.quantity} <span className="text-[10px] ml-1 opacity-70 uppercase text-rose-300 tracking-widest">{log.Item.piecesPerBox ? 'pcs' : log.Item.unit}</span>
                           </span>
                           {log.Item.piecesPerBox && (
@@ -100,19 +100,19 @@ export default async function RestaurantDashboard() {
           </div>
 
           {/* Consumption Logger */}
-          <div className="lg:col-span-5 glass-panel p-8 rounded-3xl self-start hover:border-white/20 transition-all border border-rose-500/20 shadow-[0_20px_60px_-15px_rgba(244,63,94,0.1)]">
+          <div className="lg:col-span-5 glass-panel p-8 rounded-3xl self-start hover:border-border transition-all border border-rose-500/20 shadow-[0_20px_60px_-15px_rgba(244,63,94,0.1)]">
             <div className="flex items-center gap-3 mb-8">
-               <Flame className="w-6 h-6 text-orange-400" />
-               <h2 className="text-2xl font-black text-white">Log Usage</h2>
+               <Flame className="w-6 h-6 text-orange-500" />
+               <h2 className="text-2xl font-black text-foreground">Log Usage</h2>
             </div>
             
             <form action={consumeStock} className="space-y-6">
               <div className="space-y-2">
-                <Label htmlFor="itemId" className="text-xs font-bold text-slate-400 uppercase tracking-widest">Ingredient</Label>
-                <select name="itemId" id="itemId" required defaultValue="" className="w-full h-14 px-4 py-3 rounded-xl border border-white/10 bg-black/40 text-white placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-rose-500/50 transition-all shadow-inner font-medium text-lg">
-                  <option value="" disabled className="bg-slate-900 text-slate-500">Select from fridge / pantry...</option>
+                <Label htmlFor="itemId" className="text-xs font-bold text-muted-foreground uppercase tracking-widest">Ingredient</Label>
+                <select name="itemId" id="itemId" required defaultValue="" className="w-full h-14 px-4 py-3 rounded-xl border border-border bg-foreground/5 text-foreground focus:outline-none focus:ring-2 focus:ring-rose-500/50 transition-all shadow-inner font-medium text-lg">
+                  <option value="" disabled className="bg-background text-muted-foreground">Select from fridge / pantry...</option>
                   {localStock.map(stock => (
-                    <option key={stock.itemId} value={stock.itemId} className="bg-slate-900 text-white">
+                    <option key={stock.itemId} value={stock.itemId} className="bg-background text-foreground">
                       {stock.Item.name} — {stock.quantity} {stock.Item.unit} avl.
                     </option>
                   ))}
@@ -120,8 +120,8 @@ export default async function RestaurantDashboard() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="quantity" className="text-xs font-bold text-slate-400 uppercase tracking-widest">Amount Consumed</Label>
-                <Input id="quantity" name="quantity" type="number" step="0.01" min="0.01" className="h-14 bg-black/40 border-white/10 text-white placeholder:text-slate-600 rounded-xl focus-visible:ring-rose-500/50 shadow-inner font-mono text-2xl" placeholder="2.5" required />
+                <Label htmlFor="quantity" className="text-xs font-bold text-muted-foreground uppercase tracking-widest">Amount Consumed</Label>
+                <Input id="quantity" name="quantity" type="number" step="0.01" min="0.01" className="h-14 bg-foreground/5 border-border text-foreground placeholder:text-muted-foreground/30 rounded-xl focus-visible:ring-rose-500/50 shadow-inner font-mono text-2xl" placeholder="2.5" required />
               </div>
 
               <Button type="submit" className="w-full h-16 text-xl font-black tracking-widest uppercase bg-gradient-to-r from-rose-600 to-orange-600 hover:from-rose-500 hover:to-orange-500 text-white rounded-xl transition-all shadow-[0_0_30px_-5px_rgba(244,63,94,0.5)] active:scale-95 mt-4">
@@ -132,9 +132,9 @@ export default async function RestaurantDashboard() {
 
           {/* Current Stock */}
           <div className="lg:col-span-7 glass-panel rounded-3xl overflow-hidden flex flex-col max-h-[700px]">
-             <div className="p-8 border-b border-white/10 bg-white/5 backdrop-blur-md flex justify-between items-center">
-               <h2 className="text-xl font-bold text-white uppercase tracking-widest">Current Local Stock</h2>
-               <div className="px-4 py-1.5 rounded-full bg-rose-500/20 border border-rose-500/30 text-rose-300 font-bold text-xs flex items-center gap-2">
+             <div className="p-8 border-b border-border bg-foreground/5 backdrop-blur-md flex justify-between items-center">
+               <h2 className="text-xl font-bold text-foreground uppercase tracking-widest">Current Local Stock</h2>
+               <div className="px-4 py-1.5 rounded-full bg-rose-500/20 border border-rose-500/30 text-rose-600 dark:text-rose-300 font-bold text-xs flex items-center gap-2">
                  <div className="w-2 h-2 rounded-full bg-rose-500 animate-pulse"></div> Live
                </div>
              </div>
@@ -142,17 +142,17 @@ export default async function RestaurantDashboard() {
              <div className="flex-1 overflow-auto p-8 relative">
                 <ul className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {localStock.length === 0 ? (
-                    <div className="col-span-2 flex flex-col items-center justify-center text-slate-500 py-20 animate-pulse">
+                    <div className="col-span-2 flex flex-col items-center justify-center text-muted-foreground py-20 animate-pulse text-opacity-40">
                       <Search className="w-12 h-12 mb-4 opacity-20" />
                       <p className="font-bold tracking-widest uppercase text-sm">No inventory available. Await dispatch.</p>
                     </div>
                   ) : (
                     localStock.map(stock => (
-                      <li key={stock.id} className="flex flex-col p-5 rounded-2xl border border-white/5 bg-white/5 hover:bg-white/10 hover:border-white/20 transition-all group shadow-sm hover:shadow-[0_5px_20px_-5px_rgba(244,63,94,0.2)]">
-                        <span className="font-bold text-slate-300 group-hover:text-white text-lg transition-colors">{stock.Item.name}</span>
+                      <li key={stock.id} className="flex flex-col p-5 rounded-2xl border border-border bg-foreground/5 hover:bg-foreground/10 transition-all group shadow-sm hover:shadow-[0_5px_20px_-5px_rgba(244,63,94,0.2)]">
+                        <span className="font-bold text-foreground/80 group-hover:text-foreground text-lg transition-colors">{stock.Item.name}</span>
                         <div className="mt-4 flex justify-between items-end">
-                          <span className="text-xs font-bold text-slate-500 uppercase tracking-widest">Available</span>
-                          <div className="font-black text-rose-400 bg-rose-500/10 border border-rose-500/20 px-3 py-1.5 rounded-lg text-lg drop-shadow-[0_0_5px_rgba(244,63,94,0.3)] flex flex-col items-end">
+                          <span className="text-xs font-bold text-muted-foreground uppercase tracking-widest">Available</span>
+                          <div className="font-black text-rose-600 dark:text-rose-400 bg-rose-500/10 border border-rose-500/20 px-3 py-1.5 rounded-lg text-lg drop-shadow-[0_0_5px_rgba(244,63,94,0.3)] flex flex-col items-end">
                             <span>
                               {stock.quantity} <span className="text-[10px] ml-1 opacity-70 uppercase text-rose-300 tracking-widest">{stock.Item.piecesPerBox ? 'pcs' : stock.Item.unit}</span>
                             </span>

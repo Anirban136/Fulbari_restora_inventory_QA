@@ -67,7 +67,7 @@ export function AddMenuItemForm({
 
       {/* OUTLET SELECTOR */}
       <div className="space-y-2">
-        <Label htmlFor="outletId" className="text-xs font-bold text-slate-400 uppercase tracking-widest">
+        <Label htmlFor="outletId" className="text-xs font-bold text-muted-foreground uppercase tracking-widest">
           Select POS Outlet
         </Label>
         <select
@@ -76,19 +76,19 @@ export function AddMenuItemForm({
           required
           value={selectedOutletId}
           onChange={e => setSelectedOutletId(e.target.value)}
-          className="w-full h-12 px-4 py-2 rounded-xl border border-white/10 bg-black/40 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all font-medium"
+          className="w-full h-12 px-4 py-2 rounded-xl border border-border bg-foreground/5 text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all font-medium"
         >
-          <option value="" disabled className="bg-slate-900 text-slate-500">Cafe or Chai Joint...</option>
+          <option value="" disabled className="bg-background text-muted-foreground text-opacity-50">Cafe or Chai Joint...</option>
           {outlets.map(o => (
-            <option key={o.id} value={o.id} className="bg-slate-900 text-white">{o.name}</option>
+            <option key={o.id} value={o.id} className="bg-background text-foreground">{o.name}</option>
           ))}
-          <option value="BOTH" className="bg-indigo-900 text-indigo-200 font-bold">★ Both (Chai Hub & Coffee Hub)</option>
+          <option value="BOTH" className="bg-indigo-600 text-white font-bold">★ Both (Chai Hub & Coffee Hub)</option>
         </select>
       </div>
 
       {/* DISPLAY NAME */}
       <div className="space-y-2">
-        <Label htmlFor="name" className="text-xs font-bold text-slate-400 uppercase tracking-widest">
+        <Label htmlFor="name" className="text-xs font-bold text-muted-foreground uppercase tracking-widest">
           Display Name on POS
         </Label>
         <Input
@@ -96,14 +96,14 @@ export function AddMenuItemForm({
           name="name"
           placeholder="e.g. Masala Chai"
           required
-          className="h-12 bg-black/40 border-white/10 text-white rounded-xl focus-visible:ring-indigo-500/50"
+          className="h-12 bg-foreground/5 border-border text-foreground rounded-xl focus-visible:ring-primary/50"
         />
       </div>
 
       {/* PRICE + CATEGORY */}
       <div className="grid grid-cols-2 gap-4">
         <div className="space-y-2">
-          <Label htmlFor="price" className="text-xs font-bold text-slate-400 uppercase tracking-widest">
+          <Label htmlFor="price" className="text-xs font-bold text-muted-foreground uppercase tracking-widest">
             Price (₹)
           </Label>
           <Input
@@ -114,12 +114,12 @@ export function AddMenuItemForm({
             min="0"
             placeholder="e.g. 20"
             required
-            className="h-12 bg-black/40 border-white/10 text-white rounded-xl focus-visible:ring-indigo-500/50 font-mono text-lg"
+            className="h-12 bg-foreground/5 border-border text-foreground rounded-xl focus-visible:ring-primary/50 font-mono text-lg"
           />
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="add_category" className="text-xs font-bold text-slate-400 uppercase tracking-widest">
+          <Label htmlFor="add_category" className="text-xs font-bold text-muted-foreground uppercase tracking-widest">
             Category
           </Label>
           <CategoryCombobox name="category" suggestions={suggestions} />
@@ -127,9 +127,9 @@ export function AddMenuItemForm({
       </div>
 
       {/* RECIPE BUILDER (REPLACED AUTO-DEDUCT) */}
-      <div className="space-y-4 pt-4 border-t border-white/5">
+      <div className="space-y-4 pt-4 border-t border-border">
         <div className="flex items-center justify-between">
-          <Label className="text-xs font-bold text-indigo-400 uppercase tracking-[0.2em] flex items-center gap-2">
+          <Label className="text-xs font-bold text-primary uppercase tracking-[0.2em] flex items-center gap-2">
             <UtensilsCrossed className="w-4 h-4" /> Recipe / Auto-Deduction
           </Label>
           <Button 
@@ -137,17 +137,17 @@ export function AddMenuItemForm({
             variant="ghost" 
             size="sm" 
             onClick={addIngredient}
-            className="h-8 text-[10px] font-black uppercase tracking-widest text-indigo-400 hover:text-white hover:bg-indigo-500/20 rounded-lg gap-2"
+            className="h-8 text-[10px] font-black uppercase tracking-widest text-primary hover:text-foreground hover:bg-primary/20 rounded-lg gap-2"
           >
             <Plus className="w-3 h-3" /> Add Ingredient
           </Button>
         </div>
 
         {ingredients.length === 0 ? (
-          <div className="p-6 rounded-2xl border-2 border-dashed border-white/5 bg-white/2 flex flex-col items-center justify-center text-center">
-            <Settings2 className="w-8 h-8 text-slate-700 mb-2" />
-            <p className="text-[10px] text-slate-500 uppercase font-black tracking-widest">No auto-deduction configured</p>
-            <p className="text-[9px] text-slate-600 mt-1">This will be a standalone POS item with no stock impact.</p>
+          <div className="p-6 rounded-2xl border-2 border-dashed border-border bg-foreground/[0.02] flex flex-col items-center justify-center text-center">
+            <Settings2 className="w-8 h-8 text-muted-foreground/30 mb-2" />
+            <p className="text-[10px] text-muted-foreground uppercase font-black tracking-widest">No auto-deduction configured</p>
+            <p className="text-[9px] text-muted-foreground/60 mt-1">This will be a standalone POS item with no stock impact.</p>
           </div>
         ) : (
           <div className="space-y-3">
@@ -158,11 +158,11 @@ export function AddMenuItemForm({
                     value={ing.itemId}
                     onChange={(e) => updateIngredient(index, "itemId", e.target.value)}
                     required
-                    className="w-full h-11 px-3 rounded-xl border border-white/10 bg-black/60 text-xs text-white focus:ring-1 focus:ring-indigo-500/50"
+                    className="w-full h-11 px-3 rounded-xl border border-border bg-foreground/10 text-xs text-foreground focus:ring-1 focus:ring-primary/50"
                   >
-                    <option value="" disabled className="text-slate-500">Pick Item...</option>
+                    <option value="" disabled className="bg-background text-muted-foreground">Pick Item...</option>
                     {globalItems.map(item => (
-                      <option key={item.id} value={item.id} className="bg-slate-900">{item.name} ({item.unit})</option>
+                      <option key={item.id} value={item.id} className="bg-background text-foreground">{item.name} ({item.unit})</option>
                     ))}
                   </select>
                 </div>
@@ -175,7 +175,7 @@ export function AddMenuItemForm({
                     value={ing.quantity}
                     onChange={(e) => updateIngredient(index, "quantity", parseFloat(e.target.value))}
                     required
-                    className="h-11 bg-black/60 border-white/10 text-xs text-center font-bold"
+                    className="h-11 bg-foreground/10 border-border text-xs text-center font-bold"
                   />
                 </div>
                 <div className="col-span-2">
@@ -184,7 +184,7 @@ export function AddMenuItemForm({
                     variant="ghost" 
                     size="icon" 
                     onClick={() => removeIngredient(index)}
-                    className="h-11 w-full rounded-xl hover:bg-red-500/10 text-slate-600 hover:text-red-500 transition-colors"
+                    className="h-11 w-full rounded-xl hover:bg-red-500/10 text-muted-foreground hover:text-red-500 transition-colors"
                   >
                     <Trash2 className="w-4 h-4" />
                   </Button>

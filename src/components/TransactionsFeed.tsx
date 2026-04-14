@@ -50,13 +50,13 @@ export function TransactionsFeed({ tabs, userRole }: { tabs: any[], userRole?: s
              <Receipt className="text-primary w-6 h-6" />
            </div>
            <div>
-             <h3 className="text-3xl font-black text-white tracking-tight uppercase">Today's Transactions</h3>
+             <h3 className="text-3xl font-black text-foreground tracking-tight uppercase">Today's Transactions</h3>
              <p className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em] opacity-60">Live Transaction Stream</p>
            </div>
         </div>
 
         {/* Premium Filter Toggle */}
-        <div className="flex bg-zinc-900/50 p-1.5 rounded-2xl border border-white/5 backdrop-blur-xl self-start xl:self-center">
+        <div className="flex bg-foreground/5 p-1.5 rounded-2xl border border-border backdrop-blur-xl self-start xl:self-center">
           {[
             { id: "ALL", label: "All Activity", icon: Activity },
             { id: "CAFE", label: "Cafe", icon: Coffee },
@@ -68,7 +68,7 @@ export function TransactionsFeed({ tabs, userRole }: { tabs: any[], userRole?: s
               className={`flex items-center gap-3 px-6 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all duration-500 ${
                 filter === item.id 
                   ? "bg-primary text-primary-foreground shadow-[0_10px_20px_-5px_rgba(16,185,129,0.4)] scale-105" 
-                  : "text-muted-foreground hover:text-white hover:bg-white/5"
+                  : "text-muted-foreground hover:text-foreground hover:bg-foreground/5"
               }`}
             >
               <item.icon className={`w-3.5 h-3.5 ${filter === item.id ? "animate-pulse" : ""}`} />
@@ -78,14 +78,14 @@ export function TransactionsFeed({ tabs, userRole }: { tabs: any[], userRole?: s
         </div>
 
         <div className="flex gap-3">
-          <a href={`/api/export/transactions?outlet=CAFE`} className="bg-amber-500/10 border border-amber-500/20 px-6 py-2.5 rounded-2xl text-[10px] font-black text-amber-600 hover:bg-amber-500 shadow-lg hover:text-white transition-all uppercase tracking-widest">Cafe Export</a>
-          <a href={`/api/export/transactions?outlet=CHAI_JOINT`} className="bg-blue-500/10 border border-blue-500/20 px-6 py-2.5 rounded-2xl text-[10px] font-black text-blue-600 hover:bg-blue-500 shadow-lg hover:text-white transition-all uppercase tracking-widest">Chai Export</a>
+          <a href={`/api/export/transactions?outlet=CAFE`} className="bg-amber-600/10 border border-amber-600/20 px-6 py-2.5 rounded-2xl text-[10px] font-black text-amber-600 hover:bg-amber-600 shadow-md hover:text-white dark:hover:text-primary-foreground transition-all uppercase tracking-widest">Cafe Export</a>
+          <a href={`/api/export/transactions?outlet=CHAI_JOINT`} className="bg-blue-600/10 border border-blue-600/20 px-6 py-2.5 rounded-2xl text-[10px] font-black text-blue-600 hover:bg-blue-600 shadow-md hover:text-white dark:hover:text-primary-foreground transition-all uppercase tracking-widest">Chai Export</a>
         </div>
       </div>
 
       {/* Analytics Badge — Shows count for current filter */}
       <div className="px-4">
-        <div className="inline-flex items-center gap-3 px-4 py-2 bg-white/5 border border-white/10 rounded-full">
+        <div className="inline-flex items-center gap-3 px-4 py-2 bg-foreground/5 border border-border rounded-full">
            <span className="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
            <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">
              Showing {filteredTabs.length} {filter === 'ALL' ? 'Transactions' : `${filter} Records`}
@@ -98,7 +98,7 @@ export function TransactionsFeed({ tabs, userRole }: { tabs: any[], userRole?: s
         {/* Card View (Mobile-First) */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:hidden gap-4 px-2">
           {filteredTabs.length === 0 ? (
-            <div className="text-center py-24 glass-panel rounded-[3rem] border-white/5 bg-white/5 flex flex-col items-center justify-center gap-4 col-span-full">
+            <div className="text-center py-24 glass-panel rounded-[3rem] border-border bg-foreground/5 flex flex-col items-center justify-center gap-4 col-span-full">
                <Receipt className="w-12 h-12 text-muted-foreground/20" />
                <div className="space-y-1">
                  <p className="text-muted-foreground font-black uppercase tracking-widest opacity-40 italic">No capture detected</p>
@@ -107,7 +107,7 @@ export function TransactionsFeed({ tabs, userRole }: { tabs: any[], userRole?: s
             </div>
           ) : (
             filteredTabs.map(tab => (
-              <div key={tab.id} className="glass-card p-6 rounded-[2.5rem] border-white/5 flex flex-col justify-between hover:border-primary/20 transition-all group">
+              <div key={tab.id} className="glass-card p-6 rounded-[2.5rem] border-border flex flex-col justify-between hover:border-primary/20 transition-all group">
                 <div className="flex justify-between items-start mb-4">
                   <div className="flex flex-col">
                     <div className="flex items-center gap-2 mb-1">
@@ -117,7 +117,7 @@ export function TransactionsFeed({ tabs, userRole }: { tabs: any[], userRole?: s
                     <span className="text-lg font-black text-foreground truncate max-w-[150px]">{tab.customerName || "Walk-in Capture"}</span>
                   </div>
                   <div className="flex flex-col items-end gap-1">
-                    <span className="text-[10px] font-bold text-muted-foreground opacity-60 bg-white/5 px-2 py-1 rounded-lg">
+                    <span className="text-[10px] font-bold text-muted-foreground opacity-60 bg-foreground/5 px-2 py-1 rounded-lg">
                       {tab.tokenNumber ? `TOKEN #${tab.tokenNumber}` : tab.closedAt ? new Date(tab.closedAt).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' }) : "N/A"}
                     </span>
                     {tab.tokenNumber && tab.closedAt && (
@@ -127,7 +127,7 @@ export function TransactionsFeed({ tabs, userRole }: { tabs: any[], userRole?: s
                     )}
                   </div>
                 </div>
-                <div className="flex justify-between items-end border-t border-white/5 pt-4">
+                <div className="flex justify-between items-end border-t border-border pt-4">
                   <div className="flex items-center gap-2">
                      <div className={`w-2 h-2 rounded-full ${tab.paymentMode === 'CASH' ? 'bg-emerald-500 shadow-[0_0_10px_#10b981]' : 'bg-blue-500 shadow-[0_0_10px_#3b82f6]'}`}></div>
                      <span className="text-[9px] font-black text-muted-foreground uppercase tracking-widest">{tab.paymentMode}</span>
@@ -150,10 +150,10 @@ export function TransactionsFeed({ tabs, userRole }: { tabs: any[], userRole?: s
         </div>
 
         {/* Desktop Table View */}
-        <div className="hidden lg:block glass-panel rounded-[3rem] overflow-hidden border border-white/5">
+        <div className="hidden lg:block glass-panel rounded-[3rem] overflow-hidden border border-border">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="bg-white/5 border-b border-white/5">
+              <tr className="bg-foreground/5 border-b border-border">
                 <th className="p-8 text-[11px] font-black text-muted-foreground uppercase tracking-[0.3em]">Temporal Point</th>
                 <th className="p-8 text-[11px] font-black text-muted-foreground uppercase tracking-[0.3em]">Node Location</th>
                 <th className="p-8 text-[11px] font-black text-muted-foreground uppercase tracking-[0.3em]">Token</th>
@@ -161,7 +161,7 @@ export function TransactionsFeed({ tabs, userRole }: { tabs: any[], userRole?: s
                 <th className="p-8 text-[11px] font-black text-muted-foreground uppercase tracking-[0.3em] text-right">Credit Resolved</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-white/5">
+            <tbody className="divide-y divide-border">
               {filteredTabs.length === 0 ? (
                 <tr>
                    <td colSpan={4} className="p-32 text-center">
@@ -173,7 +173,7 @@ export function TransactionsFeed({ tabs, userRole }: { tabs: any[], userRole?: s
                 </tr>
               ) : (
                 filteredTabs.map(tab => (
-                  <tr key={tab.id} className="hover:bg-white/5 transition-all duration-300 group">
+                  <tr key={tab.id} className="hover:bg-foreground/5 transition-all duration-300 group">
                     <td className="p-8 text-xs font-bold text-muted-foreground group-hover:text-foreground">
                       <div className="flex items-center gap-3">
                          <div className="w-1 h-1 rounded-full bg-primary opacity-0 group-hover:opacity-100 transition-opacity"></div>
@@ -183,8 +183,8 @@ export function TransactionsFeed({ tabs, userRole }: { tabs: any[], userRole?: s
                     <td className="p-8">
                        <span className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border ${
                          tab.Outlet.name.toUpperCase().includes('CAFE') 
-                           ? 'bg-amber-500/10 border-amber-500/20 text-amber-500' 
-                           : 'bg-indigo-500/10 border-indigo-500/20 text-indigo-500'
+                           ? 'bg-amber-600/10 border-amber-600/20 text-amber-600' 
+                           : 'bg-indigo-600/10 border-indigo-600/20 text-indigo-600 dark:bg-indigo-500/10 dark:border-indigo-500/20 dark:text-indigo-400'
                        }`}>
                          {tab.Outlet.name.replace('_', ' ')}
                        </span>

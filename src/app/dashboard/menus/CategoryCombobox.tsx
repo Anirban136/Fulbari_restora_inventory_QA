@@ -44,10 +44,10 @@ export function CategoryCombobox({
           placeholder={placeholder}
           required
           autoComplete="off"
-          className="w-full h-12 px-4 py-2 pr-10 rounded-xl border border-white/10 bg-black/40 text-white placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all font-medium"
+          className="w-full h-12 px-4 py-2 pr-10 rounded-xl border border-border bg-foreground/5 text-foreground placeholder:text-muted-foreground/30 focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all font-medium"
         />
         <div 
-          className="absolute right-0 top-0 bottom-0 w-12 flex items-center justify-center cursor-pointer text-slate-500 hover:text-white"
+          className="absolute right-0 top-0 bottom-0 w-12 flex items-center justify-center cursor-pointer text-muted-foreground/40 hover:text-foreground"
           onClick={() => setIsOpen(!isOpen)}
         >
           <ChevronDown className="w-5 h-5" />
@@ -55,12 +55,12 @@ export function CategoryCombobox({
       </div>
       
       {isOpen && (
-        <div className="absolute z-[100] w-full mt-2 py-1 max-h-48 overflow-auto bg-[#0f1117] border border-white/10 rounded-xl shadow-2xl">
+        <div className="absolute z-[100] w-full mt-2 py-1 max-h-48 overflow-auto bg-background border border-border rounded-xl shadow-2xl">
           {filtered.length > 0 ? (
             filtered.map((s, i) => (
               <div 
                 key={i} 
-                className="px-4 py-3 text-sm text-slate-200 hover:bg-indigo-500/20 hover:text-white cursor-pointer transition-colors"
+                className="px-4 py-3 text-sm text-foreground/80 hover:bg-primary/10 hover:text-primary cursor-pointer transition-colors"
                 onClick={() => {
                   setValue(s)
                   setIsOpen(false)
@@ -70,7 +70,7 @@ export function CategoryCombobox({
               </div>
             ))
           ) : (
-            <div className="px-4 py-3 text-emerald-400 font-medium text-sm">
+            <div className="px-4 py-3 text-emerald-600 dark:text-emerald-400 font-medium text-sm">
               Press enter or submit to save "{value}" as a new category
             </div>
           )}

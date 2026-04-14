@@ -11,7 +11,7 @@ export default async function AdminTransactionsPage() {
 
   const transactions = await prisma.tab.findMany({
     where: { 
-      status: { in: ["CLOSED", "CANCELLED", "OPEN"] }, 
+      status: "CLOSED", 
       openedAt: { gte: thirtyDaysAgo } 
     },
     include: { 

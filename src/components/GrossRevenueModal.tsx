@@ -125,7 +125,7 @@ export function GrossRevenueModal({ totalRevenue }: { totalRevenue: number }) {
             {/* Body */}
             <div className="p-6">
               {loading ? (
-                <div className="flex items-center justify-center py-16 gap-3 text-slate-400">
+                <div className="flex items-center justify-center py-16 gap-3 text-muted-foreground">
                   <Loader2 className="w-5 h-5 animate-spin" />
                   <span className="text-sm font-medium">Loading report…</span>
                 </div>
@@ -133,13 +133,13 @@ export function GrossRevenueModal({ totalRevenue }: { totalRevenue: number }) {
                 <div className="overflow-x-auto rounded-2xl border border-border">
                   <table className="w-full text-sm border-collapse">
                     <thead>
-                      <tr className="bg-muted/50 dark:bg-black/40 text-[11px] font-black uppercase tracking-widest text-muted-foreground">
+                      <tr className="bg-foreground/5 text-[11px] font-black uppercase tracking-widest text-muted-foreground">
                         <th className="px-5 py-3.5 text-left rounded-tl-2xl">Date</th>
                         <th className="px-5 py-3.5 text-right">
-                          <span className="text-amber-500 dark:text-amber-400">💵</span> Cash
+                          <span className="text-amber-600 dark:text-amber-400">💵</span> Cash
                         </th>
                         <th className="px-5 py-3.5 text-right">
-                          <span className="text-blue-500 dark:text-blue-400">💳</span> UPI / Card
+                          <span className="text-blue-600 dark:text-blue-400">💳</span> UPI / Card
                         </th>
                         <th className="px-5 py-3.5 text-right rounded-tr-2xl">
                           Total
@@ -164,10 +164,10 @@ export function GrossRevenueModal({ totalRevenue }: { totalRevenue: number }) {
                               </span>
                             )}
                           </td>
-                          <td className="px-5 py-3.5 text-right text-amber-700 dark:text-amber-300 font-bold">
+                          <td className="px-5 py-3.5 text-right text-amber-600 dark:text-amber-400 font-bold">
                             ₹{d.cash.toFixed(2)}
                           </td>
-                          <td className="px-5 py-3.5 text-right text-blue-700 dark:text-blue-300 font-bold">
+                          <td className="px-5 py-3.5 text-right text-blue-600 dark:text-blue-400 font-bold">
                             ₹{d.online.toFixed(2)}
                           </td>
                           <td className="px-5 py-3.5 text-right font-black text-foreground text-base">
@@ -179,17 +179,17 @@ export function GrossRevenueModal({ totalRevenue }: { totalRevenue: number }) {
 
                     {/* Grand-total footer */}
                     <tfoot>
-                      <tr className="bg-muted/50 dark:bg-black/50 border-t-2 border-border/50 text-[11px] font-black uppercase tracking-widest">
+                      <tr className="bg-foreground/10 border-t-2 border-border/50 text-[11px] font-black uppercase tracking-widest">
                         <td className="px-5 py-3.5 text-muted-foreground rounded-bl-2xl">
                           7-Day Total
                         </td>
-                        <td className="px-5 py-3.5 text-right text-amber-600 dark:text-amber-400">
+                        <td className="px-5 py-3.5 text-right text-amber-600 dark:text-amber-400 font-black">
                           ₹{grandCash.toFixed(2)}
                         </td>
-                        <td className="px-5 py-3.5 text-right text-blue-600 dark:text-blue-400">
+                        <td className="px-5 py-3.5 text-right text-blue-600 dark:text-blue-400 font-black">
                           ₹{grandOnline.toFixed(2)}
                         </td>
-                        <td className="px-5 py-3.5 text-right text-emerald-600 dark:text-emerald-400 text-sm rounded-br-2xl">
+                        <td className="px-5 py-3.5 text-right text-emerald-600 dark:text-emerald-400 text-sm rounded-br-2xl font-black">
                           ₹{grandTotal.toFixed(2)}
                         </td>
                       </tr>

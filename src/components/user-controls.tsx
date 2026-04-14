@@ -2,8 +2,9 @@
 
 import { Button } from "@/components/ui/button"
 import { signOut } from "next-auth/react"
-import { LogOut, KeyRound, CheckCircle2 } from "lucide-react"
-import { useState } from "react"
+import { LogOut, KeyRound, CheckCircle2, Sun, Moon } from "lucide-react"
+import { useState, useEffect } from "react"
+import { useTheme } from "next-themes"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { changeUserPin } from "@/app/actions/user"
@@ -15,6 +16,12 @@ export function UserControls({ role }: { role?: string }) {
   const [error, setError] = useState("")
   const [success, setSuccess] = useState(false)
   const [loading, setLoading] = useState(false)
+  const [mounted, setMounted] = useState(false)
+  const { theme, setTheme } = useTheme()
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   const isOwner = role === "OWNER"
 
@@ -39,6 +46,20 @@ export function UserControls({ role }: { role?: string }) {
 
   return (
     <div className="flex flex-wrap items-center gap-2 sm:gap-3 justify-end">
+      {mounted && (
+        <Button 
+          variant="outline" 
+          size="icon" 
+          onClick={() => setTheme(theme === "dark" ? "light" : "dark")} 
+          className="h-9 w-9 border-border text-foreground/70 hover:text-foreground hover:bg-muted focus-visible:ring-1 focus-visible:ring-ring backdrop-blur-md shadow-sm transition-colors relative flex items-center justify-center shrink-0"
+          title="Toggle theme"
+        >
+          <Sun className="h-4 w-4 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
+          <Moon className="absolute h-4 w-4 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+          <span className="sr-only">Toggle theme</span>
+        </Button>
+      )}
+
       {isOwner && (
         <Dialog open={isOpen} onOpenChange={setIsOpen}>
           <DialogTrigger className="inline-flex items-center justify-center rounded-md text-sm font-bold transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:opacity-50 disabled:pointer-events-none ring-offset-background border border-input hover:bg-muted h-9 px-4 py-2 border-border text-foreground/70 hover:text-foreground backdrop-blur-md shadow-sm">
@@ -83,7 +104,7 @@ export function UserControls({ role }: { role?: string }) {
                     {error}
                   </div>
                 )}
-                <Button type="submit" disabled={loading || currentPin.length !== 4 || newPin.length !== 4} className="w-full h-12 text-lg font-black tracking-widest uppercase bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white rounded-xl transition-all shadow-lg active:scale-95 disabled:opacity-50">
+                <Button type="submit" disabled={loading || currentPin.length !== 4 || newPin.length !== 4} className="w-full h-12 text-lg font-black tracking-widest uppercase bg-primary hover:bg-primary/90 text-primary-foreground rounded-xl transition-all shadow-lg active:scale-95 disabled:opacity-50">
                   {loading ? "Updating..." : "Save New PIN"}
                 </Button>
               </form>
@@ -92,7 +113,7 @@ export function UserControls({ role }: { role?: string }) {
         </Dialog>
       )}
 
-      <Button onClick={() => signOut()} variant="outline" className="border-red-500/30 text-red-400 hover:bg-red-500 hover:text-white backdrop-blur-md shadow-inner transition-colors">
+      <Button onClick={() => signOut()} variant="outline" className="border-red-500/30 text-red-600 dark:text-red-400 hover:bg-red-500 hover:text-white backdrop-blur-md shadow-inner transition-colors">
         <LogOut className="w-4 h-4 mr-2" /> Logout
       </Button>
     </div>

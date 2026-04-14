@@ -44,11 +44,11 @@ export function EditTransactionModal({ tabId, currentAmount, currentMode }: { ta
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger render={
-        <Button variant="ghost" size="sm" className="h-8 w-8 p-0 hover:bg-white/10 text-muted-foreground hover:text-primary">
+        <Button variant="ghost" size="sm" className="h-8 w-8 p-0 hover:bg-foreground/10 text-muted-foreground hover:text-primary">
           <Pencil className="h-4 w-4" />
         </Button>
       } />
-      <DialogContent className="sm:max-w-[425px] bg-black/95 border-white/10 backdrop-blur-2xl text-white rounded-[2rem] overflow-hidden">
+      <DialogContent className="sm:max-w-[425px] bg-background border-border text-foreground rounded-[2rem] overflow-hidden">
         <DialogHeader className="pt-6 px-6">
           <DialogTitle className="text-2xl font-black uppercase tracking-tighter">Modify Bill</DialogTitle>
         </DialogHeader>
@@ -76,14 +76,14 @@ export function EditTransactionModal({ tabId, currentAmount, currentMode }: { ta
           </div>
 
           <div className="relative">
-             <div className="absolute inset-x-0 top-1/2 h-px bg-white/5"></div>
-             <span className="relative bg-black px-4 text-[8px] font-black uppercase tracking-[0.3em] text-muted-foreground/30 left-1/2 -translate-x-1/2 italic">OR</span>
+             <div className="absolute inset-x-0 top-1/2 h-px bg-border"></div>
+             <span className="relative bg-background px-4 text-[8px] font-black uppercase tracking-[0.3em] text-muted-foreground/30 left-1/2 -translate-x-1/2 italic">OR</span>
           </div>
 
           {/* Action 2: Quick Adjustment */}
           <div className="space-y-6">
             <h3 className="text-[10px] font-black uppercase text-muted-foreground tracking-[0.2em] px-1 italic">Option B: Quick Fix</h3>
-            <div className="space-y-4 bg-white/5 p-5 rounded-2xl border border-white/5">
+            <div className="space-y-4 bg-foreground/5 p-5 rounded-2xl border border-border">
               <div className="grid gap-2">
                 <Label htmlFor="amount" className="text-[9px] font-black uppercase text-muted-foreground tracking-widest opacity-40">Adjust Amount (₹)</Label>
                 <Input
@@ -91,23 +91,23 @@ export function EditTransactionModal({ tabId, currentAmount, currentMode }: { ta
                   type="number"
                   value={amount}
                   onChange={(e) => setAmount(e.target.value)}
-                  className="bg-black/40 border-white/5 h-11 text-base font-bold focus:border-primary/50 text-white"
+                  className="bg-foreground/5 border-border h-11 text-base font-bold focus:border-primary/50 text-foreground"
                 />
               </div>
               <div className="grid gap-2">
                 <Label htmlFor="mode" className="text-[9px] font-black uppercase text-muted-foreground tracking-widest opacity-40">Update Mode</Label>
                 <Select value={mode} onValueChange={(val) => val && setMode(val)}>
-                  <SelectTrigger className="bg-black/40 border-white/5 h-11 text-sm font-bold text-white">
+                  <SelectTrigger className="bg-foreground/5 border-border h-11 text-sm font-bold text-foreground">
                     <SelectValue placeholder="Select mode" />
                   </SelectTrigger>
-                  <SelectContent className="bg-zinc-950 border-white/10 text-white">
+                  <SelectContent className="bg-background border-border text-foreground">
                     <SelectItem value="CASH">CASH</SelectItem>
                     <SelectItem value="ONLINE">ONLINE (UPI/CARD)</SelectItem>
                     <SelectItem value="SPLIT">SPLIT</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
-              <Button onClick={handleSubmit} disabled={loading} className="w-full h-11 bg-white/5 hover:bg-white/10 border border-white/10 text-white font-black uppercase text-[10px] tracking-widest">
+              <Button onClick={handleSubmit} disabled={loading} className="w-full h-11 bg-foreground/5 hover:bg-foreground/10 border border-border text-foreground font-black uppercase text-[10px] tracking-widest">
                 {loading ? <Loader2 className="w-3 h-3 animate-spin mr-2" /> : null}
                 Update Metadata Only
               </Button>
@@ -115,8 +115,8 @@ export function EditTransactionModal({ tabId, currentAmount, currentMode }: { ta
           </div>
         </div>
         
-        <div className="bg-white/5 p-4 flex justify-center">
-           <button onClick={() => setOpen(false)} className="text-[10px] font-black text-muted-foreground hover:text-white uppercase tracking-widest transition-colors">Close Window</button>
+        <div className="bg-muted/30 p-4 flex justify-center">
+           <button onClick={() => setOpen(false)} className="text-[10px] font-black text-muted-foreground hover:text-foreground uppercase tracking-widest transition-colors">Close Window</button>
         </div>
       </DialogContent>
     </Dialog>

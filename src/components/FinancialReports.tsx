@@ -46,13 +46,11 @@ export function FinancialReports() {
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger 
-        render={
-          <button className="flex items-center gap-3 bg-emerald-500/10 border border-emerald-500/20 px-8 py-4 rounded-full backdrop-blur-xl group hover:bg-emerald-500/20 transition-all active:scale-95 shadow-[0_10px_30px_-5px_rgba(16,185,129,0.1)]" />
-        }
-      >
-        <Download className="w-5 h-5 text-emerald-500 group-hover:scale-110 transition-transform" />
-        <span className="text-xs font-black text-emerald-600 dark:text-emerald-400 uppercase tracking-[0.2em]">Download Report</span>
+      <DialogTrigger asChild>
+        <button className="flex items-center gap-3 bg-emerald-500/10 border border-emerald-500/20 px-8 py-4 rounded-full backdrop-blur-xl group hover:bg-emerald-500/20 transition-all active:scale-95 shadow-[0_10px_30px_-5px_rgba(16,185,129,0.1)]">
+          <Download className="w-5 h-5 text-emerald-600 dark:text-emerald-500 group-hover:scale-110 transition-transform" />
+          <span className="text-xs font-black text-emerald-600 dark:text-emerald-400 uppercase tracking-[0.2em]">Download Report</span>
+        </button>
       </DialogTrigger>
       
       <DialogContent showCloseButton={false} className="sm:max-w-md bg-background border-border/40 p-0 overflow-hidden rounded-[2.5rem] shadow-2xl">
@@ -126,7 +124,7 @@ export function FinancialReports() {
             disabled={loading || !from || !to}
             className={cn(
                "w-full h-16 rounded-full font-black uppercase tracking-[0.2em] text-sm transition-all active:scale-95 shadow-[0_20px_40px_-10px_rgba(16,185,129,0.4)]",
-               loading ? "bg-muted cursor-not-allowed" : "bg-emerald-500 text-white hover:bg-emerald-600 hover:scale-[1.02]"
+               loading ? "bg-muted cursor-not-allowed" : "bg-emerald-500 text-white dark:text-primary-foreground hover:bg-emerald-600 hover:scale-[1.02]"
             )}
           >
             {loading ? (

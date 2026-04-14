@@ -328,19 +328,19 @@ export function PrintReceiptButton({
           disabled={btStatus === "connecting" || btStatus === "connected"}
           className={`w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl border text-sm font-bold uppercase tracking-wider transition-all active:scale-[0.98] ${
             btStatus === "connected"
-              ? "bg-emerald-500/10 border-emerald-500/30 text-emerald-400 cursor-default"
+              ? "bg-emerald-500/10 border-emerald-500/30 text-emerald-500 cursor-default"
               : btStatus === "connecting"
-              ? "bg-amber-500/10 border-amber-500/20 text-amber-400 cursor-wait opacity-70"
+              ? "bg-amber-500/10 border-amber-500/20 text-amber-500 cursor-wait opacity-70"
               : btStatus === "error"
-              ? "bg-red-500/10 border-red-500/30 text-red-400 hover:bg-red-500/20"
-              : "bg-white/5 border-white/10 text-slate-300 hover:bg-white/10 hover:border-white/20"
+              ? "bg-red-500/10 border-red-500/30 text-red-500 hover:bg-red-500/20"
+              : "bg-foreground/5 border-border text-muted-foreground hover:bg-foreground/10"
           }`}
         >
           {btStatus === "connected" ? (
             <>
-              <Bluetooth className="w-4 h-4 text-emerald-400" />
+              <Bluetooth className="w-4 h-4 text-emerald-500" />
               <span className="flex items-center gap-2">
-                <span className="w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.6)] animate-pulse"></span>
+                <span className="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.6)] animate-pulse"></span>
                 {deviceName || "Printer"} Connected
               </span>
             </>
@@ -374,9 +374,9 @@ export function PrintReceiptButton({
         disabled={printStatus.startsWith("printing") || (!isAndroid && btStatus !== "connected")}
         className={`w-full flex items-center justify-center gap-2 ${isSidebar ? "px-3 py-2 text-xs" : "px-4 py-3.5 text-sm"} rounded-xl border font-black uppercase tracking-widest transition-all active:scale-[0.98] disabled:opacity-30 disabled:cursor-not-allowed ${
           printStatus === "success"
-            ? "bg-emerald-500/20 border-emerald-500/30 text-emerald-400"
+            ? "bg-emerald-500/20 border-emerald-500/30 text-emerald-500"
             : printStatus === "error"
-            ? "bg-red-500/20 border-red-500/30 text-red-400"
+            ? "bg-red-500/20 border-red-500/30 text-red-500"
             : isAmber
             ? "bg-orange-600 border-orange-500/50 text-white hover:bg-orange-500 shadow-[0_0_25px_-5px_rgba(249,115,22,0.4)]"
             : "bg-sky-600 border-sky-500/50 text-white hover:bg-sky-500 shadow-[0_0_25px_-5px_rgba(14,165,233,0.4)]"
@@ -395,9 +395,9 @@ export function PrintReceiptButton({
         disabled={printStatus.startsWith("printing") || (!isAndroid && btStatus !== "connected")}
         className={`w-full flex items-center justify-center gap-2 ${isSidebar ? "px-3 py-2 text-xs" : "px-4 py-3.5 text-sm"} rounded-xl border font-black uppercase tracking-widest transition-all active:scale-[0.98] disabled:opacity-30 disabled:cursor-not-allowed ${
           printStatus === "success"
-            ? "bg-emerald-500/20 border-emerald-500/30 text-emerald-400"
+            ? "bg-emerald-500/20 border-emerald-500/30 text-emerald-500"
             : printStatus === "error"
-            ? "bg-red-500/20 border-red-500/30 text-red-400"
+            ? "bg-red-500/20 border-red-500/30 text-red-500"
             : "bg-purple-600 border-purple-500/50 text-white hover:bg-purple-500 shadow-[0_0_25px_-5px_rgba(147,51,234,0.4)]"
         }`}
       >
@@ -409,7 +409,7 @@ export function PrintReceiptButton({
       </button>
 
       {tokenNumber && (
-        <span className="text-[10px] text-slate-500 mt-2">
+        <span className="text-[10px] text-muted-foreground mt-2">
           Token #{tokenNumber}
         </span>
       )}

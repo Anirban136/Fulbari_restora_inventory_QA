@@ -143,10 +143,12 @@ model Tab {
   tableName     String?  // specifically for CAFE tables
   tokenNumber   Int?     // Daily auto-incrementing token for receipts
   status        String   // OPEN, CLOSED, CANCELLED
-  totalAmount   Float    @default(0)
-  paymentMode   String?  // CASH, ONLINE, SPLIT
-  openedAt      DateTime @default(now())
-  closedAt      DateTime?
+  totalAmount       Float    @default(0)
+  paymentMode       String?  // CASH, ONLINE, SPLIT
+  splitCashAmount   Float?   // Optional explicit value for split mode
+  splitOnlineAmount Float?   // Optional explicit value for split mode
+  openedAt          DateTime @default(now())
+  closedAt          DateTime?
 
   Outlet        Outlet   @relation(fields: [outletId], references: [id])
   User          User     @relation(fields: [userId], references: [id])

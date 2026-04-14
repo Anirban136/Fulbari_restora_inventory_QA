@@ -77,7 +77,7 @@ export function ItemSearchableSelect({
           autoComplete="off"
           spellCheck="false"
           placeholder={placeholder}
-          className="w-full h-12 pl-12 pr-10 py-2 rounded-xl border border-white/10 bg-black/40 text-white placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all shadow-inner font-medium"
+          className="w-full h-12 pl-12 pr-10 py-2 rounded-xl border border-border bg-foreground/[0.03] text-foreground placeholder:text-muted-foreground/30 focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all shadow-inner font-medium"
           value={searchTerm}
           onChange={(e) => {
             setSearchTerm(e.target.value)
@@ -88,19 +88,19 @@ export function ItemSearchableSelect({
           }}
           onFocus={() => setOpen(true)}
         />
-        <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500" />
+        <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground/40" />
         <div 
           className="absolute right-0 top-0 bottom-0 px-3 flex items-center cursor-pointer"
           onClick={() => setOpen(!open)}
         >
           <ChevronDown 
-            className={`w-4 h-4 text-slate-500 transition-transform ${open ? "rotate-180" : ""}`} 
+            className={`w-4 h-4 text-muted-foreground/40 transition-transform ${open ? "rotate-180" : ""}`} 
           />
         </div>
       </div>
 
       {open && (searchTerm || filteredItems.length > 0) && (
-        <div className="absolute top-full left-0 right-0 mt-2 bg-slate-900 border border-white/10 rounded-2xl shadow-[0_10px_40px_-5px_rgba(0,0,0,0.5)] z-50 overflow-hidden flex flex-col max-h-[300px] animate-in fade-in zoom-in-95 duration-200">
+        <div className="absolute top-full left-0 right-0 mt-2 bg-background border border-border rounded-2xl shadow-[0_10px_40px_-5px_rgba(0,0,0,0.1)] z-50 overflow-hidden flex flex-col max-h-[300px] animate-in fade-in zoom-in-95 duration-200">
           <div className="overflow-y-auto flex-1 custom-scrollbar-premium">
             {filteredItems.length > 0 ? (
               filteredItems.map((item) => (
@@ -112,22 +112,22 @@ export function ItemSearchableSelect({
                     setOpen(false)
                     if (onSelect) onSelect(item)
                   }}
-                  className={`px-4 py-3 cursor-pointer hover:bg-white/5 flex items-center justify-between transition-colors ${selectedItem?.id === item.id ? "bg-primary/10 text-primary border-l-2 border-primary" : "text-slate-300 border-l-2 border-transparent"}`}
+                  className={`px-4 py-3 cursor-pointer hover:bg-foreground/5 flex items-center justify-between transition-colors ${selectedItem?.id === item.id ? "bg-primary/10 text-primary border-l-2 border-primary" : "text-muted-foreground border-l-2 border-transparent"}`}
                 >
                   <div className="flex flex-col">
                     <span className="font-bold text-sm tracking-wide">{item.name}</span>
-                    <div className="flex items-center gap-2">
-                       <span className="text-[10px] text-slate-500 uppercase tracking-widest font-medium">{item.unit}</span>
-                       {showStock && item.currentStock !== undefined && (
-                         <span className="text-[10px] text-slate-400 bg-white/5 px-2 py-0.5 rounded-full">Stock: {item.currentStock}</span>
-                       )}
-                    </div>
+                     <div className="flex items-center gap-2">
+                        <span className="text-[10px] text-muted-foreground uppercase tracking-widest font-medium">{item.unit}</span>
+                        {showStock && item.currentStock !== undefined && (
+                          <span className="text-[10px] text-muted-foreground bg-foreground/5 px-2 py-0.5 rounded-full">Stock: {item.currentStock}</span>
+                        )}
+                     </div>
                   </div>
                   {selectedItem?.id === item.id && <Check className="w-5 h-5" />}
                 </div>
               ))
             ) : (
-              <div className="p-8 text-center text-slate-600 text-sm italic">
+              <div className="p-8 text-center text-muted-foreground text-sm italic">
                 No items matching "{searchTerm}"
               </div>
             )}

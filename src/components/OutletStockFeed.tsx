@@ -18,7 +18,7 @@ export function OutletStockFeed({ stocks }: { stocks: any[] }) {
     : { primary: "indigo", color: "text-indigo-500", bg: "bg-indigo-500", border: "border-indigo-500/20", glow: "shadow-[0_0_30px_rgba(99,102,241,0.15)]" }
 
   return (
-    <div className={`glass-panel p-8 rounded-[3rem] relative overflow-hidden group border border-white/5 h-full transition-all duration-700 ${outletTheme.glow}`}>
+    <div className={`glass-panel p-8 rounded-[3rem] relative overflow-hidden group border border-border h-full transition-all duration-700 ${outletTheme.glow}`}>
       <div className={`absolute -top-20 -right-20 w-80 h-80 ${activeOutlet === 'CAFE' ? 'bg-amber-500/10' : 'bg-indigo-500/10'} rounded-full blur-[100px] pointer-events-none transition-all duration-700`}></div>
       <div className="absolute -bottom-20 -left-20 w-64 h-64 bg-primary/5 rounded-full blur-[80px] pointer-events-none"></div>
       
@@ -28,22 +28,22 @@ export function OutletStockFeed({ stocks }: { stocks: any[] }) {
              {activeOutlet === 'CAFE' ? <Coffee className="w-7 h-7 text-amber-500" /> : <Activity className="w-7 h-7 text-indigo-500" />}
            </div>
            <div>
-             <h3 className="text-3xl font-black text-white tracking-tighter uppercase leading-none">{activeOutlet} STOCK</h3>
+             <h3 className="text-3xl font-black text-foreground tracking-tighter uppercase leading-none">{activeOutlet} STOCK</h3>
              <p className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.3em] mt-2 opacity-60">Real-time Deployment Capture</p>
            </div>
         </div>
         
-        <div className="flex items-center gap-2 bg-black/40 p-1.5 rounded-2xl border border-white/5 backdrop-blur-3xl shadow-2xl">
+        <div className="flex items-center gap-2 bg-foreground/5 p-1.5 rounded-2xl border border-border backdrop-blur-3xl shadow-2xl">
           <button 
             onClick={() => setActiveOutlet("CAFE")}
-            className={`px-8 py-3 rounded-xl text-[11px] font-black uppercase tracking-widest transition-all duration-500 flex items-center gap-3 ${activeOutlet === 'CAFE' ? 'bg-amber-500 text-white shadow-[0_10px_20px_-5px_rgba(245,158,11,0.4)] scale-105' : 'text-muted-foreground hover:text-white hover:bg-white/5'}`}
+            className={`px-8 py-3 rounded-xl text-[11px] font-black uppercase tracking-widest transition-all duration-500 flex items-center gap-3 ${activeOutlet === 'CAFE' ? 'bg-amber-500 text-primary-foreground shadow-[0_10px_20px_-5px_rgba(245,158,11,0.4)] scale-105' : 'text-muted-foreground hover:text-foreground hover:bg-foreground/5'}`}
           >
             <Coffee className={`w-4 h-4 ${activeOutlet === 'CAFE' ? 'animate-bounce' : ''}`} />
             Cafe
           </button>
           <button 
             onClick={() => setActiveOutlet("CHAI")}
-            className={`px-8 py-3 rounded-xl text-[11px] font-black uppercase tracking-widest transition-all duration-500 flex items-center gap-3 ${activeOutlet === 'CHAI' ? 'bg-indigo-500 text-white shadow-[0_10px_20px_-5px_rgba(99,102,241,0.4)] scale-105' : 'text-muted-foreground hover:text-white hover:bg-white/5'}`}
+            className={`px-8 py-3 rounded-xl text-[11px] font-black uppercase tracking-widest transition-all duration-500 flex items-center gap-3 ${activeOutlet === 'CHAI' ? 'bg-indigo-500 text-primary-foreground shadow-[0_10px_20px_-5px_rgba(99,102,241,0.4)] scale-105' : 'text-muted-foreground hover:text-foreground hover:bg-foreground/5'}`}
           >
             <Activity className={`w-4 h-4 ${activeOutlet === 'CHAI' ? 'animate-pulse' : ''}`} />
             Joint
@@ -59,7 +59,7 @@ export function OutletStockFeed({ stocks }: { stocks: any[] }) {
           placeholder="Scan node repository..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className={`w-full h-14 bg-white/[0.03] border border-white/10 rounded-2xl pl-14 pr-8 text-sm font-black uppercase tracking-widest focus:outline-none transition-all placeholder:text-muted-foreground/20 text-white shadow-inner ${activeOutlet === 'CAFE' ? 'focus:border-amber-500/50 focus:ring-4 focus:ring-amber-500/5' : 'focus:border-indigo-500/50 focus:ring-4 focus:ring-indigo-500/5'}`}
+          className={`w-full h-14 bg-foreground/[0.03] border border-border rounded-2xl pl-14 pr-8 text-sm font-black uppercase tracking-widest focus:outline-none transition-all placeholder:text-muted-foreground text-foreground shadow-inner ${activeOutlet === 'CAFE' ? 'focus:border-amber-500/50 focus:ring-4 focus:ring-amber-500/5' : 'focus:border-indigo-500/50 focus:ring-4 focus:ring-indigo-500/5'}`}
          />
       </div>
 
@@ -105,12 +105,12 @@ export function OutletStockFeed({ stocks }: { stocks: any[] }) {
                 <div className="relative z-10 flex justify-between items-start">
                   <div className="min-w-0 pr-4">
                     <p className={`text-[8px] font-black uppercase tracking-[0.3em] mb-1.5 opacity-60 truncate ${statusColor}`}>{stock.Item.category}</p>
-                    <p className="text-sm font-black text-white uppercase truncate tracking-tight group-hover/item:text-white transition-colors leading-tight">{stock.Item.name}</p>
+                    <p className="text-sm font-black text-foreground uppercase truncate tracking-tight group-hover/item:text-foreground transition-colors leading-tight">{stock.Item.name}</p>
                   </div>
                   <StatusIcon className={`w-5 h-5 shrink-0 ${statusColor} ${isCritical ? 'animate-bounce' : ''}`} />
                 </div>
 
-                <div className="relative z-10 flex justify-between items-end border-t border-white/5 pt-4 mt-auto">
+                <div className="relative z-10 flex justify-between items-end border-t border-border pt-4 mt-auto">
                   <div className="flex flex-col">
                     <p className={`text-3xl font-black tracking-tighter ${statusColor} drop-shadow-2xl leading-none`}>
                       {stock.quantity}

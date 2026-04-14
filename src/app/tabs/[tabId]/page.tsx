@@ -17,7 +17,8 @@ export default async function TabTerminal({ params }: { params: Promise<{ tabId:
     where: { id: tabId },
     include: {
       Items: { include: { MenuItem: true } },
-      Outlet: true
+      Outlet: true,
+      User: true
     }
   })
 
@@ -38,7 +39,7 @@ export default async function TabTerminal({ params }: { params: Promise<{ tabId:
             <div className={`w-20 h-20 mx-auto rounded-3xl flex items-center justify-center mb-6 ${isCafe ? "bg-orange-500/20 border border-orange-500/30 shadow-[0_0_40px_-5px_rgba(249,115,22,0.4)]" : "bg-sky-500/20 border border-sky-500/30 shadow-[0_0_40px_-5px_rgba(14,165,233,0.4)]"}`}>
               <CheckCircle2 className={`w-10 h-10 ${isCafe ? "text-orange-400" : "text-sky-400"}`} />
             </div>
-            <h1 className="text-3xl font-black text-white mb-2">Bill Closed!</h1>
+            <h1 className="text-3xl font-black text-foreground mb-2">Bill Closed!</h1>
             {tab.tokenNumber && (
               <div className={`inline-block px-6 py-2 rounded-2xl ${isCafe ? "bg-orange-500/20 border border-orange-500/30" : "bg-sky-500/20 border border-sky-500/30"} mb-3`}>
                 <span className={`text-4xl font-black ${isCafe ? "text-orange-400" : "text-sky-400"} tracking-tight`}>
@@ -46,7 +47,7 @@ export default async function TabTerminal({ params }: { params: Promise<{ tabId:
                 </span>
               </div>
             )}
-            <p className="text-slate-400 text-sm font-medium">{tab.customerName || "Walk-in Customer"}</p>
+            <p className="text-muted-foreground text-sm font-medium">{tab.customerName || "Walk-in Customer"}</p>
           </div>
 
           {/* Receipt Summary */}
@@ -54,14 +55,14 @@ export default async function TabTerminal({ params }: { params: Promise<{ tabId:
             <div className="space-y-2 mb-4">
               {tab.Items.map((item: any) => (
                 <div key={item.id} className="flex justify-between items-center text-sm">
-                  <span className="text-slate-300 font-medium">{item.quantity}x {item.MenuItem.name}</span>
-                  <span className="text-white font-bold">₹{(item.quantity * item.priceAtTime).toFixed(0)}</span>
+                  <span className="text-muted-foreground font-medium">{item.quantity}x {item.MenuItem.name}</span>
+                  <span className="text-foreground font-bold">₹{(item.quantity * item.priceAtTime).toFixed(0)}</span>
                 </div>
               ))}
             </div>
             <div className={`border-t ${isCafe ? "border-orange-500/20" : "border-sky-500/20"} pt-4 flex justify-between items-center`}>
-              <span className="text-sm font-bold text-slate-400 uppercase tracking-widest">Total</span>
-              <span className="text-3xl font-black text-white">₹{tab.totalAmount.toFixed(0)}</span>
+              <span className="text-sm font-bold text-muted-foreground uppercase tracking-widest">Total</span>
+              <span className="text-3xl font-black text-foreground">₹{tab.totalAmount.toFixed(0)}</span>
             </div>
             <div className="flex justify-between items-center mt-2">
               <span className="text-xs text-slate-500 uppercase tracking-widest">Payment</span>
@@ -85,7 +86,7 @@ export default async function TabTerminal({ params }: { params: Promise<{ tabId:
 
             {/* Go Back Button */}
             <Link href={`/tabs?target=${tab.Outlet.type}`} className="block">
-              <Button variant="outline" className={`w-full h-12 text-sm font-bold tracking-widest uppercase rounded-xl transition-all active:scale-[0.98] border-white/10 text-slate-300 hover:bg-white/10`}>
+              <Button variant="outline" className={`w-full h-12 text-sm font-bold tracking-widest uppercase rounded-xl transition-all active:scale-[0.98] border-border text-muted-foreground hover:bg-foreground/5`}>
                 Done — Back to Terminal
               </Button>
             </Link>
@@ -116,19 +117,19 @@ export default async function TabTerminal({ params }: { params: Promise<{ tabId:
       
       {/* Background Decorators */}
       <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-10 mix-blend-overlay pointer-events-none z-0"></div>
-      <div className={`absolute top-1/2 left-1/4 w-[600px] h-[600px] ${isCafe ? "bg-orange-900/10" : "bg-sky-900/10"} rounded-full blur-[150px] pointer-events-none -translate-y-1/2 z-0`}></div>
+      <div className={`absolute top-1/2 left-1/4 w-[600px] h-[600px] ${isCafe ? "bg-orange-500/10" : "bg-sky-500/10"} rounded-full blur-[150px] pointer-events-none -translate-y-1/2 z-0`}></div>
 
       {/* Left Pane: MENU GRID */}
       <div className="flex-1 flex flex-col pt-4 z-10 relative min-h-0 overflow-hidden">
-        <header className="p-4 sm:px-8 sm:pb-6 border-b border-white/10 flex flex-col sm:flex-row items-start sm:items-center justify-between bg-background/50 backdrop-blur-md shrink-0">
+        <header className="p-4 sm:px-8 sm:pb-6 border-b border-border flex flex-col sm:flex-row items-start sm:items-center justify-between bg-background/50 backdrop-blur-md shrink-0">
           <Link href={`/tabs?target=${tab.Outlet.type}`}>
-            <Button variant="outline" className="text-slate-300 border-white/10 hover:bg-white/10 hover:text-white rounded-xl h-10 sm:h-12 px-4 sm:px-6 gap-2 font-bold backdrop-blur-md">
+            <Button variant="outline" className="text-muted-foreground border-border hover:bg-foreground/5 hover:text-foreground rounded-xl h-10 sm:h-12 px-4 sm:px-6 gap-2 font-bold backdrop-blur-md">
               <ArrowLeft className="w-4 h-4" /> <span className="hidden sm:inline">Back to Terminal</span><span className="sm:hidden">Back</span>
             </Button>
           </Link>
           <div className="flex items-center gap-3 sm:gap-4 shrink-0 mt-4 sm:mt-0">
             <div className={`h-2 w-2 rounded-full ${isCafe ? "bg-orange-500 shadow-[0_0_10px_#f97316]" : "bg-sky-500 shadow-[0_0_10px_#0ea5e9]"} animate-pulse`}></div>
-            <h2 className="text-xl sm:text-2xl font-black text-white tracking-tight uppercase truncate">{tab.Outlet.name} <span className={isCafe ? "text-orange-500/50" : "text-sky-500/50"}>POS</span></h2>
+            <h2 className="text-xl sm:text-2xl font-black text-foreground tracking-tight uppercase truncate">{tab.Outlet.name} <span className={isCafe ? "text-orange-500/50" : "text-sky-500/50"}>POS</span></h2>
           </div>
         </header>
         
@@ -136,11 +137,11 @@ export default async function TabTerminal({ params }: { params: Promise<{ tabId:
       </div>
 
       {/* Right Pane: CART / BILL */}
-      <div className="w-full lg:w-1/3 lg:min-w-[400px] lg:max-w-[500px] bg-black/40 backdrop-blur-2xl flex flex-col border-t lg:border-t-0 lg:border-l border-white/10 shadow-[0_-20px_80px_rgba(0,0,0,0.8)] lg:shadow-[-20px_0_40px_rgba(0,0,0,0.5)] z-20 shrink-0 relative lg:h-full">
-        <header className="p-3 sm:p-8 border-b border-white/10 bg-white/5 relative overflow-hidden shrink-0">
+      <div className="w-full lg:w-1/3 lg:min-w-[400px] lg:max-w-[500px] bg-background/80 dark:bg-black/40 backdrop-blur-2xl flex flex-col border-t lg:border-t-0 lg:border-l border-border shadow-[0_-20px_80px_rgba(0,0,0,0.1)] dark:shadow-[0_-20px_80px_rgba(0,0,0,0.8)] lg:shadow-[-20px_0_40px_rgba(0,0,0,0.05)] lg:dark:shadow-[-20px_0_40px_rgba(0,0,0,0.5)] z-20 shrink-0 relative lg:h-full">
+        <header className="p-3 sm:p-8 border-b border-border bg-foreground/5 relative overflow-hidden shrink-0">
           <div className={`absolute top-0 right-0 w-32 h-32 ${isCafe ? "bg-orange-500/10" : "bg-sky-500/10"} rounded-full blur-[40px] pointer-events-none`}></div>
-          <h2 className="text-xl sm:text-3xl font-black text-white tracking-tight break-words relative z-10 text-glow">{tab.customerName}</h2>
-          <p className={`${isCafe ? "text-orange-400/80" : "text-sky-400/80"} font-bold text-[10px] sm:text-xs tracking-widest mt-0 sm:mt-2 uppercase relative z-10`}>Tab #{tab.id.slice(-6)}</p>
+          <h2 className="text-xl sm:text-3xl font-black text-foreground tracking-tight break-words relative z-10 text-glow">{tab.customerName}</h2>
+          <p className={`${isCafe ? "text-orange-500/80" : "text-sky-500/80"} font-bold text-[10px] sm:text-xs tracking-widest mt-0 sm:mt-2 uppercase relative z-10`}>Tab #{tab.id.slice(-6)}</p>
         </header>
 
         <div className="flex-1 overflow-auto p-4">
@@ -152,14 +153,14 @@ export default async function TabTerminal({ params }: { params: Promise<{ tabId:
           ) : (
             <ul className="space-y-3">
               {tab.Items.map((item: any) => (
-                <li key={item.id} className="p-2 sm:p-4 flex gap-2 sm:gap-4 bg-white/5 border border-white/10 rounded-2xl animate-in slide-in-from-right-4 duration-300 hover:border-white/20 transition-colors">
+                <li key={item.id} className="p-2 sm:p-4 flex gap-2 sm:gap-4 bg-foreground/5 border border-border rounded-2xl animate-in slide-in-from-right-4 duration-300 hover:border-primary/20 transition-colors">
                   <div className="flex items-center shrink-0">
-                    <div className="flex flex-col sm:flex-row items-center bg-black/40 rounded-xl sm:rounded-2xl overflow-hidden border border-white/10 shadow-inner group/adjuster">
+                    <div className="flex flex-col sm:flex-row items-center bg-background/50 dark:bg-black/40 rounded-xl sm:rounded-2xl overflow-hidden border border-border shadow-inner group/adjuster">
                       <form action={adjustTabItemQuantity.bind(null, item.id, tab.id, -1, item.priceAtTime)}>
                         <button 
                           type="submit" 
                           className={cn(
-                            "p-2 sm:p-3 transition-all active:scale-90 bg-white/5 border-b sm:border-b-0 sm:border-r border-white/5",
+                            "p-2 sm:p-3 transition-all active:scale-90 bg-foreground/5 border-b sm:border-b-0 sm:border-r border-border",
                             isCafe ? "hover:bg-orange-500 hover:text-orange-950" : "hover:bg-sky-500 hover:text-sky-950"
                           )}
                         >
@@ -176,7 +177,7 @@ export default async function TabTerminal({ params }: { params: Promise<{ tabId:
                         <button 
                           type="submit" 
                           className={cn(
-                            "p-2 sm:p-3 transition-all active:scale-90 bg-white/5 border-t sm:border-t-0 sm:border-l border-white/5",
+                            "p-2 sm:p-3 transition-all active:scale-90 bg-foreground/5 border-t sm:border-t-0 sm:border-l border-border",
                             isCafe ? "hover:bg-orange-500 hover:text-orange-950" : "hover:bg-sky-500 hover:text-sky-950"
                           )}
                         >
@@ -186,11 +187,11 @@ export default async function TabTerminal({ params }: { params: Promise<{ tabId:
                     </div>
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="font-bold text-slate-200 text-sm sm:text-lg truncate">{item.MenuItem.name}</p>
-                    <p className="text-slate-500 font-medium text-xs sm:text-sm">₹{item.priceAtTime.toFixed(2)} each</p>
+                    <p className="font-bold text-foreground text-sm sm:text-lg truncate">{item.MenuItem.name}</p>
+                    <p className="text-muted-foreground font-medium text-xs sm:text-sm">₹{item.priceAtTime.toFixed(2)} each</p>
                   </div>
                   <div className="text-right flex flex-col items-end shrink-0">
-                    <p className="font-black text-white text-sm sm:text-xl">₹{(item.quantity * item.priceAtTime).toFixed(2)}</p>
+                    <p className="font-black text-foreground text-sm sm:text-xl">₹{(item.quantity * item.priceAtTime).toFixed(2)}</p>
                     <form action={removeTabItem.bind(null, item.id, tab.id, item.quantity * item.priceAtTime)}>
                       <button type="submit" className="text-[10px] sm:text-xs text-red-400/70 hover:text-red-400 mt-1 sm:mt-2 font-bold tracking-widest uppercase hover:underline transition-all">Remove</button>
                     </form>
