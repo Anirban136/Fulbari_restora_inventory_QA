@@ -46,7 +46,7 @@ export function OutletStockClient({
       <header className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 glass-panel p-6 lg:p-10 rounded-[2.5rem] border border-white/5 bg-white/[0.01] backdrop-blur-xl relative overflow-hidden">
         <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-purple-500/20 to-transparent"></div>
         <div className="relative z-10">
-          <h1 className="text-3xl lg:text-5xl font-black text-white tracking-tighter flex items-center gap-4">
+          <h1 className="text-3xl lg:text-5xl font-black text-foreground tracking-tighter flex items-center gap-4">
             Outlet Inventory
             <span className="px-3 py-1 bg-purple-500/20 text-purple-400 text-[10px] font-black uppercase tracking-[0.3em] rounded-lg border border-purple-500/30">
               Live
@@ -86,7 +86,7 @@ export function OutletStockClient({
               "px-6 py-4 rounded-2xl text-[10px] lg:text-[11px] font-black uppercase tracking-[0.2em] transition-all whitespace-nowrap flex items-center gap-3 relative overflow-hidden group",
               selectedOutletId === outlet.id 
                 ? "text-white bg-purple-600/20 border border-purple-500/30 shadow-[0_0_20px_rgba(168,85,247,0.2)]" 
-                : "text-muted-foreground hover:text-white hover:bg-white/5 border border-transparent"
+                : "text-muted-foreground hover:text-foreground hover:bg-foreground/5 border border-transparent"
             )}
           >
             {selectedOutletId === outlet.id && (
@@ -102,27 +102,28 @@ export function OutletStockClient({
       <main className="animate-in slide-in-from-bottom-4 duration-500 delay-150">
         {selectedOutlet ? (
           <section className="glass-panel rounded-[2.5rem] overflow-hidden flex flex-col border border-white/5 bg-white/[0.01]">
-            <div className="bg-white/[0.03] px-8 py-6 border-b border-white/5 flex justify-between items-center backdrop-blur-md relative">
+          <section className="glass-panel rounded-[2.5rem] overflow-hidden flex flex-col border border-border bg-card/50">
+            <div className="bg-muted/30 px-8 py-6 border-b border-border flex justify-between items-center backdrop-blur-md relative">
               <div className="flex items-center gap-4">
                  <div className="p-3 bg-purple-500/10 rounded-2xl">
                     <LayoutGrid className="w-6 h-6 text-purple-400" />
                  </div>
                  <div>
-                    <h2 className="text-2xl font-black text-white tracking-tight uppercase">{selectedOutlet.name}</h2>
+                    <h2 className="text-2xl font-black text-foreground tracking-tight uppercase">{selectedOutlet.name}</h2>
                     <p className="text-[10px] text-purple-400 font-black tracking-widest uppercase opacity-80">{selectedOutlet.type}</p>
                  </div>
               </div>
               <div className="text-right">
                 <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest block mb-1">Total Items</span>
-                <span className="text-2xl font-black text-white">{selectedOutlet.Stock.length}</span>
+                <span className="text-2xl font-black text-foreground">{selectedOutlet.Stock.length}</span>
               </div>
             </div>
 
             <div className="p-0 overflow-auto custom-scrollbar-premium max-h-[600px]">
               <Table>
-                <TableHeader className="sticky top-0 z-10 bg-[#09090b]/80 backdrop-blur-3xl shadow-sm">
-                  <TableRow className="border-b border-white/5 hover:bg-transparent">
-                    <TableHead className="font-black text-muted-foreground/40 uppercase tracking-[0.3em] text-[10px] h-14 px-10 border-r border-white/5">Item Detail</TableHead>
+                <TableHeader className="sticky top-0 z-10 bg-background/80 backdrop-blur-3xl shadow-sm">
+                  <TableRow className="border-b border-border hover:bg-transparent">
+                    <TableHead className="font-black text-muted-foreground/40 uppercase tracking-[0.3em] text-[10px] h-14 px-10 border-r border-border">Item Detail</TableHead>
                     <TableHead className="font-black text-muted-foreground/40 uppercase tracking-[0.3em] text-[10px] h-14 px-10 text-right">Current Stock</TableHead>
                   </TableRow>
                 </TableHeader>
@@ -138,10 +139,10 @@ export function OutletStockClient({
                     </TableRow>
                   ) : (
                     selectedOutlet.Stock.map((stock: any) => (
-                      <TableRow key={stock.id} className="border-b border-white/[0.03] hover:bg-white/[0.02] transition-colors group/row">
-                        <TableCell className="px-10 py-6 border-r border-white/[0.03]">
+                      <TableRow key={stock.id} className="border-b border-border/50 hover:bg-muted/50 transition-colors group/row">
+                        <TableCell className="px-10 py-6 border-r border-border/50">
                           <div className="flex flex-col gap-1">
-                             <span className="text-sm font-black text-white/90 uppercase tracking-tight group-hover/row:text-purple-400 transition-colors">
+                             <span className="text-sm font-black text-foreground/90 uppercase tracking-tight group-hover/row:text-purple-400 transition-colors">
                                {stock.Item.name}
                              </span>
                              <span className="text-[9px] font-bold text-muted-foreground/40 uppercase tracking-widest">
@@ -154,7 +155,7 @@ export function OutletStockClient({
                              "inline-flex flex-col items-end px-5 py-3 rounded-2xl font-black tracking-widest shadow-inner transition-all",
                              stock.quantity <= (stock.Item.minStock || 0) 
                                ? "bg-red-500/10 border border-red-500/20 text-red-500" 
-                               : "bg-white/5 border border-white/10 text-white group-hover/row:border-purple-500/30"
+                               : "bg-muted/50 border border-border text-foreground group-hover/row:border-purple-500/30"
                            )}>
                              <span className="text-base font-black tracking-tighter">
                                {stock.quantity} <span className="text-[10px] ml-1 opacity-50 uppercase">{stock.Item.piecesPerBox ? 'pcs' : stock.Item.unit}</span>
@@ -188,9 +189,9 @@ export function OutletStockClient({
              <div className="p-2 bg-purple-500/10 rounded-xl border border-purple-500/20">
                <History className="w-4 h-4 text-purple-400" />
              </div>
-             <h3 className="text-xl font-black text-white tracking-tight uppercase">Recent Stock Changes</h3>
+             <h3 className="text-xl font-black text-foreground tracking-tight uppercase">Recent Stock Changes</h3>
            </div>
-           <div className="h-px flex-1 bg-white/5 mx-6"></div>
+           <div className="h-px flex-1 bg-border mx-6"></div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -200,12 +201,12 @@ export function OutletStockClient({
             </div>
           ) : (
             recentConsumptions.map(entry => (
-              <div key={entry.id} className="glass-panel p-6 rounded-3xl border border-white/5 hover:bg-white/[0.04] transition-all group flex items-center justify-between relative overflow-hidden">
+              <div key={entry.id} className="glass-panel p-6 rounded-3xl border border-border hover:bg-muted/50 transition-all group flex items-center justify-between relative overflow-hidden">
                 <div className="absolute top-0 right-0 w-16 h-16 bg-gradient-to-br from-purple-500/5 to-transparent"></div>
                 <div className="flex flex-col gap-2 relative z-10">
-                  <span className="text-xs font-black text-white uppercase group-hover:text-purple-400 transition-colors">{entry.Item.name}</span>
+                  <span className="text-xs font-black text-foreground uppercase group-hover:text-purple-400 transition-colors">{entry.Item.name}</span>
                   <div className="flex items-center gap-2">
-                    <span className="text-[9px] font-black text-muted-foreground uppercase opacity-60 bg-white/5 px-2 py-0.5 rounded-md border border-white/5">{entry.Outlet?.name}</span>
+                    <span className="text-[9px] font-black text-muted-foreground uppercase opacity-60 bg-foreground/5 px-2 py-0.5 rounded-md border border-border">{entry.Outlet?.name}</span>
                     <span className="text-[8px] font-bold text-muted-foreground/40">{new Date(entry.createdAt).toLocaleDateString()}</span>
                   </div>
                 </div>

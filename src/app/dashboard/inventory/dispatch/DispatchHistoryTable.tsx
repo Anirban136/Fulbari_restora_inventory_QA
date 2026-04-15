@@ -63,7 +63,7 @@ export function DispatchHistoryTable({
             onClick={() => setOutletFilter('ALL')}
             className={cn(
               "rounded-xl h-9 px-4 text-[9px] font-black uppercase tracking-widest transition-all gap-2 flex-shrink-0",
-              outletFilter === 'ALL' ? "bg-white text-black hover:bg-white shadow-lg" : "text-muted-foreground hover:text-white"
+              outletFilter === 'ALL' ? "bg-white text-black hover:bg-white shadow-lg" : "text-muted-foreground hover:text-foreground"
             )}
           >
             <LayoutGrid className="w-3 h-3" /> ALL
@@ -75,7 +75,7 @@ export function DispatchHistoryTable({
             onClick={() => setOutletFilter('RESTAURANT')}
             className={cn(
               "rounded-xl h-9 px-4 text-[9px] font-black uppercase tracking-widest transition-all gap-2 flex-shrink-0",
-              outletFilter === 'RESTAURANT' ? "bg-rose-500 text-white hover:bg-rose-510 shadow-lg shadow-rose-500/20" : "text-muted-foreground hover:text-white"
+              outletFilter === 'RESTAURANT' ? "bg-rose-500 text-white hover:bg-rose-510 shadow-lg shadow-rose-500/20" : "text-muted-foreground hover:text-foreground"
             )}
           >
             <ChefHat className="w-3 h-3" /> Restaurant
@@ -86,7 +86,7 @@ export function DispatchHistoryTable({
             onClick={() => setOutletFilter('CAFE')}
             className={cn(
               "rounded-xl h-9 px-4 text-[9px] font-black uppercase tracking-widest transition-all gap-2 flex-shrink-0",
-              outletFilter === 'CAFE' ? "bg-amber-500 text-white hover:bg-amber-510 shadow-lg shadow-amber-500/20" : "text-muted-foreground hover:text-white"
+              outletFilter === 'CAFE' ? "bg-amber-500 text-white hover:bg-amber-510 shadow-lg shadow-amber-500/20" : "text-muted-foreground hover:text-foreground"
             )}
           >
             <Utensils className="w-3 h-3" /> Cafe
@@ -97,7 +97,7 @@ export function DispatchHistoryTable({
             onClick={() => setOutletFilter('CHAI_JOINT')}
             className={cn(
               "rounded-xl h-9 px-4 text-[9px] font-black uppercase tracking-widest transition-all gap-2 flex-shrink-0",
-              outletFilter === 'CHAI_JOINT' ? "bg-blue-500 text-white hover:bg-blue-510 shadow-lg shadow-blue-500/20" : "text-muted-foreground hover:text-white"
+              outletFilter === 'CHAI_JOINT' ? "bg-blue-500 text-white hover:bg-blue-510 shadow-lg shadow-blue-500/20" : "text-muted-foreground hover:text-foreground"
             )}
           >
             <Coffee className="w-3 h-3" /> Chai Joint
@@ -189,9 +189,9 @@ export function DispatchHistoryTable({
                                  <div className="w-12 h-12 bg-blue-500/10 rounded-2xl flex items-center justify-center mb-4 border border-blue-500/20">
                                    <Edit className="w-6 h-6 text-blue-400" />
                                  </div>
-                                 <DialogTitle className="text-xl font-black text-white text-left">Edit Dispatch Quantity</DialogTitle>
+                                 <DialogTitle className="text-xl font-black text-foreground text-left">Edit Dispatch Quantity</DialogTitle>
                                  <DialogDescription className="text-slate-400 leading-relaxed text-left">
-                                   Modify the dispatched quantity of <span className="text-white font-bold">{log.Item.name}</span> to <span className="text-white font-bold">{destinationOutlet?.name}</span>. Currently dispatched: <span className="text-blue-400 font-bold">{log.quantity} {log.Item.piecesPerBox ? 'pcs' : log.Item.unit}</span>.
+                                   Modify the dispatched quantity of <span className="text-foreground font-bold">{log.Item.name}</span> to <span className="text-foreground font-bold">{destinationOutlet?.name}</span>. Currently dispatched: <span className="text-blue-400 font-bold">{log.quantity} {log.Item.piecesPerBox ? 'pcs' : log.Item.unit}</span>.
                                  </DialogDescription>
                                </DialogHeader>
                                <form action={editDispatchQuantity} className="mt-4 space-y-4">
@@ -228,9 +228,9 @@ export function DispatchHistoryTable({
                                  <div className="w-12 h-12 bg-amber-500/10 rounded-2xl flex items-center justify-center mb-4 border border-amber-500/20">
                                    <Undo2 className="w-6 h-6 text-amber-400" />
                                  </div>
-                                 <DialogTitle className="text-xl font-black text-white text-left">Revert Dispatch?</DialogTitle>
+                                 <DialogTitle className="text-xl font-black text-foreground text-left">Revert Dispatch?</DialogTitle>
                                  <DialogDescription className="text-slate-400 leading-relaxed text-left">
-                                   This will reverse the dispatch of <span className="text-blue-400 font-bold">{log.quantity} {log.Item.piecesPerBox ? 'pcs' : log.Item.unit}</span> of <span className="text-white font-bold">{log.Item.name}</span> to <span className="text-white font-bold">{destinationOutlet?.name}</span>. central stock will be restored.
+                                   This will reverse the dispatch of <span className="text-blue-400 font-bold">{log.quantity} {log.Item.piecesPerBox ? 'pcs' : log.Item.unit}</span> of <span className="text-foreground font-bold">{log.Item.name}</span> to <span className="text-foreground font-bold">{destinationOutlet?.name}</span>. central stock will be restored.
                                  </DialogDescription>
                                </DialogHeader>
                                <form action={revertLedgerEntry} className="mt-4">

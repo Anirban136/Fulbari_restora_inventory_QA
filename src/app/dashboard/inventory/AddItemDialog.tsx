@@ -33,7 +33,7 @@ export function AddItemDialog({ existingCategories = [], variant = "default" }: 
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger render={
         variant === "compact" ? (
-          <Button variant="outline" className="h-[40px] px-5 rounded-2xl border-white/10 bg-white/5 hover:bg-white/10 text-white font-black text-[10px] transition-all active:scale-95 gap-2 uppercase tracking-widest">
+          <Button variant="outline" className="h-[40px] px-5 rounded-2xl border-border bg-foreground/5 hover:bg-foreground/10 text-foreground font-black text-[10px] transition-all active:scale-95 gap-2 uppercase tracking-widest">
             <PlusCircle className="w-4 h-4 text-primary" /> New Item
           </Button>
         ) : (
@@ -44,7 +44,7 @@ export function AddItemDialog({ existingCategories = [], variant = "default" }: 
       } />
       <DialogContent className="sm:max-w-[500px] w-[95vw] lg:w-full bg-zinc-950/95 backdrop-blur-3xl border-white/10 rounded-[2.5rem] sm:rounded-[3rem] shadow-2xl p-0 overflow-hidden max-h-[92vh] flex flex-col" showCloseButton={false}>
         {/* Explicit Close Button - Positioned lower to avoid notches/status bars */}
-        <DialogClose render={<button className="absolute top-8 right-8 p-3 rounded-2xl bg-white/5 border border-white/10 text-white/40 hover:text-white transition-all active:scale-90 z-50"><X className="w-5 h-5" /></button>} />
+        <DialogClose render={<button className="absolute top-8 right-8 p-3 rounded-2xl bg-foreground/5 border border-border text-foreground/40 hover:text-foreground transition-all active:scale-90 z-50"><X className="w-5 h-5" /></button>} />
         
         <div className="absolute top-0 right-0 w-40 h-40 bg-primary/10 rounded-full blur-[80px] -z-10"></div>
         
@@ -54,7 +54,7 @@ export function AddItemDialog({ existingCategories = [], variant = "default" }: 
              <div className="w-16 h-16 sm:w-20 sm:h-20 bg-primary/10 rounded-[1.5rem] sm:rounded-[2rem] flex items-center justify-center mb-6 border border-primary/20 shadow-inner">
                <Package className="w-8 h-8 sm:w-10 sm:h-10 text-primary" />
              </div>
-            <DialogTitle className="text-3xl sm:text-4xl font-black text-white tracking-tighter uppercase leading-none">Global Item Entry</DialogTitle>
+            <DialogTitle className="text-3xl sm:text-4xl font-black text-foreground tracking-tighter uppercase leading-none">Global Item Entry</DialogTitle>
             <DialogDescription className="text-slate-400 font-medium mt-4 tracking-tight leading-relaxed text-sm">
               Define a new core product in the <span className="text-primary font-black uppercase">Global Repository</span>.
             </DialogDescription>
@@ -63,7 +63,7 @@ export function AddItemDialog({ existingCategories = [], variant = "default" }: 
           <form action={handleSubmit} className="space-y-6 sm:space-y-8">
             <div className="space-y-3">
               <Label htmlFor="name" className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.3em] ml-1">ITEM NAME</Label>
-              <Input id="name" name="name" placeholder="e.g. PREMIUM ESPRESSO BEANS" required className="h-14 bg-white/[0.03] border-white/10 text-white placeholder:text-muted-foreground/20 rounded-2xl pl-5 pr-5 text-sm focus-visible:ring-primary/40 focus:border-primary/50 transition-all font-bold uppercase tracking-widest shadow-inner" />
+              <Input id="name" name="name" placeholder="e.g. PREMIUM ESPRESSO BEANS" required className="h-14 bg-foreground/[0.03] border-border text-foreground placeholder:text-muted-foreground/30 rounded-2xl pl-5 pr-5 text-sm focus-visible:ring-primary/40 focus:border-primary/50 transition-all font-bold uppercase tracking-widest shadow-inner" />
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -84,7 +84,7 @@ export function AddItemDialog({ existingCategories = [], variant = "default" }: 
                   required 
                   value={unit}
                   onChange={(e) => setUnit(e.target.value)}
-                  className="w-full h-14 px-6 py-2 rounded-2xl border border-white/10 bg-white/[0.03] text-white focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary/50 transition-all font-black uppercase tracking-widest text-xs appearance-none cursor-pointer shadow-inner"
+                  className="w-full h-14 px-6 py-2 rounded-2xl border border-border bg-foreground/[0.03] text-foreground focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary/50 transition-all font-black uppercase tracking-widest text-xs appearance-none cursor-pointer shadow-inner"
                 >
                   <option value="" className="bg-zinc-950 text-muted-foreground/30">Select Unit...</option>
                   <option value="kg" className="bg-zinc-950 text-white">Kilogram (kg)</option>
@@ -102,7 +102,7 @@ export function AddItemDialog({ existingCategories = [], variant = "default" }: 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               <div className="space-y-3">
                 <Label htmlFor="costPerUnit" className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.3em] ml-1">BUY PRICE (₹)</Label>
-                <Input id="costPerUnit" name="costPerUnit" type="number" step="0.01" placeholder="0.00" className="h-14 bg-white/[0.03] border-white/10 text-white placeholder:text-muted-foreground/10 rounded-2xl focus-visible:ring-primary/40 font-black text-lg" />
+                <Input id="costPerUnit" name="costPerUnit" type="number" step="0.01" placeholder="0.00" className="h-14 bg-foreground/[0.03] border-border text-foreground placeholder:text-muted-foreground/20 rounded-2xl focus-visible:ring-primary/40 font-black text-lg" />
               </div>
               <div className="space-y-3">
                 <Label htmlFor="sellPrice" className="text-[10px] font-black text-primary uppercase tracking-[0.3em] ml-1">SELL PRICE (₹)</Label>

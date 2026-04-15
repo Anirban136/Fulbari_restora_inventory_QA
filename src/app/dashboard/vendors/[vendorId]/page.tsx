@@ -164,7 +164,7 @@ export default async function VendorDetailPage({ params }: { params: Promise<{ v
       <div className="relative z-10">
         <Link
           href="/dashboard/vendors"
-          className="inline-flex items-center gap-2 text-sm text-slate-400 hover:text-white transition-colors mb-4 group"
+          className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors mb-4 group"
         >
           <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
           Back to Vendor Management
@@ -179,7 +179,7 @@ export default async function VendorDetailPage({ params }: { params: Promise<{ v
                   <Package className="w-6 h-6 text-emerald-400" />
                 </div>
                 <div>
-                  <h1 className="text-2xl font-black text-white tracking-tight">{vendor.name}</h1>
+                  <h1 className="text-2xl font-black text-foreground tracking-tight">{vendor.name}</h1>
                   <p className="text-xs text-slate-500 uppercase tracking-widest font-bold">Vendor Audit History</p>
                 </div>
               </div>
@@ -217,7 +217,7 @@ export default async function VendorDetailPage({ params }: { params: Promise<{ v
             </div>
             <span className="text-[10px] font-black text-amber-400 uppercase tracking-widest">Total Bought</span>
           </div>
-          <span className="text-2xl font-black text-white flex items-center gap-0.5">
+          <span className="text-2xl font-black text-foreground flex items-center gap-0.5">
             <IndianRupee className="w-5 h-5 text-amber-400" />
             {totalPurchased.toLocaleString('en-IN', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
           </span>
@@ -231,7 +231,7 @@ export default async function VendorDetailPage({ params }: { params: Promise<{ v
             </div>
             <span className="text-[10px] font-black text-emerald-400 uppercase tracking-widest">Total Paid</span>
           </div>
-          <span className="text-2xl font-black text-white flex items-center gap-0.5">
+          <span className="text-2xl font-black text-foreground flex items-center gap-0.5">
             <IndianRupee className="w-5 h-5 text-emerald-400" />
             {totalPaid.toLocaleString('en-IN', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
           </span>
@@ -259,7 +259,7 @@ export default async function VendorDetailPage({ params }: { params: Promise<{ v
             </div>
             <span className="text-[10px] font-black text-purple-400 uppercase tracking-widest">Transactions</span>
           </div>
-          <span className="text-2xl font-black text-white">{totalTransactions}</span>
+          <span className="text-2xl font-black text-foreground">{totalTransactions}</span>
           <p className="text-[10px] text-slate-500 mt-1 uppercase">Total entries</p>
         </div>
 
@@ -270,7 +270,7 @@ export default async function VendorDetailPage({ params }: { params: Promise<{ v
             </div>
             <span className="text-[10px] font-black text-red-400 uppercase tracking-widest">Penalized</span>
           </div>
-          <span className="text-2xl font-black text-white flex items-center gap-0.5">
+          <span className="text-2xl font-black text-foreground flex items-center gap-0.5">
             <IndianRupee className="w-5 h-5 text-red-400" />
             {totalWaste.toLocaleString('en-IN', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
           </span>
@@ -281,7 +281,7 @@ export default async function VendorDetailPage({ params }: { params: Promise<{ v
       {/* Transaction Ledger */}
       <div className="glass-panel rounded-3xl overflow-hidden relative z-10 shadow-2xl">
         <div className="px-6 py-4 border-b border-white/5 flex items-center justify-between">
-          <h3 className="text-lg font-black text-white tracking-tight flex items-center gap-2">
+          <h3 className="text-lg font-black text-foreground tracking-tight flex items-center gap-2">
             Transaction Ledger
             <span className="text-xs font-medium text-slate-500 bg-white/5 px-2 py-0.5 rounded-full">{totalTransactions} entries</span>
           </h3>
@@ -302,7 +302,7 @@ export default async function VendorDetailPage({ params }: { params: Promise<{ v
               return (
                 <div key={month}>
                   {/* Month Header */}
-                  <div className="sticky top-0 z-10 bg-black/70 backdrop-blur-md px-6 py-3 border-b border-white/5 flex items-center justify-between">
+                  <div className="sticky top-0 z-10 bg-background/90 backdrop-blur-md px-6 py-3 border-b border-border flex items-center justify-between">
                     <span className="text-sm font-black text-slate-300 uppercase tracking-widest">{month}</span>
                     <div className="flex items-center gap-4 text-xs font-bold">
                       <span className="text-amber-400 flex items-center gap-1">
@@ -336,7 +336,7 @@ export default async function VendorDetailPage({ params }: { params: Promise<{ v
                     </TableHeader>
                     <TableBody>
                       {entries.map((entry) => (
-                        <TableRow key={entry.id} className="border-b border-white/[0.03] hover:bg-white/[0.03] transition-colors">
+                        <TableRow key={entry.id} className="border-b border-border hover:bg-foreground/[0.03] transition-colors">
                           {/* Date */}
                           <TableCell className="px-6 py-4">
                             <div className="text-xs text-slate-300 font-medium">{formatDateIST(entry.date)}</div>
@@ -425,7 +425,7 @@ export default async function VendorDetailPage({ params }: { params: Promise<{ v
 
         {/* Ledger Footer */}
         {ledger.length > 0 && (
-          <div className="px-6 py-4 border-t border-white/10 bg-black/40 backdrop-blur-md">
+          <div className="px-6 py-4 border-t border-border bg-muted/40 backdrop-blur-md">
             <div className="flex items-center justify-between">
               <span className="text-xs font-bold text-slate-500 uppercase tracking-widest">Closing Balance</span>
               <div className="flex items-center gap-6">

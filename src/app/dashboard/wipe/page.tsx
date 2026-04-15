@@ -30,7 +30,7 @@ export default function WipePage() {
         <AlertTriangle className="w-10 h-10" />
       </div>
       <div>
-        <h1 className="text-3xl font-black text-white mb-2">Reset Test Data</h1>
+        <h1 className="text-3xl font-black text-foreground mb-2">Reset Test Data</h1>
         <p className="text-slate-400 max-w-md mx-auto">
           This will securely wipe all your test orders, inventory items, vendors, and menus so you can start fresh. <br/> <strong className="text-emerald-400">Your accounts, passwords, and outlets will be kept safe.</strong>
         </p>

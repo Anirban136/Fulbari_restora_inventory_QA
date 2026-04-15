@@ -40,7 +40,7 @@ export default async function VendorsPage() {
         <div className="w-20 h-20 bg-red-500/10 rounded-3xl flex items-center justify-center border border-red-500/20 shadow-2xl">
           <ShieldCheck className="w-10 h-10 text-red-500" />
         </div>
-        <h2 className="text-2xl font-black text-white uppercase tracking-tighter">Access Denied</h2>
+        <h2 className="text-2xl font-black text-foreground uppercase tracking-tighter">Access Denied</h2>
         <p className="text-muted-foreground text-sm font-bold uppercase tracking-widest">OWNER PRIVILEGES REQUIRED</p>
       </div>
     )
@@ -123,7 +123,7 @@ export default async function VendorsPage() {
                <Truck className="text-emerald-500 w-8 h-8" />
              </div>
              <div className="flex flex-col">
-               <h2 className="text-4xl lg:text-7xl font-black tracking-tighter text-white leading-tight uppercase">
+               <h2 className="text-4xl lg:text-7xl font-black tracking-tighter text-foreground leading-tight uppercase">
                  VENDOR <span className="text-emerald-400">LEDGER</span>
                </h2>
                <p className="text-muted-foreground mt-2 font-black text-[9px] lg:text-xs tracking-[0.3em] uppercase opacity-60 flex items-center gap-2">
@@ -142,12 +142,12 @@ export default async function VendorsPage() {
       {/* Executive Stats Widgets - High-Density Neon Design */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 relative z-10">
         {/* Total Owed Card */}
-        <div className="group relative glass-panel p-6 rounded-[2rem] border-white/5 bg-white/[0.02] hover:bg-white/[0.04] transition-all duration-500 overflow-hidden">
+        <div className="group relative glass-panel p-6 rounded-[2rem] border-border bg-foreground/[0.02] hover:bg-foreground/[0.04] transition-all duration-500 overflow-hidden">
            <div className="absolute top-0 right-0 p-6 opacity-10 group-hover:scale-110 transition-transform">
              <IndianRupee className="w-12 h-12 text-amber-500" />
            </div>
            <p className="text-[10px] font-black text-amber-500 uppercase tracking-[0.3em] mb-4">Total Bill Amount</p>
-           <h3 className="text-4xl font-black text-white tracking-tighter drop-shadow-[0_0_15px_rgba(245,158,11,0.2)]">
+           <h3 className="text-4xl font-black text-foreground tracking-tighter drop-shadow-[0_0_15px_rgba(245,158,11,0.2)]">
              ₹{totalOwed.toLocaleString('en-IN', { minimumFractionDigits: 0 })}
            </h3>
            <div className="mt-4 flex items-center gap-2">
@@ -157,12 +157,12 @@ export default async function VendorsPage() {
         </div>
 
         {/* Total Paid Card */}
-        <div className="group relative glass-panel p-6 rounded-[2rem] border-white/5 bg-white/[0.02] hover:bg-white/[0.04] transition-all duration-500 overflow-hidden">
+        <div className="group relative glass-panel p-6 rounded-[2rem] border-border bg-foreground/[0.02] hover:bg-foreground/[0.04] transition-all duration-500 overflow-hidden">
            <div className="absolute top-0 right-0 p-6 opacity-10 group-hover:scale-110 transition-transform">
              <History className="w-12 h-12 text-emerald-500" />
            </div>
            <p className="text-[10px] font-black text-emerald-500 uppercase tracking-[0.3em] mb-4">Paid Already</p>
-           <h3 className="text-4xl font-black text-white tracking-tighter drop-shadow-[0_0_15px_rgba(16,185,129,0.2)]">
+           <h3 className="text-4xl font-black text-foreground tracking-tighter drop-shadow-[0_0_15px_rgba(16,185,129,0.2)]">
              ₹{totalPaid.toLocaleString('en-IN', { minimumFractionDigits: 0 })}
            </h3>
            <div className="mt-4 flex items-center gap-2">
@@ -184,7 +184,7 @@ export default async function VendorsPage() {
            <p className={cn("text-[10px] font-black uppercase tracking-[0.3em] mb-4", totalBalance > 0 ? "text-red-500" : "text-emerald-500")}>
              {totalBalance > 0 ? "Left to Pay" : "Account Master Settled"}
            </p>
-           <h3 className="text-4xl font-black text-white tracking-tighter drop-shadow-[0_0_15px_rgba(239,68,68,0.2)]">
+           <h3 className="text-4xl font-black text-foreground tracking-tighter drop-shadow-[0_0_15px_rgba(239,68,68,0.2)]">
              ₹{totalBalance.toLocaleString('en-IN', { minimumFractionDigits: 0 })}
            </h3>
            <div className="mt-4 flex items-center gap-2">
@@ -197,14 +197,14 @@ export default async function VendorsPage() {
       </div>
 
       {/* Main Vendor Table - Premium Glass Experience */}
-      <div className="glass-panel overflow-hidden rounded-[2.5rem] border border-white/5 bg-white/[0.01] shadow-2xl relative w-full">
+      <div className="glass-panel overflow-hidden rounded-[2.5rem] border border-border bg-foreground/[0.01] shadow-2xl relative w-full">
         <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-emerald-500/20 to-transparent"></div>
         
         {/* Desktop View - Hidden on Mobile */}
         <div className="hidden lg:block overflow-x-auto custom-scrollbar-premium w-full">
           <table className="w-full text-left border-collapse min-w-[1200px]">
             <thead>
-              <tr className="bg-white/[0.03] border-b border-white/5">
+              <tr className="bg-foreground/[0.03] border-b border-border">
                 <th className="px-8 py-6 text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground/40">VENDOR PROFILE</th>
                 <th className="px-8 py-6 text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground/40">COMMUNICATION</th>
                 <th className="px-8 py-6 text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground/40 text-right">VOLUME</th>
@@ -214,7 +214,7 @@ export default async function VendorsPage() {
                 <th className="px-8 py-6 text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground/40 text-center">OPS</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-white/[0.03]">
+            <tbody className="divide-y divide-border">
               {vendorStats.length === 0 ? (
                 <tr>
                   <td colSpan={7} className="py-32 text-center">
@@ -227,7 +227,7 @@ export default async function VendorsPage() {
                   <TableRow key={vendor.id} className="group hover:bg-white/[0.04] transition-all duration-300">
                     <TableCell className="px-8 py-6">
                       <Link href={`/dashboard/vendors/${vendor.id}`} className="flex flex-col space-y-1 group/link">
-                        <span className="text-lg font-black text-white uppercase tracking-tight group-hover/link:text-emerald-400 transition-colors">
+                        <span className="text-lg font-black text-foreground uppercase tracking-tight group-hover/link:text-emerald-400 transition-colors">
                           {vendor.name}
                         </span>
                         <div className="flex items-center gap-1.5 opacity-40">
@@ -241,7 +241,7 @@ export default async function VendorsPage() {
                       <div className="flex flex-col space-y-1">
                         <div className="flex items-center gap-2">
                            <Phone className="w-3.5 h-3.5 text-emerald-500/70" />
-                           <span className="text-xs font-black text-white/80 tracking-tight">{vendor.contact || 'No Direct Link'}</span>
+                           <span className="text-xs font-black text-foreground/80 tracking-tight">{vendor.contact || 'No Direct Link'}</span>
                         </div>
                         {vendor.email && (
                           <span className="text-[9px] font-black text-muted-foreground/40 uppercase tracking-widest ml-5">{vendor.email}</span>
@@ -333,7 +333,7 @@ export default async function VendorsPage() {
         </div>
 
         {/* Mobile Card View - Visible only on small screens */}
-        <div className="lg:hidden divide-y divide-white/[0.05]">
+        <div className="lg:hidden divide-y divide-border">
           {vendorStats.length === 0 ? (
             <div className="py-20 text-center">
               <Truck className="w-12 h-12 text-muted-foreground/10 mx-auto mb-4" />
@@ -341,11 +341,11 @@ export default async function VendorsPage() {
             </div>
           ) : (
             vendorStats.map(vendor => (
-              <div key={vendor.id} className="p-6 space-y-5 bg-white/[0.01] hover:bg-white/[0.02] transition-colors group">
+              <div key={vendor.id} className="p-6 space-y-5 bg-foreground/[0.01] hover:bg-foreground/[0.02] transition-colors group">
                 {/* Mobile Card Header */}
                 <div className="flex justify-between items-start">
                   <Link href={`/dashboard/vendors/${vendor.id}`} className="flex flex-col space-y-1">
-                    <span className="text-lg font-black text-white uppercase tracking-tight group-hover:text-emerald-400 transition-colors">{vendor.name}</span>
+                    <span className="text-lg font-black text-foreground uppercase tracking-tight group-hover:text-emerald-400 transition-colors">{vendor.name}</span>
                     <div className="flex items-center gap-1.5 opacity-40">
                       <MapPin className="w-3 h-3 text-emerald-400" />
                       <span className="text-[9px] font-black uppercase tracking-widest truncate max-w-[180px]">{vendor.address || 'Location Not Set'}</span>

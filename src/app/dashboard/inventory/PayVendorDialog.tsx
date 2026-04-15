@@ -57,7 +57,7 @@ export function PayVendorDialog({ vendor, balanceDue, wasteDeductions = 0 }: Pay
           <div className="w-12 h-12 bg-emerald-500/10 rounded-2xl flex items-center justify-center mb-4 border border-emerald-500/20">
             <IndianRupee className="w-6 h-6 text-emerald-400" />
           </div>
-          <DialogTitle className="text-xl font-black text-white">
+          <DialogTitle className="text-xl font-black text-foreground">
             Pay {vendor.name}
           </DialogTitle>
           <DialogDescription className="text-slate-400 leading-relaxed">
@@ -86,7 +86,7 @@ export function PayVendorDialog({ vendor, balanceDue, wasteDeductions = 0 }: Pay
             className={`w-full py-4 rounded-2xl border-2 transition-all font-bold text-sm flex items-center justify-center gap-3 ${
               useFullAmount 
                 ? "border-emerald-500 bg-emerald-500/20 text-emerald-300 shadow-[0_0_20px_-5px_rgba(16,185,129,0.4)]" 
-                : "border-white/10 bg-white/5 text-slate-400 hover:border-white/20 hover:bg-white/10"
+                : "border-border bg-foreground/5 text-muted-foreground hover:border-border/60 hover:bg-foreground/10"
             }`}
           >
             <IndianRupee className="w-4 h-4" />
@@ -95,9 +95,9 @@ export function PayVendorDialog({ vendor, balanceDue, wasteDeductions = 0 }: Pay
 
           {/* Divider */}
           <div className="flex items-center gap-4">
-            <div className="flex-1 h-px bg-white/10"></div>
+            <div className="flex-1 h-px bg-border"></div>
             <span className="text-[10px] text-slate-500 uppercase tracking-widest font-bold">or custom amount</span>
-            <div className="flex-1 h-px bg-white/10"></div>
+            <div className="flex-1 h-px bg-border"></div>
           </div>
 
           {/* Custom Amount Input */}
@@ -116,7 +116,7 @@ export function PayVendorDialog({ vendor, balanceDue, wasteDeductions = 0 }: Pay
                 placeholder="e.g. 500"
                 value={customAmount}
                 onChange={(e) => { setCustomAmount(e.target.value); setUseFullAmount(false); }}
-                className="h-12 pl-10 bg-white/5 border-white/10 text-white placeholder:text-slate-600 rounded-xl focus-visible:ring-emerald-500/50 text-lg font-bold"
+                className="h-12 pl-10 bg-foreground/5 border-border text-foreground placeholder:text-muted-foreground/40 rounded-xl focus-visible:ring-emerald-500/50 text-lg font-bold"
                 disabled={useFullAmount}
               />
             </div>
@@ -131,7 +131,7 @@ export function PayVendorDialog({ vendor, balanceDue, wasteDeductions = 0 }: Pay
               id="payNotes"
               name="notes"
               placeholder="e.g. Paid via UPI, Cash payment"
-              className="h-12 bg-white/5 border-white/10 text-white placeholder:text-slate-600 rounded-xl focus-visible:ring-emerald-500/50"
+              className="h-12 bg-foreground/5 border-border text-foreground placeholder:text-muted-foreground/40 rounded-xl focus-visible:ring-emerald-500/50"
             />
           </div>
 

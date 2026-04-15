@@ -16,10 +16,10 @@ export function WasteTimeFilter() {
       }}
       className="h-8 px-3 rounded-lg border border-white/10 bg-black/40 text-xs font-bold text-slate-300 focus:outline-none focus:ring-1 focus:ring-red-500/50 shadow-inner"
     >
-      <option value="all" className="bg-slate-900 text-white">All Time</option>
-      <option value="today" className="bg-slate-900 text-white">Today</option>
-      <option value="7d" className="bg-slate-900 text-white">Last 7 Days</option>
-      <option value="30d" className="bg-slate-900 text-white">Last 30 Days</option>
+      <option value="all" className="bg-background text-foreground">All Time</option>
+      <option value="today" className="bg-background text-foreground">Today</option>
+      <option value="7d" className="bg-background text-foreground">Last 7 Days</option>
+      <option value="30d" className="bg-background text-foreground">Last 30 Days</option>
     </select>
   )
 }

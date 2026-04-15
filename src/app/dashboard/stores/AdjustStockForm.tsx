@@ -102,7 +102,7 @@ export function AdjustStockForm({ outlets, onSuccess }: { outlets: any[], onSucc
             )}
           </div>
           <div>
-            <h3 className="text-xl font-black text-white tracking-tight uppercase">
+            <h3 className="text-xl font-black text-foreground tracking-tight uppercase">
               {mode === 'ADD' ? 'Add Stock' : 'Remove Stock'}
             </h3>
             <p className="text-[10px] text-muted-foreground font-black tracking-widest uppercase opacity-60">
@@ -113,7 +113,7 @@ export function AdjustStockForm({ outlets, onSuccess }: { outlets: any[], onSucc
       </div>
 
       {/* Mode Toggle Selection */}
-      <div className="grid grid-cols-2 gap-2 mb-8 p-1.5 bg-black/40 rounded-2xl border border-white/5">
+      <div className="grid grid-cols-2 gap-2 mb-8 p-1.5 bg-muted rounded-2xl border border-border">
         <button
           onClick={() => setMode('REMOVE')}
           type="button"
@@ -121,7 +121,7 @@ export function AdjustStockForm({ outlets, onSuccess }: { outlets: any[], onSucc
             "flex items-center justify-center gap-2 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all",
             mode === 'REMOVE' 
               ? "bg-purple-600 text-white shadow-lg" 
-              : "text-muted-foreground hover:text-white"
+              : "text-muted-foreground hover:text-foreground"
           )}
         >
           <Minus className="w-3 h-3" /> Remove
@@ -133,7 +133,7 @@ export function AdjustStockForm({ outlets, onSuccess }: { outlets: any[], onSucc
             "flex items-center justify-center gap-2 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all",
             mode === 'ADD' 
               ? "bg-emerald-600 text-white shadow-lg" 
-              : "text-muted-foreground hover:text-white"
+              : "text-muted-foreground hover:text-foreground"
           )}
         >
           <Plus className="w-3 h-3" /> Add
@@ -190,7 +190,7 @@ export function AdjustStockForm({ outlets, onSuccess }: { outlets: any[], onSucc
               setSelectedCategory(e.target.value)
               setSelectedItemId("")
             }}
-            className="w-full h-12 bg-black/40 border border-white/10 rounded-xl px-4 text-xs font-black uppercase tracking-widest focus:outline-none focus:border-purple-500/50 transition-all text-white appearance-none cursor-pointer"
+            className="w-full h-12 bg-muted border border-border rounded-xl px-4 text-xs font-black uppercase tracking-widest focus:outline-none focus:border-purple-500/50 transition-all text-foreground appearance-none cursor-pointer"
           >
             <option value="">Select Category</option>
             {availableCategories.map(cat => (
@@ -207,7 +207,7 @@ export function AdjustStockForm({ outlets, onSuccess }: { outlets: any[], onSucc
           <select
             value={selectedItemId}
             onChange={(e) => setSelectedItemId(e.target.value)}
-            className="w-full h-12 bg-black/40 border border-white/10 rounded-xl px-4 text-xs font-black uppercase tracking-widest focus:outline-none focus:border-purple-500/50 transition-all text-white appearance-none cursor-pointer"
+            className="w-full h-12 bg-muted border border-border rounded-xl px-4 text-xs font-black uppercase tracking-widest focus:outline-none focus:border-purple-500/50 transition-all text-foreground appearance-none cursor-pointer"
           >
             <option value="">Select Item</option>
             {availableItems.map(item => (
@@ -228,7 +228,7 @@ export function AdjustStockForm({ outlets, onSuccess }: { outlets: any[], onSucc
             </Label>
             {selectedStock && (
               <div className="flex flex-col items-end">
-                <span className="text-[10px] font-black text-white/40 uppercase tracking-widest leading-none">In Stock</span>
+                <span className="text-[10px] font-black text-foreground/40 uppercase tracking-widest leading-none">In Stock</span>
                 <span className={cn(
                   "text-xl font-black tracking-tighter transition-colors",
                   mode === 'ADD' ? "text-emerald-400" : "text-purple-400"
@@ -247,7 +247,7 @@ export function AdjustStockForm({ outlets, onSuccess }: { outlets: any[], onSucc
               onChange={(e) => setQuantity(e.target.value)}
               placeholder="0.00"
               className={cn(
-                "h-14 bg-white/5 border-white/10 text-xl font-black tracking-tight text-white rounded-xl shadow-inner placeholder:text-white/10 transition-all",
+                "h-14 bg-foreground/5 border-border text-xl font-black tracking-tight text-foreground rounded-xl shadow-inner placeholder:text-foreground/20 transition-all",
                 mode === 'ADD' ? "focus-visible:ring-emerald-500/50" : "focus-visible:ring-purple-500/50"
               )}
               required

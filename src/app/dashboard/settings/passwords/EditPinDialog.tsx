@@ -37,7 +37,7 @@ export function EditPinDialog({ userId, userName, currentPin }: { userId: string
       <DialogTrigger className="h-8 w-8 p-0 text-emerald-400 hover:text-emerald-300 hover:bg-emerald-500/10 flex items-center justify-center rounded-md transition-all active:scale-95 border border-white/5">
         <Edit2 className="w-4 h-4" />
       </DialogTrigger>
-      <DialogContent className="border-white/10 bg-black/95 backdrop-blur-2xl text-white shadow-[0_0_100px_-20px_oklch(0.55_0.16_150)]">
+      <DialogContent className="border-border bg-background/95 backdrop-blur-2xl text-foreground shadow-[0_0_100px_-20px_oklch(0.55_0.16_150)]">
         <DialogHeader>
           <DialogTitle className="text-2xl font-black tracking-tight flex items-center gap-3">
             <KeyRound className="w-6 h-6 text-emerald-400" />
@@ -48,7 +48,7 @@ export function EditPinDialog({ userId, userName, currentPin }: { userId: string
         {success ? (
           <div className="py-10 flex flex-col items-center justify-center text-center animate-in zoom-in-95">
             <CheckCircle2 className="w-16 h-16 text-emerald-500 mb-4 drop-shadow-[0_0_15px_rgba(16,185,129,0.5)]" />
-            <h3 className="text-xl font-bold text-white mb-2">PIN Updated!</h3>
+            <h3 className="text-xl font-bold text-foreground mb-2">PIN Updated!</h3>
             <p className="text-slate-400 font-medium">The passcode has been successfully<br/>reset by the system administrator.</p>
           </div>
         ) : (
@@ -58,7 +58,7 @@ export function EditPinDialog({ userId, userName, currentPin }: { userId: string
               <Input 
                 type="password" pattern="[0-9]*" inputMode="numeric" maxLength={4}
                 value={newPin} onChange={e => setNewPin(e.target.value)}
-                className="w-full text-center text-3xl tracking-[0.5em] h-14 bg-white/5 border-white/10 text-white placeholder:text-slate-700 rounded-xl focus-visible:ring-emerald-500/50 shadow-inner"
+                className="w-full text-center text-3xl tracking-[0.5em] h-14 bg-foreground/5 border-border text-foreground placeholder:text-muted-foreground/40 rounded-xl focus-visible:ring-emerald-500/50 shadow-inner"
                 placeholder="****"
                 required
               />
