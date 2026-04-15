@@ -45,22 +45,25 @@ export async function removeTabItem(tabItemId: string, tabId: string, priceDesc:
 export async function adjustTabItemQuantity(tabItemId: string, tabId: string, delta: number, pricePerUnit: number) {
   const item = await prisma.tabItem.findUnique({ where: { id: tabItemId } })
   if (!item) return
+  if (delta === 0) return
 
-  if (item.quantity === 1 && delta === -1) {
-    // If quantity is 1 and we decrement, remove it entirely
+  let appliedDelta = delta
+
+  // If decrement would bring quantity to zero (or below), remove item entirely.
+  if (item.quantity + delta <= 0) {
+    appliedDelta = -item.quantity
     await prisma.tabItem.delete({ where: { id: tabItemId } })
   } else {
-    // Otherwise update quality
     await prisma.tabItem.update({
       where: { id: tabItemId },
-      data: { quantity: { increment: delta } }
+      data: { quantity: { increment: appliedDelta } }
     })
   }
 
   // Update tab total amount
   await prisma.tab.update({
     where: { id: tabId },
-    data: { totalAmount: { increment: pricePerUnit * delta } }
+    data: { totalAmount: { increment: pricePerUnit * appliedDelta } }
   })
 
   revalidatePath(`/tabs/${tabId}`)

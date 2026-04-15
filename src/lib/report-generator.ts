@@ -1,6 +1,34 @@
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 
+function formatCurrency(amount: number) {
+  const safeAmount = Number.isFinite(amount) ? amount : 0;
+  return `Rs ${safeAmount.toLocaleString("en-IN", { maximumFractionDigits: 0 })}`;
+}
+
+function normalizePaymentAmounts(tab: any) {
+  const totalAmount = Number(tab?.totalAmount ?? 0);
+  const paymentMode = String(tab?.paymentMode ?? "").toUpperCase();
+  const splitCash = Number(tab?.splitCashAmount ?? 0);
+  const splitOnline = Number(tab?.splitOnlineAmount ?? 0);
+
+  if (paymentMode === "CASH") {
+    return { cashAmount: totalAmount, upiAmount: 0 };
+  }
+  if (paymentMode === "ONLINE" || paymentMode === "UPI") {
+    return { cashAmount: 0, upiAmount: totalAmount };
+  }
+  if (paymentMode === "SPLIT") {
+    if (splitCash > 0 || splitOnline > 0) {
+      return { cashAmount: splitCash, upiAmount: splitOnline };
+    }
+    // Fallback for old rows where split parts were not saved.
+    return { cashAmount: totalAmount / 2, upiAmount: totalAmount / 2 };
+  }
+  // Ignore unknown modes in financial allocation.
+  return { cashAmount: 0, upiAmount: 0 };
+}
+
 export async function generateTransactionPDF(data: any, fromDate: string, toDate: string) {
   const transactions = Array.isArray(data?.transactions) ? data.transactions : [];
   const doc = new jsPDF();
@@ -27,23 +55,21 @@ export async function generateTransactionPDF(data: any, fromDate: string, toDate
   doc.text(`AUDIT PERIOD: ${fromDate} TO ${toDate}`, pageWidth / 2, 38, { align: "center" });
 
   // --- 3. NUMERIC SUMMARY GRID (Replaces Pie Charts) ---
-  const grandTotal = transactions.reduce((sum: number, t: any) => sum + (t?.totalAmount ?? 0), 0);
-  const totalCash = transactions.reduce((sum: number, t: any) => {
-    if (t?.paymentMode === "CASH") return sum + (t?.totalAmount ?? 0);
-    if (t?.paymentMode === "SPLIT") return sum + (t?.splitCashAmount ?? 0);
-    return sum;
-  }, 0);
-  const totalUPI = transactions.reduce((sum: number, t: any) => {
-    if (t?.paymentMode === "ONLINE" || t?.paymentMode === "UPI") return sum + (t?.totalAmount ?? 0);
-    if (t?.paymentMode === "SPLIT") return sum + (t?.splitOnlineAmount ?? 0);
-    return sum;
-  }, 0);
+  const totalCash = transactions.reduce((sum: number, t: any) => sum + normalizePaymentAmounts(t).cashAmount, 0);
+  const totalUPI = transactions.reduce((sum: number, t: any) => sum + normalizePaymentAmounts(t).upiAmount, 0);
+  const grandTotal = totalCash + totalUPI;
   const cafeTotal = transactions
     .filter((t: any) => String(t?.Outlet?.name ?? "").toUpperCase().includes("CAFE"))
-    .reduce((s: number, t: any) => s + (t?.totalAmount ?? 0), 0);
+    .reduce((s: number, t: any) => {
+      const { cashAmount, upiAmount } = normalizePaymentAmounts(t);
+      return s + cashAmount + upiAmount;
+    }, 0);
   const chaiTotal = transactions
     .filter((t: any) => String(t?.Outlet?.name ?? "").toUpperCase().includes("CHAI"))
-    .reduce((s: number, t: any) => s + (t?.totalAmount ?? 0), 0);
+    .reduce((s: number, t: any) => {
+      const { cashAmount, upiAmount } = normalizePaymentAmounts(t);
+      return s + cashAmount + upiAmount;
+    }, 0);
 
   // Centered Dashboard Box
   doc.setFillColor(24, 24, 27); // Zinc-900
@@ -63,17 +89,17 @@ export async function generateTransactionPDF(data: any, fromDate: string, toDate
   const startX = 10 + colWidth / 2;
   const metricsY = 65;
 
-  drawMetric(startX, metricsY, "CAFE HUB", `₹${cafeTotal.toLocaleString()}`, [251, 191, 36]); // Amber
-  drawMetric(startX + colWidth, metricsY, "TEA JOINT", `₹${chaiTotal.toLocaleString()}`, [45, 212, 191]); // Teal
-  drawMetric(startX + colWidth * 2, metricsY, "CASH TALLY", `₹${totalCash.toLocaleString()}`, [16, 185, 129]); // Emerald
-  drawMetric(startX + colWidth * 3, metricsY, "UPI/ONLINE", `₹${totalUPI.toLocaleString()}`, [59, 130, 246]); // Blue
+  drawMetric(startX, metricsY, "CAFE HUB", formatCurrency(cafeTotal), [251, 191, 36]); // Amber
+  drawMetric(startX + colWidth, metricsY, "TEA JOINT", formatCurrency(chaiTotal), [45, 212, 191]); // Teal
+  drawMetric(startX + colWidth * 2, metricsY, "CASH TALLY", formatCurrency(totalCash), [16, 185, 129]); // Emerald
+  drawMetric(startX + colWidth * 3, metricsY, "UPI/ONLINE", formatCurrency(totalUPI), [59, 130, 246]); // Blue
 
   // Large Total Centerpiece
   doc.setFillColor(16, 185, 129, 0.1);
   doc.roundedRect(pageWidth/2 - 50, 85, 100, 15, 2, 2, 'F');
   doc.setFontSize(11);
   doc.setTextColor(16, 185, 129);
-  doc.text(`NET GENERATED REVENUE: ₹${grandTotal.toLocaleString()}`, pageWidth / 2, 94, { align: 'center' });
+  doc.text(`NET GENERATED REVENUE: ${formatCurrency(grandTotal)}`, pageWidth / 2, 94, { align: 'center' });
 
   // --- 4. HIGH-VISIBILITY AUDIT TABLE ---
   const dailyData: Record<string, any> = {};
@@ -94,49 +120,35 @@ export async function generateTransactionPDF(data: any, fromDate: string, toDate
       };
     }
 
-    const { paymentMode, totalAmount } = tab;
+    const { paymentMode } = tab;
     const isCafe = String(tab?.Outlet?.name ?? "").toUpperCase().includes("CAFE");
-    const splitCash = tab?.splitCashAmount ?? 0;
-    const splitOnline = tab?.splitOnlineAmount ?? 0;
+    const { cashAmount, upiAmount } = normalizePaymentAmounts(tab);
 
     if (isCafe) {
-      if (paymentMode === "CASH") dailyData[bizDayStr].cafeCash += totalAmount ?? 0;
-      else if (paymentMode === "SPLIT") {
-        dailyData[bizDayStr].cafeCash += splitCash;
-        dailyData[bizDayStr].cafeUPI += splitOnline;
-      } else {
-        dailyData[bizDayStr].cafeUPI += totalAmount ?? 0;
-      }
+      dailyData[bizDayStr].cafeCash += cashAmount;
+      dailyData[bizDayStr].cafeUPI += upiAmount;
     } else {
-      if (paymentMode === "CASH") dailyData[bizDayStr].chaiCash += totalAmount ?? 0;
-      else if (paymentMode === "SPLIT") {
-        dailyData[bizDayStr].chaiCash += splitCash;
-        dailyData[bizDayStr].chaiUPI += splitOnline;
-      } else {
-        dailyData[bizDayStr].chaiUPI += totalAmount ?? 0;
-      }
+      dailyData[bizDayStr].chaiCash += cashAmount;
+      dailyData[bizDayStr].chaiUPI += upiAmount;
     }
 
-    if (paymentMode === "CASH") dailyData[bizDayStr].totalCash += totalAmount ?? 0;
-    else if (paymentMode === "SPLIT") {
-      dailyData[bizDayStr].totalCash += splitCash;
-      dailyData[bizDayStr].totalUPI += splitOnline;
-    } else {
-      dailyData[bizDayStr].totalUPI += totalAmount ?? 0;
+    if (paymentMode === "CASH" || paymentMode === "ONLINE" || paymentMode === "UPI" || paymentMode === "SPLIT") {
+      dailyData[bizDayStr].totalCash += cashAmount;
+      dailyData[bizDayStr].totalUPI += upiAmount;
     }
     
-    dailyData[bizDayStr].total += totalAmount ?? 0;
+    dailyData[bizDayStr].total += cashAmount + upiAmount;
   });
 
   const tableRows = Object.entries(dailyData).map(([date, stats]: [string, any]) => [
     date,
-    `₹${stats.cafeCash.toFixed(0)}`,
-    `₹${stats.cafeUPI.toFixed(0)}`,
-    `₹${stats.chaiCash.toFixed(0)}`,
-    `₹${stats.chaiUPI.toFixed(0)}`,
-    `₹${stats.totalCash.toFixed(0)}`,
-    `₹${stats.totalUPI.toFixed(0)}`,
-    `₹${stats.total.toFixed(0)}`
+    formatCurrency(stats.cafeCash),
+    formatCurrency(stats.cafeUPI),
+    formatCurrency(stats.chaiCash),
+    formatCurrency(stats.chaiUPI),
+    formatCurrency(stats.totalCash),
+    formatCurrency(stats.totalUPI),
+    formatCurrency(stats.total)
   ]);
 
   autoTable(doc, {
