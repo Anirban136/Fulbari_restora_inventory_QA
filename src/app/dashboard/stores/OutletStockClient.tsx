@@ -101,7 +101,6 @@ export function OutletStockClient({
       {/* 3. SELECTED OUTLET STOCK VIEW */}
       <main className="animate-in slide-in-from-bottom-4 duration-500 delay-150">
         {selectedOutlet ? (
-          <section className="glass-panel rounded-[2.5rem] overflow-hidden flex flex-col border border-white/5 bg-white/[0.01]">
           <section className="glass-panel rounded-[2.5rem] overflow-hidden flex flex-col border border-border bg-card/50">
             <div className="bg-muted/30 px-8 py-6 border-b border-border flex justify-between items-center backdrop-blur-md relative">
               <div className="flex items-center gap-4">
