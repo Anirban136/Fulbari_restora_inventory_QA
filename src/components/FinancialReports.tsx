@@ -26,11 +26,19 @@ export function FinancialReports() {
       alert("Please select both From and To dates");
       return;
     }
+    if (from > to) {
+      alert("From date cannot be later than To date");
+      return;
+    }
 
     setLoading(true);
     try {
-      const response = await fetch(`/api/export/transactions/data?from=${from}&to=${to}`);
-      if (!response.ok) throw new Error("Failed to fetch report data");
+      const params = new URLSearchParams({ from, to });
+      const response = await fetch(`/api/export/transactions/data?${params.toString()}`);
+      if (!response.ok) {
+        const message = await response.text();
+        throw new Error(message || "Failed to fetch report data");
+      }
       
       const data = await response.json();
       await generateTransactionPDF(data, from, to);
@@ -38,7 +46,8 @@ export function FinancialReports() {
       setOpen(false); 
     } catch (error) {
       console.error("Export failed", error);
-      alert("Failed to generate PDF report. Please try again.");
+      const message = error instanceof Error ? error.message : "Failed to generate PDF report. Please try again.";
+      alert(message);
     } finally {
       setLoading(false);
     }

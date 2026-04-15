@@ -2,6 +2,7 @@ import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 
 export async function generateTransactionPDF(data: any, fromDate: string, toDate: string) {
+  const transactions = Array.isArray(data?.transactions) ? data.transactions : [];
   const doc = new jsPDF();
   const pageWidth = doc.internal.pageSize.width;
   const pageHeight = doc.internal.pageSize.height;
@@ -26,11 +27,23 @@ export async function generateTransactionPDF(data: any, fromDate: string, toDate
   doc.text(`AUDIT PERIOD: ${fromDate} TO ${toDate}`, pageWidth / 2, 38, { align: "center" });
 
   // --- 3. NUMERIC SUMMARY GRID (Replaces Pie Charts) ---
-  const grandTotal = data.transactions.reduce((sum: number, t: any) => sum + t.totalAmount, 0);
-  const totalCash = data.transactions.filter((t:any) => t.paymentMode === "CASH").reduce((s:number, t:any) => s+t.totalAmount, 0);
-  const totalUPI = data.transactions.filter((t:any) => t.paymentMode === "ONLINE" || t.paymentMode === "UPI").reduce((s:number, t:any) => s+t.totalAmount, 0);
-  const cafeTotal = data.transactions.filter((t:any) => t.Outlet.name.toUpperCase().includes("CAFE")).reduce((s:number, t:any) => s+t.totalAmount, 0);
-  const chaiTotal = data.transactions.filter((t:any) => t.Outlet.name.toUpperCase().includes("CHAI")).reduce((s:number, t:any) => s+t.totalAmount, 0);
+  const grandTotal = transactions.reduce((sum: number, t: any) => sum + (t?.totalAmount ?? 0), 0);
+  const totalCash = transactions.reduce((sum: number, t: any) => {
+    if (t?.paymentMode === "CASH") return sum + (t?.totalAmount ?? 0);
+    if (t?.paymentMode === "SPLIT") return sum + (t?.splitCashAmount ?? 0);
+    return sum;
+  }, 0);
+  const totalUPI = transactions.reduce((sum: number, t: any) => {
+    if (t?.paymentMode === "ONLINE" || t?.paymentMode === "UPI") return sum + (t?.totalAmount ?? 0);
+    if (t?.paymentMode === "SPLIT") return sum + (t?.splitOnlineAmount ?? 0);
+    return sum;
+  }, 0);
+  const cafeTotal = transactions
+    .filter((t: any) => String(t?.Outlet?.name ?? "").toUpperCase().includes("CAFE"))
+    .reduce((s: number, t: any) => s + (t?.totalAmount ?? 0), 0);
+  const chaiTotal = transactions
+    .filter((t: any) => String(t?.Outlet?.name ?? "").toUpperCase().includes("CHAI"))
+    .reduce((s: number, t: any) => s + (t?.totalAmount ?? 0), 0);
 
   // Centered Dashboard Box
   doc.setFillColor(24, 24, 27); // Zinc-900
@@ -64,7 +77,7 @@ export async function generateTransactionPDF(data: any, fromDate: string, toDate
 
   // --- 4. HIGH-VISIBILITY AUDIT TABLE ---
   const dailyData: Record<string, any> = {};
-  data.transactions.forEach((tab: any) => {
+  transactions.forEach((tab: any) => {
     const timestamp = new Date(tab.closedAt || tab.openedAt).getTime();
     const istOffset = 5.5 * 3600000;
     const logicalDate = new Date(timestamp + istOffset);
@@ -82,20 +95,37 @@ export async function generateTransactionPDF(data: any, fromDate: string, toDate
     }
 
     const { paymentMode, totalAmount } = tab;
-    const isCafe = tab.Outlet.name.toUpperCase().includes("CAFE");
+    const isCafe = String(tab?.Outlet?.name ?? "").toUpperCase().includes("CAFE");
+    const splitCash = tab?.splitCashAmount ?? 0;
+    const splitOnline = tab?.splitOnlineAmount ?? 0;
 
     if (isCafe) {
-      if (paymentMode === "CASH") dailyData[bizDayStr].cafeCash += totalAmount;
-      else dailyData[bizDayStr].cafeUPI += totalAmount;
+      if (paymentMode === "CASH") dailyData[bizDayStr].cafeCash += totalAmount ?? 0;
+      else if (paymentMode === "SPLIT") {
+        dailyData[bizDayStr].cafeCash += splitCash;
+        dailyData[bizDayStr].cafeUPI += splitOnline;
+      } else {
+        dailyData[bizDayStr].cafeUPI += totalAmount ?? 0;
+      }
     } else {
-      if (paymentMode === "CASH") dailyData[bizDayStr].chaiCash += totalAmount;
-      else dailyData[bizDayStr].chaiUPI += totalAmount;
+      if (paymentMode === "CASH") dailyData[bizDayStr].chaiCash += totalAmount ?? 0;
+      else if (paymentMode === "SPLIT") {
+        dailyData[bizDayStr].chaiCash += splitCash;
+        dailyData[bizDayStr].chaiUPI += splitOnline;
+      } else {
+        dailyData[bizDayStr].chaiUPI += totalAmount ?? 0;
+      }
     }
 
-    if (paymentMode === "CASH") dailyData[bizDayStr].totalCash += totalAmount;
-    else dailyData[bizDayStr].totalUPI += totalAmount;
+    if (paymentMode === "CASH") dailyData[bizDayStr].totalCash += totalAmount ?? 0;
+    else if (paymentMode === "SPLIT") {
+      dailyData[bizDayStr].totalCash += splitCash;
+      dailyData[bizDayStr].totalUPI += splitOnline;
+    } else {
+      dailyData[bizDayStr].totalUPI += totalAmount ?? 0;
+    }
     
-    dailyData[bizDayStr].total += totalAmount;
+    dailyData[bizDayStr].total += totalAmount ?? 0;
   });
 
   const tableRows = Object.entries(dailyData).map(([date, stats]: [string, any]) => [
@@ -140,7 +170,7 @@ export async function generateTransactionPDF(data: any, fromDate: string, toDate
   });
 
   // --- 5. ELITE FOOTER ---
-  const finalY = (doc as any).lastAutoTable.finalY + 25;
+  const finalY = ((doc as any).lastAutoTable?.finalY ?? 165) + 25;
   doc.setDrawColor(63, 63, 70); // Zinc-700
   doc.line(20, finalY, 80, finalY);
   doc.line(pageWidth - 80, finalY, pageWidth - 20, finalY);
