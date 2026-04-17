@@ -54,22 +54,22 @@
   --foreground: oklch(0.1 0.02 220); /* Deep Rich Black for maximum visibility */
   
   --card: oklch(1 0 0);
-  --card-foreground: oklch(0.2 0.04 220);
+  --card-foreground: oklch(0.15 0.05 220); /* Slightly darker for readability */
   
   --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.2 0.04 220);
+  --popover-foreground: oklch(0.15 0.05 220);
   
   --primary: oklch(0.55 0.16 150); /* Brand Emerald */
   --primary-foreground: oklch(1 0 0);
   
-  --secondary: oklch(0.96 0.01 220); /* Softest Grey */
-  --secondary-foreground: oklch(0.3 0.04 220);
+  --secondary: oklch(0.95 0.01 220); /* Softest Grey */
+  --secondary-foreground: oklch(0.25 0.04 220); /* Darker for accessibility */
   
-  --muted: oklch(0.94 0.01 220);
-  --muted-foreground: oklch(0.35 0.03 220); /* Darker muted text for visibility */
+  --muted: oklch(0.92 0.01 220);
+  --muted-foreground: oklch(0.3 0.04 220); /* Darkened significantly for readability */
   
-  --accent: oklch(0.94 0.02 150 / 0.1); /* Subtle Emerald Tint */
-  --accent-foreground: oklch(0.45 0.15 150);
+  --accent: oklch(0.94 0.02 150 / 0.15); /* Slightly darker Emerald Tint */
+  --accent-foreground: oklch(0.4 0.15 150);
   
   --destructive: oklch(0.6 0.2 25);
   --border: oklch(0.92 0.01 220);

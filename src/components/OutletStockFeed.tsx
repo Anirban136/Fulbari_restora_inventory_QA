@@ -104,7 +104,7 @@ export function OutletStockFeed({ stocks }: { stocks: any[] }) {
                 
                 <div className="relative z-10 flex justify-between items-start">
                   <div className="min-w-0 pr-4">
-                    <p className={`text-[8px] font-black uppercase tracking-[0.3em] mb-1.5 opacity-60 truncate ${statusColor}`}>{stock.Item.category}</p>
+                    <p className={`text-[8px] font-black uppercase tracking-[0.3em] mb-1.5 opacity-100 dark:opacity-60 truncate ${statusColor}`}>{stock.Item.category}</p>
                     <p className="text-sm font-black text-foreground uppercase truncate tracking-tight group-hover/item:text-foreground transition-colors leading-tight">{stock.Item.name}</p>
                   </div>
                   <StatusIcon className={`w-5 h-5 shrink-0 ${statusColor} ${isCritical ? 'animate-bounce' : ''}`} />
@@ -122,7 +122,7 @@ export function OutletStockFeed({ stocks }: { stocks: any[] }) {
                       </p>
                     )}
                   </div>
-                  <div className={`px-3 py-1 rounded-full text-[8px] font-black uppercase tracking-widest border ${statusBorder.replace('10', '20')} ${statusColor}`}>
+                  <div className={`px-3 py-1 rounded-full text-[8px] font-black uppercase tracking-widest border ${statusBorder.replace('10', '20')} ${statusColor} bg-white/40 dark:bg-black/20`}>
                     {isCritical ? "DEPLETED" : isLow ? "LOW SIGNAL" : "OPTIMAL"}
                   </div>
                 </div>

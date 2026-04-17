@@ -106,22 +106,22 @@ export function UnifiedSidebar({ user }: { user: any }) {
           {/* Logo Section in Sidebar (Enlarged & Clickable) */}
           <div className="p-10 border-b border-border shrink-0">
             <Link href="/dashboard" className="group block active:scale-95 transition-transform">
-              <h1 className="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-emerald-600 to-teal-400 dark:from-emerald-400 dark:to-teal-200 tracking-tighter uppercase leading-none group-hover:from-emerald-500 group-hover:to-teal-300 transition-all">FULBARI</h1>
-              <p className="text-[10px] font-black tracking-[0.4em] uppercase text-muted-foreground mt-3 opacity-60">Operations Unit</p>
+                <h1 className="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-emerald-600 to-teal-400 dark:from-emerald-400 dark:to-teal-200 tracking-tighter uppercase leading-none group-hover:from-emerald-500 group-hover:to-teal-300 transition-all">FULBARI</h1>
+                <p className="text-[10px] font-black tracking-[0.4em] uppercase text-muted-foreground mt-3 opacity-100">Operations Unit</p>
             </Link>
           </div>
           
           {/* User Profile Hook */}
           <div className="p-8 border-b border-border bg-foreground/[0.02] shrink-0">
              <div className="flex items-center gap-4">
-               <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-400 p-0.5 shadow-xl">
-                 <div className="w-full h-full rounded-[14px] bg-background flex items-center justify-center font-black text-emerald-600 dark:text-emerald-400 text-xl">
+               <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-emerald-600 to-teal-500 p-0.5 shadow-xl">
+                 <div className="w-full h-full rounded-[14px] bg-background flex items-center justify-center font-black text-emerald-700 dark:text-emerald-400 text-xl">
                     {user.name?.[0].toUpperCase()}
                  </div>
                </div>
                 <div className="flex-1 min-w-0">
                   <p className="font-black text-foreground text-base truncate uppercase tracking-tight">{user.name}</p>
-                  <p className="text-[9px] font-black tracking-[0.2em] uppercase text-emerald-500 mt-1 opacity-80">{user.role?.replace('_', ' ')}</p>
+                  <p className="text-[10px] font-black tracking-[0.2em] uppercase text-emerald-700 dark:text-emerald-400 mt-1 opacity-100">{user.role?.replace('_', ' ')}</p>
                 </div>
              </div>
           </div>
@@ -142,7 +142,7 @@ export function UnifiedSidebar({ user }: { user: any }) {
                 >
                   <item.icon className={cn(
                     "w-6 h-6 lg:w-5 lg:h-5 transition-transform group-hover:scale-110",
-                    isActive ? "text-primary" : "text-muted-foreground/60 group-hover:text-primary"
+                    isActive ? "text-primary" : "text-muted-foreground group-hover:text-primary"
                   )} />
                   <span className="font-black tracking-tight text-base lg:text-sm uppercase">{item.name}</span>
                   {isActive && (

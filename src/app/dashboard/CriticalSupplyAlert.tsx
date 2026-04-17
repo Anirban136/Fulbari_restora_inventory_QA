@@ -30,7 +30,7 @@ export function CriticalSupplyAlert({ criticalAlerts }: { criticalAlerts: any[] 
         <div className="flex-1 text-center lg:text-left">
           <div className="flex flex-col lg:flex-row lg:items-center gap-2 lg:gap-4 mb-4">
             <h3 className="text-3xl lg:text-4xl font-black text-foreground uppercase tracking-tighter">Critical Supply Alert</h3>
-            <span className="px-4 py-1.5 bg-red-500/20 text-red-600 dark:text-red-500 text-[10px] font-black uppercase tracking-widest rounded-full border border-red-500/30 self-center lg:self-auto">Global Catalog Deficiency</span>
+            <span className="px-4 py-1.5 bg-red-500/20 text-red-700 dark:text-red-400 text-[10px] font-black uppercase tracking-widest rounded-full border border-red-500/40 self-center lg:self-auto shadow-sm">Global Catalog Deficiency</span>
           </div>
           
           <div className="flex flex-wrap justify-center lg:justify-start gap-3">
