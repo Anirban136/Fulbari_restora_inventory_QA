@@ -24,6 +24,7 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import { cn } from "@/lib/utils"
+import { toast } from "sonner"
 
 export function GlobalCatalogFeed({ 
   items, 

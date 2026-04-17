@@ -27,6 +27,8 @@ export async function updateTransactionAction(tabId: string, data: { paymentMode
 }
 
 export async function deleteClosedTab(tabId: string, pin: string) {
+  const session = await getServerSession(authOptions)
+  if (!session) throw new Error("Unauthorized")
   await verifyAdminPin(pin)
 
   const tab = await prisma.tab.findUnique({

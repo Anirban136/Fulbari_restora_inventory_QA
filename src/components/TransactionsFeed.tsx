@@ -4,6 +4,8 @@ import { useState, useMemo } from "react"
 import { Receipt, Coffee, Activity, ChevronRight, Trash2 } from "lucide-react"
 import { EditTransactionModal } from "./EditTransactionModal"
 import { deleteClosedTab } from "@/app/dashboard/transactions/actions"
+import { DeleteVerificationDialog } from "./DeleteVerificationDialog"
+import { toast } from "sonner"
 
 type Transaction = {
   id: string
@@ -20,15 +22,18 @@ type Transaction = {
 export function TransactionsFeed({ tabs, userRole }: { tabs: any[], userRole?: string }) {
   const [filter, setFilter] = useState<"ALL" | "CAFE" | "CHAI">("ALL")
   const [isDeleting, setIsDeleting] = useState<string | null>(null)
+  const [itemToDelete, setItemToDelete] = useState<any>(null)
 
-  const handleDelete = async (tabId: string) => {
-    if (!window.confirm("ARE YOU SURE? This will permanently delete the bill and REVERT inventory. This cannot be undone.")) return
+  const handleDelete = async (pin: string) => {
+    if (!itemToDelete) return
     
-    setIsDeleting(tabId)
+    setIsDeleting(itemToDelete.id)
     try {
-      await deleteClosedTab(tabId)
-    } catch (e) {
-      alert("Failed to delete transaction")
+      await deleteClosedTab(itemToDelete.id, pin)
+      toast.success("Transaction deleted and inventory reverted")
+      setItemToDelete(null)
+    } catch (e: any) {
+      toast.error(e.message || "Failed to delete transaction")
     } finally {
       setIsDeleting(null)
     }
@@ -136,7 +141,7 @@ export function TransactionsFeed({ tabs, userRole }: { tabs: any[], userRole?: s
                   
                   {userRole === "OWNER" && (
                     <button 
-                      onClick={() => handleDelete(tab.id)}
+                      onClick={() => setItemToDelete(tab)}
                       disabled={isDeleting === tab.id}
                       className="ml-4 p-2 text-red-500/40 hover:text-red-500 hover:bg-red-500/10 rounded-xl transition-all disabled:opacity-20"
                     >
@@ -209,7 +214,7 @@ export function TransactionsFeed({ tabs, userRole }: { tabs: any[], userRole?: s
                         <div className="flex items-center gap-4">
                           {userRole === "OWNER" && (
                             <button 
-                              onClick={() => handleDelete(tab.id)}
+                              onClick={() => setItemToDelete(tab)}
                               disabled={isDeleting === tab.id}
                               className="p-2 text-red-500/30 hover:text-red-500 hover:bg-red-500/10 rounded-xl transition-all disabled:opacity-10"
                             >
@@ -230,6 +235,14 @@ export function TransactionsFeed({ tabs, userRole }: { tabs: any[], userRole?: s
           </table>
         </div>
       </div>
+      <DeleteVerificationDialog
+        open={!!itemToDelete}
+        onOpenChange={(open) => !open && setItemToDelete(null)}
+        itemName={itemToDelete ? `${itemToDelete.customerName || 'Walk-in'} (₹${itemToDelete.totalAmount})` : ""}
+        title="Delete Transaction?"
+        description="ARE YOU SURE? This will permanently delete the bill and AUTO-REVERT all inventory deductions. This action cannot be undone."
+        onConfirm={handleDelete}
+      />
     </div>
   )
 }
