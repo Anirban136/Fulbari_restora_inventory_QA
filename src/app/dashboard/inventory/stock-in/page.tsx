@@ -95,9 +95,9 @@ export default async function StockInPage() {
                   </TableRow>
                  ) : (
                   recentLogs.map((log) => (
-                    <TableRow key={log.id} className="border-b border-white/5 hover:bg-white/5 transition-colors group">
-                      <TableCell className="text-slate-500 font-medium whitespace-nowrap text-sm">
-                        <span className="text-slate-300">{formatDateIST(log.createdAt)}</span> <span className="opacity-50">{formatTimeIST(log.createdAt)}</span>
+                    <TableRow key={log.id} className="border-b border-border/10 hover:bg-muted/30 transition-colors group">
+                      <TableCell className="text-muted-foreground font-medium whitespace-nowrap text-sm">
+                        <span className="text-foreground/80 dark:text-slate-300">{formatDateIST(log.createdAt)}</span> <span className="opacity-80 dark:opacity-50">{formatTimeIST(log.createdAt)}</span>
                       </TableCell>
                       <TableCell>
                         <div className="font-bold text-foreground/90 group-hover:text-foreground transition-colors">{log.Item.name}</div>
@@ -115,7 +115,7 @@ export default async function StockInPage() {
                           )}
                         </span>
                       </TableCell>
-                      <TableCell className="text-slate-500 text-sm font-medium">{log.User.name}</TableCell>
+                      <TableCell className="text-muted-foreground text-sm font-medium">{log.User.name}</TableCell>
                       {isOwner && (
                         <TableCell className="text-center">
                           <Dialog>
@@ -124,7 +124,7 @@ export default async function StockInPage() {
                             }>
                               <Undo2 className="w-4 h-4" />
                             </DialogTrigger>
-                            <DialogContent className="sm:max-w-[400px] bg-black/90 backdrop-blur-2xl border-amber-500/20 rounded-3xl shadow-[0_0_50px_rgba(245,158,11,0.15)]">
+                            <DialogContent className="sm:max-w-[400px] bg-background/95 backdrop-blur-2xl border-amber-500/20 rounded-3xl shadow-[0_0_50px_rgba(245,158,11,0.15)]">
                               <DialogHeader className="mb-2">
                                 <div className="w-12 h-12 bg-amber-500/10 rounded-2xl flex items-center justify-center mb-4 border border-amber-500/20">
                                   <Undo2 className="w-6 h-6 text-amber-400" />

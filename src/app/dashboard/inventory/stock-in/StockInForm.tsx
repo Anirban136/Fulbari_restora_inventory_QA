@@ -135,7 +135,7 @@ export function StockInForm({ items, vendors }: { items: Item[], vendors: Vendor
                 <span className="text-sm font-bold text-foreground mt-0.5 whitespace-nowrap">Non-updateable catalog data</span>
               </div>
               <div className="px-4 py-2 rounded-xl bg-blue-500/10 border border-blue-500/30 text-blue-600 dark:text-blue-100 font-black tracking-tighter text-lg whitespace-nowrap shadow-sm">
-                {selectedItem.piecesPerBox} <span className="text-xs opacity-60 uppercase font-black ml-1">pcs</span> / BOX
+                {selectedItem.piecesPerBox} <span className="text-xs opacity-80 dark:opacity-60 uppercase font-black ml-1">pcs</span> / BOX
               </div>
             </div>
           )}
@@ -143,7 +143,7 @@ export function StockInForm({ items, vendors }: { items: Item[], vendors: Vendor
 
         <div className="space-y-2">
           <div className="flex items-center justify-between">
-            <Label htmlFor="vendorId" className="text-xs font-black text-foreground/70 uppercase tracking-widest">Select Vendor</Label>
+            <Label htmlFor="vendorId" className="text-xs font-black text-foreground/80 dark:text-foreground/70 uppercase tracking-widest">Select Vendor</Label>
             <div className="scale-75 origin-right translate-y-2 relative z-10"><AddVendorDialog /></div>
           </div>
           <select

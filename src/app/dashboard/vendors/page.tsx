@@ -152,7 +152,7 @@ export default async function VendorsPage() {
            </h3>
            <div className="mt-4 flex items-center gap-2">
              <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse shadow-[0_0_5px_#f59e0b]"></span>
-             <span className="text-[9px] font-black text-amber-500/60 uppercase tracking-widest">Awaiting Settlement</span>
+             <span className="text-[9px] font-black text-amber-600 dark:text-amber-500/60 uppercase tracking-widest">Awaiting Settlement</span>
            </div>
         </div>
 
@@ -167,7 +167,7 @@ export default async function VendorsPage() {
            </h3>
            <div className="mt-4 flex items-center gap-2">
              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 shadow-[0_0_5px_#10b981]"></span>
-             <span className="text-[9px] font-black text-emerald-500/60 uppercase tracking-widest">Transaction Verified</span>
+             <span className="text-[9px] font-black text-emerald-600 dark:text-emerald-500/60 uppercase tracking-widest">Transaction Verified</span>
            </div>
         </div>
 
@@ -189,7 +189,7 @@ export default async function VendorsPage() {
            </h3>
            <div className="mt-4 flex items-center gap-2">
              <span className={cn("w-1.5 h-1.5 rounded-full", totalBalance > 0 ? "bg-red-500 animate-ping shadow-[0_0_5px_#ef4444]" : "bg-emerald-500 shadow-[0_0_5px_#10b981]")}></span>
-             <span className={cn("text-[9px] font-black uppercase tracking-widest leading-none", totalBalance > 0 ? "text-red-500/60" : "text-emerald-500/60")}>
+             <span className={cn("text-[9px] font-black uppercase tracking-widest leading-none", totalBalance > 0 ? "text-red-600 dark:text-red-500/60" : "text-emerald-600 dark:text-emerald-500/60")}>
                {totalBalance > 0 ? "BALANCE REMAINING" : "CLEAN LEDGER"}
              </span>
            </div>
@@ -205,13 +205,13 @@ export default async function VendorsPage() {
           <table className="w-full text-left border-collapse min-w-[1200px]">
             <thead>
               <tr className="bg-foreground/[0.03] border-b border-border">
-                <th className="px-8 py-6 text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground/40">VENDOR PROFILE</th>
-                <th className="px-8 py-6 text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground/40">COMMUNICATION</th>
-                <th className="px-8 py-6 text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground/40 text-right">VOLUME</th>
-                <th className="px-8 py-6 text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground/40 text-right">TOTAL BILL</th>
-                <th className="px-8 py-6 text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground/40 text-right">PAID (₹)</th>
-                <th className="px-8 py-6 text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground/40 text-right">DUE (₹)</th>
-                <th className="px-8 py-6 text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground/40 text-center">OPS</th>
+                <th className="px-8 py-6 text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground/80 dark:text-muted-foreground/40">VENDOR PROFILE</th>
+                <th className="px-8 py-6 text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground/80 dark:text-muted-foreground/40">COMMUNICATION</th>
+                <th className="px-8 py-6 text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground/80 dark:text-muted-foreground/40 text-right">VOLUME</th>
+                <th className="px-8 py-6 text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground/80 dark:text-muted-foreground/40 text-right">TOTAL BILL</th>
+                <th className="px-8 py-6 text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground/80 dark:text-muted-foreground/40 text-right">PAID (₹)</th>
+                <th className="px-8 py-6 text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground/80 dark:text-muted-foreground/40 text-right">DUE (₹)</th>
+                <th className="px-8 py-6 text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground/80 dark:text-muted-foreground/40 text-center">OPS</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-border">
@@ -251,10 +251,10 @@ export default async function VendorsPage() {
 
                     <TableCell className="px-8 py-6 text-right">
                       <div className="inline-flex flex-col items-end">
-                        <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 font-black text-xs uppercase tracking-widest">
+                        <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 dark:text-emerald-400 font-black text-xs uppercase tracking-widest">
                           {vendor.netCollection.toFixed(1)} UNITS
                         </span>
-                        <span className="text-[8px] text-muted-foreground/30 font-black uppercase tracking-widest mt-1">NET RECEPTION</span>
+                        <span className="text-[8px] text-muted-foreground/80 dark:text-muted-foreground/30 font-black uppercase tracking-widest mt-1">NET RECEPTION</span>
                       </div>
                     </TableCell>
 
@@ -304,14 +304,14 @@ export default async function VendorsPage() {
                                 <Trash2 className="w-4 h-4" />
                               </button>
                             } />
-                            <DialogContent className="sm:max-w-[450px] bg-zinc-950/95 backdrop-blur-3xl border-red-500/20 rounded-[3rem] shadow-2xl p-10">
+                            <DialogContent className="sm:max-w-[450px] bg-background/95 backdrop-blur-3xl border-red-500/20 rounded-[3rem] shadow-2xl p-10">
                               <DialogHeader>
                                 <div className="w-20 h-20 bg-red-500/10 rounded-[2rem] flex items-center justify-center mb-10 border border-red-500/20">
                                   <Trash2 className="w-10 h-10 text-red-500" />
                                 </div>
-                                <DialogTitle className="text-4xl font-black text-white tracking-tighter uppercase leading-none mb-6">Terminate Vendor?</DialogTitle>
-                                <DialogDescription className="text-slate-400 font-medium tracking-tight leading-relaxed text-sm">
-                                  Confirm full removal of <span className="text-white font-black">{vendor.name}</span>. This action wipes the payment ledger and cannot be reversed.
+                                <DialogTitle className="text-4xl font-black text-foreground tracking-tighter uppercase leading-none mb-6">Terminate Vendor?</DialogTitle>
+                                <DialogDescription className="text-muted-foreground font-medium tracking-tight leading-relaxed text-sm">
+                                  Confirm full removal of <span className="text-foreground font-black">{vendor.name}</span>. This action wipes the payment ledger and cannot be reversed.
                                 </DialogDescription>
                               </DialogHeader>
                               <form action={deleteVendor} className="mt-10">

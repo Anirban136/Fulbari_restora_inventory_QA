@@ -92,26 +92,26 @@ export function CategoryManagerClient({ initialCategories }: { initialCategories
     <div className="space-y-8 pb-20">
       {/* ELITE STATS GRID */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="glass-panel p-6 rounded-3xl border border-white/10 relative overflow-hidden group hover:border-emerald-500/30 transition-all">
+        <div className="glass-panel p-6 rounded-3xl border border-border relative overflow-hidden group hover:border-emerald-500/30 transition-all">
            <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/10 rounded-full blur-3xl -z-10 group-hover:bg-emerald-500/20 transition-all"></div>
-           <p className="text-[10px] font-black text-white/40 uppercase tracking-[0.3em] mb-3">Audited Classes</p>
-           <p className="text-4xl font-black text-white tracking-tighter">{stats.total}</p>
+           <p className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.3em] mb-3">Audited Classes</p>
+           <p className="text-4xl font-black text-foreground tracking-tighter">{stats.total}</p>
         </div>
-        <div className="glass-panel p-6 rounded-3xl border border-white/10 relative overflow-hidden group hover:border-amber-500/30 transition-all">
+        <div className="glass-panel p-6 rounded-3xl border border-border relative overflow-hidden group hover:border-amber-500/30 transition-all">
            <div className="absolute top-0 right-0 w-32 h-32 bg-amber-500/10 rounded-full blur-3xl -z-10 group-hover:bg-amber-500/20 transition-all"></div>
-           <p className="text-[10px] font-black text-white/40 uppercase tracking-[0.3em] mb-3">Primary Category</p>
+           <p className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.3em] mb-3">Primary Category</p>
            <p className="text-2xl font-black text-amber-500 tracking-tight uppercase truncate">{stats.topCategory}</p>
         </div>
-        <div className="glass-panel p-6 rounded-3xl border border-white/10 relative overflow-hidden group hover:border-blue-500/30 transition-all">
+        <div className="glass-panel p-6 rounded-3xl border border-border relative overflow-hidden group hover:border-blue-500/30 transition-all">
            <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/10 rounded-full blur-3xl -z-10 group-hover:bg-blue-500/20 transition-all"></div>
-           <p className="text-[10px] font-black text-white/40 uppercase tracking-[0.3em] mb-3">Catalog Gaps</p>
-           <p className="text-4xl font-black text-blue-400 tracking-tighter">{stats.uncategorizedCount}</p>
+           <p className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.3em] mb-3">Catalog Gaps</p>
+           <p className="text-4xl font-black text-blue-500 dark:text-blue-400 tracking-tighter">{stats.uncategorizedCount}</p>
         </div>
       </div>
 
       {/* FILTER BAR: PERSPECTIVE SWITCHING */}
-      <div className="flex flex-col lg:flex-row items-center gap-6 justify-between glass-panel p-4 rounded-3xl border border-white/10">
-        <div className="flex p-1.5 bg-black/60 rounded-2xl border border-white/5 w-full lg:w-fit group">
+      <div className="flex flex-col lg:flex-row items-center gap-6 justify-between glass-panel p-4 rounded-3xl border border-border">
+        <div className="flex p-1.5 bg-muted rounded-2xl border border-border w-full lg:w-fit group">
            {[
              { id: "ALL", label: "Total Audit", icon: LayoutGrid },
              { id: "CATALOG", label: "Global Catalog", icon: Warehouse },
@@ -123,8 +123,8 @@ export function CategoryManagerClient({ initialCategories }: { initialCategories
                className={cn(
                  "flex-1 lg:flex-none px-6 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all flex items-center justify-center gap-2",
                  scope === item.id 
-                   ? "bg-emerald-500 text-black shadow-lg shadow-emerald-500/20" 
-                   : "text-white/40 hover:text-white"
+                   ? "bg-emerald-500 text-white shadow-lg shadow-emerald-500/20" 
+                   : "text-muted-foreground hover:text-foreground"
                )}
              >
                <item.icon className="w-4 h-4" />
@@ -134,12 +134,12 @@ export function CategoryManagerClient({ initialCategories }: { initialCategories
         </div>
 
         <div className="relative w-full lg:max-w-md">
-           <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/20" />
+           <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/30" />
            <Input 
              placeholder="Search classifications..." 
              value={searchTerm}
              onChange={e => setSearchTerm(e.target.value)}
-             className="h-14 pl-12 bg-black/40 border-white/5 rounded-2xl text-[10px] font-black uppercase tracking-widest placeholder:text-white/10 focus-visible:ring-emerald-500/30"
+             className="h-14 pl-12 bg-background border-border rounded-2xl text-[10px] font-black uppercase tracking-widest placeholder:text-muted-foreground/30 focus-visible:ring-emerald-500/30"
            />
         </div>
       </div>
@@ -153,13 +153,13 @@ export function CategoryManagerClient({ initialCategories }: { initialCategories
           </div>
         ) : (
           filteredCategories.map((cat) => (
-            <div key={cat.name} className="glass-panel p-6 rounded-[2rem] border border-white/5 bg-white/[0.02] hover:bg-white/[0.04] transition-all flex flex-col md:flex-row md:items-center justify-between gap-6 group">
+            <div key={cat.name} className="glass-panel p-6 rounded-[2rem] border border-border bg-foreground/[0.02] hover:bg-foreground/[0.04] transition-all flex flex-col md:flex-row md:items-center justify-between gap-6 group">
               <div className="flex items-center gap-6">
-                 <div className="h-16 w-16 rounded-[1.25rem] bg-zinc-900 border border-white/10 flex items-center justify-center text-emerald-500 group-hover:scale-110 transition-transform shadow-inner">
+                 <div className="h-16 w-16 rounded-[1.25rem] bg-muted border border-border flex items-center justify-center text-emerald-500 group-hover:scale-110 transition-transform shadow-inner">
                     <Layers className="w-7 h-7" />
                  </div>
                  <div>
-                    <h4 className="text-2xl font-black text-white tracking-tighter uppercase">{cat.name}</h4>
+                    <h4 className="text-2xl font-black text-foreground tracking-tighter uppercase">{cat.name}</h4>
                     <div className="flex items-center gap-4 mt-3">
                        <span className="flex items-center gap-1.5 text-[9px] font-black uppercase tracking-[0.2em] text-emerald-400 bg-emerald-500/5 px-3 py-1.5 rounded-lg border border-emerald-500/10">
                           <Warehouse className="w-3.5 h-3.5 opacity-60" /> {cat.inventoryCount} Catalog Items
@@ -171,7 +171,7 @@ export function CategoryManagerClient({ initialCategories }: { initialCategories
                  </div>
               </div>
 
-              <div className="flex items-center gap-3 pl-0 md:pl-6 border-l-0 md:border-l border-white/10 shrink-0">
+               <div className="flex items-center gap-3 pl-0 md:pl-6 border-l-0 md:border-l border-border shrink-0">
                  <Button 
                    variant="ghost" 
                    size="icon" 
@@ -180,7 +180,7 @@ export function CategoryManagerClient({ initialCategories }: { initialCategories
                      setNewLabel(cat.name)
                      setIsEditing(true)
                    }}
-                   className="h-12 w-12 rounded-2xl hover:bg-white/10 text-white/40 hover:text-white transition-all active:scale-90"
+                   className="h-12 w-12 rounded-2xl hover:bg-foreground/10 text-muted-foreground hover:text-foreground transition-all active:scale-90"
                  >
                     <Edit3 className="w-6 h-6" />
                  </Button>
@@ -191,7 +191,7 @@ export function CategoryManagerClient({ initialCategories }: { initialCategories
                      setSelectedCategory(cat)
                      setIsDeleting(true)
                    }}
-                   className="h-12 w-12 rounded-2xl hover:bg-red-500/10 text-white/40 hover:text-red-500 transition-all active:scale-90"
+                   className="h-12 w-12 rounded-2xl hover:bg-red-500/10 text-muted-foreground hover:text-red-500 transition-all active:scale-90"
                  >
                     <Trash2 className="w-6 h-6" />
                  </Button>
@@ -203,7 +203,7 @@ export function CategoryManagerClient({ initialCategories }: { initialCategories
 
       {/* RENAME DIALOG (Standardizing to UPPERCASE) */}
       <Dialog open={isEditing} onOpenChange={setIsEditing}>
-         <DialogContent className="glass-panel border-white/10 rounded-[2.5rem] bg-zinc-950/90 backdrop-blur-3xl text-white max-w-md">
+         <DialogContent className="glass-panel border-border rounded-[2.5rem] bg-background/95 backdrop-blur-3xl text-foreground max-w-md">
             <DialogHeader>
                <DialogTitle className="text-2xl font-black tracking-tighter flex items-center gap-3 uppercase">
                   <div className="h-10 w-10 rounded-xl bg-emerald-500/10 flex items-center justify-center text-emerald-500">
@@ -213,15 +213,15 @@ export function CategoryManagerClient({ initialCategories }: { initialCategories
                </DialogTitle>
             </DialogHeader>
             <div className="space-y-6 py-4">
-               <div className="p-4 rounded-2xl bg-white/5 border border-white/5 text-[10px] uppercase font-bold text-white/40 tracking-widest">
-                  Current Name: <span className="text-white ml-2">{selectedCategory?.name}</span>
+               <div className="p-4 rounded-2xl bg-foreground/5 border border-border text-[10px] uppercase font-bold text-muted-foreground tracking-widest">
+                  Current Name: <span className="text-foreground ml-2">{selectedCategory?.name}</span>
                </div>
                <div className="space-y-3">
-                  <label className="text-[10px] font-black uppercase tracking-[0.3em] text-white/40 ml-1">New Global Identity</label>
+                  <label className="text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground ml-1">New Global Identity</label>
                   <Input 
                     value={newLabel}
                     onChange={e => setNewLabel(e.target.value)}
-                    className="h-14 bg-black/40 border-white/10 rounded-2xl text-base font-black tracking-tight uppercase"
+                    className="h-14 bg-background border-border rounded-2xl text-base font-black tracking-tight uppercase"
                     placeholder="E.G. BEVERAGES"
                   />
                </div>
@@ -231,15 +231,15 @@ export function CategoryManagerClient({ initialCategories }: { initialCategories
                </div>
             </div>
             <DialogFooter className="gap-3">
-               <Button variant="ghost" className="rounded-2xl h-12 text-white/40 font-black uppercase tracking-widest" onClick={() => setIsEditing(false)}>Cancel</Button>
-               <Button className="rounded-2xl h-12 bg-emerald-500 hover:bg-emerald-600 text-black font-black uppercase tracking-widest px-8 shadow-xl shadow-emerald-500/20 active:scale-95 transition-all" onClick={handleRename}>Verify & Standardization</Button>
+               <Button variant="ghost" className="rounded-2xl h-12 text-muted-foreground font-black uppercase tracking-widest" onClick={() => setIsEditing(false)}>Cancel</Button>
+               <Button className="rounded-2xl h-12 bg-emerald-500 hover:bg-emerald-600 text-white dark:text-black font-black uppercase tracking-widest px-8 shadow-xl shadow-emerald-500/20 active:scale-95 transition-all" onClick={handleRename}>Verify & Standardization</Button>
             </DialogFooter>
          </DialogContent>
       </Dialog>
 
       {/* DELETE DIALOG */}
       <Dialog open={isDeleting} onOpenChange={setIsDeleting}>
-         <DialogContent className="glass-panel border-white/10 rounded-[2.5rem] bg-zinc-950/90 backdrop-blur-3xl text-white max-w-md">
+         <DialogContent className="glass-panel border-border rounded-[2.5rem] bg-background/95 backdrop-blur-3xl text-foreground max-w-md">
             <DialogHeader>
                <DialogTitle className="text-2xl font-black tracking-tighter flex items-center gap-3 uppercase text-red-500">
                   <div className="h-10 w-10 rounded-xl bg-red-500/10 flex items-center justify-center text-red-500">
@@ -249,13 +249,13 @@ export function CategoryManagerClient({ initialCategories }: { initialCategories
                </DialogTitle>
             </DialogHeader>
             <div className="space-y-6 py-4 text-center">
-               <p className="text-zinc-400 font-medium tracking-tight">Are you ready to dissolve <span className="text-white font-black underline decoration-red-500/50 decoration-4">"{selectedCategory?.name}"</span>?</p>
-               <div className="p-5 rounded-2xl bg-red-500/5 border border-red-500/20 text-[10px] text-red-400 font-black leading-relaxed uppercase tracking-[0.15em]">
+               <p className="text-muted-foreground font-medium tracking-tight">Are you ready to dissolve <span className="text-foreground font-black underline decoration-red-500/50 decoration-4">"{selectedCategory?.name}"</span>?</p>
+               <div className="p-5 rounded-2xl bg-red-500/5 border border-red-500/20 text-[10px] text-red-500 dark:text-red-400 font-black leading-relaxed uppercase tracking-[0.15em]">
                   ALL {selectedCategory?.inventoryCount + selectedCategory?.menuCount} ASSOCIATED ITEMS WILL BE RECLASSIFIED AS "UNCATEGORIZED".
                </div>
             </div>
             <DialogFooter className="gap-3 sm:justify-center">
-               <Button variant="ghost" className="rounded-2xl h-12 text-white/40 font-black uppercase tracking-widest" onClick={() => setIsDeleting(false)}>Abort Cleanup</Button>
+               <Button variant="ghost" className="rounded-2xl h-12 text-muted-foreground font-black uppercase tracking-widest" onClick={() => setIsDeleting(false)}>Abort Cleanup</Button>
                <Button className="rounded-2xl h-12 bg-red-500 hover:bg-red-600 text-white font-black uppercase tracking-widest px-8 shadow-xl shadow-red-500/20 active:scale-95 transition-all" onClick={handleDelete}>Confirm Dissolution</Button>
             </DialogFooter>
          </DialogContent>

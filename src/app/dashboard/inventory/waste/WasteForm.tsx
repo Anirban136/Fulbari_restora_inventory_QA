@@ -92,7 +92,7 @@ export function WasteForm({ items, vendors }: { items: Item[], vendors: Vendor[]
         )}
 
         <div className="space-y-2">
-          <Label htmlFor="categoryFilter" className="text-xs font-black text-foreground/70 uppercase tracking-widest">
+          <Label htmlFor="categoryFilter" className="text-xs font-black text-foreground uppercase tracking-widest opacity-80 dark:opacity-70">
             Select Category
           </Label>
           <select
@@ -109,7 +109,7 @@ export function WasteForm({ items, vendors }: { items: Item[], vendors: Vendor[]
         </div>
 
         <div className="space-y-4">
-          <Label htmlFor="itemId" className="text-xs font-black text-foreground/70 uppercase tracking-widest">Item Name (Type to search)</Label>
+          <Label htmlFor="itemId" className="text-xs font-black text-foreground uppercase tracking-widest opacity-80 dark:opacity-70">Item Name (Type to search)</Label>
           <ItemSearchableSelect 
             key={selectedCategory}
             items={filteredItems} 
@@ -125,7 +125,7 @@ export function WasteForm({ items, vendors }: { items: Item[], vendors: Vendor[]
                 <span className="text-sm font-bold text-foreground mt-0.5 whitespace-nowrap">Non-updateable catalog data</span>
               </div>
               <div className="px-4 py-2 rounded-xl bg-blue-500/10 border border-blue-500/30 text-blue-600 dark:text-blue-100 font-black tracking-tighter text-lg whitespace-nowrap shadow-sm">
-                {selectedItem.piecesPerBox} <span className="text-xs opacity-60 uppercase font-black ml-1">pcs</span> / BOX
+                {selectedItem.piecesPerBox} <span className="text-xs opacity-80 dark:opacity-60 uppercase font-black ml-1">pcs</span> / BOX
               </div>
             </div>
           )}
@@ -133,7 +133,7 @@ export function WasteForm({ items, vendors }: { items: Item[], vendors: Vendor[]
 
         <div className="space-y-2">
           <div className="flex items-center justify-between">
-            <Label htmlFor="vendorId" className="text-xs font-black text-foreground/70 uppercase tracking-widest">Select Vendor (To claim deduction)</Label>
+            <Label htmlFor="vendorId" className="text-xs font-black text-foreground uppercase tracking-widest opacity-80 dark:opacity-70">Select Vendor (To claim deduction)</Label>
           </div>
           <select
             id="vendorId"
@@ -150,11 +150,11 @@ export function WasteForm({ items, vendors }: { items: Item[], vendors: Vendor[]
         
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div className="space-y-2">
-            <Label htmlFor="quantity" className="text-xs font-black text-foreground/70 uppercase tracking-widest">Discard Quantity</Label>
+            <Label htmlFor="quantity" className="text-xs font-black text-foreground uppercase tracking-widest opacity-80 dark:opacity-70">Discard Quantity</Label>
             <Input id="quantity" name="quantity" type="number" step="0.01" min="0.01" placeholder="e.g. 5" required className="h-12 bg-background border-border text-foreground rounded-xl focus-visible:ring-red-500/50 shadow-inner" />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="unitType" className="text-xs font-black text-foreground/70 uppercase tracking-widest">Unit Type</Label>
+            <Label htmlFor="unitType" className="text-xs font-black text-foreground uppercase tracking-widest opacity-80 dark:opacity-70">Unit Type</Label>
             <select
               id="unitType"
               name="unitType"
@@ -172,7 +172,7 @@ export function WasteForm({ items, vendors }: { items: Item[], vendors: Vendor[]
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="notes" className="text-xs font-black text-foreground/70 uppercase tracking-widest">Reason for Waste</Label>
+          <Label htmlFor="notes" className="text-xs font-black text-foreground uppercase tracking-widest opacity-80 dark:opacity-70">Reason for Waste</Label>
           <Input id="notes" name="notes" placeholder="e.g. Broken packages, expired..." required className="h-12 bg-background border-border text-foreground rounded-xl focus-visible:ring-red-500/50 shadow-inner block" />
         </div>
 

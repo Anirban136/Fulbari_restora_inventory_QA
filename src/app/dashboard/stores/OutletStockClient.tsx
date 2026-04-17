@@ -48,7 +48,7 @@ export function OutletStockClient({
         <div className="relative z-10">
           <h1 className="text-3xl lg:text-5xl font-black text-foreground tracking-tighter flex items-center gap-4">
             Outlet Inventory
-            <span className="px-3 py-1 bg-purple-500/20 text-purple-400 text-[10px] font-black uppercase tracking-[0.3em] rounded-lg border border-purple-500/30">
+            <span className="px-3 py-1 bg-purple-100 dark:bg-purple-500/20 text-purple-700 dark:text-purple-400 text-[10px] font-black uppercase tracking-[0.3em] rounded-lg border border-purple-500/30">
               Live
             </span>
           </h1>
@@ -67,7 +67,7 @@ export function OutletStockClient({
               </button>
             }
           />
-          <DialogContent className="max-w-2xl bg-[#09090b] border-white/5 p-0 overflow-hidden rounded-[2rem]">
+          <DialogContent className="max-w-2xl bg-background/95 backdrop-blur-3xl border-border p-0 overflow-hidden rounded-[2rem]">
             <AdjustStockForm 
               outlets={outlets} 
               onSuccess={() => setIsAdjustOpen(false)} 
@@ -77,7 +77,7 @@ export function OutletStockClient({
       </header>
 
       {/* 2. TAB NAVIGATION */}
-      <nav className="flex items-center gap-2 p-2 bg-white/5 rounded-3xl border border-white/5 backdrop-blur-md overflow-x-auto no-scrollbar">
+      <nav className="flex items-center gap-2 p-2 bg-muted rounded-3xl border border-border backdrop-blur-md overflow-x-auto no-scrollbar">
         {outlets.map((outlet) => (
           <button
             key={outlet.id}
@@ -122,8 +122,8 @@ export function OutletStockClient({
               <Table>
                 <TableHeader className="sticky top-0 z-10 bg-background/80 backdrop-blur-3xl shadow-sm">
                   <TableRow className="border-b border-border hover:bg-transparent">
-                    <TableHead className="font-black text-muted-foreground/40 uppercase tracking-[0.3em] text-[10px] h-14 px-10 border-r border-border">Item Detail</TableHead>
-                    <TableHead className="font-black text-muted-foreground/40 uppercase tracking-[0.3em] text-[10px] h-14 px-10 text-right">Current Stock</TableHead>
+                    <TableHead className="font-black text-muted-foreground/80 dark:text-muted-foreground/40 uppercase tracking-[0.3em] text-[10px] h-14 px-10 border-r border-border">Item Detail</TableHead>
+                    <TableHead className="font-black text-muted-foreground/80 dark:text-muted-foreground/40 uppercase tracking-[0.3em] text-[10px] h-14 px-10 text-right">Current Stock</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -144,7 +144,7 @@ export function OutletStockClient({
                              <span className="text-sm font-black text-foreground/90 uppercase tracking-tight group-hover/row:text-purple-400 transition-colors">
                                {stock.Item.name}
                              </span>
-                             <span className="text-[9px] font-bold text-muted-foreground/40 uppercase tracking-widest">
+                             <span className="text-[9px] font-bold text-muted-foreground/80 dark:text-muted-foreground/40 uppercase tracking-widest">
                                {stock.Item.category || "General"}
                              </span>
                           </div>
@@ -157,10 +157,10 @@ export function OutletStockClient({
                                : "bg-muted/50 border border-border text-foreground group-hover/row:border-purple-500/30"
                            )}>
                              <span className="text-base font-black tracking-tighter">
-                               {stock.quantity} <span className="text-[10px] ml-1 opacity-50 uppercase">{stock.Item.piecesPerBox ? 'pcs' : stock.Item.unit}</span>
+                               {stock.quantity} <span className="text-[10px] ml-1 opacity-80 dark:opacity-50 uppercase">{stock.Item.piecesPerBox ? 'pcs' : stock.Item.unit}</span>
                              </span>
                              {stock.Item.piecesPerBox && (
-                               <span className="text-[9px] opacity-30 font-bold uppercase tracking-tighter mt-1">
+                               <span className="text-[9px] opacity-60 dark:opacity-30 font-bold uppercase tracking-tighter mt-1">
                                  ({(stock.quantity / stock.Item.piecesPerBox).toFixed(1)} {stock.Item.unit})
                                </span>
                              )}
