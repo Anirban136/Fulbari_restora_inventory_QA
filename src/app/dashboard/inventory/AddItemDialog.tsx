@@ -42,7 +42,7 @@ export function AddItemDialog({ existingCategories = [], variant = "default" }: 
           </Button>
         )
       } />
-      <DialogContent className="sm:max-w-[500px] w-[95vw] lg:w-full bg-zinc-950/95 backdrop-blur-3xl border-white/10 rounded-[2.5rem] sm:rounded-[3rem] shadow-2xl p-0 overflow-hidden max-h-[92vh] flex flex-col" showCloseButton={false}>
+      <DialogContent className="sm:max-w-[500px] w-[95vw] lg:w-full bg-background/95 backdrop-blur-3xl border-border rounded-[2.5rem] sm:rounded-[3rem] shadow-2xl p-0 overflow-hidden max-h-[92vh] flex flex-col" showCloseButton={false}>
         {/* Explicit Close Button - Positioned lower to avoid notches/status bars */}
         <DialogClose render={<button className="absolute top-8 right-8 p-3 rounded-2xl bg-foreground/5 border border-border text-foreground/40 hover:text-foreground transition-all active:scale-90 z-50"><X className="w-5 h-5" /></button>} />
         
@@ -86,15 +86,15 @@ export function AddItemDialog({ existingCategories = [], variant = "default" }: 
                   onChange={(e) => setUnit(e.target.value)}
                   className="w-full h-14 px-6 py-2 rounded-2xl border border-border bg-foreground/[0.03] text-foreground focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary/50 transition-all font-black uppercase tracking-widest text-xs appearance-none cursor-pointer shadow-inner"
                 >
-                  <option value="" className="bg-zinc-950 text-muted-foreground/30">Select Unit...</option>
-                  <option value="kg" className="bg-zinc-950 text-white">Kilogram (kg)</option>
-                  <option value="gm" className="bg-zinc-950 text-white">Gram (gm)</option>
-                  <option value="lit" className="bg-zinc-950 text-white">Litre (lit)</option>
-                  <option value="ml" className="bg-zinc-950 text-white">Millilitre (ml)</option>
-                  <option value="packet" className="bg-zinc-950 text-white">Packet</option>
-                  <option value="box" className="bg-zinc-950 text-white">Box</option>
-                  <option value="plate" className="bg-zinc-950 text-white">Plate</option>
-                  <option value="pcs" className="bg-zinc-950 text-white">Pieces (pcs)</option>
+                  <option value="" className="bg-background text-muted-foreground/30">Select Unit...</option>
+                  <option value="kg" className="bg-background text-foreground">Kilogram (kg)</option>
+                  <option value="gm" className="bg-background text-foreground">Gram (gm)</option>
+                  <option value="lit" className="bg-background text-foreground">Litre (lit)</option>
+                  <option value="ml" className="bg-background text-foreground">Millilitre (ml)</option>
+                  <option value="packet" className="bg-background text-foreground">Packet</option>
+                  <option value="box" className="bg-background text-foreground">Box</option>
+                  <option value="plate" className="bg-background text-foreground">Plate</option>
+                  <option value="pcs" className="bg-background text-foreground">Pieces (pcs)</option>
                 </select>
               </div>
             </div>
@@ -124,7 +124,7 @@ export function AddItemDialog({ existingCategories = [], variant = "default" }: 
             </div>
 
             <div className="pt-6 pb-4">
-              <Button type="submit" className="w-full h-16 text-sm font-black uppercase tracking-[0.4em] bg-white text-black hover:bg-slate-100 rounded-2xl shadow-2xl transition-all active:scale-95 flex items-center justify-center gap-3">
+              <Button type="submit" className="w-full h-16 text-sm font-black uppercase tracking-[0.4em] bg-foreground text-background hover:opacity-90 rounded-2xl shadow-2xl transition-all active:scale-95 flex items-center justify-center gap-3">
                 SUBMIT <ArrowRight className="w-4 h-4" />
               </Button>
             </div>

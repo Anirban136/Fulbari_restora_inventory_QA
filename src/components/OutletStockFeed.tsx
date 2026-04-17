@@ -122,7 +122,7 @@ export function OutletStockFeed({ stocks }: { stocks: any[] }) {
                       </p>
                     )}
                   </div>
-                  <div className={`px-3 py-1 rounded-full text-[8px] font-black uppercase tracking-widest border ${statusBorder.replace('10', '20')} ${statusColor} bg-white/40 dark:bg-black/20`}>
+                  <div className={`px-3 py-1 rounded-full text-[8px] font-black uppercase tracking-widest border ${statusBorder.replace('10', '20')} ${statusColor} bg-foreground/5`}>
                     {isCritical ? "DEPLETED" : isLow ? "LOW SIGNAL" : "OPTIMAL"}
                   </div>
                 </div>

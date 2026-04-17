@@ -40,7 +40,7 @@ export function EditVendorDialog({ vendor }: { vendor: Vendor }) {
         </button>
       } />
       
-      <DialogContent className="sm:max-w-[450px] bg-black/80 backdrop-blur-2xl border-white/10 rounded-3xl shadow-[0_0_50px_rgba(0,0,0,0.8)]">
+      <DialogContent className="sm:max-w-[450px] bg-background/95 backdrop-blur-2xl border-border rounded-3xl shadow-2xl">
         <DialogHeader className="mb-4">
            <div className="w-12 h-12 bg-blue-500/20 rounded-2xl flex items-center justify-center mb-4 border border-blue-500/30 shadow-[0_0_15px_-3px_rgba(59,130,246,0.3)]">
              <Edit2 className="w-6 h-6 text-blue-400" />

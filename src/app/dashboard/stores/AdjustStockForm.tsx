@@ -218,9 +218,9 @@ export function AdjustStockForm({ outlets, onSuccess }: { outlets: any[], onSucc
 
         {/* Step 4: Adjustment Quantity */}
         <div className={cn(
-          "group p-5 rounded-2xl bg-black/40 border transition-all duration-500",
+          "group p-5 rounded-2xl bg-foreground/5 border transition-all duration-500",
           !selectedItemId && "opacity-20 pointer-events-none grayscale",
-          mode === 'ADD' ? "border-emerald-500/20" : "border-white/5"
+          mode === 'ADD' ? "border-emerald-500/20" : "border-border"
         )}>
           <div className="flex justify-between items-end mb-4">
             <Label className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em]">

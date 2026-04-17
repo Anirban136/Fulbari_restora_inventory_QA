@@ -30,7 +30,7 @@ export function AddVendorDialog() {
       }>
         <PlusCircle className="w-5 h-5" /> Add New Vendor
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[450px] bg-black/80 backdrop-blur-2xl border-white/10 rounded-3xl shadow-[0_0_50px_rgba(0,0,0,0.8)]">
+      <DialogContent className="sm:max-w-[450px] bg-background/95 backdrop-blur-2xl border-border rounded-3xl shadow-2xl">
         <DialogHeader className="mb-4">
            <div className="w-12 h-12 bg-primary/20 rounded-2xl flex items-center justify-center mb-4 border border-primary/30 shadow-[0_0_15px_-3px_oklch(0.55_0.16_150_/_0.3)]">
              <Users className="w-6 h-6 text-primary" />
@@ -53,7 +53,7 @@ export function AddVendorDialog() {
             <Label htmlFor="address" className="text-xs font-bold text-slate-400 uppercase tracking-widest">Address</Label>
             <Input id="address" name="address" placeholder="Vendor location..." className="h-12 bg-foreground/5 border-border text-foreground placeholder:text-muted-foreground/40 rounded-xl focus-visible:ring-primary/50" />
           </div>
-          <Button type="submit" className="w-full h-14 text-lg font-bold bg-white text-black hover:bg-slate-200 mt-4 rounded-xl shadow-[0_0_20px_rgba(255,255,255,0.2)]">Save Vendor</Button>
+          <Button type="submit" className="w-full h-14 text-lg font-bold bg-primary text-primary-foreground hover:bg-primary/90 mt-4 rounded-xl shadow-lg transition-all active:scale-[0.98]">Save Vendor</Button>
         </form>
       </DialogContent>
     </Dialog>

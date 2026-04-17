@@ -52,7 +52,7 @@ export function PayVendorDialog({ vendor, balanceDue, wasteDeductions = 0 }: Pay
           Pay
         </button>
       } />
-      <DialogContent className="sm:max-w-[420px] bg-black/90 backdrop-blur-2xl border-emerald-500/20 rounded-3xl shadow-[0_0_50px_rgba(16,185,129,0.15)]">
+      <DialogContent className="sm:max-w-[450px] bg-background/95 backdrop-blur-2xl border-border rounded-3xl shadow-2xl">
         <DialogHeader className="mb-2">
           <div className="w-12 h-12 bg-emerald-500/10 rounded-2xl flex items-center justify-center mb-4 border border-emerald-500/20">
             <IndianRupee className="w-6 h-6 text-emerald-400" />
