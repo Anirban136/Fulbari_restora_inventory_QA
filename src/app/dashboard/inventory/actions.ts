@@ -163,7 +163,10 @@ export async function updateItem(data: FormData) {
 }
 
 export async function removeItem(itemId: string, pin: string) {
-  await verifyAdminPin(pin)
+  const session = await getServerSession(authOptions)
+  if (!session || (session.user.role !== "OWNER" && session.user.role !== "INV_MANAGER")) {
+    throw new Error("Unauthorized")
+  }
 
   if (!itemId) return
 

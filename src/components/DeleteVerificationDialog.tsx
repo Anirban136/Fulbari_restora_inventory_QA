@@ -31,6 +31,7 @@ interface DeleteVerificationDialogProps {
   description: string
   itemName: string
   loading?: boolean
+  requirePin?: boolean
 }
 
 export function DeleteVerificationDialog({
@@ -40,7 +41,8 @@ export function DeleteVerificationDialog({
   title,
   description,
   itemName,
-  loading: externalLoading
+  loading: externalLoading,
+  requirePin = true
 }: DeleteVerificationDialogProps) {
   const [step, setStep] = useState<1 | 2>(1)
   const [pin, setPin] = useState("")
@@ -54,7 +56,7 @@ export function DeleteVerificationDialog({
   }
 
   const handleConfirm = async () => {
-    if (!pin) {
+    if (requirePin && !pin) {
       setError("Please enter your Admin PIN")
       return
     }
@@ -166,10 +168,18 @@ export function DeleteVerificationDialog({
                 Cancel
               </Button>
               <Button 
-                onClick={handleNextStep}
+                onClick={requirePin ? handleNextStep : handleConfirm}
+                disabled={loading}
                 className="w-full h-14 bg-red-500 hover:bg-red-600 text-white font-black uppercase tracking-widest rounded-2xl shadow-xl shadow-red-500/20 active:scale-95 transition-all"
               >
-                Proceed to Verify <Trash2 className="ml-2 w-4 h-4" />
+                {requirePin ? (
+                  <>Proceed to Verify <Trash2 className="ml-2 w-4 h-4" /></>
+                ) : (
+                  <>
+                    {loading ? <Loader2 className="w-5 h-5 animate-spin mr-2" /> : <Trash2 className="w-5 h-5 mr-2" />}
+                    Confirm Deletion
+                  </>
+                )}
               </Button>
             </>
           ) : (

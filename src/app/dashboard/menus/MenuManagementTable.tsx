@@ -178,6 +178,7 @@ export function MenuManagementTable({
         itemName={itemToDelete?.name || ""}
         title="Delete Menu Item?"
         description={`Confirm removal of this item from the ${itemToDelete?.Outlet?.name} menu selection. This will also remove it from any active tabs.`}
+        requirePin={false}
         onConfirm={async (pin) => {
           await deleteMenuItem(itemToDelete.id, pin)
           toast.success(`${itemToDelete.name} has been removed from menu`)

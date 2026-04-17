@@ -2,6 +2,8 @@
 
 import { prisma } from "@/lib/prisma"
 import { revalidatePath } from "next/cache"
+import { getServerSession } from "next-auth"
+import { authOptions } from "@/lib/auth"
 import { verifyAdminPin } from "@/lib/server-auth"
 
 export async function getAggregatedCategories() {
@@ -58,7 +60,10 @@ export async function updateCategoryLabel(oldLabel: string, newLabel: string) {
 }
 
 export async function deleteCategory(label: string, pin: string) {
-  await verifyAdminPin(pin)
+  const session = await getServerSession(authOptions)
+  if (!session || (session.user.role !== "OWNER" && session.user.role !== "INV_MANAGER")) {
+    throw new Error("Unauthorized")
+  }
   const standardizedLabel = label.trim().toUpperCase()
 
   await prisma.$transaction([

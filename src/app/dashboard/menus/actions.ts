@@ -151,7 +151,10 @@ export async function updateMenuItem(data: FormData) {
 }
 
 export async function deleteMenuItem(menuItemId: string, pin: string) {
-  await verifyAdminPin(pin)
+  const session = await getServerSession(authOptions)
+  if (!session || (session.user.role !== "OWNER" && session.user.role !== "INV_MANAGER")) {
+    throw new Error("Unauthorized")
+  }
 
   // Delete related TabItems first to avoid foreign key constraint errors
   await prisma.$transaction([

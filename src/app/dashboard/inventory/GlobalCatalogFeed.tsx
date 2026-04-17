@@ -356,6 +356,7 @@ export function GlobalCatalogFeed({
         itemName={itemToDelete?.name || ""}
         title="Delete Catalog Item?"
         description="Permanently dissolve this product and all associated ledger history. This will impact stock levels across all outlets."
+        requirePin={false}
         onConfirm={async (pin) => {
           await removeItem(itemToDelete.id, pin)
           toast.success(`${itemToDelete.name} has been removed from catalog`)

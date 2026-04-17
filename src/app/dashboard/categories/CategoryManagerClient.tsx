@@ -246,6 +246,7 @@ export function CategoryManagerClient({ initialCategories }: { initialCategories
         itemName={selectedCategory?.name || ""}
         title="Dissolve Category?"
         description={`ALL ${selectedCategory?.inventoryCount + selectedCategory?.menuCount} ASSOCIATED ITEMS WILL BE RECLASSIFIED AS "UNCATEGORIZED". THIS ACTION IS IRREVERSIBLE.`}
+        requirePin={false}
         onConfirm={handleDelete}
       />
     </div>
