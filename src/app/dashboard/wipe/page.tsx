@@ -3,22 +3,43 @@
 import { wipeTestData } from "./actions"
 import { Button } from "@/components/ui/button"
 import { useState } from "react"
-import { Loader2, AlertTriangle } from "lucide-react"
+import { Loader2, AlertTriangle, ShieldCheck, Lock } from "lucide-react"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { toast } from "sonner"
 
 export default function WipePage() {
   const [loading, setLoading] = useState(false)
   const [success, setSuccess] = useState(false)
+  const [showConfirm, setShowConfirm] = useState(false)
+  const [pin, setPin] = useState("")
+  const [error, setError] = useState<string | null>(null)
 
   async function handleWipe() {
-    if (!confirm("WARNING: This will permanently delete ALL Menus, Orders, Inventory, and Vendors. Only Passwords and Outlets will remain. Are you absolutely sure?")) return;
-    
+    if (!pin) {
+      setError("Please enter your Admin PIN")
+      return
+    }
+
     setLoading(true)
+    setError(null)
+    
     try {
-      await wipeTestData()
+      await wipeTestData(pin)
       setSuccess(true)
-      alert("Test data successfully wiped!")
+      setShowConfirm(false)
+      toast.success("Database successfully wiped!")
     } catch (e: any) {
-      alert("Failed to wipe data: " + e.message)
+      setError(e.message)
+      toast.error(e.message)
     } finally {
       setLoading(false)
     }
@@ -37,13 +58,73 @@ export default function WipePage() {
       </div>
 
       <Button 
-        onClick={handleWipe}
+        onClick={() => setShowConfirm(true)}
         disabled={loading || success}
         variant="destructive"
         className="mt-6 h-14 px-8 text-lg font-bold rounded-2xl shadow-[0_0_40px_rgba(239,68,68,0.3)] transition-all active:scale-95"
       >
         {loading ? <><Loader2 className="w-5 h-5 mr-2 animate-spin" /> Wiping Database...</> : success ? "Database Wiped Successfully!" : "Yes, Wipe All Test Data"}
       </Button>
+
+      <Dialog open={showConfirm} onOpenChange={setShowConfirm}>
+        <DialogContent className="sm:max-w-[425px] bg-[#0A0A0B] border-white/10 rounded-2xl shadow-2xl">
+          <DialogHeader>
+            <div className="w-12 h-12 bg-amber-500/10 text-amber-500 rounded-full flex items-center justify-center mb-4 border border-amber-500/20">
+              <ShieldCheck className="w-6 h-6" />
+            </div>
+            <DialogTitle className="text-2xl font-bold text-white">Security Verification</DialogTitle>
+            <DialogDescription className="text-slate-400 text-base">
+              This action is destructive and cannot be undone. To proceed, please enter your <strong className="text-white">Admin PIN</strong> for confirmation.
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="grid gap-4 py-4">
+            <div className="grid gap-2">
+              <Label htmlFor="pin" className="text-slate-300 ml-1">Admin PIN</Label>
+              <div className="relative">
+                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
+                <Input
+                  id="pin"
+                  type="password"
+                  placeholder="Enter 4-digit PIN"
+                  className="pl-10 h-12 bg-white/5 border-white/10 text-white rounded-xl focus:ring-amber-500/50 focus:border-amber-500 transition-all text-lg tracking-widest"
+                  value={pin}
+                  onChange={(e) => {
+                    setPin(e.target.value)
+                    setError(null)
+                  }}
+                  autoFocus
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') handleWipe()
+                  }}
+                />
+              </div>
+              {error && <p className="text-red-400 text-sm font-medium ml-1">{error}</p>}
+            </div>
+          </div>
+          
+          <DialogFooter className="mt-2">
+            <Button 
+              type="button" 
+              variant="outline" 
+              onClick={() => setShowConfirm(false)}
+              className="rounded-xl border-white/10 hover:bg-white/5 text-slate-300"
+            >
+              Cancel
+            </Button>
+            <Button 
+              type="button" 
+              variant="destructive"
+              onClick={handleWipe}
+              disabled={loading || !pin}
+              className="rounded-xl bg-red-500 hover:bg-red-600 font-bold shadow-lg shadow-red-500/20"
+            >
+              {loading ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
+              Confirm Wipe
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }

@@ -5,10 +5,20 @@ import { getServerSession } from "next-auth"
 import { authOptions } from "@/lib/auth"
 import { revalidatePath } from "next/cache"
 
-export async function wipeTestData() {
+export async function wipeTestData(pin: string) {
   const session = await getServerSession(authOptions)
   if (!session || session.user.role !== "OWNER") {
     throw new Error("Unauthorized: Only Owner can wipe data")
+  }
+
+  // Double verification: check if provided PIN matches the user's PIN in DB
+  const user = await prisma.user.findUnique({
+    where: { id: session.user.id },
+    select: { pin: true }
+  })
+
+  if (!user || user.pin !== pin) {
+    throw new Error("Invalid PIN: Verification failed. Data was not wiped.")
   }
 
   // Delete operational data first to avoid foreign key constraints
