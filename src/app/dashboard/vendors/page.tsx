@@ -9,6 +9,7 @@ import { AddVendorDialog } from "../inventory/AddVendorDialog"
 import { EditVendorDialog } from "../inventory/EditVendorDialog"
 import { PayVendorDialog } from "../inventory/PayVendorDialog"
 import { deleteVendor } from "../inventory/actions"
+import { VendorDeleteButton } from "./VendorDeleteButton"
 import {
   Dialog,
   DialogContent,
@@ -298,30 +299,7 @@ export default async function VendorsPage() {
                         <EditVendorDialog vendor={vendor} />
                         
                         {isOwner && (
-                          <Dialog>
-                            <DialogTrigger render={
-                              <button className="p-3 rounded-2xl bg-white/5 border border-white/5 text-red-400/60 hover:text-red-400 transition-all hover:bg-red-500/10 active:scale-90" title="Terminate Link">
-                                <Trash2 className="w-4 h-4" />
-                              </button>
-                            } />
-                            <DialogContent className="sm:max-w-[450px] bg-background/95 backdrop-blur-3xl border-red-500/20 rounded-[3rem] shadow-2xl p-10">
-                              <DialogHeader>
-                                <div className="w-20 h-20 bg-red-500/10 rounded-[2rem] flex items-center justify-center mb-10 border border-red-500/20">
-                                  <Trash2 className="w-10 h-10 text-red-500" />
-                                </div>
-                                <DialogTitle className="text-4xl font-black text-foreground tracking-tighter uppercase leading-none mb-6">Terminate Vendor?</DialogTitle>
-                                <DialogDescription className="text-muted-foreground font-medium tracking-tight leading-relaxed text-sm">
-                                  Confirm full removal of <span className="text-foreground font-black">{vendor.name}</span>. This action wipes the payment ledger and cannot be reversed.
-                                </DialogDescription>
-                              </DialogHeader>
-                              <form action={deleteVendor} className="mt-10">
-                                <input type="hidden" name="vendorId" value={vendor.id} />
-                                <Button type="submit" variant="destructive" className="w-full h-16 font-black uppercase tracking-[0.3em] rounded-2xl transition-all active:scale-95 shadow-2xl">
-                                  CONFIRM TERMINATION
-                                </Button>
-                              </form>
-                            </DialogContent>
-                          </Dialog>
+                          <VendorDeleteButton vendor={vendor} />
                         )}
                       </div>
                     </TableCell>
@@ -382,24 +360,7 @@ export default async function VendorsPage() {
                     <PayVendorDialog vendor={vendor} balanceDue={vendor.balanceDue} />
                     <EditVendorDialog vendor={vendor} />
                     {isOwner && (
-                       <Dialog>
-                       <DialogTrigger render={
-                         <button className="h-12 w-12 rounded-xl bg-white/5 border border-white/5 text-red-400/60 flex items-center justify-center hover:bg-red-500/10 transition-all">
-                           <Trash2 className="w-4 h-4" />
-                         </button>
-                       } />
-                       <DialogContent className="sm:max-w-[400px] bg-black border-red-500/20 rounded-3xl">
-                         {/* Reusing existing dialog content structure */}
-                         <DialogHeader>
-                           <DialogTitle>Terminate?</DialogTitle>
-                           <DialogDescription>Full removal of {vendor.name}</DialogDescription>
-                         </DialogHeader>
-                         <form action={deleteVendor} className="mt-4">
-                           <input type="hidden" name="vendorId" value={vendor.id} />
-                           <Button type="submit" variant="destructive" className="w-full">Confirm</Button>
-                         </form>
-                       </DialogContent>
-                     </Dialog>
+                       <VendorDeleteButton vendor={vendor} />
                     )}
                   </div>
                 </div>

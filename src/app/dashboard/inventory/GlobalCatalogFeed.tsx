@@ -1,7 +1,8 @@
 "use client"
 
 import { useState, useMemo } from "react"
-import { Search, Package, Trash2, AlertTriangle, Layers, Edit2, CheckCircle2, IndianRupee, BarChart2, ShieldAlert, LayoutGrid } from "lucide-react"
+import { Search, Package, Trash2, AlertTriangle, Layers, Edit2, CheckCircle2, IndianRupee, BarChart2, ShieldAlert, LayoutGrid, Trash } from "lucide-react"
+import { DeleteVerificationDialog } from "@/components/DeleteVerificationDialog"
 import {
   Dialog,
   DialogContent,
@@ -37,6 +38,7 @@ export function GlobalCatalogFeed({
 }) {
   const [searchTerm, setSearchTerm] = useState("")
   const [activeCategory, setActiveCategory] = useState("ALL")
+  const [itemToDelete, setItemToDelete] = useState<any>(null)
 
   const filteredItems = useMemo(() => {
     return items.filter(item => {
@@ -109,7 +111,8 @@ export function GlobalCatalogFeed({
               <p className="font-black uppercase tracking-[0.5em] text-xs">Repository Empty</p>
             </div>
           ) : (
-            filteredItems.map(item => {
+            <>
+              {filteredItems.map(item => {
               const isCritical = item.minStock > 0 && item.currentStock <= 0
               const isLow = item.minStock > 0 && item.currentStock <= item.minStock
               const hasConversion = item.piecesPerBox > 0
@@ -137,7 +140,7 @@ export function GlobalCatalogFeed({
                        <EditItemDialog item={item} existingCategories={categories} />
                        {(isOwner || isManager) && (
                           <button 
-                            onClick={() => removeItem(item.id)}
+                            onClick={() => setItemToDelete(item)}
                             className="p-2.5 rounded-xl bg-red-500/5 text-red-500/40 hover:text-red-500 transition-all border border-transparent hover:border-red-500/20" 
                           >
                             <Trash2 className="w-4 h-4" />
@@ -198,7 +201,8 @@ export function GlobalCatalogFeed({
                   </div>
                 </div>
               )
-            })
+            })}
+            </>
           )}
         </div>
 
@@ -327,7 +331,7 @@ export function GlobalCatalogFeed({
                           <EditItemDialog item={item} existingCategories={categories} />
                           {(isOwner || isManager) && (
                             <button 
-                              onClick={() => removeItem(item.id)}
+                              onClick={() => setItemToDelete(item)}
                               className="p-2.5 rounded-xl bg-red-500/5 text-red-500/40 hover:text-red-500 hover:bg-red-500/10 transition-all border border-transparent hover:border-red-500/20 active:scale-90" 
                               title={`Delete ${item.name}`}
                             >
@@ -344,6 +348,18 @@ export function GlobalCatalogFeed({
           </Table>
         </div>
       </div>
+
+      <DeleteVerificationDialog
+        open={!!itemToDelete}
+        onOpenChange={(open) => !open && setItemToDelete(null)}
+        itemName={itemToDelete?.name || ""}
+        title="Delete Catalog Item?"
+        description="Permanently dissolve this product and all associated ledger history. This will impact stock levels across all outlets."
+        onConfirm={async (pin) => {
+          await removeItem(itemToDelete.id, pin)
+          toast.success(`${itemToDelete.name} has been removed from catalog`)
+        }}
+      />
     </div>
   )
 }

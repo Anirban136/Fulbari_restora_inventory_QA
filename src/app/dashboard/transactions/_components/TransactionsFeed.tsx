@@ -1,7 +1,9 @@
 "use client"
 
 import { useState, useMemo } from "react"
-import { Coffee, CupSoda, Calendar, Filter, FileDown, Search, ArrowRight, CreditCard, Banknote, Layers, Trash2 } from "lucide-react"
+import { Coffee, CupSoda, Calendar, Filter, FileDown, Search, ArrowRight, CreditCard, Banknote, Layers, Trash2, Trash } from "lucide-react"
+import { DeleteVerificationDialog } from "@/components/DeleteVerificationDialog"
+import { toast } from "sonner"
 import { formatTimeIST, formatDateIST } from "@/lib/utils"
 import { EditTransactionModal } from "@/components/EditTransactionModal"
 import { deleteClosedTab } from "../actions"
@@ -15,18 +17,22 @@ export function TransactionsFeed({ initialTransactions, userRole }: { initialTra
   const [paymentFilter, setPaymentFilter] = useState<"ALL" | "CASH" | "ONLINE">("ALL")
   const [activeOutlet, setActiveOutlet] = useState<"CAFE" | "CHAI">("CAFE")
   const [searchTerm, setSearchTerm] = useState("")
-  const [isDeleting, setIsDeleting] = useState<string | null>(null)
+  const [itemToDelete, setItemToDelete] = useState<any>(null)
+  const [localDeletingId, setLocalDeletingId] = useState<string | null>(null)
 
-  const handleDelete = async (tabId: string) => {
-    if (!window.confirm("ARE YOU SURE? This will permanently delete the bill and REVERT inventory. This cannot be undone.")) return
+  const handleDelete = async (pin: string) => {
+    if (!itemToDelete) return
     
-    setIsDeleting(tabId)
+    setLocalDeletingId(itemToDelete.id)
     try {
-      await deleteClosedTab(tabId)
-    } catch (e) {
-      alert("Failed to delete transaction")
+      await deleteClosedTab(itemToDelete.id, pin)
+      toast.success("Transaction successfully deleted and inventory reverted")
+      setItemToDelete(null)
+    } catch (e: any) {
+      toast.error(e.message || "Failed to delete transaction")
+      throw e
     } finally {
-      setIsDeleting(null)
+      setLocalDeletingId(null)
     }
   }
 
@@ -122,16 +128,16 @@ export function TransactionsFeed({ initialTransactions, userRole }: { initialTra
                      {tab.paymentMode === 'CASH' ? <Banknote className="w-3 h-3 text-emerald-500/50" /> : <CreditCard className="w-3 h-3 text-blue-500/50" />}
                      <p className="text-[9px] text-muted-foreground font-black uppercase tracking-widest">{tab.paymentMode || "UNKNOWN"}</p>
                   </div>
-                  {userRole === "OWNER" && (
-                    <button 
-                      onClick={() => handleDelete(tab.id)}
-                      disabled={isDeleting === tab.id}
-                      className="mt-2 w-full flex items-center justify-center gap-2 p-2 text-red-500/40 hover:text-red-500 hover:bg-red-500/10 rounded-xl transition-all disabled:opacity-20 border border-transparent hover:border-red-500/20"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                      <span className="text-[9px] font-black uppercase tracking-widest">Delete Bill</span>
-                    </button>
-                  )}
+                    {userRole === "OWNER" && (
+                      <button 
+                        onClick={() => setItemToDelete(tab)}
+                        disabled={localDeletingId === tab.id}
+                        className="mt-2 w-full flex items-center justify-center gap-2 p-2 text-red-500/40 hover:text-red-500 hover:bg-red-500/10 rounded-xl transition-all disabled:opacity-20 border border-transparent hover:border-red-500/20 active:scale-95"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                        <span className="text-[9px] font-black uppercase tracking-widest">Delete Bill</span>
+                      </button>
+                    )}
                 </div>
                 
                 <div className="pl-4 border-l border-border shrink-0">
@@ -270,6 +276,15 @@ export function TransactionsFeed({ initialTransactions, userRole }: { initialTra
             "bg-teal-500/5"
         )}
       </div>
+
+      <DeleteVerificationDialog
+        open={!!itemToDelete}
+        onOpenChange={(open) => !open && setItemToDelete(null)}
+        itemName={itemToDelete ? `${itemToDelete.customerName || 'Walk-in'} (₹${itemToDelete.totalAmount})` : ""}
+        title="Delete Transaction?"
+        description="ARE YOU SURE? This will permanently delete the bill and AUTO-REVERT all inventory deductions. This action cannot be undone."
+        onConfirm={handleDelete}
+      />
     </div>
   )
 }

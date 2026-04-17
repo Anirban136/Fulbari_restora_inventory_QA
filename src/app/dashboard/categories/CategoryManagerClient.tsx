@@ -1,7 +1,8 @@
 "use client"
 
 import { useState, useMemo } from "react"
-import { Layers, Search, Edit3, Trash2, ArrowRight, Package, ClipboardList, Info, LayoutGrid, Store, Warehouse } from "lucide-react"
+import { Layers, Search, Edit3, Trash2, ArrowRight, Package, ClipboardList, Info, LayoutGrid, Store, Warehouse, Trash } from "lucide-react"
+import { DeleteVerificationDialog } from "@/components/DeleteVerificationDialog"
 import { 
   getAggregatedCategories, 
   updateCategoryLabel, 
@@ -72,10 +73,10 @@ export function CategoryManagerClient({ initialCategories }: { initialCategories
     }
   }
 
-  const handleDelete = async () => {
+  const handleDelete = async (pin: string) => {
     try {
       toast.loading("Performing categorical cleanup...", { id: "category-delete" })
-      await deleteCategory(selectedCategory.name)
+      await deleteCategory(selectedCategory.name, pin)
       
       const fresh = await getAggregatedCategories()
       setCategories(fresh)
@@ -83,8 +84,9 @@ export function CategoryManagerClient({ initialCategories }: { initialCategories
       toast.success("Category cleaned up", { id: "category-delete" })
       setIsDeleting(false)
       setSelectedCategory(null)
-    } catch (error) {
-      toast.error("Cleanup failed", { id: "category-delete" })
+    } catch (error: any) {
+      toast.error(error.message || "Cleanup failed", { id: "category-delete" })
+      throw error // Re-throw for the dialog to handle
     }
   }
 
@@ -237,29 +239,15 @@ export function CategoryManagerClient({ initialCategories }: { initialCategories
          </DialogContent>
       </Dialog>
 
-      {/* DELETE DIALOG */}
-      <Dialog open={isDeleting} onOpenChange={setIsDeleting}>
-         <DialogContent className="glass-panel border-border rounded-[2.5rem] bg-background/95 backdrop-blur-3xl text-foreground max-w-md">
-            <DialogHeader>
-               <DialogTitle className="text-2xl font-black tracking-tighter flex items-center gap-3 uppercase text-red-500">
-                  <div className="h-10 w-10 rounded-xl bg-red-500/10 flex items-center justify-center text-red-500">
-                     <Trash2 className="w-5 h-5" />
-                  </div>
-                  Cleanse Catalog
-               </DialogTitle>
-            </DialogHeader>
-            <div className="space-y-6 py-4 text-center">
-               <p className="text-muted-foreground font-medium tracking-tight">Are you ready to dissolve <span className="text-foreground font-black underline decoration-red-500/50 decoration-4">"{selectedCategory?.name}"</span>?</p>
-               <div className="p-5 rounded-2xl bg-red-500/5 border border-red-500/20 text-[10px] text-red-500 dark:text-red-400 font-black leading-relaxed uppercase tracking-[0.15em]">
-                  ALL {selectedCategory?.inventoryCount + selectedCategory?.menuCount} ASSOCIATED ITEMS WILL BE RECLASSIFIED AS "UNCATEGORIZED".
-               </div>
-            </div>
-            <DialogFooter className="gap-3 sm:justify-center">
-               <Button variant="ghost" className="rounded-2xl h-12 text-muted-foreground font-black uppercase tracking-widest" onClick={() => setIsDeleting(false)}>Abort Cleanup</Button>
-               <Button className="rounded-2xl h-12 bg-red-500 hover:bg-red-600 text-white font-black uppercase tracking-widest px-8 shadow-xl shadow-red-500/20 active:scale-95 transition-all" onClick={handleDelete}>Confirm Dissolution</Button>
-            </DialogFooter>
-         </DialogContent>
-      </Dialog>
+
+      <DeleteVerificationDialog
+        open={isDeleting}
+        onOpenChange={setIsDeleting}
+        itemName={selectedCategory?.name || ""}
+        title="Dissolve Category?"
+        description={`ALL ${selectedCategory?.inventoryCount + selectedCategory?.menuCount} ASSOCIATED ITEMS WILL BE RECLASSIFIED AS "UNCATEGORIZED". THIS ACTION IS IRREVERSIBLE.`}
+        onConfirm={handleDelete}
+      />
     </div>
   )
 }

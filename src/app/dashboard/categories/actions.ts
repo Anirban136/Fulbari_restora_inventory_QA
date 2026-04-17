@@ -2,6 +2,7 @@
 
 import { prisma } from "@/lib/prisma"
 import { revalidatePath } from "next/cache"
+import { verifyAdminPin } from "@/lib/server-auth"
 
 export async function getAggregatedCategories() {
   const [items, menuItems] = await Promise.all([
@@ -56,7 +57,8 @@ export async function updateCategoryLabel(oldLabel: string, newLabel: string) {
   revalidatePath("/dashboard/inventory/stock-in")
 }
 
-export async function deleteCategory(label: string) {
+export async function deleteCategory(label: string, pin: string) {
+  await verifyAdminPin(pin)
   const standardizedLabel = label.trim().toUpperCase()
 
   await prisma.$transaction([

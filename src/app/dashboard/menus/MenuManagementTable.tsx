@@ -1,7 +1,9 @@
 "use client"
 
 import { useState } from "react"
-import { Search, Trash2, Coffee, Utensils, LayoutGrid } from "lucide-react"
+import { Search, Trash2, Coffee, Utensils, LayoutGrid, Trash } from "lucide-react"
+import { DeleteVerificationDialog } from "@/components/DeleteVerificationDialog"
+import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import {
@@ -37,6 +39,7 @@ export function MenuManagementTable({
 }) {
   const [outletFilter, setOutletFilter] = useState<'ALL' | 'CAFE' | 'CHAI_JOINT'>('ALL')
   const [searchQuery, setSearchQuery] = useState("")
+  const [itemToDelete, setItemToDelete] = useState<any>(null)
 
   const filteredMenuItems = menuItems.filter((item) => {
     const matchesOutlet = 
@@ -154,29 +157,12 @@ export function MenuManagementTable({
                           {menuItem.isAvailable ? "Active" : "OOS"}
                         </Button>
                       </form>
-                      <Dialog>
-                        <DialogTrigger>
-                          <div className="flex h-8 w-8 items-center justify-center text-red-500/70 hover:text-red-400 hover:bg-red-500/10 rounded-lg cursor-pointer">
-                            <Trash2 className="h-4 w-4" />
-                          </div>
-                        </DialogTrigger>
-                        <DialogContent className="sm:max-w-[400px] bg-background backdrop-blur-2xl border-border rounded-3xl shadow-[0_0_50px_rgba(239,68,68,0.1)]">
-                          <DialogHeader className="mb-2">
-                            <div className="w-12 h-12 bg-red-500/10 rounded-2xl flex items-center justify-center mb-4 border border-red-500/20">
-                              <Trash2 className="w-6 h-6 text-red-500 dark:text-red-400" />
-                            </div>
-                            <DialogTitle className="text-xl font-black text-foreground">Delete Menu Item?</DialogTitle>
-                            <DialogDescription className="text-muted-foreground leading-relaxed">
-                              Are you sure you want to delete <span className="text-foreground font-bold">{menuItem.name}</span> from the {menuItem.Outlet.name} menu? This action cannot be undone.
-                            </DialogDescription>
-                          </DialogHeader>
-                          <form action={deleteMenuItem.bind(null, menuItem.id)} className="mt-4">
-                            <Button type="submit" variant="destructive" className="w-full h-11 font-bold rounded-xl transition-all active:scale-95">
-                              Yes, Delete Item
-                            </Button>
-                          </form>
-                        </DialogContent>
-                      </Dialog>
+                      <button 
+                        onClick={() => setItemToDelete(menuItem)}
+                        className="flex h-8 w-8 items-center justify-center text-red-500/70 hover:text-red-400 hover:bg-red-500/10 rounded-lg cursor-pointer transition-all active:scale-90"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </button>
                     </div>
                   </TableCell>
                 </TableRow>
@@ -185,6 +171,18 @@ export function MenuManagementTable({
           </TableBody>
         </Table>
       </div>
+
+      <DeleteVerificationDialog
+        open={!!itemToDelete}
+        onOpenChange={(open) => !open && setItemToDelete(null)}
+        itemName={itemToDelete?.name || ""}
+        title="Delete Menu Item?"
+        description={`Confirm removal of this item from the ${itemToDelete?.Outlet?.name} menu selection. This will also remove it from any active tabs.`}
+        onConfirm={async (pin) => {
+          await deleteMenuItem(itemToDelete.id, pin)
+          toast.success(`${itemToDelete.name} has been removed from menu`)
+        }}
+      />
     </div>
   )
 }

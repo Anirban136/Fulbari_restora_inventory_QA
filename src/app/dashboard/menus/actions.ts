@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma"
 import { revalidatePath } from "next/cache"
 import { getServerSession } from "next-auth"
 import { authOptions } from "@/lib/auth"
+import { verifyAdminPin } from "@/lib/server-auth"
 
 export async function addMenuItem(data: FormData) {
   const session = await getServerSession(authOptions)
@@ -149,9 +150,8 @@ export async function updateMenuItem(data: FormData) {
   revalidatePath("/dashboard/menus")
 }
 
-export async function deleteMenuItem(menuItemId: string) {
-  const session = await getServerSession(authOptions)
-  if (!session || (session.user.role !== "OWNER" && session.user.role !== "INV_MANAGER")) throw new Error("Unauthorized")
+export async function deleteMenuItem(menuItemId: string, pin: string) {
+  await verifyAdminPin(pin)
 
   // Delete related TabItems first to avoid foreign key constraint errors
   await prisma.$transaction([

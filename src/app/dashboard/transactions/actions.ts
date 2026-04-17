@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma"
 import { revalidatePath } from "next/cache"
 import { getServerSession } from "next-auth"
 import { authOptions } from "@/lib/auth"
+import { verifyAdminPin } from "@/lib/server-auth"
 
 export async function updateTransactionAction(tabId: string, data: { paymentMode: string, totalAmount: number, status: string }) {
   const session = await getServerSession(authOptions)
@@ -25,11 +26,8 @@ export async function updateTransactionAction(tabId: string, data: { paymentMode
   return { success: true }
 }
 
-export async function deleteClosedTab(tabId: string) {
-  const session = await getServerSession(authOptions)
-  if (!session || session.user.role !== "OWNER") {
-    throw new Error("Unauthorized")
-  }
+export async function deleteClosedTab(tabId: string, pin: string) {
+  await verifyAdminPin(pin)
 
   const tab = await prisma.tab.findUnique({
     where: { id: tabId },

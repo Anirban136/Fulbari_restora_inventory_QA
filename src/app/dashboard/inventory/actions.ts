@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma"
 import { revalidatePath } from "next/cache"
 import { getServerSession } from "next-auth"
 import { authOptions } from "@/lib/auth"
+import { verifyAdminPin } from "@/lib/server-auth"
 
 export async function addVendor(data: FormData) {
   const session = await getServerSession(authOptions)
@@ -44,12 +45,8 @@ export async function editVendor(data: FormData) {
   revalidatePath("/dashboard/inventory")
 }
 
-export async function deleteVendor(data: FormData) {
-  const session = await getServerSession(authOptions)
-  if (!session || session.user.role !== "OWNER") {
-    throw new Error("Unauthorized")
-  }
-
+export async function deleteVendor(data: FormData, pin: string) {
+  await verifyAdminPin(pin)
   const vendorId = data.get("vendorId") as string
 
   // Gracefully remove vendor relation from ledger before deleting
@@ -165,11 +162,8 @@ export async function updateItem(data: FormData) {
   revalidatePath("/dashboard/inventory")
 }
 
-export async function removeItem(itemId: string) {
-  const session = await getServerSession(authOptions)
-  if (!session || (session.user.role !== "OWNER" && session.user.role !== "INV_MANAGER")) {
-    throw new Error("Unauthorized — only Admin Owner or Inventory Manager can remove catalog items")
-  }
+export async function removeItem(itemId: string, pin: string) {
+  await verifyAdminPin(pin)
 
   if (!itemId) return
 
