@@ -35,10 +35,10 @@ export default async function GlobalCatalogPage() {
                <h2 className="text-3xl lg:text-7xl font-black tracking-tighter text-foreground leading-tight uppercase">
                  GLOBAL <span className="text-primary">CATALOG</span>
                </h2>
-               <p className="text-muted-foreground mt-2 font-black text-[9px] lg:text-xs tracking-[0.3em] uppercase opacity-60 flex items-center gap-2">
-                 <Layers className="sm:hidden w-3 h-3 text-primary" />
-                 REPOSITORY CONTROL • PRODUCT MANAGEMENT
-               </p>
+                <p className="text-muted-foreground mt-2 font-black text-[9px] lg:text-xs tracking-[0.3em] uppercase opacity-90 dark:opacity-60 flex items-center gap-2">
+                  <Layers className="sm:hidden w-3 h-3 text-primary" />
+                  REPOSITORY CONTROL • PRODUCT MANAGEMENT
+                </p>
              </div>
           </div>
         </div>

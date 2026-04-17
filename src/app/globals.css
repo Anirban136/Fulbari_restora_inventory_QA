@@ -63,10 +63,10 @@
   --primary-foreground: oklch(1 0 0);
   
   --secondary: oklch(0.95 0.01 220); /* Softest Grey */
-  --secondary-foreground: oklch(0.25 0.04 220); /* Darker for accessibility */
+  --secondary-foreground: oklch(0.2 0.04 220); /* Darker for accessibility */
   
   --muted: oklch(0.92 0.01 220);
-  --muted-foreground: oklch(0.3 0.04 220); /* Darkened significantly for readability */
+  --muted-foreground: oklch(0.2 0.04 220); /* Deep dark gray for high visibility */
   
   --accent: oklch(0.94 0.02 150 / 0.15); /* Slightly darker Emerald Tint */
   --accent-foreground: oklch(0.4 0.15 150);

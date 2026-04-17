@@ -46,20 +46,6 @@ export function UserControls({ role }: { role?: string }) {
 
   return (
     <div className="flex flex-wrap items-center gap-2 sm:gap-3 justify-end">
-      {mounted && (
-        <Button 
-          variant="outline" 
-          size="icon" 
-          onClick={() => setTheme(theme === "dark" ? "light" : "dark")} 
-          className="h-9 w-9 border-border text-foreground/70 hover:text-foreground hover:bg-muted focus-visible:ring-1 focus-visible:ring-ring backdrop-blur-md shadow-sm transition-colors relative flex items-center justify-center shrink-0"
-          title="Toggle theme"
-        >
-          <Sun className="h-4 w-4 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
-          <Moon className="absolute h-4 w-4 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
-          <span className="sr-only">Toggle theme</span>
-        </Button>
-      )}
-
       {isOwner && (
         <Dialog open={isOpen} onOpenChange={setIsOpen}>
           <DialogTrigger className="inline-flex items-center justify-center rounded-md text-sm font-bold transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:opacity-50 disabled:pointer-events-none ring-offset-background border border-input hover:bg-muted h-9 px-4 py-2 border-border text-foreground/70 hover:text-foreground backdrop-blur-md shadow-sm">

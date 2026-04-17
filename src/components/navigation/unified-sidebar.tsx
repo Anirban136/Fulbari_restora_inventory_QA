@@ -22,11 +22,14 @@ import {
   ShieldCheck,
   AlertTriangle,
   Trash2,
-  Tags
+  Tags,
+  Sun,
+  Moon
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { UserControls } from "@/components/user-controls"
 import { cn } from "@/lib/utils"
+import { useTheme } from "next-themes"
 
 interface NavItem {
   name: string
@@ -39,9 +42,13 @@ export function UnifiedSidebar({ user }: { user: any }) {
   const [isOpen, setIsOpen] = useState(false)
   const pathname = usePathname()
 
+  const { theme, setTheme } = useTheme()
+  const [mounted, setMounted] = useState(false)
+
   // Close sidebar when route changes
   useEffect(() => {
     setIsOpen(false)
+    setMounted(true)
   }, [pathname])
 
   const navItems: NavItem[] = [
@@ -72,9 +79,20 @@ export function UnifiedSidebar({ user }: { user: any }) {
       <div className="lg:hidden fixed top-0 left-0 right-0 h-20 px-8 flex items-center justify-between border-b border-border bg-background/80 backdrop-blur-3xl z-[45] shadow-2xl">
         <Link href="/dashboard" className="flex flex-col group active:scale-95 transition-transform">
           <h1 className="text-3xl font-black text-emerald-500 group-hover:text-emerald-400 tracking-tighter leading-none uppercase transition-colors">FULBARI</h1>
-          <p className="text-[9px] font-black tracking-[0.4em] uppercase text-muted-foreground mt-2 opacity-60">Operations Unit</p>
+          <p className="text-[9px] font-black tracking-[0.4em] uppercase text-muted-foreground mt-2 opacity-100">Operations Unit</p>
         </Link>
         <div className="flex items-center gap-4">
+          {mounted && (
+            <Button 
+              variant="outline" 
+              size="icon" 
+              onClick={() => setTheme(theme === "dark" ? "light" : "dark")} 
+              className="rounded-[1rem] w-12 h-12 border-emerald-500/20 bg-emerald-500/10 text-emerald-400 shadow-xl active:scale-90 transition-all flex items-center justify-center p-0"
+            >
+              <Sun className="h-5 w-5 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
+              <Moon className="absolute h-5 w-5 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+            </Button>
+          )}
           <Button 
             variant="outline" 
             size="icon" 
@@ -104,11 +122,22 @@ export function UnifiedSidebar({ user }: { user: any }) {
           isOpen ? "shadow-[20px_0_60px_rgba(0,0,0,0.2)] dark:shadow-[20px_0_60px_rgba(0,0,0,0.9)]" : "shadow-none"
         )}>
           {/* Logo Section in Sidebar (Enlarged & Clickable) */}
-          <div className="p-10 border-b border-border shrink-0">
+          <div className="p-10 border-b border-border shrink-0 flex items-start justify-between">
             <Link href="/dashboard" className="group block active:scale-95 transition-transform">
                 <h1 className="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-emerald-600 to-teal-400 dark:from-emerald-400 dark:to-teal-200 tracking-tighter uppercase leading-none group-hover:from-emerald-500 group-hover:to-teal-300 transition-all">FULBARI</h1>
                 <p className="text-[10px] font-black tracking-[0.4em] uppercase text-muted-foreground mt-3 opacity-100">Operations Unit</p>
             </Link>
+            {mounted && (
+              <Button 
+                variant="outline" 
+                size="icon" 
+                onClick={() => setTheme(theme === "dark" ? "light" : "dark")} 
+                className="w-10 h-10 rounded-xl border-border bg-foreground/[0.02] text-muted-foreground hover:text-primary transition-all shadow-sm"
+              >
+                <Sun className="h-4 w-4 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
+                <Moon className="absolute h-4 w-4 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+              </Button>
+            )}
           </div>
           
           {/* User Profile Hook */}

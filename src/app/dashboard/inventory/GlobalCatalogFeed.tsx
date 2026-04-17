@@ -149,7 +149,7 @@ export function GlobalCatalogFeed({
                   {/* Stock Grid */}
                   <div className="grid grid-cols-2 gap-3 mb-4">
                     <div className="bg-foreground/5 rounded-2xl p-4 border border-border">
-                      <p className="text-[8px] font-black text-muted-foreground uppercase tracking-widest mb-1">Current Stock</p>
+                      <p className="text-[8px] font-black text-muted-foreground uppercase tracking-widest mb-1 opacity-90 dark:opacity-60">Current Stock</p>
                       <div className="flex items-end gap-2">
                          <span className={cn(
                            "text-2xl font-black tracking-tighter leading-none",
@@ -207,14 +207,14 @@ export function GlobalCatalogFeed({
           <Table>
             <TableHeader>
               <TableRow className="border-b border-border hover:bg-transparent">
-                <TableHead className="px-8 font-black text-muted-foreground/40 uppercase tracking-[0.3em] text-[10px] h-14 bg-foreground/5 sticky top-0 z-20 border-r border-border">Product Detail</TableHead>
-                <TableHead className="px-8 font-black text-muted-foreground/40 uppercase tracking-[0.3em] text-[10px] h-14 bg-foreground/5 sticky top-0 z-20 border-r border-border">Category</TableHead>
-                <TableHead className="px-8 font-black text-muted-foreground/40 uppercase tracking-[0.3em] text-[10px] h-14 bg-foreground/5 sticky top-0 z-20 text-center border-r border-border">Inventory Status</TableHead>
-                <TableHead className="px-8 font-black text-muted-foreground/40 uppercase tracking-[0.3em] text-[10px] h-14 bg-foreground/5 sticky top-0 z-20 text-center border-r border-border">Base Unit</TableHead>
-                <TableHead className="px-8 font-black text-muted-foreground/40 uppercase tracking-[0.3em] text-[10px] h-14 bg-foreground/5 sticky top-0 z-20 text-center border-r border-border">Multiplier (PCS/Box)</TableHead>
-                <TableHead className="px-8 font-black text-muted-foreground/40 uppercase tracking-[0.3em] text-[10px] h-14 bg-foreground/5 sticky top-0 z-20 text-right border-r border-border">Buy Rate</TableHead>
-                <TableHead className="px-8 font-black text-muted-foreground/40 uppercase tracking-[0.3em] text-[10px] h-14 bg-foreground/5 sticky top-0 z-20 text-right border-r border-border">Sell Rate</TableHead>
-                <TableHead className="px-8 font-black text-muted-foreground/40 uppercase tracking-[0.3em] text-[10px] h-14 bg-foreground/5 sticky top-0 z-20 text-center">Actions</TableHead>
+                <TableHead className="px-8 font-black text-muted-foreground/80 dark:text-muted-foreground/40 uppercase tracking-[0.3em] text-[10px] h-14 bg-foreground/5 sticky top-0 z-20 border-r border-border">Product Detail</TableHead>
+                <TableHead className="px-8 font-black text-muted-foreground/80 dark:text-muted-foreground/40 uppercase tracking-[0.3em] text-[10px] h-14 bg-foreground/5 sticky top-0 z-20 border-r border-border">Category</TableHead>
+                <TableHead className="px-8 font-black text-muted-foreground/80 dark:text-muted-foreground/40 uppercase tracking-[0.3em] text-[10px] h-14 bg-foreground/5 sticky top-0 z-20 text-center border-r border-border">Inventory Status</TableHead>
+                <TableHead className="px-8 font-black text-muted-foreground/80 dark:text-muted-foreground/40 uppercase tracking-[0.3em] text-[10px] h-14 bg-foreground/5 sticky top-0 z-20 text-center border-r border-border">Base Unit</TableHead>
+                <TableHead className="px-8 font-black text-muted-foreground/80 dark:text-muted-foreground/40 uppercase tracking-[0.3em] text-[10px] h-14 bg-foreground/5 sticky top-0 z-20 text-center border-r border-border">Multiplier (PCS/Box)</TableHead>
+                <TableHead className="px-8 font-black text-muted-foreground/80 dark:text-muted-foreground/40 uppercase tracking-[0.3em] text-[10px] h-14 bg-foreground/5 sticky top-0 z-20 text-right border-r border-border">Buy Rate</TableHead>
+                <TableHead className="px-8 font-black text-muted-foreground/80 dark:text-muted-foreground/40 uppercase tracking-[0.3em] text-[10px] h-14 bg-foreground/5 sticky top-0 z-20 text-right border-r border-border">Sell Rate</TableHead>
+                <TableHead className="px-8 font-black text-muted-foreground/80 dark:text-muted-foreground/40 uppercase tracking-[0.3em] text-[10px] h-14 bg-foreground/5 sticky top-0 z-20 text-center">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -318,7 +318,7 @@ export function GlobalCatalogFeed({
                           <span className="text-sm font-black text-primary drop-shadow-[0_0_10px_rgba(16,185,129,0.3)]">
                             ₹{item.sellPrice?.toFixed(2)}
                           </span>
-                          <span className="text-[9px] font-black text-muted-foreground uppercase tracking-widest mt-0.5">EST. VALUE</span>
+                          <span className="text-[9px] font-black text-muted-foreground uppercase tracking-widest mt-0.5 opacity-90 dark:opacity-60">EST. VALUE</span>
                         </div>
                       </TableCell>
 

@@ -29,7 +29,7 @@ export function OutletStockFeed({ stocks }: { stocks: any[] }) {
            </div>
            <div>
              <h3 className="text-3xl font-black text-foreground tracking-tighter uppercase leading-none">{activeOutlet} STOCK</h3>
-             <p className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.3em] mt-2 opacity-60">Real-time Deployment Capture</p>
+             <p className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.3em] mt-2 opacity-100">Real-time Deployment Capture</p>
            </div>
         </div>
         
@@ -104,7 +104,7 @@ export function OutletStockFeed({ stocks }: { stocks: any[] }) {
                 
                 <div className="relative z-10 flex justify-between items-start">
                   <div className="min-w-0 pr-4">
-                    <p className={`text-[8px] font-black uppercase tracking-[0.3em] mb-1.5 opacity-100 dark:opacity-60 truncate ${statusColor}`}>{stock.Item.category}</p>
+                    <p className={`text-[8px] font-black uppercase tracking-[0.3em] mb-1.5 opacity-100 dark:opacity-40 truncate ${statusColor}`}>{stock.Item.category}</p>
                     <p className="text-sm font-black text-foreground uppercase truncate tracking-tight group-hover/item:text-foreground transition-colors leading-tight">{stock.Item.name}</p>
                   </div>
                   <StatusIcon className={`w-5 h-5 shrink-0 ${statusColor} ${isCritical ? 'animate-bounce' : ''}`} />

@@ -131,7 +131,7 @@ export default async function DashboardOverview() {
               <span className="text-primary">Dashboard</span>
               <div className="h-4 w-4 rounded-full bg-emerald-500 animate-pulse-slow shadow-[0_0_30px_#10b981]"></div>
             </h2>
-            <p className="text-muted-foreground mt-2 text-[10px] lg:text-sm font-black uppercase tracking-[0.4em] opacity-60">
+            <p className="text-muted-foreground mt-2 text-[10px] lg:text-sm font-black uppercase tracking-[0.4em]">
               Live Flow Analysis • {new Date().toLocaleDateString('en-IN', { weekday: 'long', day: 'numeric', month: 'short' })}
             </p>
           </div>
@@ -161,10 +161,10 @@ export default async function DashboardOverview() {
                   <div className="p-3 bg-emerald-500/10 rounded-2xl group-hover:rotate-12 transition-transform">
                     <TrendingUp className="w-6 h-6 text-emerald-500" />
                   </div>
-                  <span className="text-[10px] font-black text-muted-foreground/40 uppercase tracking-[0.2em]">Hard Cash</span>
+                  <span className="text-[10px] font-black text-muted-foreground/80 dark:text-muted-foreground/40 uppercase tracking-[0.2em]">Hard Cash</span>
                 </div>
                 <div className="mt-8">
-                  <p className="text-[10px] font-black text-muted-foreground uppercase opacity-60 mb-1">Combined Collected</p>
+                  <p className="text-[10px] font-black text-muted-foreground uppercase opacity-80 mb-1">Combined Collected</p>
                   <p className="text-3xl font-black text-foreground">₹{chaiCafeCash.toFixed(0)}</p>
                 </div>
              </div>
@@ -174,10 +174,10 @@ export default async function DashboardOverview() {
                   <div className="p-3 bg-blue-500/10 rounded-2xl group-hover:rotate-12 transition-transform">
                     <CreditCard className="w-6 h-6 text-blue-500" />
                   </div>
-                  <span className="text-[10px] font-black text-muted-foreground/40 uppercase tracking-[0.2em]">Digital</span>
+                  <span className="text-[10px] font-black text-muted-foreground/80 dark:text-muted-foreground/40 uppercase tracking-[0.2em]">Digital</span>
                 </div>
                 <div className="mt-8">
-                  <p className="text-[10px] font-black text-muted-foreground uppercase opacity-60 mb-1">Combined UPI</p>
+                  <p className="text-[10px] font-black text-muted-foreground uppercase opacity-80 mb-1">Combined UPI</p>
                   <p className="text-3xl font-black text-foreground">₹{chaiCafeDigital.toFixed(0)}</p>
                 </div>
              </div>
@@ -188,10 +188,10 @@ export default async function DashboardOverview() {
                   <div className="p-3 bg-amber-500/10 rounded-2xl group-hover:rotate-12 transition-transform">
                     <Coffee className="w-6 h-6 text-amber-500" />
                   </div>
-                  <span className="text-[10px] font-black text-muted-foreground/40 uppercase tracking-[0.2em]">Cafe Branch</span>
+                  <span className="text-[10px] font-black text-muted-foreground/80 dark:text-muted-foreground/40 uppercase tracking-[0.2em]">Cafe Branch</span>
                 </div>
                 <div className="mt-6">
-                  <p className="text-[10px] font-black text-muted-foreground uppercase opacity-60 mb-1">Volume</p>
+                  <p className="text-[10px] font-black text-muted-foreground uppercase opacity-80 mb-1">Volume</p>
                   <p className="text-3xl font-black text-foreground mb-4">₹{cafeTotal.toFixed(0)}</p>
                   <div className="flex justify-between border-t border-border pt-4">
                     <div className="flex flex-col bg-emerald-500/5 px-3 py-2 rounded-xl">
@@ -211,10 +211,10 @@ export default async function DashboardOverview() {
                   <div className="p-3 bg-indigo-500/10 rounded-2xl group-hover:rotate-12 transition-transform">
                     <Activity className="w-6 h-6 text-indigo-500" />
                   </div>
-                  <span className="text-[10px] font-black text-muted-foreground/40 uppercase tracking-[0.2em]">Chai Joint</span>
+                  <span className="text-[10px] font-black text-muted-foreground/80 dark:text-muted-foreground/40 uppercase tracking-[0.2em]">Chai Joint</span>
                 </div>
                 <div className="mt-6">
-                  <p className="text-[10px] font-black text-muted-foreground uppercase opacity-60 mb-1">Volume</p>
+                  <p className="text-[10px] font-black text-muted-foreground uppercase opacity-80 mb-1">Volume</p>
                   <p className="text-3xl font-black text-foreground mb-4">₹{chaiTotal.toFixed(0)}</p>
                   <div className="flex justify-between border-t border-border pt-4">
                     <div className="flex flex-col bg-emerald-500/5 px-3 py-2 rounded-xl">
@@ -241,7 +241,7 @@ export default async function DashboardOverview() {
           <div className="flex justify-between items-center mb-10">
             <div>
               <h3 className="text-2xl font-black text-foreground tracking-tight uppercase">High Selling Category</h3>
-              <p className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em] mt-1 opacity-60">Revenue Distribution</p>
+              <p className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em] mt-1 opacity-80">Revenue Distribution</p>
             </div>
             <BarChart3 className="text-primary w-8 h-8" />
           </div>
@@ -281,7 +281,7 @@ export default async function DashboardOverview() {
           <div className="flex justify-between items-center mb-10">
             <div>
               <h3 className="text-2xl font-black text-foreground tracking-tight uppercase">High Selling Product</h3>
-              <p className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em] mt-1 opacity-60">High-Velocity Items</p>
+              <p className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em] mt-1 opacity-80">High-Velocity Items</p>
             </div>
             <Crown className="text-amber-500 w-8 h-8 animate-pulse" />
           </div>

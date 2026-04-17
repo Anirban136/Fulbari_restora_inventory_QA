@@ -49,10 +49,10 @@ export function TransactionsFeed({ tabs, userRole }: { tabs: any[], userRole?: s
            <div className="p-4 bg-primary/10 rounded-[1.5rem] border border-primary/20 shadow-[0_0_20px_rgba(16,185,129,0.1)]">
              <Receipt className="text-primary w-6 h-6" />
            </div>
-           <div>
-             <h3 className="text-3xl font-black text-foreground tracking-tight uppercase">Today's Transactions</h3>
-             <p className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em] opacity-60">Live Transaction Stream</p>
-           </div>
+            <div>
+              <h3 className="text-3xl font-black text-foreground tracking-tight uppercase">Today's Transactions</h3>
+              <p className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em] opacity-90 dark:opacity-60 transition-opacity">Live Transaction Stream</p>
+            </div>
         </div>
 
         {/* Premium Filter Toggle */}
@@ -100,10 +100,10 @@ export function TransactionsFeed({ tabs, userRole }: { tabs: any[], userRole?: s
           {filteredTabs.length === 0 ? (
             <div className="text-center py-24 glass-panel rounded-[3rem] border-border bg-foreground/5 flex flex-col items-center justify-center gap-4 col-span-full">
                <Receipt className="w-12 h-12 text-muted-foreground/20" />
-               <div className="space-y-1">
-                 <p className="text-muted-foreground font-black uppercase tracking-widest opacity-40 italic">No capture detected</p>
-                 <p className="text-[10px] text-muted-foreground/30 font-bold uppercase tracking-widest">Awaiting first sync for {filter}</p>
-               </div>
+                <div className="space-y-2">
+                  <p className="text-muted-foreground font-black uppercase tracking-widest opacity-80 dark:opacity-40 italic">No capture detected</p>
+                  <p className="text-[10px] text-muted-foreground/80 dark:text-muted-foreground/30 font-bold uppercase tracking-widest">Awaiting first sync for {filter}</p>
+                </div>
             </div>
           ) : (
             filteredTabs.map(tab => (
@@ -117,11 +117,11 @@ export function TransactionsFeed({ tabs, userRole }: { tabs: any[], userRole?: s
                     <span className="text-lg font-black text-foreground truncate max-w-[150px]">{tab.customerName || "Walk-in Capture"}</span>
                   </div>
                   <div className="flex flex-col items-end gap-1">
-                    <span className="text-[10px] font-bold text-muted-foreground opacity-60 bg-foreground/5 px-2 py-1 rounded-lg">
+                    <span className="text-[10px] font-bold text-muted-foreground opacity-90 dark:opacity-60 bg-foreground/5 px-2 py-1 rounded-lg">
                       {tab.tokenNumber ? `TOKEN #${tab.tokenNumber}` : tab.closedAt ? new Date(tab.closedAt).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' }) : "N/A"}
                     </span>
                     {tab.tokenNumber && tab.closedAt && (
-                      <span className="text-[8px] font-bold text-muted-foreground/40 uppercase tracking-widest">
+                      <span className="text-[8px] font-bold text-muted-foreground/80 dark:text-muted-foreground/40 uppercase tracking-widest">
                         {new Date(tab.closedAt).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' })}
                       </span>
                     )}
@@ -190,13 +190,13 @@ export function TransactionsFeed({ tabs, userRole }: { tabs: any[], userRole?: s
                        </span>
                     </td>
                     <td className="p-8">
-                       {tab.tokenNumber ? (
-                         <span className="px-3 py-1 bg-primary/10 border border-primary/20 rounded-lg text-[10px] font-black text-primary tracking-widest">
-                           #{tab.tokenNumber}
-                         </span>
-                       ) : (
-                         <span className="text-[10px] font-bold text-muted-foreground/30">---</span>
-                       )}
+                        {tab.tokenNumber ? (
+                          <span className="px-3 py-1 bg-primary/10 border border-primary/20 rounded-lg text-[10px] font-black text-primary tracking-widest">
+                            #{tab.tokenNumber}
+                          </span>
+                        ) : (
+                          <span className="text-[10px] font-bold text-muted-foreground/60 dark:text-muted-foreground/30">---</span>
+                        )}
                     </td>
                     <td className="p-8 relative">
                       <div className="flex items-center gap-4">
