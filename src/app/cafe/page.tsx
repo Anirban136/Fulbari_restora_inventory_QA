@@ -257,6 +257,7 @@ export default async function CafeDashboard() {
                                      <PrintReceiptButton
                                        outletName={cafe.name}
                                        tokenNumber={tab.tokenNumber}
+                                       tableName={tab.tableName}
                                        customerName={tab.customerName}
                                        tabId={tab.id}
                                        items={tab.Items}

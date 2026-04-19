@@ -60,3 +60,16 @@ export async function cancelTab(tabId: string) {
   revalidatePath("/chai")
   revalidatePath("/dashboard")
 }
+
+export async function finalizeTab(tabId: string) {
+  await prisma.tab.update({
+    where: { id: tabId },
+    data: { status: "CLOSED" }
+  })
+  
+  revalidatePath("/tabs")
+  revalidatePath("/cafe")
+  revalidatePath("/chai")
+  revalidatePath("/dashboard")
+}
+

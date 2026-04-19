@@ -16,6 +16,7 @@ const PRINTER_SERVICES = [
 interface PrintReceiptButtonProps {
   outletName: string
   tokenNumber: number | null
+  tableName: string | null
   customerName: string | null
   tabId: string
   items: Array<{
@@ -34,6 +35,7 @@ interface PrintReceiptButtonProps {
 function generateReceiptBytes(data: {
   outletName: string
   tokenNumber: number
+  tableName: string | null
   customerName: string
   tabId: string
   items: Array<{ name: string; quantity: number; price: number }>
@@ -68,11 +70,16 @@ function generateReceiptBytes(data: {
   // Header
   r += STAR + LF
   r += LF
-  r += center('FULBARI CAFE') + LF
+  r += LF
+  r += center(data.outletName.toUpperCase()) + LF
   r += center('Old Delhi Road, Sankar Nursery') + LF
   r += center('Rajyadharpur, Serampore') + LF
   r += center('Ph: 9432750140') + LF
   r += LF
+  if (data.tableName) {
+    r += center('TABLE: ' + data.tableName) + LF
+    r += LF
+  }
   r += STAR + LF
 
   // Kitchen badge
@@ -148,7 +155,7 @@ function generateReceiptBytes(data: {
 }
 
 export function PrintReceiptButton({
-  outletName, tokenNumber, customerName, tabId,
+  outletName, tokenNumber, tableName, customerName, tabId,
   items, totalAmount, paymentMode, closedAt,
   accentColor = "amber", isSidebar = false
 }: PrintReceiptButtonProps) {
@@ -277,7 +284,10 @@ export function PrintReceiptButton({
       name: item.MenuItem.name, quantity: item.quantity, price: item.priceAtTime
     }))
     const baseData = {
-      outletName, tokenNumber: tokenNumber || 0, customerName: customerName || 'Walk-in',
+      outletName, 
+      tokenNumber: tokenNumber || 0, 
+      tableName: tableName || null,
+      customerName: customerName || 'Walk-in',
       tabId, items: receiptItems, totalAmount, paymentMode: paymentMode || 'N/A', closedAt: dateObj,
     }
 

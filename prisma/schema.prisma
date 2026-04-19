@@ -9,40 +9,37 @@ datasource db {
 }
 
 model User {
-  id        String   @id @default(cuid())
-  name      String
-  email     String?  @unique
-  pin       String   @unique // Quick PIN login for staff
-  role      String   // OWNER, INV_MANAGER, CAFE_STAFF, CHAI_STAFF, REST_STAFF
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  Tabs      Tab[]    // Tabs created by this user
-  Dispatches InventoryLedger[] // Dispatches approved by this user
-  VendorPayments VendorPayment[] // Payments made to vendors
+  id             String            @id @default(cuid())
+  name           String
+  email          String?           @unique
+  pin            String            @unique
+  role           String
+  createdAt      DateTime          @default(now())
+  updatedAt      DateTime          @updatedAt
+  Dispatches     InventoryLedger[]
+  Tabs           Tab[]
+  VendorPayments VendorPayment[]
 }
 
 model Outlet {
-  id        String   @id @default(cuid())
-  name      String   // RESTAURANT, CAFE, CHAI_JOINT
+  id        String            @id @default(cuid())
+  name      String
   type      String
-  createdAt DateTime @default(now())
-  
+  createdAt DateTime          @default(now())
+  Ledger    InventoryLedger[]
+  Menus     MenuItem[]
   Stock     OutletStock[]
   Tabs      Tab[]
-  Menus     MenuItem[]
-  Ledger    InventoryLedger[]
 }
 
 model Vendor {
-  id        String   @id @default(cuid())
+  id        String            @id @default(cuid())
   name      String
   contact   String?
   email     String?
   address   String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
+  createdAt DateTime          @default(now())
+  updatedAt DateTime          @updatedAt
   Ledger    InventoryLedger[]
   Payments  VendorPayment[]
 }
@@ -54,105 +51,99 @@ model VendorPayment {
   notes     String?
   paidBy    String
   createdAt DateTime @default(now())
-
-  Vendor    Vendor   @relation(fields: [vendorId], references: [id], onDelete: Cascade)
   User      User     @relation(fields: [paidBy], references: [id])
+  Vendor    Vendor   @relation(fields: [vendorId], references: [id], onDelete: Cascade)
 }
 
 model Item {
-  id            String   @id @default(cuid())
-  name          String
-  category      String   @default("Uncategorized")
-  unit          String   // kg, litre, pieces, packets
-  currentStock  Float    @default(0) // Central inventory stock
-  costPerUnit   Float?
-  sellPrice     Float?   // Selling price per unit
-  minStock      Float    @default(0) // Threshold for low stock warning
-  piecesPerBox  Int?     // For items like Cigarettes (e.g. 20 pieces in a box)
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-
-  Ledger        InventoryLedger[]
-  OutletStock   OutletStock[]
-  MenuItems     MenuItem[] // If this item maps to a menu item directly (e.g., Samosa)
-  ingredients   MenuItemIngredient[]
+  id           String               @id @default(cuid())
+  name         String
+  category     String               @default("Uncategorized")
+  unit         String
+  currentStock Float                @default(0)
+  costPerUnit  Float?
+  sellPrice    Float?
+  minStock     Float                @default(0)
+  piecesPerBox Int?
+  createdAt    DateTime             @default(now())
+  updatedAt    DateTime             @updatedAt
+  Ledger       InventoryLedger[]
+  MenuItems    MenuItem[]
+  ingredients  MenuItemIngredient[]
+  OutletStock  OutletStock[]
 }
 
 model InventoryLedger {
-  id          String   @id @default(cuid())
-  type        String   // STOCK_IN, DISPATCH, CONSUMPTION
-  itemId      String
-  quantity    Float
-  outletId    String?  // Null if STOCK_IN, populated if DISPATCH or CONSUMPTION
-  vendorId    String?  // Specifically for STOCK_IN tracking
-  userId      String   // Who did this action
-  notes       String?
-  createdAt   DateTime @default(now())
-
-  Item        Item     @relation(fields: [itemId], references: [id])
-  User        User     @relation(fields: [userId], references: [id])
-  Vendor      Vendor?  @relation(fields: [vendorId], references: [id])
-  Outlet      Outlet?  @relation(fields: [outletId], references: [id])
+  id        String   @id @default(cuid())
+  type      String
+  itemId    String
+  quantity  Float
+  outletId  String?
+  vendorId  String?
+  userId    String
+  notes     String?
+  createdAt DateTime @default(now())
+  Item      Item     @relation(fields: [itemId], references: [id])
+  Outlet    Outlet?  @relation(fields: [outletId], references: [id])
+  User      User     @relation(fields: [userId], references: [id])
+  Vendor    Vendor?  @relation(fields: [vendorId], references: [id])
 }
 
 model OutletStock {
-  id          String   @id @default(cuid())
-  outletId    String
-  itemId      String
-  quantity    Float    @default(0)
-  updatedAt   DateTime @updatedAt
-
-  Outlet      Outlet   @relation(fields: [outletId], references: [id])
-  Item        Item     @relation(fields: [itemId], references: [id])
+  id        String   @id @default(cuid())
+  outletId  String
+  itemId    String
+  quantity  Float    @default(0)
+  updatedAt DateTime @updatedAt
+  Item      Item     @relation(fields: [itemId], references: [id])
+  Outlet    Outlet   @relation(fields: [outletId], references: [id])
 
   @@unique([outletId, itemId])
 }
 
 model MenuItem {
-  id          String   @id @default(cuid())
+  id          String               @id @default(cuid())
   outletId    String
   name        String
   price       Float
   categoryId  String?
-  isAvailable Boolean  @default(true)
-  itemId      String?  // Optional relation to global Item catalog
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
-  Outlet      Outlet   @relation(fields: [outletId], references: [id])
-  Item        Item?    @relation(fields: [itemId], references: [id])
-  TabItems    TabItem[]
+  isAvailable Boolean              @default(true)
+  itemId      String?
+  createdAt   DateTime             @default(now())
+  updatedAt   DateTime             @updatedAt
+  Item        Item?                @relation(fields: [itemId], references: [id])
+  Outlet      Outlet               @relation(fields: [outletId], references: [id])
   ingredients MenuItemIngredient[]
+  TabItems    TabItem[]
 }
 
 model MenuItemIngredient {
   id         String   @id @default(cuid())
   menuItemId String
   itemId     String
-  quantity   Float    // e.g. 2 slices or 1 patty
-
-  MenuItem   MenuItem @relation(fields: [menuItemId], references: [id], onDelete: Cascade)
+  quantity   Float
   Item       Item     @relation(fields: [itemId], references: [id])
+  MenuItem   MenuItem @relation(fields: [menuItemId], references: [id], onDelete: Cascade)
 }
 
 model Tab {
-  id            String   @id @default(cuid())
-  outletId      String
-  userId        String   // Staff who opened it
-  customerName  String?
-  tableName     String?  // specifically for CAFE tables
-  tokenNumber   Int?     // Daily auto-incrementing token for receipts
-  status        String   // OPEN, CLOSED, CANCELLED
-  totalAmount       Float    @default(0)
-  paymentMode       String?  // CASH, ONLINE, SPLIT
-  splitCashAmount   Float?   // Optional explicit value for split mode
-  splitOnlineAmount Float?   // Optional explicit value for split mode
-  openedAt          DateTime @default(now())
+  id                String    @id @default(cuid())
+  outletId          String
+  userId            String
+  customerName      String?
+  tableName         String?
+  tokenNumber       Int?
+  status            String
+  totalAmount       Float     @default(0)
+  paymentMode       String?
+  openedAt          DateTime  @default(now())
   closedAt          DateTime?
-
-  Outlet        Outlet   @relation(fields: [outletId], references: [id])
-  User          User     @relation(fields: [userId], references: [id])
-  Items         TabItem[]
+  splitCashAmount   Float?
+  splitOnlineAmount Float?
+  totalPaid         Float     @default(0)
+  Outlet            Outlet    @relation(fields: [outletId], references: [id])
+  User              User      @relation(fields: [userId], references: [id])
+  Items             TabItem[]
 }
 
 model TabItem {
@@ -160,9 +151,17 @@ model TabItem {
   tabId       String
   menuItemId  String
   quantity    Int      @default(1)
-  priceAtTime Float    // To lock in the price when ordered
+  priceAtTime Float
   addedAt     DateTime @default(now())
-
-  Tab         Tab      @relation(fields: [tabId], references: [id])
+  isPaid      Boolean  @default(false)
   MenuItem    MenuItem @relation(fields: [menuItemId], references: [id])
+  Tab         Tab      @relation(fields: [tabId], references: [id])
+}
+
+model daily_transaction_snapshot {
+  day               DateTime @id @db.Date
+  total_cash        Decimal  @default(0) @db.Decimal(18, 2)
+  total_card_upi    Decimal  @default(0) @db.Decimal(18, 2)
+  total_amount      Decimal  @default(0) @db.Decimal(18, 2)
+  last_refreshed_at DateTime @default(now()) @db.Timestamptz(6)
 }

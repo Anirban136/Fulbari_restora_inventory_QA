@@ -75,6 +75,7 @@ export default async function TabTerminal({ params }: { params: Promise<{ tabId:
                 <PrintReceiptButton
                   outletName={tab.Outlet.name}
                   tokenNumber={tab.tokenNumber}
+                  tableName={tab.tableName}
                   customerName={tab.customerName}
                   tabId={tab.id}
                   items={tab.Items}
@@ -153,15 +154,24 @@ export default async function TabTerminal({ params }: { params: Promise<{ tabId:
           ) : (
             <ul className="space-y-3">
               {tab.Items.map((item: any) => (
-                <li key={item.id} className="p-2 sm:p-4 flex gap-2 sm:gap-4 bg-foreground/5 border border-border rounded-2xl animate-in slide-in-from-right-4 duration-300 hover:border-primary/20 transition-colors">
+                <li key={item.id} className={cn(
+                  "p-2 sm:p-4 flex gap-2 sm:gap-4 bg-foreground/5 border border-border rounded-2xl animate-in slide-in-from-right-4 duration-300 hover:border-primary/20 transition-colors relative",
+                  item.isPaid && "opacity-50 grayscale-[0.5] bg-foreground/[0.02] border-dashed"
+                )}>
+                  {item.isPaid && (
+                    <div className="absolute top-2 right-2 flex items-center gap-1 text-[8px] sm:text-[10px] font-bold text-emerald-500 bg-emerald-500/10 px-2 py-1 rounded-full border border-emerald-500/20 z-10">
+                      <CheckCircle2 className="w-3 h-3" /> PAID
+                    </div>
+                  )}
                   <div className="flex items-center shrink-0">
                     <div className="flex flex-col sm:flex-row items-center bg-background/50 dark:bg-black/40 rounded-xl sm:rounded-2xl overflow-hidden border border-border shadow-inner group/adjuster">
                       <form action={adjustTabItemQuantity.bind(null, item.id, tab.id, -1, item.priceAtTime)}>
                         <button 
                           type="submit" 
+                          disabled={item.isPaid}
                           className={cn(
                             "p-2 sm:p-3 transition-all active:scale-90 bg-foreground/5 border-b sm:border-b-0 sm:border-r border-border",
-                            isCafe ? "hover:bg-orange-500 hover:text-orange-950" : "hover:bg-sky-500 hover:text-sky-950"
+                            item.isPaid ? "cursor-not-allowed opacity-20" : isCafe ? "hover:bg-orange-500 hover:text-orange-950" : "hover:bg-sky-500 hover:text-sky-950"
                           )}
                         >
                           <Minus className="w-3 h-3 sm:w-4 sm:h-4" />
@@ -176,9 +186,10 @@ export default async function TabTerminal({ params }: { params: Promise<{ tabId:
                       <form action={adjustTabItemQuantity.bind(null, item.id, tab.id, 1, item.priceAtTime)}>
                         <button 
                           type="submit" 
+                          disabled={item.isPaid}
                           className={cn(
                             "p-2 sm:p-3 transition-all active:scale-90 bg-foreground/5 border-t sm:border-t-0 sm:border-l border-border",
-                            isCafe ? "hover:bg-orange-500 hover:text-orange-950" : "hover:bg-sky-500 hover:text-sky-950"
+                            item.isPaid ? "cursor-not-allowed opacity-20" : isCafe ? "hover:bg-orange-500 hover:text-orange-950" : "hover:bg-sky-500 hover:text-sky-950"
                           )}
                         >
                           <Plus className="w-3 h-3 sm:w-4 sm:h-4" />
@@ -208,9 +219,10 @@ export default async function TabTerminal({ params }: { params: Promise<{ tabId:
                         <form action={adjustTabItemQuantity.bind(null, item.id, tab.id, item.MenuItem.Item.piecesPerBox, item.priceAtTime)}>
                           <button
                             type="submit"
+                            disabled={item.isPaid}
                             className={cn(
                               "px-2 py-1 rounded-md text-[10px] font-black tracking-wider uppercase transition-all active:scale-90 border",
-                              isCafe
+                              item.isPaid ? "cursor-not-allowed opacity-20" : isCafe
                                 ? "border-orange-500/40 text-orange-200 hover:bg-orange-500/25"
                                 : "border-sky-500/40 text-sky-200 hover:bg-sky-500/25"
                             )}
@@ -240,9 +252,11 @@ export default async function TabTerminal({ params }: { params: Promise<{ tabId:
         <CheckoutSidebar
           tabId={tab.id}
           totalAmount={tab.totalAmount}
+          totalPaid={tab.totalPaid}
           isCafe={isCafe}
           outletName={tab.Outlet.name}
           tokenNumber={tab.tokenNumber}
+          tableName={tab.tableName}
           customerName={tab.customerName || "Walk-in"}
           items={tab.Items}
         />

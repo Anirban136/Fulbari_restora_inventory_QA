@@ -5,14 +5,17 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Banknote, CreditCard, SplitSquareHorizontal, Receipt, Printer, CheckCircle2 } from "lucide-react"
 import { PrintReceiptButton } from "@/components/PrintReceiptButton"
-import { closeTab } from "./actions"
+import { toast } from "sonner"
+import { closeTab, assignTokenToTab } from "./actions"
 
 interface CheckoutSidebarProps {
   tabId: string
   totalAmount: number
+  totalPaid: number
   isCafe: boolean
   outletName: string
   tokenNumber: number | null
+  tableName: string | null
   customerName: string | null
   items: any[]
 }
@@ -20,8 +23,8 @@ interface CheckoutSidebarProps {
 const BILL_KEY = (tabId: string) => `bill_generated_${tabId}`
 
 export function CheckoutSidebar({
-  tabId, totalAmount, isCafe,
-  outletName, tokenNumber, customerName, items
+  tabId, totalAmount, totalPaid, isCafe,
+  outletName, tokenNumber, tableName, customerName, items
 }: CheckoutSidebarProps) {
   // Initialise from localStorage so state survives back-navigation
   const [billGenerated, setBillGenerated] = useState<boolean>(() => {
@@ -39,23 +42,20 @@ export function CheckoutSidebar({
   }, [billGenerated, tabId])
 
   const [paymentMode, setPaymentMode] = useState<"CASH" | "ONLINE" | "SPLIT">("CASH")
+  const [isHold, setIsHold] = useState(false)
   const [splitCash, setSplitCash] = useState<string>("")
   const [splitOnline, setSplitOnline] = useState<string>("")
 
+  const unpaidItems = items.filter(item => !item.isPaid)
+  const dueAmount = Math.max(0, totalAmount - totalPaid)
+
   const handleCashChange = (val: string) => {
     setSplitCash(val)
-    const cw = parseFloat(val)
-    if (!isNaN(cw) && cw <= totalAmount) {
-      setSplitOnline((totalAmount - cw).toFixed(2))
-    } else {
-      setSplitOnline("")
-    }
+    const cash = parseFloat(val) || 0
+    setSplitOnline((dueAmount - cash).toFixed(2))
   }
 
-  const isSplitValid = paymentMode !== "SPLIT" || (
-    splitCash !== "" && splitOnline !== "" && 
-    Math.abs(parseFloat(splitCash) + parseFloat(splitOnline) - totalAmount) < 0.01
-  )
+  const isSplitValid = paymentMode !== "SPLIT" || (parseFloat(splitCash) + parseFloat(splitOnline) === dueAmount)
 
   // Helper that also clears storage (used for "Edit Order" button)
   const clearBill = () => {
@@ -67,12 +67,18 @@ export function CheckoutSidebar({
     <div className="p-3 sm:p-8 bg-background/80 dark:bg-card border-t lg:border-t-0 border-border z-10 backdrop-blur-xl shrink-0">
       <div className="flex justify-between items-center mb-4 sm:mb-8">
         <span className="text-muted-foreground text-xs sm:text-sm font-bold tracking-widest uppercase">Total Due</span>
-        <span className="text-2xl sm:text-5xl font-black text-foreground text-glow">₹{totalAmount.toFixed(2)}</span>
+        <span className="text-3xl sm:text-5xl font-black text-foreground tracking-tighter">
+          ₹{dueAmount.toFixed(2)}
+        </span>
       </div>
 
       {!billGenerated ? (
         <Button 
-          onClick={() => setBillGenerated(true)}
+          onClick={async () => {
+             // Assign token in DB first (especially for kitchen copy)
+             await assignTokenToTab(tabId)
+             setBillGenerated(true)
+          }}
           disabled={items.length === 0}
           className={`w-full h-12 sm:h-16 text-sm sm:text-xl font-black tracking-widest uppercase ${isCafe ? "bg-orange-600 hover:bg-orange-500 shadow-[0_0_40px_-5px_rgba(249,115,22,0.5)]" : "bg-sky-600 hover:bg-sky-500 shadow-[0_0_40px_-5px_rgba(14,165,233,0.5)]"} text-white rounded-xl sm:rounded-2xl transition-all active:scale-[0.98] group`}
         >
@@ -90,10 +96,11 @@ export function CheckoutSidebar({
             <PrintReceiptButton
               outletName={outletName}
               tokenNumber={tokenNumber}
+              tableName={tableName}
               customerName={customerName}
               tabId={tabId}
-              items={items}
-              totalAmount={totalAmount}
+              items={unpaidItems}
+              totalAmount={dueAmount}
               paymentMode="UNPAID"
               closedAt={null}
               accentColor={isCafe ? "amber" : "sky"}
@@ -103,6 +110,7 @@ export function CheckoutSidebar({
 
           <form action={closeTab} className="space-y-6">
             <input type="hidden" name="tabId" value={tabId} />
+            <input type="hidden" name="isHold" value={isHold ? "true" : "false"} />
             
             <div className="space-y-3">
               <div className="flex items-center justify-between">
@@ -156,13 +164,30 @@ export function CheckoutSidebar({
               )}
             </div>
             
-            <Button 
-              type="submit" 
-              disabled={!isSplitValid}
-              className={`w-full h-12 sm:h-16 text-sm sm:text-xl font-black tracking-widest uppercase bg-emerald-600 hover:bg-emerald-500 shadow-[0_0_40px_-5px_rgba(16,185,129,0.5)] text-white rounded-xl sm:rounded-2xl transition-all active:scale-[0.98] ${!isSplitValid ? "opacity-50 cursor-not-allowed" : "animate-pulse"}`}
-            >
-              Step 3: Close Tab
-            </Button>
+            <div className="grid grid-cols-2 gap-4">
+              <Button 
+                type="submit" 
+                onClick={() => {
+                  setIsHold(true)
+                  toast.success("Payment Successful - Order On Hold")
+                }}
+                disabled={!isSplitValid || dueAmount <= 0}
+                className={`h-12 sm:h-16 text-[10px] sm:text-base font-black tracking-widest uppercase bg-amber-600 hover:bg-amber-500 shadow-[0_0_40px_-5px_rgba(245,158,11,0.5)] text-white rounded-xl sm:rounded-2xl transition-all active:scale-[0.98] ${(!isSplitValid || dueAmount <= 0) ? "opacity-50 cursor-not-allowed" : ""}`}
+              >
+                Pay & Hold
+              </Button>
+              <Button 
+                type="submit" 
+                onClick={() => {
+                  setIsHold(false)
+                  toast.success("Payment Successful - Tab Closed")
+                }}
+                disabled={!isSplitValid || dueAmount <= 0}
+                className={`h-12 sm:h-16 text-[10px] sm:text-base font-black tracking-widest uppercase bg-emerald-600 hover:bg-emerald-500 shadow-[0_0_40px_-5px_rgba(16,185,129,0.5)] text-white rounded-xl sm:rounded-2xl transition-all active:scale-[0.98] ${(!isSplitValid || dueAmount <= 0) ? "opacity-50 cursor-not-allowed" : "animate-pulse"}`}
+              >
+                Pay & Close
+              </Button>
+            </div>
           </form>
         </div>
       )}

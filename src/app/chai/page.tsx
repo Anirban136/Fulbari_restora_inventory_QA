@@ -257,6 +257,7 @@ export default async function ChaiDashboard() {
                                      <PrintReceiptButton
                                        outletName={chaiJoint.name}
                                        tokenNumber={tab.tokenNumber}
+                                       tableName={tab.tableName}
                                        customerName={tab.customerName}
                                        tabId={tab.id}
                                        items={tab.Items}

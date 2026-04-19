@@ -1,9 +1,11 @@
 "use client"
 
 import { useState, useTransition } from "react"
-import { createTab, cancelTab } from "@/app/tabs/actions"
+import { createTab, cancelTab, finalizeTab } from "@/app/tabs/actions"
 import Link from "next/link"
-import { Loader2, Plus, Users, Utensils, Coffee, X } from "lucide-react"
+import { Loader2, Plus, Users, Utensils, Coffee, X, CheckSquare } from "lucide-react"
+import { toast } from "sonner"
+import { useRouter } from "next/navigation"
 
 interface TableGridProps {
   activeTabs: any[]
@@ -13,8 +15,10 @@ interface TableGridProps {
 
 export function TableGrid({ activeTabs, outletId, isCafe }: TableGridProps) {
   const [isPending, startTransition] = useTransition()
+  const router = useRouter()
   const [loadingTable, setLoadingTable] = useState<string | null>(null)
   const [cancellingTable, setCancellingTable] = useState<string | null>(null)
+  const [finalizingTable, setFinalizingTable] = useState<string | null>(null)
 
   const handleOpenTable = (tableName: string) => {
     setLoadingTable(tableName)
@@ -35,17 +39,42 @@ export function TableGrid({ activeTabs, outletId, isCafe }: TableGridProps) {
     e.preventDefault()
     e.stopPropagation()
     
-    if (!window.confirm(`Are you sure you want to cancel Table ${tableName} and make it vacant?`)) return
+    // Using a simpler confirm or skipping for test
+    if (!window.confirm(`Cancel Table ${tableName}?`)) return
 
     setCancellingTable(tableName)
     startTransition(async () => {
       try {
         await cancelTab(tabId)
+        toast.error(`Table ${tableName} has been cancelled`)
+        router.refresh()
       } catch (error) {
         console.error("Failed to cancel table:", error)
         alert("Failed to cancel table")
       } finally {
         setCancellingTable(null)
+      }
+    })
+  }
+
+  const handleFinalize = (e: React.MouseEvent, tabId: string, tableName: string) => {
+    e.preventDefault()
+    e.stopPropagation()
+    
+    // Removing confirm for the success button to make it one-click as requested
+    // "once the food is delivered then manager will mark it as success"
+
+    setFinalizingTable(tableName)
+    startTransition(async () => {
+      try {
+        await finalizeTab(tabId)
+        toast.success(`Table ${tableName} marked as served!`)
+        router.refresh()
+      } catch (error) {
+        console.error("Failed to finalize table:", error)
+        alert("Failed to finalize table")
+      } finally {
+        setFinalizingTable(null)
       }
     })
   }
@@ -58,8 +87,10 @@ export function TableGrid({ activeTabs, outletId, isCafe }: TableGridProps) {
       {tables.map((tableNum) => {
         const activeTab = activeTabs.find((t) => t.tableName === tableNum)
         const isOccupied = !!activeTab
+        const isPaidHold = activeTab?.status === "PAID_HOLD"
         const isLoading = loadingTable === tableNum && isPending
         const isCancelling = cancellingTable === tableNum && isPending
+        const isFinalizing = finalizingTable === tableNum && isPending
 
         if (isOccupied) {
           const itemsCount = activeTab.Items.reduce((acc: number, item: any) => acc + item.quantity, 0)
@@ -67,49 +98,62 @@ export function TableGrid({ activeTabs, outletId, isCafe }: TableGridProps) {
           return (
             <div key={tableNum} className="relative group h-44 animate-in fade-in zoom-in duration-500">
                 <Link href={`/tabs/${activeTab.id}`} className="block h-full">
-                    <div className="relative h-full bg-gradient-to-br from-red-600/20 to-transparent border-2 border-red-500/40 hover:border-red-500 rounded-[2rem] p-5 transition-all duration-500 hover:shadow-[0_20px_50px_-10px_rgba(239,68,68,0.4)] hover:-translate-y-2 flex flex-col justify-between overflow-hidden backdrop-blur-md bg-background/50">
+                    <div className={`relative h-full ${isPaidHold ? "bg-emerald-500/20 border-emerald-500 shadow-[0_0_30px_-10px_rgba(16,185,129,0.4)]" : "bg-red-600/20 border-red-500/40"} border-2 hover:${isPaidHold ? "border-emerald-400" : "border-red-500"} rounded-[2rem] p-5 transition-all duration-500 hover:shadow-[0_20px_50px_-10px_${isPaidHold ? "rgba(16,185,129,0.5)" : "rgba(239,68,68,0.4)"}] hover:-translate-y-2 flex flex-col justify-between overflow-hidden backdrop-blur-md bg-background/50`}>
                         
                         {/* Decorator */}
-                        <div className="absolute -right-4 -top-4 w-24 h-24 bg-red-600/10 rounded-full blur-2xl group-hover:bg-red-500/20 transition-all duration-500"></div>
+                        <div className={`absolute -right-4 -top-4 w-24 h-24 ${isPaidHold ? "bg-emerald-500/10" : "bg-red-600/10"} rounded-full blur-2xl group-hover:${isPaidHold ? "bg-emerald-500/20" : "bg-red-500/20"} transition-all duration-500`}></div>
                         
                         <div className="flex justify-between items-start relative z-10">
                             <div className="flex flex-col">
-                                <span className="text-3xl font-black text-foreground group-hover:text-red-500 transition-colors">T-{tableNum}</span>
+                                <span className={`text-3xl font-black text-foreground group-hover:${isPaidHold ? "text-emerald-500" : "text-red-500"} transition-colors`}>T-{tableNum}</span>
                                 <div className="flex items-center gap-1.5 mt-1">
-                                    <div className="w-2 h-2 rounded-full bg-red-500 animate-pulse"></div>
-                                    <span className="text-[10px] font-black text-red-500 tracking-[0.2em] uppercase">Occupied</span>
+                                    <div className={`w-2 h-2 rounded-full ${isPaidHold ? "bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.5)]" : "bg-red-500 animate-pulse"}`}></div>
+                                    <span className={`text-[10px] font-black ${isPaidHold ? "text-emerald-500" : "text-red-500"} tracking-[0.2em] uppercase`}>{isPaidHold ? "Paid - Serv" : "Occupied"}</span>
                                 </div>
                             </div>
-                            <div className="bg-foreground/10 backdrop-blur-md border border-border p-2 rounded-xl group-hover:border-red-500/50 transition-colors">
-                                {isCafe ? <Utensils className="w-5 h-5 text-red-500" /> : <Coffee className="w-5 h-5 text-red-500" />}
+                            <div className={`bg-foreground/10 backdrop-blur-md border border-border p-2 rounded-xl group-hover:${isPaidHold ? "border-emerald-500/50" : "border-red-500/50"} transition-colors`}>
+                                {isCafe ? <Utensils className={`w-5 h-5 ${isPaidHold ? "text-emerald-500" : "text-red-500"}`} /> : <Coffee className={`w-5 h-5 ${isPaidHold ? "text-emerald-500" : "text-red-500"}`} />}
                             </div>
                         </div>
 
                         <div className="flex flex-col relative z-10">
                             <div className="flex items-center gap-2 mb-1.5">
-                                <Users className="w-3.5 h-3.5 text-red-500/70" />
-                                <span className="text-foreground font-black text-sm truncate group-hover:text-red-600 transition-colors">{activeTab.customerName || "Walk-in"}</span>
+                                <Users className={`w-3.5 h-3.5 ${isPaidHold ? "text-emerald-500/70" : "text-red-500/70"}`} />
+                                <span className={`text-foreground font-black text-sm truncate group-hover:${isPaidHold ? "text-emerald-600" : "text-red-600"} transition-colors`}>{activeTab.customerName || "Walk-in"}</span>
                             </div>
-                            <div className="flex justify-between items-center bg-foreground/5 p-2.5 rounded-xl border border-border shadow-inner group-hover:border-red-500/20 transition-colors">
-                                <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">Running Bill</span>
-                                <span className="text-xs font-black text-red-500">{itemsCount} Items</span>
+                            <div className={`flex justify-between items-center bg-foreground/5 p-2.5 rounded-xl border border-border shadow-inner group-hover:${isPaidHold ? "border-emerald-500/20" : "border-red-500/20"} transition-colors`}>
+                                <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">{isPaidHold ? "Final Check" : "Running Bill"}</span>
+                                <span className={`text-xs font-black ${isPaidHold ? "text-emerald-500" : "text-red-500"}`}>{itemsCount} Items</span>
                             </div>
                         </div>
 
                         {/* Hover Glow */}
-                        <div className="absolute inset-x-0 bottom-0 h-1 bg-gradient-to-r from-transparent via-red-500 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                        <div className={`absolute inset-x-0 bottom-0 h-1 bg-gradient-to-r from-transparent via-${isPaidHold ? "emerald-500" : "red-500"} to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500`}></div>
                     </div>
                 </Link>
                 
-                {/* Quick Cancel Button */}
-                <button 
-                    onClick={(e) => handleCancel(e, activeTab.id, tableNum)}
-                    disabled={isPending}
-                    className="absolute -top-2 -right-2 w-10 h-10 bg-red-600 text-white rounded-full flex items-center justify-center shadow-lg hover:bg-red-500 hover:scale-110 transition-all z-20 border-2 border-[#0a0a0a] disabled:opacity-50 disabled:cursor-not-allowed group/cancel"
-                    title="Cancel Table (Make Vacant)"
-                >
-                    {isCancelling ? <Loader2 className="w-5 h-5 animate-spin" /> : <X className="w-5 h-5 group-hover/cancel:rotate-90 transition-transform" />}
-                </button>
+                {/* Action Buttons */}
+                <div className="absolute -top-2 -right-2 flex flex-col gap-2 z-20">
+                   {isPaidHold ? (
+                      <button 
+                        onClick={(e) => handleFinalize(e, activeTab.id, tableNum)}
+                        disabled={isPending}
+                        className="w-10 h-10 bg-emerald-600 text-white rounded-full flex items-center justify-center shadow-lg hover:bg-emerald-500 hover:scale-110 transition-all border-2 border-[#0a0a0a] disabled:opacity-50 group/success"
+                        title="Mark as Served (Clear Table)"
+                      >
+                        {isFinalizing ? <Loader2 className="w-5 h-5 animate-spin" /> : <CheckSquare className="w-5 h-5 group-hover/success:rotate-12 transition-transform" />}
+                      </button>
+                   ) : (
+                      <button 
+                        onClick={(e) => handleCancel(e, activeTab.id, tableNum)}
+                        disabled={isPending}
+                        className="w-10 h-10 bg-red-600 text-white rounded-full flex items-center justify-center shadow-lg hover:bg-red-500 hover:scale-110 transition-all border-2 border-[#0a0a0a] disabled:opacity-50 group/cancel"
+                        title="Cancel Table (Make Vacant)"
+                      >
+                        {isCancelling ? <Loader2 className="w-5 h-5 animate-spin" /> : <X className="w-5 h-5 group-hover/cancel:rotate-90 transition-transform" />}
+                      </button>
+                   )}
+                </div>
             </div>
           )
         }

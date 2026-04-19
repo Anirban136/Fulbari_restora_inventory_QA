@@ -72,6 +72,7 @@ export async function adjustTabItemQuantity(tabItemId: string, tabId: string, de
 
 export async function closeTab(data: FormData) {
   const tabId = data.get("tabId") as string
+  const isHold = data.get("isHold") === "true"
   const paymentMode = data.get("paymentMode") as string
   const splitCashAmountRaw = data.get("splitCashAmount") as string
   const splitOnlineAmountRaw = data.get("splitOnlineAmount") as string
@@ -101,9 +102,13 @@ export async function closeTab(data: FormData) {
   })
   if (!tab) return
 
-  // Deduct inventory for all items on the tab
-  for (const tabItem of tab.Items) {
+  // Deduct inventory ONLY for items not already paid
+  const unpaidItems = tab.Items.filter(item => !item.isPaid)
+  let sessionSubtotal = 0
+
+  for (const tabItem of unpaidItems) {
      const { MenuItem: menuItem, quantity: orderQty } = tabItem
+     sessionSubtotal += tabItem.priceAtTime * orderQty
 
      // 1. Handle Legacy Single-Item link (1:1)
      if (menuItem.itemId) {
@@ -166,9 +171,17 @@ export async function closeTab(data: FormData) {
      }
   }
 
-  // Generate token number for CAFE (daily auto-increment) if none exists
+  // Mark all currently unpaid items as paid
+  if (unpaidItems.length > 0) {
+    await prisma.tabItem.updateMany({
+      where: { id: { in: unpaidItems.map(i => i.id) } },
+      data: { isPaid: true }
+    })
+  }
+
+  // Generate token number for CAFE & CHAI_JOINT (daily auto-increment) if none exists
   let tokenNumber: number | null = tab.tokenNumber
-  if (!tokenNumber && tab.Outlet.type === "CAFE") {
+  if (!tokenNumber && (tab.Outlet.type === "CAFE" || tab.Outlet.type === "CHAI_JOINT")) {
     const { startUTC: todayStart } = getISTDateBounds()
     
     const lastToken = await prisma.tab.findFirst({
@@ -186,9 +199,10 @@ export async function closeTab(data: FormData) {
   await prisma.tab.update({
     where: { id: tabId },
     data: {
-      status: "CLOSED",
+      status: isHold ? "PAID_HOLD" : "CLOSED",
       paymentMode,
       tokenNumber,
+      totalPaid: { increment: sessionSubtotal },
       closedAt: new Date(),
       splitCashAmount: paymentMode === "SPLIT" ? splitCashAmount : null,
       splitOnlineAmount: paymentMode === "SPLIT" ? splitOnlineAmount : null
@@ -300,3 +314,42 @@ export async function updateTab(tabId: string, totalAmount: number, paymentMode:
   revalidatePath('/chai')
   revalidatePath(`/tabs/${tabId}`)
 }
+
+
+export async function assignTokenToTab(tabId: string) {
+  const tab = await prisma.tab.findUnique({
+    where: { id: tabId },
+    include: { Outlet: true }
+  })
+  if (!tab || tab.tokenNumber) return tab?.tokenNumber
+
+  let tokenNumber: number | null = null
+  if (tab.Outlet.type === "CAFE" || tab.Outlet.type === "CHAI_JOINT") {
+    const { startUTC: todayStart } = getISTDateBounds()
+    
+    const lastToken = await prisma.tab.findFirst({
+      where: {
+        outletId: tab.outletId,
+        tokenNumber: { not: null },
+        openedAt: { gte: todayStart }
+      },
+      orderBy: { tokenNumber: 'desc' }
+    })
+    
+    tokenNumber = (lastToken?.tokenNumber || 0) + 1
+  }
+
+  if (tokenNumber) {
+    await prisma.tab.update({
+      where: { id: tabId },
+      data: { tokenNumber }
+    })
+    revalidatePath(`/tabs/${tabId}`)
+    revalidatePath(`/tabs`)
+    revalidatePath(`/cafe`)
+    revalidatePath(`/chai`)
+  }
+
+  return tokenNumber
+}
+

@@ -30,7 +30,7 @@ export default async function ActiveTabsPage({ searchParams }: { searchParams: P
   let activeTabs: any[] = []
   if (outlet) {
     activeTabs = await prisma.tab.findMany({
-      where: { outletId: outlet.id, status: "OPEN" },
+      where: { outletId: outlet.id, status: { in: ["OPEN", "PAID_HOLD"] } },
       include: { Items: { include: { MenuItem: true } } },
       orderBy: { openedAt: "desc" }
     })
